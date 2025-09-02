@@ -1,9 +1,9 @@
 export const typography = {
   fontFamily: {
-    regular: "System",
-    medium: "System",
-    bold: "System",
-    light: "System",
+    regular: 'System',
+    medium: 'System',
+    bold: 'System',
+    light: 'System',
   },
 
   fontSize: {
@@ -37,118 +37,116 @@ export const typography = {
   },
 
   fontWeight: {
-    light: "300",
-    regular: "400",
-    medium: "500",
-    semibold: "600",
-    bold: "700",
-    extrabold: "800",
-    black: "900",
+    light: '300',
+    regular: '400',
+    medium: '500',
+    semibold: '600',
+    bold: '700',
+    extrabold: '800',
+    black: '900',
   },
 
   text: {
     h1: {
       fontSize: 32,
       lineHeight: 40,
-      fontWeight: "700",
+      fontWeight: '700',
     },
     h2: {
       fontSize: 24,
       lineHeight: 32,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     h3: {
       fontSize: 20,
       lineHeight: 28,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     h4: {
       fontSize: 18,
       lineHeight: 24,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     body: {
       fontSize: 16,
       lineHeight: 24,
-      fontWeight: "400",
+      fontWeight: '400',
     },
     bodySmall: {
       fontSize: 14,
       lineHeight: 20,
-      fontWeight: "400",
+      fontWeight: '400',
     },
     caption: {
       fontSize: 12,
       lineHeight: 16,
-      fontWeight: "400",
+      fontWeight: '400',
     },
     button: {
       fontSize: 16,
       lineHeight: 24,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     buttonSmall: {
       fontSize: 14,
       lineHeight: 20,
-      fontWeight: "500",
+      fontWeight: '500',
     },
-    // 추가: 인증 화면용 텍스트 스타일
     auth: {
       title: {
         fontSize: 28,
         lineHeight: 36,
-        fontWeight: "700",
+        fontWeight: '700',
       },
       subtitle: {
         fontSize: 16,
         lineHeight: 22,
-        fontWeight: "400",
+        fontWeight: '400',
       },
       logo: {
         fontSize: 36,
         lineHeight: 44,
-        fontWeight: "800",
+        fontWeight: '800',
       },
       tagline: {
         fontSize: 16,
         lineHeight: 24,
-        fontWeight: "400",
+        fontWeight: '400',
       },
     },
-    // 추가: 배너용 텍스트 스타일
     banner: {
       title: {
         fontSize: 32,
         lineHeight: 36,
-        fontWeight: "900",
+        fontWeight: '900',
       },
       subtitle: {
         fontSize: 22,
         lineHeight: 26,
-        fontWeight: "700",
+        fontWeight: '700',
       },
       description: {
         fontSize: 18,
         lineHeight: 22,
-        fontWeight: "400",
+        fontWeight: '400',
       },
     },
-    // 추가: 카드용 텍스트 스타일
+
     card: {
       title: {
         fontSize: 18,
         lineHeight: 24,
-        fontWeight: "600",
+        fontWeight: '600',
       },
       subtitle: {
         fontSize: 14,
         lineHeight: 20,
-        fontWeight: "500",
+        fontWeight: '500',
       },
       body: {
         fontSize: 16,
         lineHeight: 24,
-        fontWeight: "400",
+        fontWeight: '400',
       },
     },
   },
