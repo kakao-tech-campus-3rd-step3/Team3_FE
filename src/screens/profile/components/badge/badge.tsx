@@ -9,11 +9,11 @@ interface BadgeProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-export const Badge: React.FC<BadgeProps> = ({
+export const Badge = ({
   text,
   variant = 'primary',
   size = 'medium',
-}) => {
+}: BadgeProps) => {
   const getSizeStyle = () => {
     switch (size) {
       case 'small':

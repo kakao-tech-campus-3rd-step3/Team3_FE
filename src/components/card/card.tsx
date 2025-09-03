@@ -10,13 +10,13 @@ interface CardProps {
   style?: any;
 }
 
-export const Card: React.FC<CardProps> = ({
+export const Card = ({
   title,
   subtitle,
   variant = 'default',
   children,
   style,
-}) => {
+}: CardProps) => {
   const getVariantStyle = () => {
     switch (variant) {
       case 'elevated':

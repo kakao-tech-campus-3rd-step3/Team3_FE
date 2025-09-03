@@ -9,10 +9,10 @@ interface CustomHeaderProps {
   showBackButton?: boolean;
 }
 
-export const CustomHeader: React.FC<CustomHeaderProps> = ({
+export const CustomHeader = ({
   title,
   showBackButton = true,
-}) => {
+}: CustomHeaderProps) => {
   const navigation = useNavigation();
 
   useEffect(() => {
