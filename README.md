@@ -13,25 +13,21 @@ Shoot Doori 모바일 애플리케이션의 프론트엔드 프로젝트입니�
 
 ## ⚙️ 환경 변수 설정
 
-프로젝트 루트에 `.env` 파일을 생성하고 다음 환경 변수들을 설정하세요:
+프로젝트 루트에 `.env` 파일을 생성하고 다음 환경 변수들을 설정해주세요
 
 ```bash
 # API Configuration
-API_BASE_URL=https://api.shootdoori.com
-API_VERSION=v1
-
-# External Services
-GOOGLE_MAPS_API_KEY=your_google_maps_key_here
-KAKAO_LOGIN_API_KEY=your_kakao_key_here
+EXPO_PUBLIC_API_BASE_URL=http://localhost:3000
 
 # Environment
-ENVIRONMENT=development
-DEBUG=true
-
-# App Configuration
-APP_NAME=Shoot Doori
-APP_VERSION=1.0.0
+EXPO_PUBLIC_ENVIRONMENT=development
 ```
+
+**주의사항:**
+
+- `.env` 파일은 Git에 올라가지 않습니다
+- 각 개발자가 로컬 환경에 맞게 설정해야 합니다
+- 실제 배포 시에는 다른 값으로 설정됩니다
 
 ## 🛠️ 개발 도구
 
