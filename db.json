@@ -26,5 +26,63 @@
       "assists": 23,
       "favoritePosition": "MF"
     }
+  },
+  "personalizedMatch": {
+    "recommendedMatches": [
+      {
+        "id": 1,
+        "location": "강원대학교 운동장",
+        "time": "오후 3시",
+        "currentPlayers": 8,
+        "totalPlayers": 10,
+        "level": "세미프로",
+        "popularity": "인기"
+      },
+      {
+        "id": 2,
+        "location": "춘천시 축구장",
+        "time": "오후 5시",
+        "currentPlayers": 6,
+        "totalPlayers": 8,
+        "level": "아마추어",
+        "popularity": "일반"
+      },
+      {
+        "id": 3,
+        "location": "춘천공원 축구장",
+        "time": "오후 7시",
+        "currentPlayers": 4,
+        "totalPlayers": 6,
+        "level": "프로",
+        "popularity": "일반"
+      },
+      {
+        "id": 4,
+        "location": "춘천체육공원",
+        "time": "오전 10시",
+        "currentPlayers": 5,
+        "totalPlayers": 8,
+        "level": "세미프로",
+        "popularity": "일반"
+      },
+      {
+        "id": 5,
+        "location": "춘천대학교 운동장",
+        "time": "오후 2시",
+        "currentPlayers": 7,
+        "totalPlayers": 10,
+        "level": "아마추어",
+        "popularity": "인기"
+      },
+      {
+        "id": 6,
+        "location": "춘천시민운동장",
+        "time": "오후 6시",
+        "currentPlayers": 3,
+        "totalPlayers": 6,
+        "level": "프로",
+        "popularity": "일반"
+      }
+    ]
   }
 }
