@@ -13,7 +13,7 @@ export const queries = {
 
   recommendedMatch: {
     key: ['recommendedMatch'] as const,
-    fn: () => api.recommendedMatchApi.getRecommendedMatchData(),
+    fn: () => api.recommendedMatchApi.getRecommendedMatch(),
   },
 } as const;
 
@@ -31,7 +31,7 @@ export function useHome() {
   });
 }
 
-export function usePersonalizedMatchData() {
+export function useRecommendedMatch() {
   return useQuery({
     queryKey: queries.recommendedMatch.key,
     queryFn: queries.recommendedMatch.fn,
