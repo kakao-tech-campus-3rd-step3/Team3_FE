@@ -39,8 +39,5 @@ EXPO_PUBLIC_ENVIRONMENT=development
 
 ## 📝 스크립트
 
-- `npm start`: Expo 개발 서버 시작
-- `npm run ios`: iOS 시뮬레이터 실행
-- `npm run android`: Android 에뮬레이터 실행
-- `npm run web`: 웹 브라우저에서 실행
+- `npx run start`: Expo 개발 서버 시작
 - `npm run lint`: ESLint로 코드 검사
