@@ -6,6 +6,8 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { queryClient } from '@/src/lib/query_client';
+import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import ErrorBoundary from 'react-native-error-boundary';
 
 function AppContent() {
   const [loaded] = useFonts({
@@ -28,8 +30,10 @@ function AppContent() {
 
 export default function RootLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AppContent />
-    </QueryClientProvider>
+    <ErrorBoundary FallbackComponent={GlobalErrorFallback}>
+      <QueryClientProvider client={queryClient}>
+        <AppContent />
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
