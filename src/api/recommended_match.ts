@@ -8,9 +8,8 @@ import type {
 export type { RecommendedMatch, RecommendedMatchListData };
 
 export const recommendedMatchApi = {
-  getRecommendedMatchData: (): Promise<RecommendedMatchListData> => {
-    return apiClient.get<RecommendedMatchListData>(
+  getRecommendedMatch: () =>
+    apiClient.get<RecommendedMatchListData>(
       RECOMMENDED_MATCH_API.GET_RECOMMENDED_MATCH
-    );
-  },
+    ),
 };
