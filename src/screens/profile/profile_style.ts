@@ -4,7 +4,8 @@ import { theme } from '@/src/theme';
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.main,
+    minHeight: '100%',
+    backgroundColor: theme.colors.background.sub,
   },
   header: {
     flexDirection: 'row',
@@ -87,7 +88,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: theme.spacing.spacing6,
     marginBottom: theme.spacing.spacing4,
-    backgroundColor: theme.colors.background.sub,
+    backgroundColor: theme.colors.gray[100],
     borderRadius: 8,
     padding: theme.spacing.spacing2,
   },
@@ -116,8 +117,6 @@ export default StyleSheet.create({
   warningCard: {
     margin: theme.spacing.spacing6,
     marginBottom: theme.spacing.spacing4,
-    borderLeftWidth: 4,
-    borderLeftColor: theme.colors.error,
   },
   warningHeader: {
     flexDirection: 'row',
@@ -189,45 +188,6 @@ export default StyleSheet.create({
   reviewLabel: {
     fontSize: 14,
     color: theme.colors.text.main,
-  },
-  statsCard: {
-    margin: theme.spacing.spacing6,
-    marginBottom: theme.spacing.spacing4,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: theme.spacing.spacing4,
-    marginBottom: theme.spacing.spacing6,
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing2,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: theme.colors.text.sub,
-  },
-  additionalStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: theme.spacing.spacing4,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.gray[300],
-  },
-  additionalStatItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.spacing2,
-  },
-  additionalStatText: {
-    fontSize: 12,
-    color: theme.colors.text.sub,
   },
   settingsCard: {
     margin: theme.spacing.spacing6,

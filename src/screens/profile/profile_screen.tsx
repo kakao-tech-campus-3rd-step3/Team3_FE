@@ -50,22 +50,54 @@ function ProfileScreen() {
 
   const renderReputationTab = () => (
     <View>
-      {displayUser.noShowCount > 0 && (
-        <Card variant="elevated" style={styles.warningCard}>
-          <View style={styles.warningHeader}>
-            <Ionicons name="warning" size={24} color={theme.colors.error} />
-            <Text style={styles.warningTitle}>노쇼 기록</Text>
-          </View>
-          <Text style={styles.warningText}>
-            총 {displayUser.noShowCount}회의 노쇼가 신고되었습니다.
+      <Card
+        level={
+          displayUser.noShowCount === 0
+            ? 0
+            : displayUser.noShowCount >= 2
+              ? 2
+              : 1
+        }
+        style={styles.warningCard}
+      >
+        <View style={styles.warningHeader}>
+          <Ionicons
+            name={
+              displayUser.noShowCount === 0 ? 'checkmark-circle' : 'warning'
+            }
+            size={24}
+            color={
+              displayUser.noShowCount === 0
+                ? theme.colors.success
+                : theme.colors.error
+            }
+          />
+          <Text
+            style={[
+              styles.warningTitle,
+              displayUser.noShowCount === 0 && { color: theme.colors.success },
+            ]}
+          >
+            노쇼 기록
           </Text>
-          <Text style={styles.warningSubtext}>
-            노쇼 횟수가 많으면 매치 참여에 제한이 있을 수 있습니다.
+        </View>
+        {displayUser.noShowCount === 0 ? (
+          <Text style={[styles.warningText, { color: theme.colors.text.sub }]}>
+            노쇼 기록이 없습니다. 좋은 매너를 유지하고 있습니다!
           </Text>
-        </Card>
-      )}
+        ) : (
+          <>
+            <Text style={styles.warningText}>
+              총 {displayUser.noShowCount}회의 노쇼가 신고되었습니다.
+            </Text>
+            <Text style={styles.warningSubtext}>
+              노쇼 횟수가 많으면 매치 참여에 제한이 있을 수 있습니다.
+            </Text>
+          </>
+        )}
+      </Card>
 
-      <Card variant="elevated" style={styles.mannerCard}>
+      <Card style={styles.mannerCard}>
         <View style={styles.mannerHeader}>
           <Text style={styles.sectionTitle}>매너 점수</Text>
           <View style={styles.mannerScoreContainer}>
@@ -95,7 +127,7 @@ function ProfileScreen() {
         </Text>
       </Card>
 
-      <Card variant="elevated" style={styles.reviewsCard}>
+      <Card style={styles.reviewsCard}>
         <Text style={styles.sectionTitle}>받은 후기</Text>
         <View style={styles.reviewsList}>
           {displayUser.recentReviews.map((review: any, index: number) => (
@@ -112,65 +144,6 @@ function ProfileScreen() {
           ))}
         </View>
       </Card>
-
-      <Card variant="elevated" style={styles.statsCard}>
-        <Text style={styles.sectionTitle}>경기 통계</Text>
-        <View style={styles.statsGrid}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{displayUser.totalMatches}</Text>
-            <Text style={styles.statLabel}>총 경기</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={[styles.statValue, { color: theme.colors.success }]}>
-              {displayUser.stats.wins}
-            </Text>
-            <Text style={styles.statLabel}>승리</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text
-              style={[styles.statValue, { color: theme.colors.orange[500] }]}
-            >
-              {displayUser.stats.draws}
-            </Text>
-            <Text style={styles.statLabel}>무승부</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={[styles.statValue, { color: theme.colors.error }]}>
-              {displayUser.stats.losses}
-            </Text>
-            <Text style={styles.statLabel}>패배</Text>
-          </View>
-        </View>
-
-        <View style={styles.additionalStats}>
-          <View style={styles.additionalStatItem}>
-            <Ionicons
-              name="football"
-              size={16}
-              color={theme.colors.grass[500]}
-            />
-            <Text style={styles.additionalStatText}>
-              {displayUser.stats.goals}골
-            </Text>
-          </View>
-          <View style={styles.additionalStatItem}>
-            <Ionicons
-              name="hand-left"
-              size={16}
-              color={theme.colors.grass[500]}
-            />
-            <Text style={styles.additionalStatText}>
-              {displayUser.stats.assists}어시스트
-            </Text>
-          </View>
-          <View style={styles.additionalStatItem}>
-            <Ionicons name="person" size={16} color={theme.colors.grass[500]} />
-            <Text style={styles.additionalStatText}>
-              주포지션: {displayUser.stats.favoritePosition}
-            </Text>
-          </View>
-        </View>
-      </Card>
     </View>
   );
 
@@ -185,7 +158,7 @@ function ProfileScreen() {
       >
         <View style={styles.container}>
           <CustomHeader title="프로필" showBackButton={false} />
-          <Card variant="elevated" style={styles.profileCard}>
+          <Card style={styles.profileCard}>
             <View style={styles.profileHeader}>
               <View style={styles.profileAvatar}>
                 <Ionicons
@@ -261,7 +234,7 @@ function ProfileScreen() {
           {activeTab === 'reputation' && renderReputationTab()}
 
           {activeTab === 'settings' && (
-            <Card variant="elevated" style={styles.settingsCard}>
+            <Card style={styles.settingsCard}>
               <Text style={styles.sectionTitle}>설정</Text>
               <TouchableOpacity style={styles.settingItem}>
                 <Text style={styles.settingText}>알림 설정</Text>
