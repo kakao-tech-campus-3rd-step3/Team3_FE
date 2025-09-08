@@ -1,5 +1,5 @@
 import * as api from '@/src/api';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const queries = {
   userProfile: {
@@ -13,7 +13,7 @@ export const queries = {
 
   recommendedMatch: {
     key: ['recommendedMatch'] as const,
-    fn: () => api.recommendedMatchApi.getRecommendedMatchData(),
+    fn: () => api.recommendedMatchApi.getRecommendedMatch(),
   },
 } as const;
 
@@ -24,15 +24,16 @@ export function useUserInfo() {
   });
 }
 
-export function useSuspenseUserInfo() {
-  return useSuspenseQuery({
-    queryKey: queries.userProfile.key,
-    queryFn: queries.userProfile.fn,
-  });
-}
-export function useSuspenseHome() {
-  return useSuspenseQuery({
+export function useHome() {
+  return useQuery({
     queryKey: queries.home.key,
     queryFn: queries.home.fn,
+  });
+}
+
+export function useRecommendedMatch() {
+  return useQuery({
+    queryKey: queries.recommendedMatch.key,
+    queryFn: queries.recommendedMatch.fn,
   });
 }

@@ -3,7 +3,5 @@ import type { UserProfile } from '@/src/types';
 import { PROFILE_API } from '@/src/constants/endpoints';
 
 export const profileApi = {
-  getProfile: (): Promise<UserProfile> => {
-    return apiClient.get<UserProfile>(PROFILE_API.GET_PROFILE);
-  },
+  getProfile: () => apiClient.get<UserProfile>(PROFILE_API.GET_PROFILE),
 };
