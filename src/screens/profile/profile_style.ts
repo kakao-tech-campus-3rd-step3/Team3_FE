@@ -7,6 +7,12 @@ export default StyleSheet.create({
     minHeight: '100%',
     backgroundColor: theme.colors.background.sub,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.colors.background.sub,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

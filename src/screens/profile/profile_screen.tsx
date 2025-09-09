@@ -1,8 +1,15 @@
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { useUserInfo } from '@/src/hooks/queries';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge } from './components/badge/badge';
 import { Card } from '@/src/components/card/card';
@@ -13,25 +20,20 @@ function ProfileScreen() {
   const [activeTab, setActiveTab] = useState('reputation');
   const insets = useSafeAreaInsets();
 
-  const { data: userInfo, isLoading, error } = useUserInfo();
+  const { data: userInfo, isLoading, error, refetch } = useUserInfo();
 
   const displayUser = userInfo;
 
   if (isLoading) {
     return (
-      <View style={styles.container}>
-        <Text>사용자 정보를 불러오는 중...</Text>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.colors.grass[500]} />
       </View>
     );
   }
 
   if (error) {
-    return (
-      <View style={styles.container}>
-        <Text>사용자 정보를 불러올 수 없습니다.</Text>
-        <Text>에러: {error.message}</Text>
-      </View>
-    );
+    return <GlobalErrorFallback error={error} resetError={() => refetch()} />;
   }
 
   if (!displayUser) {
