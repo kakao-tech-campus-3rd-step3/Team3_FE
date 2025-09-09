@@ -20,11 +20,6 @@ export const styles = StyleSheet.create({
     elevation: 3,
   },
 
-  outlined: {
-    borderWidth: 1,
-    borderColor: colors.border.light,
-  },
-
   title: {
     ...typography.text.h4,
     color: colors.text.main,
