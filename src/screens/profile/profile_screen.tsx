@@ -16,6 +16,8 @@ import { Card } from '@/src/components/card/card';
 import { theme } from '@/src/theme';
 import styles from './profile_style';
 
+import NoShowCard from './components/reputationTab/noshow_card';
+
 function ProfileScreen() {
   const [activeTab, setActiveTab] = useState('reputation');
   const insets = useSafeAreaInsets();
@@ -52,52 +54,7 @@ function ProfileScreen() {
 
   const renderReputationTab = () => (
     <View>
-      <Card
-        level={
-          displayUser.noShowCount === 0
-            ? 0
-            : displayUser.noShowCount >= 2
-              ? 2
-              : 1
-        }
-        style={styles.warningCard}
-      >
-        <View style={styles.warningHeader}>
-          <Ionicons
-            name={
-              displayUser.noShowCount === 0 ? 'checkmark-circle' : 'warning'
-            }
-            size={24}
-            color={
-              displayUser.noShowCount === 0
-                ? theme.colors.success
-                : theme.colors.error
-            }
-          />
-          <Text
-            style={[
-              styles.warningTitle,
-              displayUser.noShowCount === 0 && { color: theme.colors.success },
-            ]}
-          >
-            노쇼 기록
-          </Text>
-        </View>
-        {displayUser.noShowCount === 0 ? (
-          <Text style={[styles.warningText, { color: theme.colors.text.sub }]}>
-            노쇼 기록이 없습니다. 좋은 매너를 유지하고 있습니다!
-          </Text>
-        ) : (
-          <>
-            <Text style={styles.warningText}>
-              총 {displayUser.noShowCount}회의 노쇼가 신고되었습니다.
-            </Text>
-            <Text style={styles.warningSubtext}>
-              노쇼 횟수가 많으면 매치 참여에 제한이 있을 수 있습니다.
-            </Text>
-          </>
-        )}
-      </Card>
+      <NoShowCard noShowCount={displayUser.noShowCount} />
 
       <Card style={styles.mannerCard}>
         <View style={styles.mannerHeader}>
