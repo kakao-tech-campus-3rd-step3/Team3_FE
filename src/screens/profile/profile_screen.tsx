@@ -17,6 +17,8 @@ import { theme } from '@/src/theme';
 import styles from './profile_style';
 
 import NoShowCard from './components/reputationTab/noshow_card';
+import MannerCard from './components/reputationTab/manner_card';
+import { getMannerScoreColor } from '@/src/utils/manner';
 
 function ProfileScreen() {
   const [activeTab, setActiveTab] = useState('reputation');
@@ -46,45 +48,15 @@ function ProfileScreen() {
     );
   }
 
-  const getMannerScoreColor = () => {
-    if (displayUser.noShowCount >= 2) return theme.colors.error;
-    if (displayUser.noShowCount === 1) return theme.colors.orange[500];
-    return theme.colors.success;
-  };
-
   const renderReputationTab = () => (
     <View>
       <NoShowCard noShowCount={displayUser.noShowCount} />
 
-      <Card style={styles.mannerCard}>
-        <View style={styles.mannerHeader}>
-          <Text style={styles.sectionTitle}>매너 점수</Text>
-          <View style={styles.mannerScoreContainer}>
-            <Text
-              style={[styles.mannerScore, { color: getMannerScoreColor() }]}
-            >
-              {displayUser.mannerScore}
-            </Text>
-            <View style={styles.starsContainer}>
-              {[...Array(5)].map((_, i) => (
-                <Ionicons
-                  key={i}
-                  name={
-                    i < Math.floor(displayUser.mannerScore)
-                      ? 'star'
-                      : 'star-outline'
-                  }
-                  size={16}
-                  color="#FFD700"
-                />
-              ))}
-            </View>
-          </View>
-        </View>
-        <Text style={styles.reviewCount}>
-          총 {displayUser.totalReviews}개의 후기 기반
-        </Text>
-      </Card>
+      <MannerCard
+        mannerScore={displayUser.mannerScore}
+        totalReviews={displayUser.totalReviews}
+        noShowCount={displayUser.noShowCount}
+      />
 
       <Card style={styles.reviewsCard}>
         <Text style={styles.sectionTitle}>받은 후기</Text>
@@ -175,7 +147,7 @@ function ProfileScreen() {
                 <Text
                   style={[
                     styles.quickStatValue,
-                    { color: getMannerScoreColor() },
+                    { color: getMannerScoreColor(userInfo.noShowCount) },
                   ]}
                 >
                   {displayUser.mannerScore}
