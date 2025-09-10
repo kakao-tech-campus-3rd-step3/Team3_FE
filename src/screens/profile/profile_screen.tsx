@@ -149,6 +149,33 @@ function ProfileScreen() {
     </View>
   );
 
+  const renderSettingTab = () => (
+    <Card style={styles.settingsCard}>
+      <Text style={styles.sectionTitle}>설정</Text>
+      <TouchableOpacity style={styles.settingItem}>
+        <Text style={styles.settingText}>알림 설정</Text>
+        <Ionicons
+          name="chevron-forward"
+          size={20}
+          color={theme.colors.text.sub}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.settingItem}>
+        <Text style={styles.settingText}>개인정보 수정</Text>
+        <Ionicons
+          name="chevron-forward"
+          size={20}
+          color={theme.colors.text.sub}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.settingItem}>
+        <Text style={[styles.settingText, { color: theme.colors.error }]}>
+          로그아웃
+        </Text>
+      </TouchableOpacity>
+    </Card>
+  );
+
   return (
     <>
       <ScrollView
@@ -235,34 +262,7 @@ function ProfileScreen() {
 
           {activeTab === 'reputation' && renderReputationTab()}
 
-          {activeTab === 'settings' && (
-            <Card style={styles.settingsCard}>
-              <Text style={styles.sectionTitle}>설정</Text>
-              <TouchableOpacity style={styles.settingItem}>
-                <Text style={styles.settingText}>알림 설정</Text>
-                <Ionicons
-                  name="chevron-forward"
-                  size={20}
-                  color={theme.colors.text.sub}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.settingItem}>
-                <Text style={styles.settingText}>개인정보 수정</Text>
-                <Ionicons
-                  name="chevron-forward"
-                  size={20}
-                  color={theme.colors.text.sub}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.settingItem}>
-                <Text
-                  style={[styles.settingText, { color: theme.colors.error }]}
-                >
-                  로그아웃
-                </Text>
-              </TouchableOpacity>
-            </Card>
-          )}
+          {activeTab === 'settings' && renderSettingTab()}
 
           <View style={styles.bottomSpacer} />
         </View>
