@@ -23,6 +23,8 @@ import ReviewCard from './components/reputationTab/review_card';
 import TabBar from './components/TabBar';
 import ProfileHeader from './components/profileHeader';
 import QuickStats from './components/quickStats';
+import SettingCard from './components/settingTab/setting_card';
+import { defaultSettingsItems } from './components/settingTab/setting_items';
 
 function ProfileScreen() {
   const [activeTab, setActiveTab] = useState<'reputation' | 'settings'>(
@@ -58,47 +60,6 @@ function ProfileScreen() {
     );
   }
 
-  const renderReputationTab = () => (
-    <View>
-      <NoShowCard noShowCount={displayUser.noShowCount} />
-
-      <MannerCard
-        mannerScore={displayUser.mannerScore}
-        totalReviews={displayUser.totalReviews}
-        noShowCount={displayUser.noShowCount}
-      />
-
-      <ReviewCard reviews={displayUser.recentReviews} />
-    </View>
-  );
-
-  const renderSettingTab = () => (
-    <Card style={styles.settingsCard}>
-      <Text style={styles.sectionTitle}>설정</Text>
-      <TouchableOpacity style={styles.settingItem}>
-        <Text style={styles.settingText}>알림 설정</Text>
-        <Ionicons
-          name="chevron-forward"
-          size={20}
-          color={theme.colors.text.sub}
-        />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.settingItem}>
-        <Text style={styles.settingText}>개인정보 수정</Text>
-        <Ionicons
-          name="chevron-forward"
-          size={20}
-          color={theme.colors.text.sub}
-        />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.settingItem}>
-        <Text style={[styles.settingText, { color: theme.colors.error }]}>
-          로그아웃
-        </Text>
-      </TouchableOpacity>
-    </Card>
-  );
-
   return (
     <>
       <ScrollView
@@ -116,9 +77,19 @@ function ProfileScreen() {
           </Card>
           <TabBar active={activeTab} onChange={handleChangeTab} />
 
-          {activeTab === 'reputation' && renderReputationTab()}
-
-          {activeTab === 'settings' && renderSettingTab()}
+          {activeTab === 'reputation' ? (
+            <>
+              <NoShowCard noShowCount={displayUser.noShowCount} />
+              <MannerCard
+                mannerScore={displayUser.mannerScore}
+                totalReviews={displayUser.totalReviews}
+                noShowCount={displayUser.noShowCount}
+              />
+              <ReviewCard reviews={displayUser.recentReviews} />
+            </>
+          ) : (
+            <SettingCard items={defaultSettingsItems} />
+          )}
 
           <View style={styles.bottomSpacer} />
         </View>
