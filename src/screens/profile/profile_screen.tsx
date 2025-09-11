@@ -21,6 +21,7 @@ import MannerCard from './components/reputationTab/manner_card';
 import { getMannerScoreColor } from '@/src/utils/manner';
 import ReviewCard from './components/reputationTab/review_card';
 import TabBar from './components/TabBar';
+import ProfileHeader from './components/profileHeader';
 
 function ProfileScreen() {
   const [activeTab, setActiveTab] = useState<'reputation' | 'settings'>(
@@ -109,24 +110,7 @@ function ProfileScreen() {
         <View style={styles.container}>
           <CustomHeader title="프로필" showBackButton={false} />
           <Card style={styles.profileCard}>
-            <View style={styles.profileHeader}>
-              <View style={styles.profileAvatar}>
-                <Ionicons
-                  name="person"
-                  size={48}
-                  color={theme.colors.grass[500]}
-                />
-              </View>
-              <View style={styles.profileInfo}>
-                <Text style={styles.profileName}>{displayUser.name}</Text>
-                <Text style={styles.profileUniversity}>
-                  {displayUser.university}
-                </Text>
-                <Text style={styles.profileDetails}>
-                  {displayUser.joinDate} 가입
-                </Text>
-              </View>
-            </View>
+            <ProfileHeader user={displayUser} />
 
             <View style={styles.quickStats}>
               <View style={styles.quickStatItem}>
