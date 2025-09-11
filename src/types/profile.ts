@@ -43,3 +43,11 @@ export interface UpdateProfileResponse {
   success: boolean;
   user: UserProfile;
 }
+
+export type SettingItem = {
+  key: string;
+  label: string;
+  onPress?: () => void;
+  color?: string;
+  showChevron?: boolean;
+};
