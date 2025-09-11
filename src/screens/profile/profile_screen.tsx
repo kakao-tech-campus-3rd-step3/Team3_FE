@@ -22,6 +22,7 @@ import { getMannerScoreColor } from '@/src/utils/manner';
 import ReviewCard from './components/reputationTab/review_card';
 import TabBar from './components/TabBar';
 import ProfileHeader from './components/profileHeader';
+import QuickStats from './components/quickStats';
 
 function ProfileScreen() {
   const [activeTab, setActiveTab] = useState<'reputation' | 'settings'>(
@@ -111,28 +112,8 @@ function ProfileScreen() {
           <CustomHeader title="프로필" showBackButton={false} />
           <Card style={styles.profileCard}>
             <ProfileHeader user={displayUser} />
-
-            <View style={styles.quickStats}>
-              <View style={styles.quickStatItem}>
-                <Text style={styles.quickStatValue}>
-                  {displayUser.totalMatches}
-                </Text>
-                <Text style={styles.quickStatLabel}>총 경기</Text>
-              </View>
-              <View style={styles.quickStatItem}>
-                <Text
-                  style={[
-                    styles.quickStatValue,
-                    { color: getMannerScoreColor(userInfo.noShowCount) },
-                  ]}
-                >
-                  {displayUser.mannerScore}
-                </Text>
-                <Text style={styles.quickStatLabel}>매너 점수</Text>
-              </View>
-            </View>
+            <QuickStats user={displayUser} />
           </Card>
-
           <TabBar active={activeTab} onChange={handleChangeTab} />
 
           {activeTab === 'reputation' && renderReputationTab()}

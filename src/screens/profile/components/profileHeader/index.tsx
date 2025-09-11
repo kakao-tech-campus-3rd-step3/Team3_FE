@@ -8,17 +8,15 @@ import { UserProfile } from '@/src/types/profile';
 
 export default memo(function ProfileHeader({ user }: { user: UserProfile }) {
   return (
-    <Card style={styles.profileCard}>
-      <View style={styles.profileHeader}>
-        <View style={styles.profileAvatar}>
-          <Ionicons name="person" size={48} color={theme.colors.grass[500]} />
-        </View>
-        <View style={styles.profileInfo}>
-          <Text style={styles.profileName}>{user.name}</Text>
-          <Text style={styles.profileUniversity}>{user.university}</Text>
-          <Text style={styles.profileDetails}>{user.joinDate} 가입</Text>
-        </View>
+    <View style={styles.profileHeader}>
+      <View style={styles.profileAvatar}>
+        <Ionicons name="person" size={48} color={theme.colors.grass[500]} />
       </View>
-    </Card>
+      <View style={styles.profileInfo}>
+        <Text style={styles.profileName}>{user.name}</Text>
+        <Text style={styles.profileUniversity}>{user.university}</Text>
+        <Text style={styles.profileDetails}>{user.joinDate} 가입</Text>
+      </View>
+    </View>
   );
 });
