@@ -2,7 +2,7 @@ import { memo, useMemo } from 'react';
 import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '@/src/components/card/card';
-import styles from '../../profile_style';
+import styles from '@/src/screens/profile/profile_style';
 import { getMannerScoreColor } from '@/src/utils/manner';
 
 export default memo(function MannerCard({

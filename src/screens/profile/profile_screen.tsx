@@ -19,6 +19,7 @@ import styles from './profile_style';
 import NoShowCard from './components/reputationTab/noshow_card';
 import MannerCard from './components/reputationTab/manner_card';
 import { getMannerScoreColor } from '@/src/utils/manner';
+import ReviewCard from './components/reputationTab/review_card';
 
 function ProfileScreen() {
   const [activeTab, setActiveTab] = useState('reputation');
@@ -58,23 +59,7 @@ function ProfileScreen() {
         noShowCount={displayUser.noShowCount}
       />
 
-      <Card style={styles.reviewsCard}>
-        <Text style={styles.sectionTitle}>받은 후기</Text>
-        <View style={styles.reviewsList}>
-          {displayUser.recentReviews.map((review: any, index: number) => (
-            <View key={index} style={styles.reviewItem}>
-              <View style={styles.reviewContent}>
-                <Text style={styles.reviewLabel}>{review.label}</Text>
-                <Badge
-                  text={`${review.count}회`}
-                  variant="secondary"
-                  size="small"
-                />
-              </View>
-            </View>
-          ))}
-        </View>
-      </Card>
+      <ReviewCard reviews={displayUser.recentReviews} />
     </View>
   );
 
