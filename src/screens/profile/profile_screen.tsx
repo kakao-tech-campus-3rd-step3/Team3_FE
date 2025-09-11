@@ -2,7 +2,7 @@ import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { useUserInfo } from '@/src/hooks/queries';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ScrollView,
   Text,
@@ -20,14 +20,21 @@ import NoShowCard from './components/reputationTab/noshow_card';
 import MannerCard from './components/reputationTab/manner_card';
 import { getMannerScoreColor } from '@/src/utils/manner';
 import ReviewCard from './components/reputationTab/review_card';
+import TabBar from './components/TabBar';
 
 function ProfileScreen() {
-  const [activeTab, setActiveTab] = useState('reputation');
+  const [activeTab, setActiveTab] = useState<'reputation' | 'settings'>(
+    'reputation'
+  );
   const insets = useSafeAreaInsets();
 
   const { data: userInfo, isLoading, error, refetch } = useUserInfo();
 
   const displayUser = userInfo;
+  const handleChangeTab = useCallback(
+    (t: 'reputation' | 'settings') => setActiveTab(t),
+    []
+  );
 
   if (isLoading) {
     return (
@@ -142,37 +149,7 @@ function ProfileScreen() {
             </View>
           </Card>
 
-          <View style={styles.tabContainer}>
-            <TouchableOpacity
-              style={[
-                styles.tab,
-                activeTab === 'reputation' && styles.activeTab,
-              ]}
-              onPress={() => setActiveTab('reputation')}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === 'reputation' && styles.activeTabText,
-                ]}
-              >
-                평판 정보
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.tab, activeTab === 'settings' && styles.activeTab]}
-              onPress={() => setActiveTab('settings')}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === 'settings' && styles.activeTabText,
-                ]}
-              >
-                설정
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <TabBar active={activeTab} onChange={handleChangeTab} />
 
           {activeTab === 'reputation' && renderReputationTab()}
 
