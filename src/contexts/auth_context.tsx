@@ -1,5 +1,7 @@
-import React, { createContext, useContext } from 'react';
-import { useStorageState } from '../hooks/useStorageState';
+import React, { createContext, useContext, useEffect } from 'react';
+import { useStorageState } from '@/src/hooks/useStorageState';
+import { apiClient } from '@/src/lib/api_client';
+import { queryClient } from '@/src/lib/query_client';
 
 interface AuthContextType {
   token: string | null;
@@ -13,9 +15,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken, isLoading] = useStorageState<string | null>(
-    'auth_token',
+    'authToken',
     null
   );
+
+  useEffect(() => {
+    apiClient.setToken(token);
+  }, [token]);
+
+  useEffect(() => {
+    apiClient.setOnTokenExpired(() => {
+      setToken(null);
+      queryClient.clear();
+    });
+  }, [setToken]);
 
   const login = async (newToken: string) => {
     setToken(newToken);
