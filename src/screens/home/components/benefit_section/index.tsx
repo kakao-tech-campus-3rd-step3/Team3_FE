@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Text, View } from 'react-native';
-import { serviceCards } from '@/src/constants/serviceCards';
+import { serviceCards } from '@/src/constants/service_card';
 import styles from '../../home_style';
 
 export default memo(function BenefitsSection() {
