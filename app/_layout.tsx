@@ -22,6 +22,7 @@ function AppContent() {
     <ThemeProvider value={DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="team_guide" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
