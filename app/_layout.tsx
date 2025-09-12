@@ -8,6 +8,7 @@ import 'react-native-reanimated';
 import { queryClient } from '@/src/lib/query_client';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import ErrorBoundary from 'react-native-error-boundary';
+import { AuthProvider } from '@/src/contexts/auth_context';
 
 function AppContent() {
   const [loaded] = useFonts({
@@ -32,7 +33,9 @@ export default function RootLayout() {
   return (
     <ErrorBoundary FallbackComponent={GlobalErrorFallback}>
       <QueryClientProvider client={queryClient}>
-        <AppContent />
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
