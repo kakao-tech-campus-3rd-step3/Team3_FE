@@ -1,4 +1,27 @@
 {
+  "login": {
+    "authToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+  },
+  "users": [
+    {
+      "id": 1,
+      "email": "test@kakao.com",
+      "password": "password123",
+      "name": "손응민",
+      "auth": {
+        "authToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiLss7zsm5Hsi5wiLCJpYXQiOjE3MDk5OTk5OTl9.user1_token_signature"
+      }
+    },
+    {
+      "id": 2,
+      "email": "admin@kakao.com",
+      "password": "admin123",
+      "name": "관리자",
+      "auth": {
+        "authToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsIm5hbWUiOiLqtawg66Gc7J6lIiwiaWF0IjoxNzA5OTk5OTk5fQ.admin_token_signature"
+      }
+    }
+  ],
   "profile": {
     "id": "1",
     "name": "손응민",
