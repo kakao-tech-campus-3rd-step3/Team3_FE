@@ -8,3 +8,7 @@ export const HOME_API = {
 export const RECOMMENDED_MATCH_API = {
   GET_RECOMMENDED_MATCH: '/recommendedMatch',
 };
+
+export const AUTH_API = {
+  LOGIN: '/login',
+};
