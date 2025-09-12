@@ -1,4 +1,13 @@
 {
+  "home": {
+    "user": {
+      "name": "손응민"
+    },
+    "todayMatch": {
+      "hasMatch": false,
+      "matchInfo": null
+    }
+  },
   "profile": {
     "id": "1",
     "name": "손응민",
@@ -27,7 +36,7 @@
       "favoritePosition": "MF"
     }
   },
-  "personalizedMatch": {
+  "recommendedMatch": {
     "recommendedMatches": [
       {
         "id": 1,
