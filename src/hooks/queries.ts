@@ -22,7 +22,7 @@ export const queries = {
   },
 } as const;
 
-export function useLogin() {
+export function useLoginMutation() {
   const { login } = useAuth();
   const queryClient = useQueryClient();
 
