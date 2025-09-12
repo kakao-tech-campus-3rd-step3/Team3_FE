@@ -14,29 +14,52 @@ export class ApiError extends Error {
 
 class ApiClient {
   private baseURL: string;
+  private token: string | null = null;
+  private onTokenExpired: (() => void) | null = null;
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
+  }
+
+  setToken(token: string | null) {
+    this.token = token;
+  }
+
+  setOnTokenExpired(callback: (() => void) | null) {
+    this.onTokenExpired = callback;
   }
 
   private async request<T>(
     endpoint: string,
     options: AxiosRequestConfig = {}
   ): Promise<T> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...((options.headers as Record<string, string>) || {}),
+    };
+
+    if (this.token) {
+      headers.Authorization = `Bearer ${this.token}`;
+    }
+
     try {
       const response: AxiosResponse<T> = await axios({
         ...options,
         url: endpoint,
         baseURL: this.baseURL,
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
+        headers,
       });
 
       return response.data;
     } catch (error: unknown) {
       if (isAxiosError(error) && error.response) {
+        if (error.response.status === 401) {
+          this.setToken(null);
+          if (this.onTokenExpired) {
+            this.onTokenExpired();
+          }
+        }
+
         const errorData = error.response.data || {};
         const errorMessage =
           errorData.data &&
