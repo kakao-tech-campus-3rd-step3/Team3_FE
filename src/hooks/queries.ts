@@ -1,10 +1,10 @@
 import * as api from '@/src/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/src/contexts/auth_context';
+import type { LoginResponse } from '@/src/types/auth';
 export const queries = {
-  auth: {
-    key: ['auth'] as const,
-    fn: () => api.authApi.getAuth(),
+  login: {
+    key: ['login'] as const,
   },
 
   userProfile: {
@@ -29,9 +29,11 @@ export function useLogin() {
   return useMutation({
     mutationFn: (params: { email: string; password: string }) =>
       api.authApi.login(params.email, params.password),
-    onSuccess: (data: any) => {
-      login(data.token);
-      queryClient.invalidateQueries({ queryKey: queries.auth.key });
+    onSuccess: (data: LoginResponse) => {
+      login(data.authToken);
+
+      queryClient.invalidateQueries({ queryKey: queries.login.key });
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
 }
@@ -41,7 +43,7 @@ export function useLogout() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => logout(),
+    mutationFn: logout,
     onSuccess: () => {
       queryClient.clear();
     },
