@@ -1,6 +1,6 @@
-import ProfileScreen from '@/src/screens/profile/profile_screen';
 import React from 'react';
+import HomeScreen from '@/src/screens/home/home_screen';
 
-export default function ProfileTab() {
-  return <ProfileScreen />;
+export default function homeTab() {
+  return <HomeScreen />;
 }
