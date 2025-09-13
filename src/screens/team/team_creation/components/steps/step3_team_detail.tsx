@@ -8,7 +8,7 @@ interface Step3Props {
   description: string;
   onSkillLevelChange: (level: string) => void;
   onDescriptionChange: (description: string) => void;
-  onNext: () => void;
+  onSubmit: () => void;
   onBack: () => void;
   errors: {
     description?: string;
@@ -20,7 +20,7 @@ export default function Step3TeamDetails({
   description,
   onSkillLevelChange,
   onDescriptionChange,
-  onNext,
+  onSubmit,
   onBack,
   errors,
 }: Step3Props) {
@@ -87,9 +87,9 @@ export default function Step3TeamDetails({
           <Text style={styles.backButtonText}>이전</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.nextButton} onPress={onNext}>
-          <Text style={styles.nextButtonText}>다음</Text>
-          <Ionicons name="arrow-forward" size={20} color="#fff" />
+        <TouchableOpacity style={styles.createButton} onPress={onSubmit}>
+          <Ionicons name="checkmark-circle" size={20} color="#fff" />
+          <Text style={styles.createButtonText}>팀 생성</Text>
         </TouchableOpacity>
       </View>
     </View>

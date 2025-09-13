@@ -6,35 +6,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background.main,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.spacing5,
-    paddingVertical: theme.spacing.spacing4,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  headerBackButton: {
-    padding: theme.spacing.spacing2,
-  },
-  headerTitle: {
-    fontSize: theme.typography.fontSize.font5,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.main,
-  },
-  headerSpacer: {
-    width: theme.spacing.spacing10,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: theme.spacing.spacing15,
-  },
-  formContainer: {
-    padding: theme.spacing.spacing5,
-  },
   inputContainer: {
     marginBottom: theme.spacing.spacing6,
   },
@@ -44,30 +15,8 @@ export const styles = StyleSheet.create({
     color: theme.colors.text.main,
     marginBottom: theme.spacing.spacing2,
   },
-  textInput: {
-    borderWidth: 1,
-    borderColor: theme.colors.border.light,
-    borderRadius: theme.spacing.spacing2,
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    backgroundColor: theme.colors.background.main,
-  },
   textInputError: {
     borderColor: theme.colors.error,
-  },
-  textArea: {
-    borderWidth: 1,
-    borderColor: theme.colors.border.light,
-    borderRadius: theme.spacing.spacing2,
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    backgroundColor: theme.colors.background.main,
-    height: theme.spacing.spacing15,
-    textAlignVertical: 'top',
   },
   errorText: {
     fontSize: theme.typography.fontSize.font3,
@@ -82,61 +31,6 @@ export const styles = StyleSheet.create({
   },
   selectorContainer: {
     marginBottom: theme.spacing.spacing6,
-  },
-  selectorLabel: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing3,
-  },
-  selectorButtons: {
-    flexDirection: 'row',
-    gap: theme.spacing.spacing2,
-  },
-  selectorButton: {
-    flex: 1,
-    paddingVertical: theme.spacing.spacing3,
-    paddingHorizontal: theme.spacing.spacing4,
-    borderRadius: theme.spacing.spacing2,
-    borderWidth: 1,
-    borderColor: theme.colors.border.light,
-    backgroundColor: theme.colors.background.main,
-    alignItems: 'center',
-  },
-  selectorButtonActive: {
-    backgroundColor: theme.colors.blue[500],
-    borderColor: theme.colors.blue[500],
-  },
-  selectorButtonText: {
-    fontSize: theme.typography.fontSize.font3,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.sub,
-  },
-  selectorButtonTextActive: {
-    color: theme.colors.white,
-  },
-  memberCountContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing.spacing5,
-  },
-  memberCountButton: {
-    width: theme.spacing.spacing10,
-    height: theme.spacing.spacing10,
-    borderRadius: theme.spacing.spacing5,
-    borderWidth: 1,
-    borderColor: theme.colors.border.light,
-    backgroundColor: theme.colors.background.main,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  memberCountText: {
-    fontSize: theme.typography.fontSize.font5,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.main,
-    minWidth: theme.spacing.spacing10,
-    textAlign: 'center',
   },
   createButton: {
     backgroundColor: theme.colors.blue[500],
@@ -305,24 +199,6 @@ export const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.font4,
     color: theme.colors.text.sub,
     marginTop: theme.spacing.spacing1,
-  },
-  confirmationContainer: {
-    backgroundColor: theme.colors.background.sub,
-    borderRadius: theme.spacing.spacing3,
-    padding: theme.spacing.spacing5,
-  },
-  confirmationItem: {
-    marginBottom: 16,
-  },
-  confirmationLabel: {
-    fontSize: theme.typography.fontSize.font3,
-    color: theme.colors.text.sub,
-    marginBottom: 4,
-  },
-  confirmationValue: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.main,
   },
   progressContainer: {
     paddingVertical: 8,

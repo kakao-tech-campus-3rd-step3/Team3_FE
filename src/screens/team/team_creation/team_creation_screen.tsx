@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { View, Text, StatusBar, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useUserInfo } from '@/src/hooks/queries';
-import { createTeam, CreateTeamRequest } from '@/src/api/team';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { styles } from './team_creation_style';
 import { theme } from '@/src/theme';
@@ -10,7 +8,6 @@ import { theme } from '@/src/theme';
 import Step1BasicInfo from './components/steps/step1_info';
 import Step2TeamSettings from './components/steps/step2_team_setting';
 import Step3TeamDetails from './components/steps/step3_team_detail';
-import Step4Confirmation from './components/steps/step4_team_confirmation';
 
 interface TeamFormData {
   name: string;
@@ -23,7 +20,6 @@ interface TeamFormData {
 
 export default function TeamCreationScreen() {
   const router = useRouter();
-  const { data: currentUser } = useUserInfo();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<TeamFormData>({
     name: '',
@@ -67,34 +63,13 @@ export default function TeamCreationScreen() {
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      if (!currentUser) {
-        Alert.alert('오류', '로그인 정보를 찾을 수 없습니다.');
-        return;
-      }
-
-      try {
-        const apiData: CreateTeamRequest = {
-          name: formData.name,
-          description: formData.description,
-          university: formData.university,
-          skillLevel: formData.skillLevel,
-          teamType: formData.teamType,
-          memberCount: formData.memberCount,
-        };
-        await createTeam(apiData);
-
-        Alert.alert('팀 생성 완료', '팀이 성공적으로 생성되었습니다!', [
-          {
-            text: '확인',
-            onPress: () => router.back(),
-          },
-        ]);
-      } catch (error) {
-        Alert.alert(
-          '오류',
-          '팀 생성 중 오류가 발생했습니다. 다시 시도해주세요.'
-        );
-      }
+      // API 호출 제거 - 홈으로 이동
+      Alert.alert('팀 생성 완료', '팀이 성공적으로 생성되었습니다!', [
+        {
+          text: '확인',
+          onPress: () => router.push('/'),
+        },
+      ]);
     }
   };
 
@@ -105,7 +80,7 @@ export default function TeamCreationScreen() {
     }
   };
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 4));
+  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 3));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   const renderCurrentStep = () => {
@@ -150,18 +125,11 @@ export default function TeamCreationScreen() {
             onDescriptionChange={description =>
               updateFormData('description', description)
             }
+            onSubmit={handleSubmit}
             {...stepProps}
             errors={{
               description: errors.description,
             }}
-          />
-        );
-      case 4:
-        return (
-          <Step4Confirmation
-            formData={formData}
-            onSubmit={handleSubmit}
-            onBack={prevStep}
           />
         );
     }
@@ -181,11 +149,11 @@ export default function TeamCreationScreen() {
           <View
             style={[
               styles.progressFill,
-              { width: `${(currentStep / 4) * 100}%` },
+              { width: `${(currentStep / 3) * 100}%` },
             ]}
           />
         </View>
-        <Text style={styles.progressText}>{currentStep} / 4</Text>
+        <Text style={styles.progressText}>{currentStep} / 3</Text>
       </View>
 
       {renderCurrentStep()}

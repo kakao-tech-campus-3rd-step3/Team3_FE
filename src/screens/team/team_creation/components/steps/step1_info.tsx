@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,22 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../team_creation_style';
-
-const GANGWON_UNIVERSITIES = [
-  '가톨릭관동대학교',
-  '강릉원주대학교',
-  '강원과학기술대학교',
-  '강원관광대학교',
-  '강원도립대학교',
-  '강원대학교',
-  '상지대학교',
-  '연세대학교 원주캠퍼스',
-  '춘천교육대학교',
-  '한국교통대학교',
-  '한국폴리텍대학 강원캠퍼스',
-  '한림대학교',
-  '기타',
-];
+import { universityListApi } from '@/src/api/team';
 
 interface Step1Props {
   teamName: string;
@@ -47,6 +32,22 @@ export default function Step1BasicInfo({
   errors,
 }: Step1Props) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [universities, setUniversities] = useState<
+    { id: number; name: string }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchUniversities = async () => {
+      try {
+        const data = await universityListApi.getUniversities();
+        setUniversities(data);
+      } catch (error) {
+        console.error('대학교 목록 조회 실패:', error);
+      }
+    };
+
+    fetchUniversities();
+  }, []);
 
   const isValid =
     teamName.trim().length > 0 &&
@@ -139,25 +140,26 @@ export default function Step1BasicInfo({
               </TouchableOpacity>
             </View>
             <FlatList
-              data={GANGWON_UNIVERSITIES}
-              keyExtractor={item => item}
+              data={universities}
+              keyExtractor={item => item.id.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={[
                     styles.dropdownItem,
-                    university === item && styles.dropdownItemSelected,
+                    university === item.name && styles.dropdownItemSelected,
                   ]}
-                  onPress={() => handleUniversitySelect(item)}
+                  onPress={() => handleUniversitySelect(item.name)}
                 >
                   <Text
                     style={[
                       styles.dropdownItemText,
-                      university === item && styles.dropdownItemTextSelected,
+                      university === item.name &&
+                        styles.dropdownItemTextSelected,
                     ]}
                   >
-                    {item}
+                    {item.name}
                   </Text>
-                  {university === item && (
+                  {university === item.name && (
                     <Ionicons name="checkmark" size={20} color="#4A9EFF" />
                   )}
                 </TouchableOpacity>
