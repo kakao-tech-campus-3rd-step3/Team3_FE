@@ -23,6 +23,7 @@ function AppContent() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="team_guide" />
+        <Stack.Screen name="team_creation" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
