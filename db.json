@@ -93,5 +93,164 @@
         "popularity": "일반"
       }
     ]
-  }
+  },
+  "universities": [
+    { "id": 1, "name": "가톨릭관동대학교" },
+    { "id": 2, "name": "강릉원주대학교" },
+    { "id": 3, "name": "강원과학기술대학교" },
+    { "id": 4, "name": "강원관광대학교" },
+    { "id": 5, "name": "강원도립대학교" },
+    { "id": 6, "name": "강원대학교" },
+    { "id": 7, "name": "상지대학교" },
+    { "id": 8, "name": "연세대학교 원주캠퍼스" },
+    { "id": 9, "name": "춘천교육대학교" },
+    { "id": 10, "name": "한국교통대학교" },
+    { "id": 11, "name": "한국폴리텍대학 강원캠퍼스" },
+    { "id": 12, "name": "한림대학교" }
+  ],
+  "teams": [
+    {
+      "id": 1,
+      "name": "강원대 축구부",
+      "description": "강원대학교 축구 동아리입니다. 매주 정기적으로 연습하며 대회에도 참가합니다.",
+      "university": "강원대학교",
+      "teamType": "중앙동아리",
+      "skillLevel": "세미프로",
+      "memberCount": 15,
+      "captainName": "김철수",
+      "captainId": 2
+    },
+    {
+      "id": 2,
+      "name": "강원대 축구팀",
+      "description": "강원대학교 축구팀입니다. 실력 향상을 목표로 합니다.",
+      "university": "강원대학교",
+      "teamType": "과동아리",
+      "skillLevel": "아마추어",
+      "memberCount": 12,
+      "captainName": "이영희",
+      "captainId": 3
+    },
+    {
+      "id": 3,
+      "name": "상지대 축구부",
+      "description": "상지대학교 축구 동아리입니다.",
+      "university": "상지대학교",
+      "teamType": "중앙동아리",
+      "skillLevel": "프로",
+      "memberCount": 18,
+      "captainName": "박민수",
+      "captainId": 4
+    },
+    {
+      "id": 4,
+      "name": "한림대 축구팀",
+      "description": "한림대학교 축구팀입니다.",
+      "university": "한림대학교",
+      "teamType": "과동아리",
+      "skillLevel": "세미프로",
+      "memberCount": 14,
+      "captainName": "정수진",
+      "captainId": 5
+    },
+    {
+      "id": 5,
+      "name": "강릉원주대 축구부",
+      "description": "강릉원주대학교 축구 동아리입니다.",
+      "university": "강릉원주대학교",
+      "teamType": "중앙동아리",
+      "skillLevel": "아마추어",
+      "memberCount": 16,
+      "captainName": "최동현",
+      "captainId": 6
+    },
+    {
+      "id": 6,
+      "name": "가톨릭관동대 축구팀",
+      "description": "가톨릭관동대학교 축구팀입니다. 열정적인 플레이를 추구합니다.",
+      "university": "가톨릭관동대학교",
+      "teamType": "과동아리",
+      "skillLevel": "세미프로",
+      "memberCount": 13,
+      "captainName": "김태호",
+      "captainId": 7
+    },
+    {
+      "id": 7,
+      "name": "강원과학기술대 축구부",
+      "description": "강원과학기술대학교 축구 동아리입니다.",
+      "university": "강원과학기술대학교",
+      "teamType": "중앙동아리",
+      "skillLevel": "아마추어",
+      "memberCount": 11,
+      "captainName": "이준호",
+      "captainId": 8
+    },
+    {
+      "id": 8,
+      "name": "강원관광대 축구팀",
+      "description": "강원관광대학교 축구팀입니다.",
+      "university": "강원관광대학교",
+      "teamType": "과동아리",
+      "skillLevel": "프로",
+      "memberCount": 17,
+      "captainName": "박지훈",
+      "captainId": 9
+    },
+    {
+      "id": 9,
+      "name": "강원도립대 축구부",
+      "description": "강원도립대학교 축구 동아리입니다.",
+      "university": "강원도립대학교",
+      "teamType": "중앙동아리",
+      "skillLevel": "세미프로",
+      "memberCount": 14,
+      "captainName": "정민수",
+      "captainId": 10
+    },
+    {
+      "id": 10,
+      "name": "연세대 원주 축구팀",
+      "description": "연세대학교 원주캠퍼스 축구팀입니다.",
+      "university": "연세대학교 원주캠퍼스",
+      "teamType": "과동아리",
+      "skillLevel": "프로",
+      "memberCount": 19,
+      "captainName": "송현우",
+      "captainId": 11
+    },
+    {
+      "id": 11,
+      "name": "춘천교육대 축구부",
+      "description": "춘천교육대학교 축구 동아리입니다.",
+      "university": "춘천교육대학교",
+      "teamType": "중앙동아리",
+      "skillLevel": "아마추어",
+      "memberCount": 12,
+      "captainName": "윤서연",
+      "captainId": 12
+    },
+    {
+      "id": 12,
+      "name": "한국교통대 축구팀",
+      "description": "한국교통대학교 축구팀입니다.",
+      "university": "한국교통대학교",
+      "teamType": "과동아리",
+      "skillLevel": "세미프로",
+      "memberCount": 15,
+      "captainName": "강민철",
+      "captainId": 13
+    },
+    {
+      "id": 13,
+      "name": "한국폴리텍 강원 축구부",
+      "description": "한국폴리텍대학 강원캠퍼스 축구 동아리입니다.",
+      "university": "한국폴리텍대학 강원캠퍼스",
+      "teamType": "중앙동아리",
+      "skillLevel": "아마추어",
+      "memberCount": 10,
+      "captainName": "임도현",
+      "captainId": 14
+    }
+  ]
 }
