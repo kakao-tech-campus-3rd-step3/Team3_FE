@@ -14,10 +14,7 @@ const BackButton = () => {
   const router = useRouter();
 
   return (
-    <TouchableOpacity
-      onPress={() => router.back()}
-      style={{ marginLeft: theme.spacing.spacing4 }}
-    >
+    <TouchableOpacity onPress={() => router.back()}>
       <IconSymbol
         size={24}
         color={theme.colors.text.main}
