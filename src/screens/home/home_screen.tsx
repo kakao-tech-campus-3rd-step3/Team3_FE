@@ -49,7 +49,7 @@ export default function HomeScreen() {
         <View style={styles.headerDivider} />
 
         <WeatherSection />
-        <RecommendedMatchCard onMatchPress={matchId => {}} />
+        {/* <RecommendedMatchCard onMatchPress={matchId => {}} /> */}
       </ScrollView>
     </View>
   );
