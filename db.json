@@ -1,0 +1,97 @@
+{
+  "home": {
+    "user": {
+      "name": "손응민"
+    },
+    "todayMatch": {
+      "hasMatch": false,
+      "matchInfo": null
+    }
+  },
+  "profile": {
+    "id": "1",
+    "name": "손응민",
+    "email": "test@kakao.com",
+    "university": "강원대학교",
+    "major": "컴퓨터공학과",
+    "studentId": "202012345",
+    "joinDate": "2025.03",
+    "totalMatches": 47,
+    "noShowCount": 2,
+    "mannerScore": 4.3,
+    "totalReviews": 23,
+    "recentReviews": [
+      { "type": "good_play", "count": 8, "label": "플레이가 좋았어요" },
+      { "type": "good_manner", "count": 12, "label": "매너가 좋았어요" },
+      { "type": "team_player", "count": 6, "label": "팀워크가 좋았어요" },
+      { "type": "punctual", "count": 9, "label": "시간을 잘 지켜요" },
+      { "type": "bad_manner", "count": 1, "label": "매너가 아쉬워요" }
+    ],
+    "stats": {
+      "wins": 28,
+      "draws": 12,
+      "losses": 7,
+      "goals": 15,
+      "assists": 23,
+      "favoritePosition": "MF"
+    }
+  },
+  "recommendedMatch": {
+    "recommendedMatches": [
+      {
+        "id": 1,
+        "location": "강원대학교 운동장",
+        "time": "오후 3시",
+        "currentPlayers": 8,
+        "totalPlayers": 10,
+        "level": "세미프로",
+        "popularity": "인기"
+      },
+      {
+        "id": 2,
+        "location": "춘천시 축구장",
+        "time": "오후 5시",
+        "currentPlayers": 6,
+        "totalPlayers": 8,
+        "level": "아마추어",
+        "popularity": "일반"
+      },
+      {
+        "id": 3,
+        "location": "춘천공원 축구장",
+        "time": "오후 7시",
+        "currentPlayers": 4,
+        "totalPlayers": 6,
+        "level": "프로",
+        "popularity": "일반"
+      },
+      {
+        "id": 4,
+        "location": "춘천체육공원",
+        "time": "오전 10시",
+        "currentPlayers": 5,
+        "totalPlayers": 8,
+        "level": "세미프로",
+        "popularity": "일반"
+      },
+      {
+        "id": 5,
+        "location": "춘천대학교 운동장",
+        "time": "오후 2시",
+        "currentPlayers": 7,
+        "totalPlayers": 10,
+        "level": "아마추어",
+        "popularity": "인기"
+      },
+      {
+        "id": 6,
+        "location": "춘천시민운동장",
+        "time": "오후 6시",
+        "currentPlayers": 3,
+        "totalPlayers": 6,
+        "level": "프로",
+        "popularity": "일반"
+      }
+    ]
+  }
+}

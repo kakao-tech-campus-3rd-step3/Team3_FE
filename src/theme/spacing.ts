@@ -1,0 +1,24 @@
+export const spacing = {
+  spacing0: 0,
+  spacing1: 4,
+  spacing2: 8,
+  spacing3: 12,
+  spacing4: 16,
+  spacing5: 20,
+  spacing6: 24,
+  spacing7: 28,
+  spacing8: 32,
+  spacing9: 36,
+  spacing10: 40,
+  spacing11: 44,
+  spacing12: 48,
+  spacing13: 52,
+  spacing14: 56,
+  spacing15: 60,
+  spacing16: 64,
+  spacing17: 68,
+  spacing18: 72,
+} as const;
+
+export type SpacingSize = keyof typeof spacing;
+export type SpacingValue = (typeof spacing)[keyof typeof spacing];
