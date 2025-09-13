@@ -2,10 +2,12 @@ import React, { useRef } from 'react';
 import { Text, TouchableOpacity, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../team_guide_styles';
+import { useRouter } from 'expo-router';
 
 const ActionButtons = () => {
   const createButtonScale = useRef(new Animated.Value(1)).current;
   const joinButtonScale = useRef(new Animated.Value(1)).current;
+  const router = useRouter();
 
   const handleCreateButtonPress = () => {
     Animated.sequence([
@@ -20,6 +22,7 @@ const ActionButtons = () => {
         useNativeDriver: true,
       }),
     ]).start();
+    router.push('/team_creation');
   };
 
   const handleJoinButtonPress = () => {
