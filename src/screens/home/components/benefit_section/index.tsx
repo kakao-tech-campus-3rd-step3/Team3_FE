@@ -12,7 +12,7 @@ export default memo(function BenefitsSection() {
     } else if (serviceId === 2) {
       router.push('/mercenary');
     } else if (serviceId === 3) {
-      router.push('/team_guide');
+      router.push('/team/guide');
     }
   };
   return (
