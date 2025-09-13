@@ -1,28 +1,30 @@
 import { apiClient } from '@/src/lib/api_client';
+import { TEAM_API } from '@/src/constants/endpoints';
+import type {
+  CreateTeamRequest,
+  CreateTeamResponse,
+  JoinTeamResponse,
+  TeamListItem,
+} from '@/src/types';
 
-export interface CreateTeamRequest {
-  name: string; // 팀 이름
-  description: string; // 팀 소개 (최대 1000자)
-  university: string; // 소속 대학교
-  skillLevel: string; // 실력 수준: "아마추어" | "세미프로" | "프로"
-  teamType: string; // 팀 유형: "중앙동아리" | "과동아리" | "기타"
-  memberCount: number; // 현재 팀원 수 (nullable → 기본 0)
-}
+export const createTeamApi = {
+  createTeam: (teamData: CreateTeamRequest) =>
+    apiClient.post<CreateTeamResponse>(TEAM_API.CREATE_TEAM, teamData),
+};
 
-export interface CreateTeamResponse {
-  id: number;
-  name: string;
-  description: string;
-  university: string;
-  skillLevel: string;
-  teamType: string;
-  memberCount: number;
-  captainId: number;
-  createdAt: string;
-}
+export const universityListApi = {
+  getUniversities: () =>
+    apiClient.get<{ id: number; name: string }[]>(TEAM_API.GET_UNIVERSITY_LIST),
+};
 
-export const createTeam = async (
-  teamData: CreateTeamRequest
-): Promise<CreateTeamResponse> => {
-  return await apiClient.post<CreateTeamResponse>('/teams', teamData);
+export const teamListApi = {
+  getTeamsByUniversity: (university: string) =>
+    apiClient.get<TeamListItem[]>(
+      `${TEAM_API.GET_TEAMS_BY_UNIVERSITY}?university=${encodeURIComponent(university)}`
+    ),
+};
+
+export const joinTeamApi = {
+  joinTeam: (teamId: number) =>
+    apiClient.post<JoinTeamResponse>(TEAM_API.JOIN_TEAM, { teamId }),
 };
