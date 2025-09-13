@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal, Animated } from 'react-native';
 import { styles } from '../university_team_list_style';
-import MemberCountSlider from './MemberCountSlider';
+import MemberCountSlider from './member_count_slider';
 
 interface FilterOptions {
   skillLevel: string[];

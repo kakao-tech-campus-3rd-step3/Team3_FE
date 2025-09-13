@@ -13,9 +13,9 @@ import { styles } from './university_team_list_style';
 import { theme } from '@/src/theme';
 import type { TeamListItem } from '@/src/types';
 import { teamListApi } from '@/src/api/team';
-import TeamCard from './components/TeamCard';
-import FilterModal from './components/FilterModal';
-import TeamListHeader from './components/TeamListHeader';
+import TeamCard from './components/team_card';
+import FilterModal from './components/filter_modal';
+import TeamListHeader from './components/team_list_header';
 
 interface FilterOptions {
   skillLevel: string[];

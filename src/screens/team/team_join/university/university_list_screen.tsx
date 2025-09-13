@@ -6,9 +6,9 @@ import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { styles } from './university_list_style';
 import { theme } from '@/src/theme';
 import { universityListApi } from '@/src/api/team';
-import UniversityItem from './components/UniversityItem';
-import UniversityHeader from './components/UniversityHeader';
-import ConnectButton from './components/ConnectButton';
+import UniversityItem from './components/university_item';
+import UniversityHeader from './components/university_header';
+import ConnectButton from './components/connect_button';
 
 export default function UniversityListScreen() {
   const router = useRouter();
