@@ -6,7 +6,6 @@ const GuideImage = () => {
   const imageFadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // 이미지 페이드인 애니메이션
     Animated.timing(imageFadeAnim, {
       toValue: 1,
       duration: 1000,

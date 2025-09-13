@@ -14,9 +14,14 @@ const TeamGuideScreen = () => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-        <Ionicons name="chevron-back" size={24} color="#333333" />
-      </TouchableOpacity>
+      <View style={styles.topButtons}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="chevron-back" size={24} color="#333333" />
+        </TouchableOpacity>
+      </View>
 
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <Header />

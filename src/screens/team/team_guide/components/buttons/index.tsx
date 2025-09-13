@@ -22,7 +22,7 @@ const ActionButtons = () => {
         useNativeDriver: true,
       }),
     ]).start();
-    router.push('/team_creation');
+    router.push('/team/creation');
   };
 
   const handleJoinButtonPress = () => {
@@ -38,6 +38,7 @@ const ActionButtons = () => {
         useNativeDriver: true,
       }),
     ]).start();
+    router.push('/team/join_university');
   };
 
   return (
