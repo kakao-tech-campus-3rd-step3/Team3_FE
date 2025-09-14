@@ -1,0 +1,159 @@
+import React from 'react';
+import { View, Text, TouchableOpacity, Modal, Animated } from 'react-native';
+import { styles } from '../university_team_list_style';
+import MemberCountSlider from './member_count_slider';
+
+interface FilterOptions {
+  skillLevel: string[];
+  teamType: string[];
+  maxMemberCount: number;
+}
+
+interface FilterModalProps {
+  visible: boolean;
+  filterOptions: FilterOptions;
+  slideAnim: Animated.Value;
+  onClose: () => void;
+  onApply: () => void;
+  onReset: () => void;
+  onToggleSkillLevel: (level: string) => void;
+  onToggleTeamType: (type: string) => void;
+  onMemberCountChange: (value: number) => void;
+}
+
+export default function FilterModal({
+  visible,
+  filterOptions,
+  slideAnim,
+  onClose,
+  onApply,
+  onReset,
+  onToggleSkillLevel,
+  onToggleTeamType,
+  onMemberCountChange,
+}: FilterModalProps) {
+  return (
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="none"
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalOverlay}>
+        <TouchableOpacity
+          style={styles.modalBackdrop}
+          activeOpacity={1}
+          onPress={onClose}
+        />
+        <Animated.View
+          style={[
+            styles.filterModal,
+            {
+              transform: [
+                {
+                  translateY: slideAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [400, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          <View style={styles.filterHeader}>
+            <Text style={styles.filterTitle}>필터</Text>
+            <TouchableOpacity onPress={onClose}>
+              <Text style={styles.closeButton}>✕</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.filterContent}>
+            <View style={styles.filterSection}>
+              <Text style={styles.filterSectionTitle}>실력 수준</Text>
+              <View style={styles.filterOptions}>
+                {['아마추어', '세미프로', '프로'].map(level => (
+                  <TouchableOpacity
+                    key={level}
+                    style={[
+                      styles.filterOption,
+                      filterOptions.skillLevel.includes(level) &&
+                        styles.filterOptionSelected,
+                    ]}
+                    onPress={() => onToggleSkillLevel(level)}
+                  >
+                    <Text
+                      style={[
+                        styles.filterOptionText,
+                        filterOptions.skillLevel.includes(level) &&
+                          styles.filterOptionTextSelected,
+                      ]}
+                    >
+                      {level}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <View style={styles.filterSection}>
+              <Text style={styles.filterSectionTitle}>팀 유형</Text>
+              <View style={styles.filterOptions}>
+                {['중앙동아리', '과동아리', '기타'].map(type => (
+                  <TouchableOpacity
+                    key={type}
+                    style={[
+                      styles.filterOption,
+                      filterOptions.teamType.includes(type) &&
+                        styles.filterOptionSelected,
+                    ]}
+                    onPress={() => onToggleTeamType(type)}
+                  >
+                    <Text
+                      style={[
+                        styles.filterOptionText,
+                        filterOptions.teamType.includes(type) &&
+                          styles.filterOptionTextSelected,
+                      ]}
+                    >
+                      {type}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <View style={styles.filterSection}>
+              <Text style={styles.filterSectionTitle}>멤버 수</Text>
+              <View style={styles.sliderSection}>
+                <MemberCountSlider
+                  value={filterOptions.maxMemberCount}
+                  onValueChange={onMemberCountChange}
+                />
+                <Text style={styles.rangeText}>
+                  {filterOptions.maxMemberCount === 50
+                    ? '30명 이상'
+                    : `${filterOptions.maxMemberCount}명 이하`}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.filterActions}>
+            <TouchableOpacity style={styles.resetButton} onPress={onReset}>
+              <Text style={styles.resetButtonText}>초기화</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.applyButton}
+              onPress={() => {
+                onApply();
+                onClose();
+              }}
+            >
+              <Text style={styles.applyButtonText}>적용</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      </View>
+    </Modal>
+  );
+}

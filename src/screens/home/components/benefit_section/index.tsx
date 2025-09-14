@@ -1,9 +1,20 @@
 import { memo } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { serviceCards } from '@/src/constants/service_card';
-import styles from '../../home_style';
+import styles from '@/src/screens/home/home_style';
+import { useRouter } from 'expo-router';
 
 export default memo(function BenefitsSection() {
+  const router = useRouter();
+  const handleServicePress = (serviceId: number) => {
+    if (serviceId === 1) {
+      router.push('/tournament');
+    } else if (serviceId === 2) {
+      router.push('/mercenary');
+    } else if (serviceId === 3) {
+      router.push('/team/guide');
+    }
+  };
   return (
     <View style={styles.benefitsSection}>
       <View style={styles.benefitsHeader}>
@@ -12,8 +23,10 @@ export default memo(function BenefitsSection() {
 
       <View style={styles.benefitsGrid}>
         {serviceCards.map(service => (
-          <View
+          <TouchableOpacity
             key={service.id}
+            onPress={() => handleServicePress(service.id)}
+            activeOpacity={0.8}
             style={[
               styles.benefitCard,
               { backgroundColor: service.backgroundColor },
@@ -26,7 +39,7 @@ export default memo(function BenefitsSection() {
             ) : (
               <View style={styles.benefitIconContainer}>{service.icon}</View>
             )}
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
     </View>
