@@ -41,3 +41,4 @@ EXPO_PUBLIC_ENVIRONMENT=development
 
 - `npx run start`: Expo 개발 서버 시작
 - `npm run lint`: ESLint로 코드 검사
+- 'npm run api', 'npx expo start' : 실행
