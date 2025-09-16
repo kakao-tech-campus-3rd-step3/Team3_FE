@@ -10,10 +10,6 @@ export const styles = StyleSheet.create({
   headerSection: {
     paddingHorizontal: theme.spacing.spacing5,
     paddingVertical: theme.spacing.spacing6,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
   },
   title: {
@@ -21,12 +17,18 @@ export const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text.main,
     marginBottom: theme.spacing.spacing2,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: theme.typography.fontSize.font4,
     color: theme.colors.text.sub,
     textAlign: 'center',
     lineHeight: theme.typography.lineHeight.line6,
+  },
+  filterSection: {
+    paddingHorizontal: theme.spacing.spacing5,
+    paddingVertical: theme.spacing.spacing3,
+    alignItems: 'flex-end',
   },
   loadingContainer: {
     flex: 1,
@@ -155,9 +157,6 @@ export const styles = StyleSheet.create({
   filterContent: {
     paddingHorizontal: theme.spacing.spacing5,
     paddingVertical: theme.spacing.spacing4,
-  },
-  filterSection: {
-    marginBottom: theme.spacing.spacing6,
   },
   filterSectionTitle: {
     fontSize: theme.typography.fontSize.font4,

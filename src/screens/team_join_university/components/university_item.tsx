@@ -22,17 +22,23 @@ export default function UniversityItem({
       ]}
       onPress={() => onSelect(university)}
     >
-      <View style={styles.universityLogo}>
-        <Text style={styles.universityLogoText}>{university.charAt(0)}</Text>
+      <View style={styles.cardContent}>
+        <View style={styles.universityLogo}>
+          <Text style={styles.universityLogoText}>{university.charAt(0)}</Text>
+        </View>
+        <View style={styles.universityInfo}>
+          <Text
+            style={[
+              styles.universityName,
+              isSelected && styles.universityNameSelected,
+            ]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {university}
+          </Text>
+        </View>
       </View>
-      <Text
-        style={[
-          styles.universityName,
-          isSelected && styles.universityNameSelected,
-        ]}
-      >
-        {university}
-      </Text>
       {isSelected && (
         <View style={styles.selectedIndicator}>
           <Text style={styles.selectedIndicatorText}>✓</Text>

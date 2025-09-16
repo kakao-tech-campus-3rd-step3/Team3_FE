@@ -14,15 +14,8 @@ export default function TeamListHeader({
 }: TeamListHeaderProps) {
   return (
     <View style={styles.headerSection}>
-      <View style={styles.titleRow}>
-        <View>
-          <Text style={styles.title}>{university} 팀 목록</Text>
-          <Text style={styles.subtitle}>참여하고 싶은 팀을 선택하세요</Text>
-        </View>
-        <TouchableOpacity style={styles.filterButton} onPress={onFilterPress}>
-          <Text style={styles.filterButtonText}>필터</Text>
-        </TouchableOpacity>
-      </View>
+      <Text style={styles.title}>{university} 팀 목록</Text>
+      <Text style={styles.subtitle}>참여하고 싶은 팀을 선택하세요</Text>
     </View>
   );
 }

@@ -107,7 +107,6 @@ export default function UniversityListScreen() {
         data={universities}
         renderItem={renderUniversityItem}
         keyExtractor={item => item.id.toString()}
-        numColumns={3}
         contentContainerStyle={styles.universityList}
         showsVerticalScrollIndicator={false}
       />
