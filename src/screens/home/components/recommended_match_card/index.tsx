@@ -1,7 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
-import { theme } from '@/src/theme';
+
 import { useRecommendedMatch, useHome } from '@/src/hooks/queries';
+import { theme } from '@/src/theme';
+
 import { styles } from './styles';
 
 interface SafeMatchPreviewProps {

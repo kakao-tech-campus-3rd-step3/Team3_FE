@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { View, Text } from 'react-native';
+
 import styles from '@/src/screens/profile/profile_style';
 import { UserProfile } from '@/src/types/profile';
 import { getMannerScoreColor } from '@/src/utils/manner';

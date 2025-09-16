@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -7,9 +8,9 @@ import {
   Modal,
   FlatList,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { styles } from '../../team_creation_style';
+
 import { universityListApi } from '@/src/api/team';
+import { styles } from '@/src/screens/team_creation/team_creation_style';
 
 interface TeamBasicInfoProps {
   teamName: string;
@@ -41,7 +42,7 @@ export default function TeamBasicInfo({
       try {
         const data = await universityListApi.getUniversities();
         setUniversities(data);
-      } catch (error) {
+      } catch {
         // 대학교 목록 조회 실패 처리
       }
     };

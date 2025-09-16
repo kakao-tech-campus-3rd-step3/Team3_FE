@@ -1,19 +1,20 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View, Text, StatusBar, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
-import { CustomHeader } from '@/src/components/ui/custom_header';
-import { styles } from './team_creation_style';
-import { theme } from '@/src/theme';
 
-import TeamBasicInfo from './components/steps/TeamBasicInfo';
-import TeamSettings from './components/steps/TeamSettings';
-import TeamDetails from './components/steps/TeamDetails';
+import { CustomHeader } from '@/src/components/ui/custom_header';
+import { theme } from '@/src/theme';
 import {
   TeamType,
   SkillLevel,
   DEFAULT_TEAM_TYPE,
   DEFAULT_SKILL_LEVEL,
 } from '@/src/types/team';
+
+import TeamBasicInfo from './components/steps/TeamBasicInfo';
+import TeamDetails from './components/steps/TeamDetails';
+import TeamSettings from './components/steps/TeamSettings';
+import { styles } from './team_creation_style';
 
 interface TeamFormData {
   name: string;

@@ -1,7 +1,8 @@
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { styles } from '../../team_creation_style';
+
+import { styles } from '@/src/screens/team_creation/team_creation_style';
 import { TeamType, TEAM_TYPES } from '@/src/types/team';
 
 interface TeamSettingsProps {

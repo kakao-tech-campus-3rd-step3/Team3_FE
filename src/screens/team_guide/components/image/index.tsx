@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Animated } from 'react-native';
-import { styles } from '../../team_guide_styles';
+
+import { styles } from '@/src/screens/team_guide/team_guide_styles';
 
 const GuideImage = () => {
   const imageFadeAnim = useRef(new Animated.Value(0)).current;

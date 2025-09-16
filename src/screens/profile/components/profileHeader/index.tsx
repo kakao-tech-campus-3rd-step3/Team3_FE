@@ -1,8 +1,9 @@
+import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { View, Text } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/src/theme';
+
 import styles from '@/src/screens/profile/profile_style';
+import { theme } from '@/src/theme';
 import { UserProfile } from '@/src/types/profile';
 
 export default memo(function ProfileHeader({ user }: { user: UserProfile }) {

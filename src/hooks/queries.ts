@@ -1,11 +1,12 @@
-import * as api from '@/src/api';
 import { useQuery, useMutation } from '@tanstack/react-query';
+
+import * as api from '@/src/api';
+import { queryClient } from '@/src/lib/query_client';
 import type {
   JoinTeamResponse,
   CreateTeamResponse,
   CreateTeamRequest,
 } from '@/src/types';
-import { queryClient } from '@/src/lib/query_client';
 export const queries = {
   userProfile: {
     key: ['user', 'profile'] as const,

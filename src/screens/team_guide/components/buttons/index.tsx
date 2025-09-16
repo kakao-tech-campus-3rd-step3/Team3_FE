@@ -1,8 +1,9 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useRef } from 'react';
 import { Text, TouchableOpacity, Animated } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { styles } from '../../team_guide_styles';
-import { useRouter } from 'expo-router';
+
+import { styles } from '@/src/screens/team_guide/team_guide_styles';
 
 const ActionButtons = () => {
   const createButtonScale = useRef(new Animated.Value(1)).current;

@@ -1,5 +1,5 @@
-import { Image } from 'react-native';
 import type { ReactNode } from 'react';
+import { Image } from 'react-native';
 
 export interface ServiceCard {
   id: string;

@@ -1,14 +1,16 @@
+import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { View, FlatList, StatusBar, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
+
+import { universityListApi } from '@/src/api/team';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
-import { styles } from './university_list_style';
 import { theme } from '@/src/theme';
-import { universityListApi } from '@/src/api/team';
-import UniversityItem from './components/university_item';
-import UniversityHeader from './components/university_header';
+
 import ConnectButton from './components/connect_button';
+import UniversityHeader from './components/university_header';
+import UniversityItem from './components/university_item';
+import { styles } from './university_list_style';
 
 export default function UniversityListScreen() {
   const router = useRouter();

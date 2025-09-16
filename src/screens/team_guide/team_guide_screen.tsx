@@ -1,12 +1,13 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { View, TouchableOpacity, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { styles } from './team_guide_styles';
+
+import ActionButtons from './components/buttons';
 import Header from './components/header';
 import GuideImage from './components/image';
-import ActionButtons from './components/buttons';
+import { styles } from './team_guide_styles';
 
 const TeamGuideScreen = () => {
   const insets = useSafeAreaInsets();

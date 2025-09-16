@@ -1,9 +1,11 @@
-import { theme } from '@/src/theme';
 import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
+
+import { theme } from '@/src/theme';
+
 import { IconSymbol } from './icon_symbol';
-import { useRouter } from 'expo-router';
 
 interface CustomHeaderProps {
   title: string;

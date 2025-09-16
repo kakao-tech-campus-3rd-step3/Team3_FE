@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { styles } from '../university_team_list_style';
+
+import { styles } from '@/src/screens/team_join_list/university_team_list_style';
 
 interface TeamListHeaderProps {
   university: string;

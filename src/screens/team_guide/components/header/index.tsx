@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { styles } from '../../team_guide_styles';
+
+import { styles } from '@/src/screens/team_guide/team_guide_styles';
 
 const Header = () => {
   return (

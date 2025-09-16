@@ -1,8 +1,9 @@
+import { useRouter } from 'expo-router';
 import { memo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+
 import { serviceCards } from '@/src/constants/service_card';
 import styles from '@/src/screens/home/home_style';
-import { useRouter } from 'expo-router';
 
 export default memo(function BenefitsSection() {
   const router = useRouter();
