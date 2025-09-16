@@ -3,11 +3,11 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import ErrorBoundary from 'react-native-error-boundary';
 import 'react-native-reanimated';
 
-import { queryClient } from '@/src/lib/query_client';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
-import ErrorBoundary from 'react-native-error-boundary';
+import { queryClient } from '@/src/lib/query_client';
 
 function AppContent() {
   const [loaded] = useFonts({

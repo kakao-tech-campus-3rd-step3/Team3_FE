@@ -1,5 +1,6 @@
-import config from '@/src/config/environment';
 import axios, { AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
+
+import config from '@/src/config/environment';
 
 export class ApiError extends Error {
   constructor(

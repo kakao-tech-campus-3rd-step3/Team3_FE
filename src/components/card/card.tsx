@@ -1,6 +1,8 @@
 import React from 'react';
 import { Text, View, StyleProp, ViewStyle } from 'react-native';
+
 import { colors } from '@/src/theme';
+
 import { styles } from './card_style';
 
 interface CardProps {

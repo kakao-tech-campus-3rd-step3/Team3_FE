@@ -1,11 +1,12 @@
-import * as api from '@/src/api';
 import { useQuery, useMutation } from '@tanstack/react-query';
+
+import * as api from '@/src/api';
+import { queryClient } from '@/src/lib/query_client';
 import type {
   JoinTeamResponse,
   CreateTeamResponse,
   CreateTeamRequest,
 } from '@/src/types';
-import { queryClient } from '@/src/lib/query_client';
 export const queries = {
   userProfile: {
     key: ['user', 'profile'] as const,
@@ -23,6 +24,11 @@ export const queries = {
   universityTeamList: {
     key: ['university'] as const,
     fn: () => api.universityListApi.getUniversities(),
+  },
+  teamsByUniversity: {
+    key: ['teams', 'university'] as const,
+    fn: (university: string) =>
+      api.teamListApi.getTeamsByUniversity(university),
   },
 } as const;
 
@@ -51,6 +57,14 @@ export function useUniversityTeamList() {
   return useQuery({
     queryKey: queries.universityTeamList.key,
     queryFn: queries.universityTeamList.fn,
+  });
+}
+
+export function useTeamsByUniversity(university: string) {
+  return useQuery({
+    queryKey: [...queries.teamsByUniversity.key, university],
+    queryFn: () => queries.teamsByUniversity.fn(university),
+    enabled: !!university,
   });
 }
 

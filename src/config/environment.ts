@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+
 import type { AppExtra } from '@/src/types';
 
 const getEnvVars = () => {

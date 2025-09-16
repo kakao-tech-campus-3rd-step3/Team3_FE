@@ -1,15 +1,17 @@
 import { ActivityIndicator, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { useHome, useUserInfo } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
-import styles from './home_style';
-import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 
-import HomeHeader from './components/home_header';
-import GreetingSection from './components/greeting_section';
-import EnvelopeSection from './components/envelope_section';
 import BenefitsSection from './components/benefit_section';
+import EnvelopeSection from './components/envelope_section';
+import GreetingSection from './components/greeting_section';
+import HomeHeader from './components/home_header';
+import RecommendedMatchCard from './components/recommended_match_card';
 import WeatherSection from './components/weather_card';
+import styles from './home_style';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -48,7 +50,7 @@ export default function HomeScreen() {
         <View style={styles.headerDivider} />
 
         <WeatherSection />
-        {/* <RecommendedMatchCard onMatchPress={matchId => {}} /> */}
+        <RecommendedMatchCard />
       </ScrollView>
     </View>
   );

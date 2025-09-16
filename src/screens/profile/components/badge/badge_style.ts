@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+
 import { colors, spacing, typography } from '@/src/theme';
 
 export const BadgeStyles = StyleSheet.create({

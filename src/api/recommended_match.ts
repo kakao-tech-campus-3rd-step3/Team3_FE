@@ -1,5 +1,5 @@
-import { apiClient } from '@/src/lib/api_client';
 import { RECOMMENDED_MATCH_API } from '@/src/constants/endpoints';
+import { apiClient } from '@/src/lib/api_client';
 import type {
   RecommendedMatch,
   RecommendedMatchListData,
