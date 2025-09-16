@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
 
 import { useRecommendedMatch, useHome } from '@/src/hooks/queries';
@@ -24,10 +24,15 @@ export default function SafeMatchPreview({
   const userInteracting = useRef(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const matches = recommendedData?.recommendedMatches || [];
+  const matches = useMemo(
+    () => recommendedData?.recommendedMatches || [],
+    [recommendedData?.recommendedMatches]
+  );
 
-  const extendedMatches =
-    matches.length > 1 ? [...matches, ...matches, ...matches] : matches;
+  const extendedMatches = useMemo(
+    () => (matches.length > 1 ? [...matches, ...matches, ...matches] : matches),
+    [matches]
+  );
 
   const middleIndex = matches.length;
   const middleOffset = middleIndex * CARD_WIDTH;
@@ -42,7 +47,7 @@ export default function SafeMatchPreview({
         });
       }, 100);
     }
-  }, [extendedMatches]);
+  }, [extendedMatches, middleOffset]);
 
   useEffect(() => {
     if (extendedMatches.length <= 1) return;
@@ -76,7 +81,7 @@ export default function SafeMatchPreview({
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [extendedMatches]);
+  }, [extendedMatches, middleOffset]);
 
   const renderPreviewCard = (match: any, index: number) => (
     <TouchableOpacity

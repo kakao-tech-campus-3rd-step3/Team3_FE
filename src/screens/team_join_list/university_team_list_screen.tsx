@@ -6,8 +6,6 @@ import {
   StatusBar,
   Animated,
   ActivityIndicator,
-  TouchableOpacity,
-  Text,
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
@@ -151,12 +149,6 @@ export default function UniversityTeamListScreen() {
         university={university || ''}
         onFilterPress={openFilterModal}
       />
-
-      <View style={styles.filterSection}>
-        <TouchableOpacity style={styles.filterButton} onPress={openFilterModal}>
-          <Text style={styles.filterButtonText}>필터</Text>
-        </TouchableOpacity>
-      </View>
 
       <FlatList
         data={filteredTeams}

@@ -70,6 +70,7 @@ export default function FilterModal({
           ]}
         >
           <View style={styles.filterHeader}>
+            <View style={styles.dragHandle} />
             <Text style={styles.filterTitle}>필터</Text>
             <TouchableOpacity onPress={onClose}>
               <Text style={styles.closeButton}>✕</Text>
@@ -138,11 +139,6 @@ export default function FilterModal({
                   value={filterOptions.maxMemberCount}
                   onValueChange={onMemberCountChange}
                 />
-                <Text style={styles.rangeText}>
-                  {filterOptions.maxMemberCount === 50
-                    ? '30명 이상'
-                    : `${filterOptions.maxMemberCount}명 이하`}
-                </Text>
               </View>
             </View>
           </View>
