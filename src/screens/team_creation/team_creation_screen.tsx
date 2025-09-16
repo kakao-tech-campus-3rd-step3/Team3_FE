@@ -5,9 +5,9 @@ import { CustomHeader } from '@/src/components/ui/custom_header';
 import { styles } from './team_creation_style';
 import { theme } from '@/src/theme';
 
-import Step1BasicInfo from './components/steps/step1_info';
-import Step2TeamSettings from './components/steps/step2_team_setting';
-import Step3TeamDetails from './components/steps/step3_team_detail';
+import TeamBasicInfo from './components/steps/TeamBasicInfo';
+import TeamSettings from './components/steps/TeamSettings';
+import TeamDetails from './components/steps/TeamDetails';
 
 interface TeamFormData {
   name: string;
@@ -63,7 +63,6 @@ export default function TeamCreationScreen() {
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      // API 호출 제거 - 홈으로 이동
       Alert.alert('팀 생성 완료', '팀이 성공적으로 생성되었습니다!', [
         {
           text: '확인',
@@ -92,7 +91,7 @@ export default function TeamCreationScreen() {
     switch (currentStep) {
       case 1:
         return (
-          <Step1BasicInfo
+          <TeamBasicInfo
             teamName={formData.name}
             university={formData.university}
             onTeamNameChange={name => updateFormData('name', name)}
@@ -108,7 +107,7 @@ export default function TeamCreationScreen() {
         );
       case 2:
         return (
-          <Step2TeamSettings
+          <TeamSettings
             teamType={formData.teamType}
             memberCount={formData.memberCount}
             onTeamTypeChange={type => updateFormData('teamType', type)}
@@ -118,7 +117,7 @@ export default function TeamCreationScreen() {
         );
       case 3:
         return (
-          <Step3TeamDetails
+          <TeamDetails
             skillLevel={formData.skillLevel}
             description={formData.description}
             onSkillLevelChange={level => updateFormData('skillLevel', level)}

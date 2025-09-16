@@ -54,7 +54,6 @@ export const styles = StyleSheet.create({
     marginLeft: theme.spacing.spacing2,
   },
 
-  // Step-by-step styles
   stepContainer: {
     flex: 1,
     backgroundColor: theme.colors.background.main,
@@ -224,7 +223,6 @@ export const styles = StyleSheet.create({
   footerSpacer: {
     flex: 1,
   },
-  // Dropdown styles
   dropdownButton: {
     borderWidth: 1,
     borderColor: theme.colors.border.light,

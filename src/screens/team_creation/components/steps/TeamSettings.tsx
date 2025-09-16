@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../team_creation_style';
 
-interface Step2Props {
+interface TeamSettingsProps {
   teamType: string;
   memberCount: number;
   onTeamTypeChange: (type: string) => void;
@@ -12,14 +12,14 @@ interface Step2Props {
   onBack: () => void;
 }
 
-export default function Step2TeamSettings({
+export default function TeamSettings({
   teamType,
   memberCount,
   onTeamTypeChange,
   onMemberCountChange,
   onNext,
   onBack,
-}: Step2Props) {
+}: TeamSettingsProps) {
   return (
     <View style={styles.stepContainer}>
       <View style={styles.stepHeader}>

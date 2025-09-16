@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../team_creation_style';
 import { universityListApi } from '@/src/api/team';
 
-interface Step1Props {
+interface TeamBasicInfoProps {
   teamName: string;
   university: string;
   onTeamNameChange: (name: string) => void;
@@ -23,14 +23,14 @@ interface Step1Props {
   };
 }
 
-export default function Step1BasicInfo({
+export default function TeamBasicInfo({
   teamName,
   university,
   onTeamNameChange,
   onUniversityChange,
   onNext,
   errors,
-}: Step1Props) {
+}: TeamBasicInfoProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [universities, setUniversities] = useState<
     { id: number; name: string }[]
@@ -42,7 +42,7 @@ export default function Step1BasicInfo({
         const data = await universityListApi.getUniversities();
         setUniversities(data);
       } catch (error) {
-        console.error('대학교 목록 조회 실패:', error);
+        // 대학교 목록 조회 실패 처리
       }
     };
 

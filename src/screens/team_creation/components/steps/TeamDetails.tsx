@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../team_creation_style';
 
-interface Step3Props {
+interface TeamDetailsProps {
   skillLevel: string;
   description: string;
   onSkillLevelChange: (level: string) => void;
@@ -15,7 +15,7 @@ interface Step3Props {
   };
 }
 
-export default function Step3TeamDetails({
+export default function TeamDetails({
   skillLevel,
   description,
   onSkillLevelChange,
@@ -23,7 +23,7 @@ export default function Step3TeamDetails({
   onSubmit,
   onBack,
   errors,
-}: Step3Props) {
+}: TeamDetailsProps) {
   return (
     <View style={styles.stepContainer}>
       <View style={styles.stepHeader}>
