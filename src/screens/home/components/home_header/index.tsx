@@ -2,8 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
-import styles from '@/src/screens/home/home_style';
 import { theme } from '@/src/theme';
+
+import styles from '../../home_style';
 
 export default memo(function HomeHeader() {
   return (

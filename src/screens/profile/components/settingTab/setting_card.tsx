@@ -3,9 +3,10 @@ import { memo } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 
 import { Card } from '@/src/components/card/card';
-import styles from '@/src/screens/profile/profile_style';
 import { theme } from '@/src/theme';
 import { SettingItem } from '@/src/types';
+
+import styles from '../../profile_style';
 
 export default memo(function SettingCard({ items }: { items: SettingItem[] }) {
   return (

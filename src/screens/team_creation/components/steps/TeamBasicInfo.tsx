@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 
 import { universityListApi } from '@/src/api/team';
-import { styles } from '@/src/screens/team_creation/team_creation_style';
+
+import { styles } from '../../team_creation_style';
 
 interface TeamBasicInfoProps {
   teamName: string;

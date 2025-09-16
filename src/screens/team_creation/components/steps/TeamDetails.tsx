@@ -2,8 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 
-import { styles } from '@/src/screens/team_creation/team_creation_style';
 import { SkillLevel, SKILL_LEVELS } from '@/src/types/team';
+
+import { styles } from '../../team_creation_style';
 
 interface TeamDetailsProps {
   skillLevel: SkillLevel;

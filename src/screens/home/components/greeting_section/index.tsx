@@ -2,11 +2,11 @@ import { memo } from 'react';
 import { Image, Text, View } from 'react-native';
 
 import { Card } from '@/src/components/card/card';
-import styles from '@/src/screens/home/home_style';
 import { theme } from '@/src/theme';
 import { HomeData } from '@/src/types/home';
 import { UserProfile } from '@/src/types/profile';
 
+import styles from '../../home_style';
 import MatchStatusCard from '../matchstatus_card';
 
 interface GreetingSectionProps {

@@ -3,8 +3,9 @@ import { memo } from 'react';
 import { View, Text } from 'react-native';
 
 import { Card } from '@/src/components/card/card';
-import styles from '@/src/screens/profile/profile_style';
 import { theme } from '@/src/theme';
+
+import styles from '../../profile_style';
 
 export default memo(function NoShowCard({
   noShowCount,

@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 
-import styles from '@/src/screens/profile/profile_style';
+import styles from '../../profile_style';
 
 type Tab = 'reputation' | 'settings';
 

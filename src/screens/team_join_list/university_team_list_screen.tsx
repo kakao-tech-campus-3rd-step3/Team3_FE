@@ -13,13 +13,14 @@ import {
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { useTeamsByUniversity } from '@/src/hooks/queries';
-import FilterModal from '@/src/screens/team_join_list/components/filter_modal';
-import TeamCard from '@/src/screens/team_join_list/components/team_card';
-import TeamListHeader from '@/src/screens/team_join_list/components/team_list_header';
-import { styles } from '@/src/screens/team_join_list/university_team_list_style';
 import { theme } from '@/src/theme';
 import type { TeamListItem } from '@/src/types';
 import { SkillLevel, TeamType } from '@/src/types/team';
+
+import FilterModal from './components/filter_modal';
+import TeamCard from './components/team_card';
+import TeamListHeader from './components/team_list_header';
+import { styles } from './university_team_list_style';
 
 interface FilterOptions {
   skillLevel: SkillLevel[];

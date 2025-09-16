@@ -1,10 +1,16 @@
 import { useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
-import { View, FlatList, StatusBar, ActivityIndicator } from 'react-native';
+import { useState } from 'react';
+import {
+  View,
+  FlatList,
+  StatusBar,
+  ActivityIndicator,
+  Text,
+} from 'react-native';
 
-import { universityListApi } from '@/src/api/team';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { useUniversityTeamList } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 
 import ConnectButton from './components/connect_button';
@@ -14,47 +20,36 @@ import { styles } from './university_list_style';
 
 export default function UniversityListScreen() {
   const router = useRouter();
+
+  const {
+    data: universities,
+    isLoading,
+    error,
+    refetch,
+  } = useUniversityTeamList();
   const [selectedUniversity, setSelectedUniversity] = useState<string>('');
-  const [universities, setUniversities] = useState<
-    { id: number; name: string }[]
-  >([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.colors.blue[500]} />
+      </View>
+    );
+  }
+  if (error) {
+    return <GlobalErrorFallback error={error as Error} resetError={refetch} />;
+  }
 
-  useEffect(() => {
-    const fetchUniversities = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const data = await universityListApi.getUniversities();
-        setUniversities(data);
-      } catch (err) {
-        console.error('대학교 목록 조회 실패:', err);
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUniversities();
-  }, []);
-
-  const refetch = () => {
-    const fetchUniversities = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const data = await universityListApi.getUniversities();
-        setUniversities(data);
-      } catch (err) {
-        console.error('대학교 목록 조회 실패:', err);
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchUniversities();
-  };
+  if (!universities || universities.length === 0) {
+    return (
+      <View style={styles.container}>
+        <CustomHeader title="" showBackButton={true} />
+        <UniversityHeader />
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>등록된 대학교가 없습니다</Text>
+        </View>
+      </View>
+    );
+  }
 
   const handleUniversitySelect = (university: string) => {
     setSelectedUniversity(university);
@@ -80,18 +75,6 @@ export default function UniversityListScreen() {
       onSelect={handleUniversitySelect}
     />
   );
-
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color={theme.colors.blue[500]} />
-      </View>
-    );
-  }
-
-  if (error) {
-    return <GlobalErrorFallback error={error} resetError={refetch} />;
-  }
 
   return (
     <View style={styles.container}>

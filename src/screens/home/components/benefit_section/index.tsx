@@ -3,7 +3,8 @@ import { memo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { serviceCards } from '@/src/constants/service_card';
-import styles from '@/src/screens/home/home_style';
+
+import styles from '../../home_style';
 
 export default memo(function BenefitsSection() {
   const router = useRouter();

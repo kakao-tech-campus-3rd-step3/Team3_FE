@@ -2,9 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { View, Text } from 'react-native';
 
-import styles from '@/src/screens/profile/profile_style';
 import { theme } from '@/src/theme';
 import { UserProfile } from '@/src/types/profile';
+
+import styles from '../../profile_style';
 
 export default memo(function ProfileHeader({ user }: { user: UserProfile }) {
   return (

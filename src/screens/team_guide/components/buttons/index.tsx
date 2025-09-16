@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useRef } from 'react';
 import { Text, TouchableOpacity, Animated } from 'react-native';
 
-import { styles } from '@/src/screens/team_guide/team_guide_styles';
+import { styles } from '../../team_guide_styles';
 
 const ActionButtons = () => {
   const createButtonScale = useRef(new Animated.Value(1)).current;

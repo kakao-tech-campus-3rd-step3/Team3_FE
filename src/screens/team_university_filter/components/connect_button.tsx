@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-import { styles } from '@/src/screens/team_join_university/university_list_style';
+import { styles } from '../university_list_style';
 
 interface ConnectButtonProps {
   selectedUniversity: string;
