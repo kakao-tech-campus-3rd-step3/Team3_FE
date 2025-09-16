@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   FlatList,
@@ -8,9 +8,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import { teamListApi } from '@/src/api/team';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { useTeamsByUniversity } from '@/src/hooks/queries';
 import FilterModal from '@/src/screens/team_join_list/components/filter_modal';
 import TeamCard from '@/src/screens/team_join_list/components/team_card';
 import TeamListHeader from '@/src/screens/team_join_list/components/team_list_header';
@@ -27,10 +27,7 @@ interface FilterOptions {
 
 export default function UniversityTeamListScreen() {
   const { university } = useLocalSearchParams<{ university: string }>();
-  const [teams, setTeams] = useState<TeamListItem[]>([]);
   const [filteredTeams, setFilteredTeams] = useState<TeamListItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     skillLevel: [],
@@ -39,30 +36,16 @@ export default function UniversityTeamListScreen() {
   });
   const slideAnim = useState(new Animated.Value(0))[0];
 
-  const fetchTeams = useCallback(async () => {
-    if (!university) return;
-
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await teamListApi.getTeamsByUniversity(university);
-      setTeams(data);
-      setFilteredTeams(data);
-    } catch (err) {
-      console.error('팀 목록 조회 실패:', err);
-      setError(err as Error);
-    } finally {
-      setLoading(false);
-    }
-  }, [university]);
-
-  const refetch = () => {
-    fetchTeams();
-  };
+  const {
+    data: teams = [],
+    isLoading: loading,
+    error,
+    refetch,
+  } = useTeamsByUniversity(university || '');
 
   useEffect(() => {
-    fetchTeams();
-  }, [fetchTeams]);
+    setFilteredTeams(teams);
+  }, [teams]);
 
   const applyFilters = () => {
     let filtered = [...teams];
@@ -149,7 +132,7 @@ export default function UniversityTeamListScreen() {
   }
 
   if (error) {
-    return <GlobalErrorFallback error={error} resetError={refetch} />;
+    return <GlobalErrorFallback error={error as Error} resetError={refetch} />;
   }
 
   return (

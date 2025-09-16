@@ -25,6 +25,11 @@ export const queries = {
     key: ['university'] as const,
     fn: () => api.universityListApi.getUniversities(),
   },
+  teamsByUniversity: {
+    key: ['teams', 'university'] as const,
+    fn: (university: string) =>
+      api.teamListApi.getTeamsByUniversity(university),
+  },
 } as const;
 
 export function useUserInfo() {
@@ -52,6 +57,14 @@ export function useUniversityTeamList() {
   return useQuery({
     queryKey: queries.universityTeamList.key,
     queryFn: queries.universityTeamList.fn,
+  });
+}
+
+export function useTeamsByUniversity(university: string) {
+  return useQuery({
+    queryKey: [...queries.teamsByUniversity.key, university],
+    queryFn: () => queries.teamsByUniversity.fn(university),
+    enabled: !!university,
   });
 }
 
