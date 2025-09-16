@@ -78,7 +78,10 @@ export default function TeamCreationScreen() {
     }
   };
 
-  const updateFormData = (field: keyof TeamFormData, value: any) => {
+  const updateFormData = <Key extends keyof TeamFormData>(
+    field: Key,
+    value: TeamFormData[Key]
+  ) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
