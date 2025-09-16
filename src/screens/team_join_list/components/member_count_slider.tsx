@@ -7,19 +7,19 @@ interface MemberCountSliderProps {
   onValueChange: (value: number) => void;
 }
 
+const MEMBER_COUNT_OPTIONS = [
+  { label: '11명 이하', maxCount: 11 },
+  { label: '15명 이하', maxCount: 15 },
+  { label: '20명 이하', maxCount: 20 },
+  { label: '25명 이하', maxCount: 25 },
+  { label: '30명 이하', maxCount: 30 },
+  { label: '30명+', maxCount: 50 },
+];
+
 export default function MemberCountSlider({
   value,
   onValueChange,
 }: MemberCountSliderProps) {
-  const memberCountOptions = [
-    { label: '11명 이하', maxCount: 11 },
-    { label: '15명 이하', maxCount: 15 },
-    { label: '20명 이하', maxCount: 20 },
-    { label: '25명 이하', maxCount: 25 },
-    { label: '30명 이하', maxCount: 30 },
-    { label: '30명+', maxCount: 50 },
-  ];
-
   return (
     <View style={styles.memberCountSlider}>
       <View style={styles.sliderTrack}>
@@ -35,7 +35,7 @@ export default function MemberCountSlider({
         />
       </View>
       <View style={styles.sliderLabels}>
-        {memberCountOptions.map((option, index) => (
+        {MEMBER_COUNT_OPTIONS.map((option, index) => (
           <TouchableOpacity
             key={index}
             style={[
