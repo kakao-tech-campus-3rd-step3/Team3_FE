@@ -16,10 +16,11 @@ import { teamListApi } from '@/src/api/team';
 import TeamCard from './components/team_card';
 import FilterModal from './components/filter_modal';
 import TeamListHeader from './components/team_list_header';
+import { SkillLevel, TeamType } from '@/src/types/team';
 
 interface FilterOptions {
-  skillLevel: string[];
-  teamType: string[];
+  skillLevel: SkillLevel[];
+  teamType: TeamType[];
   maxMemberCount: number;
 }
 
@@ -120,7 +121,7 @@ export default function UniversityTeamListScreen() {
     <TeamCard team={item} onJoin={handleJoinTeam} />
   );
 
-  const toggleSkillLevel = (level: string) => {
+  const toggleSkillLevel = (level: SkillLevel) => {
     setFilterOptions(prev => ({
       ...prev,
       skillLevel: prev.skillLevel.includes(level)
@@ -129,7 +130,7 @@ export default function UniversityTeamListScreen() {
     }));
   };
 
-  const toggleTeamType = (type: string) => {
+  const toggleTeamType = (type: TeamType) => {
     setFilterOptions(prev => ({
       ...prev,
       teamType: prev.teamType.includes(type)

@@ -2,10 +2,16 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Modal, Animated } from 'react-native';
 import { styles } from '../university_team_list_style';
 import MemberCountSlider from './member_count_slider';
+import {
+  SkillLevel,
+  TeamType,
+  SKILL_LEVELS,
+  TEAM_TYPES,
+} from '@/src/types/team';
 
 interface FilterOptions {
-  skillLevel: string[];
-  teamType: string[];
+  skillLevel: SkillLevel[];
+  teamType: TeamType[];
   maxMemberCount: number;
 }
 
@@ -16,8 +22,8 @@ interface FilterModalProps {
   onClose: () => void;
   onApply: () => void;
   onReset: () => void;
-  onToggleSkillLevel: (level: string) => void;
-  onToggleTeamType: (type: string) => void;
+  onToggleSkillLevel: (level: SkillLevel) => void;
+  onToggleTeamType: (type: TeamType) => void;
   onMemberCountChange: (value: number) => void;
 }
 
@@ -71,7 +77,7 @@ export default function FilterModal({
             <View style={styles.filterSection}>
               <Text style={styles.filterSectionTitle}>실력 수준</Text>
               <View style={styles.filterOptions}>
-                {['아마추어', '세미프로', '프로'].map(level => (
+                {SKILL_LEVELS.map(level => (
                   <TouchableOpacity
                     key={level}
                     style={[
@@ -98,7 +104,7 @@ export default function FilterModal({
             <View style={styles.filterSection}>
               <Text style={styles.filterSectionTitle}>팀 유형</Text>
               <View style={styles.filterOptions}>
-                {['중앙동아리', '과동아리', '기타'].map(type => (
+                {TEAM_TYPES.map(type => (
                   <TouchableOpacity
                     key={type}
                     style={[

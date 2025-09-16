@@ -2,11 +2,12 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../team_creation_style';
+import { TeamType, TEAM_TYPES } from '@/src/types/team';
 
 interface TeamSettingsProps {
-  teamType: string;
+  teamType: TeamType;
   memberCount: number;
-  onTeamTypeChange: (type: string) => void;
+  onTeamTypeChange: (type: TeamType) => void;
   onMemberCountChange: (count: number) => void;
   onNext: () => void;
   onBack: () => void;
@@ -33,7 +34,7 @@ export default function TeamSettings({
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>팀 유형 *</Text>
           <View style={styles.selectorContainer}>
-            {['중앙동아리', '과동아리', '기타'].map(type => (
+            {TEAM_TYPES.map(type => (
               <TouchableOpacity
                 key={type}
                 style={[

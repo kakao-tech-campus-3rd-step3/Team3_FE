@@ -2,11 +2,12 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../../team_creation_style';
+import { SkillLevel, SKILL_LEVELS } from '@/src/types/team';
 
 interface TeamDetailsProps {
-  skillLevel: string;
+  skillLevel: SkillLevel;
   description: string;
-  onSkillLevelChange: (level: string) => void;
+  onSkillLevelChange: (level: SkillLevel) => void;
   onDescriptionChange: (description: string) => void;
   onSubmit: () => void;
   onBack: () => void;
@@ -37,7 +38,7 @@ export default function TeamDetails({
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>팀 실력 *</Text>
           <View style={styles.selectorContainer}>
-            {['아마추어', '세미프로', '프로'].map(level => (
+            {SKILL_LEVELS.map(level => (
               <TouchableOpacity
                 key={level}
                 style={[

@@ -8,13 +8,19 @@ import { theme } from '@/src/theme';
 import TeamBasicInfo from './components/steps/TeamBasicInfo';
 import TeamSettings from './components/steps/TeamSettings';
 import TeamDetails from './components/steps/TeamDetails';
+import {
+  TeamType,
+  SkillLevel,
+  DEFAULT_TEAM_TYPE,
+  DEFAULT_SKILL_LEVEL,
+} from '@/src/types/team';
 
 interface TeamFormData {
   name: string;
   university: string;
-  teamType: string;
+  teamType: TeamType;
   memberCount: number;
-  skillLevel: string;
+  skillLevel: SkillLevel;
   description: string;
 }
 
@@ -24,9 +30,9 @@ export default function TeamCreationScreen() {
   const [formData, setFormData] = useState<TeamFormData>({
     name: '',
     university: '',
-    teamType: '중앙동아리',
+    teamType: DEFAULT_TEAM_TYPE,
     memberCount: 0,
-    skillLevel: '아마추어',
+    skillLevel: DEFAULT_SKILL_LEVEL,
     description: '',
   });
 
