@@ -6,13 +6,16 @@ import { useRouter } from 'expo-router';
 
 export default memo(function BenefitsSection() {
   const router = useRouter();
-  const handleServicePress = (serviceId: number) => {
-    if (serviceId === 1) {
-      router.push('/tournament');
-    } else if (serviceId === 2) {
-      router.push('/mercenary');
-    } else if (serviceId === 3) {
-      router.push('/team/guide');
+  const handleServicePress = (serviceId: string) => {
+    const routeMap: Record<string, string> = {
+      tournament: '/tournament',
+      mercenary: '/mercenary',
+      team: '/team/guide',
+    };
+
+    const route = routeMap[serviceId];
+    if (route) {
+      router.push(route);
     }
   };
   return (
