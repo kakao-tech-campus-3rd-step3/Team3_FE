@@ -1,190 +1,201 @@
-import React, { useEffect, useRef, memo } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { theme } from '@/src/theme';
 import { useRecommendedMatch, useHome } from '@/src/hooks/queries';
 import { styles } from './styles';
 
-interface RecommendedMatchCardProps {
+interface SafeMatchPreviewProps {
   onMatchPress?: (matchId: number) => void;
 }
 
-export default memo(function RecommendedMatchCard({
+const CARD_WIDTH = 150 + theme.spacing.spacing2;
+
+export default function SafeMatchPreview({
   onMatchPress,
-}: RecommendedMatchCardProps) {
-  const { data: personalizedMatchData } = useRecommendedMatch();
+}: SafeMatchPreviewProps) {
+  const { data: recommendedData } = useRecommendedMatch();
   const { data: homeData, isLoading, error } = useHome();
-  const scrollViewRef = useRef<ScrollView>(null);
 
-  const scrollAnimationRef = useRef<number | null>(null);
-  const userInteractingRef = useRef(false);
-  const restartTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const currentPositionRef = useRef(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const flatListRef = useRef<FlatList>(null);
+  const scrollOffset = useRef(0);
+  const userInteracting = useRef(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const recommendedMatches = personalizedMatchData?.recommendedMatches || [];
-  const renderedMatches =
-    recommendedMatches.length > 1
-      ? [...recommendedMatches.slice(1), ...recommendedMatches.slice(1)]
-      : [];
+  const matches = recommendedData?.recommendedMatches || [];
+
+  const extendedMatches =
+    matches.length > 1 ? [...matches, ...matches, ...matches] : matches;
+
+  const middleIndex = matches.length;
+  const middleOffset = middleIndex * CARD_WIDTH;
 
   useEffect(() => {
-    if (!personalizedMatchData || recommendedMatches.length <= 1) return;
-
-    const cardWidth = 130 + theme.spacing.spacing2;
-    const totalWidth = (recommendedMatches.length - 1) * cardWidth;
-
-    const continuousScroll = () => {
-      if (userInteractingRef.current) return;
-
-      currentPositionRef.current += 0.3;
-      if (scrollViewRef.current) {
-        scrollViewRef.current.scrollTo({
-          x: currentPositionRef.current,
+    if (extendedMatches.length > 1) {
+      setTimeout(() => {
+        scrollOffset.current = middleOffset;
+        flatListRef.current?.scrollToOffset({
+          offset: middleOffset,
           animated: false,
         });
-      }
+      }, 100);
+    }
+  }, [extendedMatches]);
 
-      if (currentPositionRef.current >= totalWidth) {
-        currentPositionRef.current -= totalWidth;
-        if (scrollViewRef.current) {
-          scrollViewRef.current.scrollTo({
-            x: currentPositionRef.current,
+  useEffect(() => {
+    if (extendedMatches.length <= 1) return;
+
+    const startAutoScroll = () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+
+      intervalRef.current = setInterval(() => {
+        if (userInteracting.current) return;
+
+        scrollOffset.current += CARD_WIDTH;
+
+        const maxOffset = extendedMatches.length * CARD_WIDTH;
+        if (scrollOffset.current >= maxOffset - CARD_WIDTH) {
+          scrollOffset.current = middleOffset;
+          flatListRef.current?.scrollToOffset({
+            offset: scrollOffset.current,
             animated: false,
           });
+        } else {
+          flatListRef.current?.scrollToOffset({
+            offset: scrollOffset.current,
+            animated: true,
+          });
         }
-      }
-
-      scrollAnimationRef.current = requestAnimationFrame(continuousScroll);
+      }, 3000);
     };
 
-    const timer = setTimeout(() => {
-      scrollAnimationRef.current = requestAnimationFrame(continuousScroll);
-    }, 2000);
+    startAutoScroll();
 
     return () => {
-      clearTimeout(timer);
-      if (scrollAnimationRef.current)
-        cancelAnimationFrame(scrollAnimationRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [personalizedMatchData, recommendedMatches.length]);
+  }, [extendedMatches]);
+
+  const renderPreviewCard = (match: any, index: number) => (
+    <TouchableOpacity
+      key={`${match.id}-${index}`}
+      style={styles.card}
+      activeOpacity={0.85}
+      onPress={() => onMatchPress?.(match.id)}
+    >
+      <View>
+        <Text style={styles.location} numberOfLines={1}>
+          {match.location}
+        </Text>
+        <Text style={styles.time}>{match.time}</Text>
+      </View>
+      <View style={styles.metaRow}>
+        <View style={[styles.smallBadge, badgeBg(match.level)]}>
+          <Text style={[styles.smallBadgeText, badgeTextColor(match.level)]}>
+            {match.level}
+          </Text>
+        </View>
+        <Text style={styles.playerCountSmall}>
+          {match.currentPlayers}/{match.totalPlayers}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderFullItem = ({ item }: { item: any }) => (
+    <TouchableOpacity
+      style={styles.fullItem}
+      onPress={() => {
+        setModalVisible(false);
+        onMatchPress?.(item.id);
+      }}
+      activeOpacity={0.85}
+    >
+      <View style={styles.fullItemLeft}>
+        <Text style={styles.location}>{item.location}</Text>
+        <Text style={styles.time}>{item.time}</Text>
+      </View>
+      <View style={styles.fullItemRight}>
+        <View style={[styles.smallBadge, badgeBg(item.level)]}>
+          <Text style={[styles.smallBadgeText, badgeTextColor(item.level)]}>
+            {item.level}
+          </Text>
+        </View>
+        <Text style={styles.playerCountSmall}>
+          {item.currentPlayers}/{item.totalPlayers}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   if (error) throw error;
   if (isLoading || !homeData) return null;
 
-  const handleScrollBeginDrag = () => {
-    userInteractingRef.current = true;
-    if (scrollAnimationRef.current) {
-      cancelAnimationFrame(scrollAnimationRef.current);
-      scrollAnimationRef.current = null;
-    }
-    if (restartTimerRef.current) {
-      clearTimeout(restartTimerRef.current);
-    }
-  };
-
-  const handleScrollEndDrag = (e: any) => {
-    currentPositionRef.current = e.nativeEvent.contentOffset.x;
-    userInteractingRef.current = false;
-
-    restartTimerRef.current = setTimeout(() => {
-      scrollAnimationRef.current = requestAnimationFrame(function step() {
-        if (!userInteractingRef.current) {
-          currentPositionRef.current += 0.3;
-          if (scrollViewRef.current) {
-            scrollViewRef.current.scrollTo({
-              x: currentPositionRef.current,
-              animated: false,
-            });
-          }
-          scrollAnimationRef.current = requestAnimationFrame(step);
-        }
-      });
-    }, 2000);
-  };
-
-  const handleScroll = (e: any) => {
-    const cardWidth = 130 + theme.spacing.spacing2;
-    const totalWidth = (recommendedMatches.length - 1) * cardWidth;
-    let x = e.nativeEvent.contentOffset.x;
-
-    if (x >= totalWidth) {
-      x -= totalWidth;
-      if (scrollViewRef.current) {
-        scrollViewRef.current.scrollTo({ x, animated: false });
-      }
-      currentPositionRef.current = x;
-    } else {
-      currentPositionRef.current = x;
-    }
-  };
-
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={styles.container} pointerEvents="box-none">
+      <View style={styles.header} pointerEvents="box-none">
         <Text style={styles.title}>금주의 추천 매치</Text>
+        {matches.length > 3 && (
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            style={styles.moreButton}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.moreText}>더보기</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
-      <View style={styles.additionalMatches}>
-        <ScrollView
-          ref={scrollViewRef}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.horizontalScrollContainer}
-          onScrollBeginDrag={handleScrollBeginDrag}
-          onScrollEndDrag={handleScrollEndDrag}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-        >
-          {renderedMatches.map(match => (
+      <FlatList
+        ref={flatListRef}
+        data={extendedMatches}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
+        renderItem={({ item, index }) => renderPreviewCard(item, index)}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={CARD_WIDTH}
+        decelerationRate="fast"
+        contentContainerStyle={styles.carouselContent}
+        onScrollBeginDrag={() => (userInteracting.current = true)}
+        onScrollEndDrag={() => (userInteracting.current = false)}
+      />
+
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={false}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>추천 매치 전체</Text>
             <TouchableOpacity
-              key={`${match.id}-${Math.random()}`}
-              style={[
-                styles.additionalMatchItem,
-                { backgroundColor: theme.colors.background.main },
-              ]}
-              onPress={() => onMatchPress?.(match.id)}
+              onPress={() => setModalVisible(false)}
+              activeOpacity={0.8}
             >
-              <View style={styles.additionalMatchInfo}>
-                <Text style={styles.additionalLocation}>{match.location}</Text>
-                <Text style={styles.additionalTime}>{match.time}</Text>
-              </View>
-              <View style={styles.additionalMatchBadges}>
-                <View
-                  style={[
-                    styles.smallBadge,
-                    {
-                      backgroundColor:
-                        match.level === '아마추어'
-                          ? '#E3F2FD'
-                          : match.level === '세미프로'
-                            ? '#E8F5E8'
-                            : '#FFEBEE',
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.smallBadgeText,
-                      {
-                        color:
-                          match.level === '아마추어'
-                            ? '#1976D2'
-                            : match.level === '세미프로'
-                              ? '#2E7D32'
-                              : '#C62828',
-                      },
-                    ]}
-                  >
-                    {match.level}
-                  </Text>
-                </View>
-                <Text style={styles.playerCountSmall}>
-                  {match.currentPlayers}/{match.totalPlayers}
-                </Text>
-              </View>
+              <Text style={styles.modalClose}>닫기</Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+          </View>
+          <FlatList
+            data={matches}
+            keyExtractor={item => String(item.id)}
+            renderItem={renderFullItem}
+            contentContainerStyle={styles.flatListContent}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+          />
+        </View>
+      </Modal>
     </View>
   );
-});
+}
+
+const badgeBg = (level?: string) => {
+  if (level === '아마추어') return { backgroundColor: theme.colors.blue[50] };
+  if (level === '세미프로') return { backgroundColor: theme.colors.green[50] };
+  return { backgroundColor: theme.colors.red[50] };
+};
+const badgeTextColor = (level?: string) => {
+  if (level === '아마추어') return { color: theme.colors.blue[700] };
+  if (level === '세미프로') return { color: theme.colors.green[700] };
+  return { color: theme.colors.red[700] };
+};

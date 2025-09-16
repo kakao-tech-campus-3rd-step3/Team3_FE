@@ -10,6 +10,7 @@ import GreetingSection from './components/greeting_section';
 import EnvelopeSection from './components/envelope_section';
 import BenefitsSection from './components/benefit_section';
 import WeatherSection from './components/weather_card';
+import RecommendedMatchCard from './components/recommended_match_card';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -48,7 +49,7 @@ export default function HomeScreen() {
         <View style={styles.headerDivider} />
 
         <WeatherSection />
-        {/* <RecommendedMatchCard onMatchPress={matchId => {}} /> */}
+        <RecommendedMatchCard />
       </ScrollView>
     </View>
   );
