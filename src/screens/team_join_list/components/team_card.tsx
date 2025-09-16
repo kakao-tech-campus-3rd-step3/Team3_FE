@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import type { TeamListItem } from '@/src/types';
 import { styles } from '../university_team_list_style';
@@ -8,7 +8,20 @@ interface TeamCardProps {
   onJoin: (teamId: number) => void;
 }
 
+interface TeamInfoItem {
+  label: string;
+  value: string;
+}
+
 export default function TeamCard({ team, onJoin }: TeamCardProps) {
+  const teamInfoItems: TeamInfoItem[] = useMemo(
+    () => [
+      { label: '실력', value: team.skillLevel },
+      { label: '멤버', value: `${team.memberCount}명` },
+      { label: '주장', value: team.captainName },
+    ],
+    [team.skillLevel, team.memberCount, team.captainName]
+  );
   return (
     <TouchableOpacity style={styles.teamCard} onPress={() => onJoin(team.id)}>
       <View style={styles.teamHeader}>
@@ -23,18 +36,12 @@ export default function TeamCard({ team, onJoin }: TeamCardProps) {
       </Text>
 
       <View style={styles.teamInfo}>
-        <View style={styles.infoItem}>
-          <Text style={styles.infoLabel}>실력</Text>
-          <Text style={styles.infoValue}>{team.skillLevel}</Text>
-        </View>
-        <View style={styles.infoItem}>
-          <Text style={styles.infoLabel}>멤버</Text>
-          <Text style={styles.infoValue}>{team.memberCount}명</Text>
-        </View>
-        <View style={styles.infoItem}>
-          <Text style={styles.infoLabel}>주장</Text>
-          <Text style={styles.infoValue}>{team.captainName}</Text>
-        </View>
+        {teamInfoItems.map((item, index) => (
+          <View key={index} style={styles.infoItem}>
+            <Text style={styles.infoLabel}>{item.label}</Text>
+            <Text style={styles.infoValue}>{item.value}</Text>
+          </View>
+        ))}
       </View>
 
       <View style={styles.joinButton}>
