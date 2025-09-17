@@ -50,11 +50,12 @@ export default memo(function TeamMembersSection({
           : teamMembers?.slice(0, 6) || []
         ).map(member => (
           <View key={member.id} style={styles.memberCard}>
-            <View style={styles.memberAvatar}>
-              <Text style={styles.memberAvatarText}>
-                {member.user?.name?.charAt(0) || '?'}
-              </Text>
-            </View>
+            <Ionicons
+              name="shirt"
+              size={24}
+              color="#3b82f6"
+              style={{ marginRight: 12 }}
+            />
             <View style={styles.memberInfo}>
               <Text style={styles.memberName}>
                 {member.user?.name || '알 수 없음'}

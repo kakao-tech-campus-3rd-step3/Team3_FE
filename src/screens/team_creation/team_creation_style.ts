@@ -33,27 +33,6 @@ export const styles = StyleSheet.create({
   selectorContainer: {
     marginBottom: theme.spacing.spacing6,
   },
-  createButton: {
-    backgroundColor: theme.colors.blue[500],
-    borderRadius: theme.spacing.spacing3,
-    paddingVertical: theme.spacing.spacing4,
-    paddingHorizontal: theme.spacing.spacing6,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: theme.colors.blue[500],
-    shadowOffset: { width: 0, height: theme.spacing.spacing3 },
-    shadowOpacity: 0.2,
-    shadowRadius: theme.spacing.spacing2,
-    elevation: theme.spacing.spacing1,
-    minWidth: theme.spacing.spacing15,
-  },
-  createButtonText: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.white,
-    marginLeft: theme.spacing.spacing2,
-  },
 
   stepContainer: {
     flex: 1,

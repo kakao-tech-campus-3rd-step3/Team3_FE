@@ -56,21 +56,13 @@ export default memo(function MemberListSection({
           <View key={member.id} style={styles.memberCard}>
             <View style={styles.memberInfo}>
               <View style={styles.memberAvatar}>
-                <Text style={styles.memberAvatarText}>
-                  {member.user?.name?.charAt(0) || '?'}
-                </Text>
+                <Ionicons name="person" size={20} color={theme.colors.white} />
               </View>
               <View style={styles.memberDetails}>
-                <Text style={styles.memberName}>
-                  {member.user?.name || '알 수 없음'}
-                </Text>
-                <Text style={styles.memberEmail}>
-                  {member.user?.email || ''}
-                </Text>
-                <Text style={styles.memberUniversity}>
-                  {member.user?.university} • {member.user?.major}
-                </Text>
-                <View style={styles.memberMeta}>
+                <View style={styles.memberHeader}>
+                  <Text style={styles.memberName}>
+                    {member.user?.name || '알 수 없음'}
+                  </Text>
                   <View
                     style={[
                       styles.roleBadge,
@@ -81,11 +73,17 @@ export default memo(function MemberListSection({
                       {getRoleDisplayName(member.role)}
                     </Text>
                   </View>
-                  <Text style={styles.joinDate}>
-                    가입일:{' '}
-                    {new Date(member.joinedAt).toLocaleDateString('ko-KR')}
-                  </Text>
                 </View>
+                <Text style={styles.memberEmail}>
+                  {member.user?.email || ''}
+                </Text>
+                <Text style={styles.memberUniversity}>
+                  {member.user?.university} • {member.user?.major}
+                </Text>
+                <Text style={styles.joinDate}>
+                  가입일:{' '}
+                  {new Date(member.joinedAt).toLocaleDateString('ko-KR')}
+                </Text>
               </View>
             </View>
 
@@ -96,9 +94,9 @@ export default memo(function MemberListSection({
                   onPress={() => onRoleChange(member)}
                 >
                   <Ionicons
-                    name="person-outline"
-                    size={16}
-                    color={theme.colors.gray[700]}
+                    name="swap-horizontal-outline"
+                    size={18}
+                    color={theme.colors.blue[600]}
                   />
                   <Text style={styles.actionButtonText}>역할변경</Text>
                 </TouchableOpacity>
@@ -107,8 +105,8 @@ export default memo(function MemberListSection({
                   onPress={() => onRemoveMember(member)}
                 >
                   <Ionicons
-                    name="person-remove-outline"
-                    size={16}
+                    name="trash-outline"
+                    size={18}
                     color={theme.colors.red[600]}
                   />
                   <Text

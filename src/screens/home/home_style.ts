@@ -269,11 +269,6 @@ export default StyleSheet.create({
     fontSize: theme.typography.fontSize.font4,
     marginRight: theme.spacing.spacing1,
   },
-  assistIcon: {
-    width: theme.typography.fontSize.font4,
-    height: theme.typography.fontSize.font4,
-    marginRight: theme.spacing.spacing1,
-  },
   locationIcon: {
     fontSize: theme.typography.fontSize.font4,
     marginRight: theme.spacing.spacing1,

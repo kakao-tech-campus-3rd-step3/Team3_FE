@@ -28,9 +28,12 @@ export default memo(function TeamInfoCard({
     router.push(getTeamManagementSettingsUrl(team.id));
   };
 
+  const handleRecentMatches = () => {
+    router.push(`/team/management/${team.id}/recent-matches`);
+  };
+
   return (
     <View style={styles.container}>
-      {/* 헤더 섹션 */}
       <View style={styles.headerGradient}>
         <View style={styles.headerContent}>
           <View style={styles.teamTitleContainer}>
@@ -48,15 +51,12 @@ export default memo(function TeamInfoCard({
         </View>
       </View>
 
-      {/* 메인 정보 섹션 */}
       <View style={styles.mainContent}>
-        {/* 설명 섹션 */}
         <View style={styles.descriptionSection}>
           <Text style={styles.descriptionLabel}>팀 소개</Text>
           <Text style={styles.descriptionText}>{team.description}</Text>
         </View>
 
-        {/* 통계 카드들 */}
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
             <View
@@ -92,13 +92,16 @@ export default memo(function TeamInfoCard({
           </View>
         </View>
 
-        {/* 축구 팀 배지 */}
-        <View style={styles.badgeContainer}>
-          <View style={styles.teamTypeBadge}>
-            <Text style={styles.teamTypeIcon}>⚽</Text>
-            <Text style={styles.teamTypeText}>축구팀</Text>
+        <TouchableOpacity
+          style={styles.recentMatchesButton}
+          onPress={handleRecentMatches}
+        >
+          <View style={styles.recentMatchesButtonContent}>
+            <Ionicons name="football-outline" size={20} color="white" />
+            <Text style={styles.recentMatchesButtonText}>최근 경기 보기</Text>
+            <Ionicons name="chevron-forward" size={16} color="white" />
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -118,7 +121,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   headerGradient: {
-    backgroundColor: '#16a34a',
+    backgroundColor: colors.gray[400],
     paddingTop: 20,
     paddingBottom: 30,
     paddingHorizontal: 20,
@@ -198,26 +201,31 @@ const styles = StyleSheet.create({
     color: colors.gray[500],
     fontWeight: '500',
   },
-  badgeContainer: {
-    alignItems: 'center',
+
+  recentMatchesButton: {
+    backgroundColor: colors.blue[500],
+    borderRadius: 16,
+    marginTop: 16,
+    shadowColor: colors.blue[300],
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+    opacity: 0.9,
   },
-  teamTypeBadge: {
+  recentMatchesButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.blue[50],
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.blue[200],
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    gap: 8,
   },
-  teamTypeIcon: {
+  recentMatchesButtonText: {
     fontSize: 16,
-    marginRight: 6,
-  },
-  teamTypeText: {
-    fontSize: 14,
     fontWeight: '600',
-    color: colors.blue[700],
+    color: 'white',
+    flex: 1,
+    textAlign: 'center',
   },
 });

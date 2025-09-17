@@ -60,63 +60,6 @@ export const styles = StyleSheet.create({
     paddingBottom: spacing.spacing4,
   },
 
-  teamCard: {
-    backgroundColor: colors.white,
-    borderRadius: spacing.spacing4,
-    padding: spacing.spacing5,
-    marginBottom: spacing.spacing5,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  teamNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.spacing3,
-  },
-  teamName: {
-    fontSize: typography.fontSize.font7,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.gray[900],
-    flex: 1,
-  },
-  teamSettingsButton: {
-    padding: spacing.spacing2,
-    borderRadius: spacing.spacing2,
-    backgroundColor: colors.gray[100],
-  },
-  teamInfoGrid: {
-    gap: spacing.spacing3,
-  },
-  teamInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.spacing2,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray[100],
-  },
-  teamInfoLabel: {
-    fontSize: typography.fontSize.font3,
-    fontWeight: typography.fontWeight.semibold,
-    color: colors.gray[500],
-    width: 80,
-    marginRight: spacing.spacing3,
-  },
-  teamInfoValue: {
-    fontSize: typography.fontSize.font4,
-    color: colors.gray[900],
-    flex: 1,
-  },
-  teamInfoIcon: {
-    fontSize: typography.fontSize.font4,
-    marginRight: spacing.spacing2,
-    width: 20,
-    textAlign: 'center',
-  },
-
   actionButton: {
     backgroundColor: colors.blue[500],
     paddingVertical: spacing.spacing4,
