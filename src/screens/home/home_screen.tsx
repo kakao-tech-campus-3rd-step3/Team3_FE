@@ -45,7 +45,7 @@ export default function HomeScreen() {
       >
         <GreetingSection homeData={homeData} userInfo={userInfo!} />
         <EnvelopeSection />
-        <BenefitsSection />
+        <BenefitsSection homeData={homeData} />
 
         <View style={styles.headerDivider} />
 
