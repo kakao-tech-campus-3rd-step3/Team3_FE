@@ -47,6 +47,10 @@ export const queries = {
     fn: (teamId: string | number) =>
       api.teamJoinRequestApi.getTeamJoinRequests(teamId),
   },
+  teamMatches: {
+    key: (teamId: string | number) => ['teamMatches', teamId] as const,
+    fn: (teamId: string | number) => api.teamMatchApi.getTeamMatches(teamId),
+  },
 } as const;
 
 export function useUserInfo() {
@@ -112,6 +116,14 @@ export function useTeamJoinRequests(teamId: string | number) {
   return useQuery({
     queryKey: queries.teamJoinRequests.key(teamId),
     queryFn: () => queries.teamJoinRequests.fn(teamId),
+    enabled: !!teamId,
+  });
+}
+
+export function useTeamMatches(teamId: string | number) {
+  return useQuery({
+    queryKey: queries.teamMatches.key(teamId),
+    queryFn: () => queries.teamMatches.fn(teamId),
     enabled: !!teamId,
   });
 }

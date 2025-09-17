@@ -31,3 +31,8 @@ export const TEAM_MEMBER_API = {
 export const TEAM_REVIEW_API = {
   GET_REVIEWS: (teamId: string | number) => `/teamReviews?teamId=${teamId}`,
 };
+
+export const TEAM_MATCH_API = {
+  GET_TEAM_RECENT_MATCHES: (teamId: string | number) =>
+    `/teamMatches?teamId=${teamId}`,
+};
