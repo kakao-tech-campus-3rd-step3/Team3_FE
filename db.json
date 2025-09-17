@@ -1,7 +1,8 @@
 {
   "home": {
     "user": {
-      "name": "손응민"
+      "name": "선원준",
+      "teamId": 1
     },
     "todayMatch": {
       "hasMatch": false,
@@ -21,11 +22,31 @@
     "mannerScore": 4.3,
     "totalReviews": 23,
     "recentReviews": [
-      { "type": "good_play", "count": 8, "label": "플레이가 좋았어요" },
-      { "type": "good_manner", "count": 12, "label": "매너가 좋았어요" },
-      { "type": "team_player", "count": 6, "label": "팀워크가 좋았어요" },
-      { "type": "punctual", "count": 9, "label": "시간을 잘 지켜요" },
-      { "type": "bad_manner", "count": 1, "label": "매너가 아쉬워요" }
+      {
+        "type": "good_play",
+        "count": 8,
+        "label": "플레이가 좋았어요"
+      },
+      {
+        "type": "good_manner",
+        "count": 12,
+        "label": "매너가 좋았어요"
+      },
+      {
+        "type": "team_player",
+        "count": 6,
+        "label": "팀워크가 좋았어요"
+      },
+      {
+        "type": "punctual",
+        "count": 9,
+        "label": "시간을 잘 지켜요"
+      },
+      {
+        "type": "bad_manner",
+        "count": 1,
+        "label": "매너가 아쉬워요"
+      }
     ],
     "stats": {
       "wins": 28,
@@ -34,7 +55,8 @@
       "goals": 15,
       "assists": 23,
       "favoritePosition": "MF"
-    }
+    },
+    "teamId": 1
   },
   "recommendedMatch": {
     "recommendedMatches": [
@@ -95,162 +117,379 @@
     ]
   },
   "universities": [
-    { "id": 1, "name": "가톨릭관동대학교" },
-    { "id": 2, "name": "강릉원주대학교" },
-    { "id": 3, "name": "강원과학기술대학교" },
-    { "id": 4, "name": "강원관광대학교" },
-    { "id": 5, "name": "강원도립대학교" },
-    { "id": 6, "name": "강원대학교" },
-    { "id": 7, "name": "상지대학교" },
-    { "id": 8, "name": "연세대학교 원주캠퍼스" },
-    { "id": 9, "name": "춘천교육대학교" },
-    { "id": 10, "name": "한국교통대학교" },
-    { "id": 11, "name": "한국폴리텍대학 강원캠퍼스" },
-    { "id": 12, "name": "한림대학교" }
+    {
+      "id": "1",
+      "name": "가톨릭관동대학교"
+    },
+    {
+      "id": "2",
+      "name": "강릉원주대학교"
+    },
+    {
+      "id": "3",
+      "name": "강원과학기술대학교"
+    },
+    {
+      "id": "4",
+      "name": "강원관광대학교"
+    },
+    {
+      "id": "5",
+      "name": "강원도립대학교"
+    },
+    {
+      "id": "6",
+      "name": "강원대학교"
+    },
+    {
+      "id": "7",
+      "name": "상지대학교"
+    },
+    {
+      "id": "8",
+      "name": "연세대학교 원주캠퍼스"
+    },
+    {
+      "id": "9",
+      "name": "춘천교육대학교"
+    },
+    {
+      "id": "10",
+      "name": "한국교통대학교"
+    },
+    {
+      "id": "11",
+      "name": "한국폴리텍대학 강원캠퍼스"
+    },
+    {
+      "id": "12",
+      "name": "한림대학교"
+    }
   ],
   "teams": [
     {
-      "id": 1,
       "name": "강원대 축구부",
       "description": "강원대학교 축구 동아리입니다. 매주 정기적으로 연습하며 대회에도 참가합니다.",
       "university": "강원대학교",
-      "teamType": "중앙동아리",
       "skillLevel": "세미프로",
-      "memberCount": 15,
-      "captainName": "김철수",
-      "captainId": 2
+      "teamType": "중앙동아리",
+      "memberCount": 7,
+      "createdAt": "2024-08-20T10:15:30",
+      "id": "1"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "강원대 축구팀",
       "description": "강원대학교 축구팀입니다. 실력 향상을 목표로 합니다.",
       "university": "강원대학교",
-      "teamType": "과동아리",
       "skillLevel": "아마추어",
+      "teamType": "과동아리",
       "memberCount": 12,
-      "captainName": "이영희",
-      "captainId": 3
+      "createdAt": "2024-08-20T10:15:30"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "상지대 축구부",
       "description": "상지대학교 축구 동아리입니다.",
       "university": "상지대학교",
       "teamType": "중앙동아리",
       "skillLevel": "프로",
       "memberCount": 18,
-      "captainName": "박민수",
-      "captainId": 4
+      "createdAt": "2024-07-10T14:22:45"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "한림대 축구팀",
       "description": "한림대학교 축구팀입니다.",
       "university": "한림대학교",
       "teamType": "과동아리",
       "skillLevel": "세미프로",
       "memberCount": 14,
-      "captainName": "정수진",
-      "captainId": 5
+      "createdAt": "2024-06-15T09:30:20"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "강릉원주대 축구부",
       "description": "강릉원주대학교 축구 동아리입니다.",
       "university": "강릉원주대학교",
       "teamType": "중앙동아리",
       "skillLevel": "아마추어",
       "memberCount": 16,
-      "captainName": "최동현",
-      "captainId": 6
+      "createdAt": "2024-05-22T16:45:10"
     },
     {
-      "id": 6,
+      "id": "6",
       "name": "가톨릭관동대 축구팀",
       "description": "가톨릭관동대학교 축구팀입니다. 열정적인 플레이를 추구합니다.",
       "university": "가톨릭관동대학교",
       "teamType": "과동아리",
       "skillLevel": "세미프로",
       "memberCount": 13,
-      "captainName": "김태호",
-      "captainId": 7
+      "createdAt": "2024-04-18T11:20:35"
     },
     {
-      "id": 7,
+      "id": "7",
       "name": "강원과학기술대 축구부",
       "description": "강원과학기술대학교 축구 동아리입니다.",
       "university": "강원과학기술대학교",
       "teamType": "중앙동아리",
       "skillLevel": "아마추어",
       "memberCount": 11,
-      "captainName": "이준호",
-      "captainId": 8
+      "createdAt": "2024-03-25T13:15:40"
     },
     {
-      "id": 8,
+      "id": "8",
       "name": "강원관광대 축구팀",
       "description": "강원관광대학교 축구팀입니다.",
       "university": "강원관광대학교",
       "teamType": "과동아리",
       "skillLevel": "프로",
       "memberCount": 17,
-      "captainName": "박지훈",
-      "captainId": 9
+      "createdAt": "2024-02-28T08:50:25"
     },
     {
-      "id": 9,
+      "id": "9",
       "name": "강원도립대 축구부",
       "description": "강원도립대학교 축구 동아리입니다.",
       "university": "강원도립대학교",
       "teamType": "중앙동아리",
       "skillLevel": "세미프로",
       "memberCount": 14,
-      "captainName": "정민수",
-      "captainId": 10
+      "createdAt": "2024-01-30T15:35:50"
     },
     {
-      "id": 10,
+      "id": "10",
       "name": "연세대 원주 축구팀",
       "description": "연세대학교 원주캠퍼스 축구팀입니다.",
       "university": "연세대학교 원주캠퍼스",
       "teamType": "과동아리",
       "skillLevel": "프로",
       "memberCount": 19,
-      "captainName": "송현우",
-      "captainId": 11
+      "createdAt": "2024-01-15T12:10:15"
     },
     {
-      "id": 11,
+      "id": "11",
       "name": "춘천교육대 축구부",
       "description": "춘천교육대학교 축구 동아리입니다.",
       "university": "춘천교육대학교",
       "teamType": "중앙동아리",
       "skillLevel": "아마추어",
       "memberCount": 12,
-      "captainName": "윤서연",
-      "captainId": 12
+      "createdAt": "2023-12-20T14:25:30"
     },
     {
-      "id": 12,
+      "id": "12",
       "name": "한국교통대 축구팀",
       "description": "한국교통대학교 축구팀입니다.",
       "university": "한국교통대학교",
       "teamType": "과동아리",
       "skillLevel": "세미프로",
       "memberCount": 15,
-      "captainName": "강민철",
-      "captainId": 13
+      "createdAt": "2023-11-18T10:40:45"
     },
     {
-      "id": 13,
+      "id": "13",
       "name": "한국폴리텍 강원 축구부",
       "description": "한국폴리텍대학 강원캠퍼스 축구 동아리입니다.",
       "university": "한국폴리텍대학 강원캠퍼스",
       "teamType": "중앙동아리",
       "skillLevel": "아마추어",
       "memberCount": 10,
-      "captainName": "임도현",
-      "captainId": 14
+      "createdAt": "2023-10-25T16:55:20"
+    }
+  ],
+  "teamMembers": [
+    {
+      "id": "1",
+      "teamId": 1,
+      "userId": 1,
+      "role": "LEADER",
+      "joinedAt": "2024-09-16T12:34:56",
+      "updatedAt": "2024-09-16T12:34:56",
+      "user": {
+        "id": 1,
+        "name": "선원준",
+        "email": "kim@example.com",
+        "university": "강원대학교",
+        "major": "컴퓨터공학과"
+      }
+    },
+    {
+      "id": "2",
+      "teamId": 1,
+      "userId": 2,
+      "role": "VICE_LEADER",
+      "joinedAt": "2024-09-17T10:15:30",
+      "updatedAt": "2024-09-17T10:15:30",
+      "user": {
+        "id": 2,
+        "name": "김상수",
+        "email": "park@example.com",
+        "university": "강원대학교",
+        "major": "전자공학과"
+      }
+    },
+    {
+      "id": "3",
+      "teamId": 1,
+      "userId": 3,
+      "role": "MEMBER",
+      "joinedAt": "2024-09-18T14:22:45",
+      "updatedAt": "2024-09-18T14:22:45",
+      "user": {
+        "id": 3,
+        "name": "이시행",
+        "email": "lee@example.com",
+        "university": "강원대학교",
+        "major": "기계공학과"
+      }
+    },
+    {
+      "id": "4",
+      "teamId": 1,
+      "userId": 4,
+      "role": "MEMBER",
+      "joinedAt": "2024-09-19T09:30:20",
+      "updatedAt": "2024-09-19T09:30:20",
+      "user": {
+        "id": 4,
+        "name": "김지수",
+        "email": "hong@example.com",
+        "university": "강원대학교",
+        "major": "화학공학과"
+      }
+    },
+    {
+      "id": "5",
+      "teamId": 1,
+      "userId": 5,
+      "role": "MEMBER",
+      "joinedAt": "2024-09-20T16:45:10",
+      "updatedAt": "2024-09-20T16:45:10",
+      "user": {
+        "id": 5,
+        "name": "서현주",
+        "email": "lee2@example.com",
+        "university": "강원대학교",
+        "major": "물리학과"
+      }
+    },
+    {
+      "id": "6",
+      "teamId": 1,
+      "userId": 6,
+      "role": "MEMBER",
+      "joinedAt": "2024-08-20T10:15:30",
+      "updatedAt": "2024-08-20T10:15:30",
+      "user": {
+        "id": 6,
+        "name": "손응민",
+        "email": "son@example.com",
+        "university": "강원대학교",
+        "major": "컴퓨터공학과"
+      }
+    },
+    {
+      "id": "7",
+      "teamId": 1,
+      "userId": 7,
+      "role": "MEMBER",
+      "joinedAt": "2024-08-21T11:20:35",
+      "updatedAt": "2024-08-21T11:20:35",
+      "user": {
+        "id": 7,
+        "name": "설유준",
+        "email": "jung@example.com",
+        "university": "강원대학교",
+        "major": "전자공학과"
+      }
+    }
+  ],
+  "teamReviews": [
+    {
+      "id": 1,
+      "teamId": 1,
+      "reviewerName": "aaa",
+      "reviewerTeam": "강원대 축구부",
+      "rating": 5,
+      "reviewTypes": ["SEMI_PRO_BETTER", "TEAM_PLAYER"],
+      "createdAt": "2024-12-15T14:30:00"
+    },
+    {
+      "id": 2,
+      "teamId": 1,
+      "reviewerName": "bbb",
+      "reviewerTeam": "상지대 축구부",
+      "rating": 4,
+      "reviewTypes": ["MANNER_GOOD", "PUNCTUAL"],
+      "createdAt": "2024-12-14T16:45:00"
+    },
+    {
+      "id": 3,
+      "teamId": 1,
+      "reviewerName": "ccc",
+      "reviewerTeam": "한림대 축구팀",
+      "rating": 5,
+      "reviewTypes": ["TEAM_PLAYER", "SEMI_PRO_BETTER"],
+      "createdAt": "2024-12-13T11:20:00"
+    },
+    {
+      "id": 4,
+      "teamId": 1,
+      "reviewerName": "ddd",
+      "reviewerTeam": "강릉원주대 축구부",
+      "rating": 4,
+      "reviewTypes": ["PUNCTUAL", "MANNER_GOOD"],
+      "createdAt": "2024-12-12T09:15:00"
+    },
+    {
+      "id": 5,
+      "teamId": 2,
+      "reviewerName": "eee",
+      "reviewerTeam": "가톨릭관동대 축구팀",
+      "rating": 5,
+      "reviewTypes": ["SEMI_PRO_BETTER"],
+      "createdAt": "2024-12-11T13:30:00"
+    },
+    {
+      "id": 6,
+      "teamId": 1,
+      "reviewerName": "fff",
+      "reviewerTeam": "연세대 원주 축구팀",
+      "rating": 4,
+      "reviewTypes": ["MANNER_GOOD", "TEAM_PLAYER"],
+      "createdAt": "2024-12-10T18:20:00"
+    },
+    {
+      "id": 7,
+      "teamId": 1,
+      "reviewerName": "ggg",
+      "reviewerTeam": "춘천교육대 축구부",
+      "rating": 5,
+      "reviewTypes": ["TEAM_PLAYER", "SEMI_PRO_BETTER", "MANNER_GOOD"],
+      "createdAt": "2024-12-09T15:45:00"
+    }
+  ],
+  "joinRequests": [
+    {
+      "id": "1",
+      "applicantName": "김xx",
+      "applicantEmail": "park@example.com",
+      "position": "MF",
+      "experience": "3년",
+      "message": "열정적으로 팀에 기여하고 싶습니다!",
+      "status": "pending",
+      "createdAt": "2024-01-15"
+    },
+    {
+      "id": "2",
+      "applicantName": "이xx",
+      "applicantEmail": "lee@example.com",
+      "position": "FW",
+      "experience": "2년",
+      "message": "팀의 공격력을 높이는데 도움이 되고 싶습니다.",
+      "status": "pending",
+      "createdAt": "2024-01-14"
     }
   ]
 }
