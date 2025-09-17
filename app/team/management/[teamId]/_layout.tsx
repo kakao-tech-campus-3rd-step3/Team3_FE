@@ -31,6 +31,13 @@ export default function TeamManagementLayout() {
           title: '팀원 관리',
         }}
       />
+      <Stack.Screen
+        name="recent-matches"
+        options={{
+          headerShown: false,
+          title: '최근 경기',
+        }}
+      />
     </Stack>
   );
 }

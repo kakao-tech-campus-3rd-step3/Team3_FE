@@ -169,7 +169,7 @@
   "teams": [
     {
       "name": "강원대 축구부",
-      "description": "강원대학교 축구 동아리입니다. 매주 정기적으로 연습하며 대회에도 참가합니다.",
+      "description": "강원대 축구부는 축구를 사랑하는 학생들이 모여\n실력 향상과 친목을 도모하는 팀입니다.",
       "university": "강원대학교",
       "skillLevel": "세미프로",
       "teamType": "중앙동아리",
@@ -491,5 +491,195 @@
       "status": "pending",
       "createdAt": "2024-01-14"
     }
-  ]
+  ],
+  "venues": [
+    {
+      "venueId": 1,
+      "name": "강원대학교 축구장",
+      "address": "강원도 춘천시 강원대학길 1",
+      "capacity": 2000,
+      "facilities": ["조명", "주차장", "샤워실"]
+    },
+    {
+      "venueId": 2,
+      "name": "춘천시민축구장",
+      "address": "강원도 춘천시 중앙로 123",
+      "capacity": 5000,
+      "facilities": ["조명", "주차장", "샤워실", "매점"]
+    },
+    {
+      "venueId": 3,
+      "name": "원주시민축구장",
+      "address": "강원도 원주시 원주대로 456",
+      "capacity": 3000,
+      "facilities": ["조명", "주차장"]
+    }
+  ],
+  "teamMatches": {
+    "1": [
+      {
+        "matchId": 1,
+        "team1": {
+          "teamId": 1,
+          "name": "강원대 축구부",
+          "university": "강원대학교"
+        },
+        "team2": {
+          "teamId": 2,
+          "name": "강원대 축구팀",
+          "university": "강원대학교"
+        },
+        "matchDate": "2024-12-15",
+        "matchTime": "14:00:00",
+        "venue": {
+          "venueId": 1,
+          "name": "강원대학교 축구장",
+          "address": "강원도 춘천시 강원대학길 1"
+        },
+        "status": "FINISHED",
+        "createdAt": "2024-12-10T09:00:00",
+        "updatedAt": "2024-12-15T16:30:00"
+      },
+      {
+        "matchId": 2,
+        "team1": {
+          "teamId": 1,
+          "name": "강원대 축구부",
+          "university": "강원대학교"
+        },
+        "team2": {
+          "teamId": 3,
+          "name": "춘천대 축구팀",
+          "university": "춘천대학교"
+        },
+        "matchDate": "2024-12-08",
+        "matchTime": "16:00:00",
+        "venue": {
+          "venueId": 2,
+          "name": "춘천시민축구장",
+          "address": "강원도 춘천시 중앙로 123"
+        },
+        "status": "FINISHED",
+        "createdAt": "2024-12-05T10:00:00",
+        "updatedAt": "2024-12-08T18:00:00"
+      },
+      {
+        "matchId": 3,
+        "team1": {
+          "teamId": 4,
+          "name": "원주대 축구팀",
+          "university": "원주대학교"
+        },
+        "team2": {
+          "teamId": 1,
+          "name": "강원대 축구부",
+          "university": "강원대학교"
+        },
+        "matchDate": "2024-12-01",
+        "matchTime": "15:30:00",
+        "venue": {
+          "venueId": 3,
+          "name": "원주시민축구장",
+          "address": "강원도 원주시 원주대로 456"
+        },
+        "status": "FINISHED",
+        "createdAt": "2024-11-28T14:00:00",
+        "updatedAt": "2024-12-01T17:30:00"
+      },
+      {
+        "matchId": 4,
+        "team1": {
+          "teamId": 1,
+          "name": "강원대 축구부",
+          "university": "강원대학교"
+        },
+        "team2": {
+          "teamId": 5,
+          "name": "한림대 축구팀",
+          "university": "한림대학교"
+        },
+        "matchDate": "2024-11-25",
+        "matchTime": "13:00:00",
+        "venue": {
+          "venueId": 1,
+          "name": "강원대학교 축구장",
+          "address": "강원도 춘천시 강원대학길 1"
+        },
+        "status": "FINISHED",
+        "createdAt": "2024-11-20T11:00:00",
+        "updatedAt": "2024-11-25T15:00:00"
+      },
+      {
+        "matchId": 5,
+        "team1": {
+          "teamId": 6,
+          "name": "상지대 축구팀",
+          "university": "상지대학교"
+        },
+        "team2": {
+          "teamId": 1,
+          "name": "강원대 축구부",
+          "university": "강원대학교"
+        },
+        "matchDate": "2024-11-18",
+        "matchTime": "14:30:00",
+        "venue": {
+          "venueId": 2,
+          "name": "춘천시민축구장",
+          "address": "강원도 춘천시 중앙로 123"
+        },
+        "status": "FINISHED",
+        "createdAt": "2024-11-15T09:30:00",
+        "updatedAt": "2024-11-18T16:30:00"
+      }
+    ],
+    "2": [
+      {
+        "matchId": 6,
+        "team1": {
+          "teamId": 2,
+          "name": "강원대 축구팀",
+          "university": "강원대학교"
+        },
+        "team2": {
+          "teamId": 7,
+          "name": "경동대 축구팀",
+          "university": "경동대학교"
+        },
+        "matchDate": "2024-12-12",
+        "matchTime": "15:00:00",
+        "venue": {
+          "venueId": 1,
+          "name": "강원대학교 축구장",
+          "address": "강원도 춘천시 강원대학길 1"
+        },
+        "status": "FINISHED",
+        "createdAt": "2024-12-08T10:00:00",
+        "updatedAt": "2024-12-12T17:00:00"
+      },
+      {
+        "matchId": 7,
+        "team1": {
+          "teamId": 2,
+          "name": "강원대 축구팀",
+          "university": "강원대학교"
+        },
+        "team2": {
+          "teamId": 8,
+          "name": "한국체대 축구팀",
+          "university": "한국체육대학교"
+        },
+        "matchDate": "2024-12-05",
+        "matchTime": "16:30:00",
+        "venue": {
+          "venueId": 2,
+          "name": "춘천시민축구장",
+          "address": "강원도 춘천시 중앙로 123"
+        },
+        "status": "FINISHED",
+        "createdAt": "2024-12-01T14:00:00",
+        "updatedAt": "2024-12-05T18:30:00"
+      }
+    ]
+  }
 }
