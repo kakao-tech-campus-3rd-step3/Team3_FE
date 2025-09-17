@@ -24,8 +24,6 @@ class ApiClient {
     endpoint: string,
     options: AxiosRequestConfig = {}
   ): Promise<T> {
-    const fullUrl = `${this.baseURL}${endpoint}`;
-
     try {
       const response: AxiosResponse<T> = await axios({
         ...options,

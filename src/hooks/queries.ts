@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 
 import * as api from '@/src/api';
 import { queryClient } from '@/src/lib/query_client';
