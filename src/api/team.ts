@@ -91,6 +91,5 @@ export const teamJoinRequestApi = {
     return apiClient.get<JoinRequest[]>('/joinRequests');
   },
 };
-
 export const deleteTeam = (teamId: string | number) =>
   apiClient.delete(TEAM_API.DELETE(teamId));
