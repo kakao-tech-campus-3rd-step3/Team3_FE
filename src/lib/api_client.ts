@@ -24,6 +24,8 @@ class ApiClient {
     endpoint: string,
     options: AxiosRequestConfig = {}
   ): Promise<T> {
+    const fullUrl = `${this.baseURL}${endpoint}`;
+
     try {
       const response: AxiosResponse<T> = await axios({
         ...options,
@@ -39,6 +41,7 @@ class ApiClient {
     } catch (error: unknown) {
       if (isAxiosError(error) && error.response) {
         const errorData = error.response.data || {};
+
         const errorMessage =
           errorData.data &&
           typeof errorData.data === 'object' &&
