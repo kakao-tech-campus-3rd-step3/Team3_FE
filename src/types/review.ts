@@ -20,7 +20,7 @@ export enum ReviewType {
 }
 
 export interface ReviewData {
-  rating: number; // 1-5 별점
+  rating: number;
   reviewTypes: ReviewType[];
 }
 

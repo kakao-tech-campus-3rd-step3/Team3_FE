@@ -19,7 +19,6 @@ export default memo(function BenefitsSection({
   const handleServicePress = (serviceId: string) => {
     if (serviceId === 'team') {
       if (homeData?.user.teamId) {
-        // ✅ 동적 라우트에 teamId 직접 포함
         router.push(`/team/management/${homeData.user.teamId}`);
       } else {
         router.push('/team/guide');

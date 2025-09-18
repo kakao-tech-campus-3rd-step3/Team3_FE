@@ -89,7 +89,6 @@ export default StyleSheet.create({
     marginLeft: theme.spacing.spacing2,
   },
 
-  // 매치 상태 카드
   matchStatusCard: {
     width: '100%',
     marginBottom: theme.spacing.spacing4,

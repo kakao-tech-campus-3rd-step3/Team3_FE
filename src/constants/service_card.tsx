@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { Image } from 'react-native';
 
+import { colors } from '@/src/theme';
+
 export interface ServiceCard {
   id: string;
   title: string;
@@ -15,7 +17,7 @@ export const serviceCards: ServiceCard[] = [
     title: '토너먼트',
     subtitle: '토너먼트 신청',
     icon: '🏆',
-    backgroundColor: '#F0F8FF',
+    backgroundColor: colors.blue[50],
   },
   {
     id: 'mercenary',
@@ -27,7 +29,7 @@ export const serviceCards: ServiceCard[] = [
         style={{ width: 28, height: 28 }}
       />
     ),
-    backgroundColor: '#E8F5E8',
+    backgroundColor: colors.grass[50],
   },
   {
     id: 'team',
@@ -39,6 +41,6 @@ export const serviceCards: ServiceCard[] = [
         style={{ width: 28, height: 28 }}
       />
     ),
-    backgroundColor: '#F0F8FF',
+    backgroundColor: colors.blue[50],
   },
 ];

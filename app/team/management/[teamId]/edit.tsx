@@ -1,6 +1,6 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 
-import TeamEditScreen from '@/src/screens/team_management/team_edit_screen';
+import TeamEditScreen from '@/src/screens/team/management/screens/team_edit_screen';
 
 export default function TeamEdit() {
   const { teamId } = useLocalSearchParams();
