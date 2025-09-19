@@ -27,6 +27,7 @@ function AppContent() {
         <Stack.Screen name="team/join_university" />
         <Stack.Screen name="team/join_list" />
         <Stack.Screen name="team/management/[teamId]" />
+        <Stack.Screen name="match_making/teammate_register" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
