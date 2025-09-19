@@ -9,18 +9,29 @@ interface MemberCountSliderProps {
 }
 
 const MEMBER_COUNT_OPTIONS = [
-  { label: '11명 이하', maxCount: 11 },
-  { label: '15명 이하', maxCount: 15 },
-  { label: '20명 이하', maxCount: 20 },
-  { label: '25명 이하', maxCount: 25 },
-  { label: '30명 이하', maxCount: 30 },
-  { label: '30명+', maxCount: 50 },
+  { label: '11명 이하', maxCount: 11, sliderValue: 1 },
+  { label: '15명 이하', maxCount: 15, sliderValue: 2 },
+  { label: '20명 이하', maxCount: 20, sliderValue: 3 },
+  { label: '25명 이하', maxCount: 25, sliderValue: 4 },
+  { label: '30명 이하', maxCount: 30, sliderValue: 5 },
+  { label: '30명+', maxCount: 50, sliderValue: 6 },
 ];
 
 export default function MemberCountSlider({
   value,
   onValueChange,
 }: MemberCountSliderProps) {
+  // 현재 값에 해당하는 슬라이더 값을 찾기
+  const getSliderValue = (currentValue: number) => {
+    const option = MEMBER_COUNT_OPTIONS.find(
+      opt => currentValue <= opt.maxCount
+    );
+    return option ? option.sliderValue : 6; // 기본값은 6 (30명+)
+  };
+
+  const currentSliderValue = getSliderValue(value);
+  const sliderWidth = (currentSliderValue / 6) * 100; // 6개 옵션 중 몇 번째까지
+
   return (
     <View style={styles.memberCountSlider}>
       <View style={styles.sliderTrack}>
@@ -30,7 +41,7 @@ export default function MemberCountSlider({
             styles.sliderActiveTrack,
             {
               left: '0%',
-              width: `${(value / 50) * 100}%`,
+              width: `${sliderWidth}%`,
             },
           ]}
         />

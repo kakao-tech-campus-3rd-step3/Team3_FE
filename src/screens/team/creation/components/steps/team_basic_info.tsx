@@ -11,27 +11,35 @@ import {
 
 import { universityListApi } from '@/src/api/team';
 import { colors } from '@/src/theme';
+import { TeamType, TEAM_TYPES } from '@/src/types/team';
 
 import { styles } from '../../team_creation_style';
 
 interface TeamBasicInfoProps {
   teamName: string;
   university: string;
+  teamType: TeamType;
   onTeamNameChange: (name: string) => void;
   onUniversityChange: (university: string) => void;
+  onTeamTypeChange: (type: TeamType) => void;
   onNext: () => void;
+  onBack: () => void;
   errors: {
     name?: string;
     university?: string;
+    teamType?: string;
   };
 }
 
 export default function TeamBasicInfo({
   teamName,
   university,
+  teamType,
   onTeamNameChange,
   onUniversityChange,
+  onTeamTypeChange,
   onNext,
+  onBack,
   errors,
 }: TeamBasicInfoProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -54,7 +62,8 @@ export default function TeamBasicInfo({
     teamName.trim().length > 0 &&
     teamName.length <= 100 &&
     university.trim().length > 0 &&
-    university.length <= 100;
+    university.length <= 100 &&
+    teamType.length > 0;
 
   const handleUniversitySelect = (selectedUniversity: string) => {
     onUniversityChange(selectedUniversity);
@@ -79,7 +88,6 @@ export default function TeamBasicInfo({
             onChangeText={onTeamNameChange}
             placeholder="예: 강원대 3팀"
             maxLength={100}
-            autoFocus
           />
           {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
         </View>
@@ -107,11 +115,37 @@ export default function TeamBasicInfo({
             <Text style={styles.errorText}>{errors.university}</Text>
           )}
         </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>팀 유형 *</Text>
+          <View style={styles.selectorContainer}>
+            {TEAM_TYPES.map(type => (
+              <TouchableOpacity
+                key={type}
+                style={[
+                  styles.stepSelectorButton,
+                  teamType === type && styles.stepSelectorButtonActive,
+                ]}
+                onPress={() => onTeamTypeChange(type)}
+              >
+                <Text
+                  style={[
+                    styles.stepSelectorButtonText,
+                    teamType === type && styles.stepSelectorButtonTextActive,
+                  ]}
+                >
+                  {type}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          {errors.teamType && (
+            <Text style={styles.errorText}>{errors.teamType}</Text>
+          )}
+        </View>
       </View>
 
-      <View style={styles.stepFooter}>
-        <View style={styles.footerSpacer} />
-
+      <View style={[styles.stepFooter, { justifyContent: 'flex-end' }]}>
         <TouchableOpacity
           style={[styles.nextButton, !isValid && styles.nextButtonDisabled]}
           onPress={onNext}

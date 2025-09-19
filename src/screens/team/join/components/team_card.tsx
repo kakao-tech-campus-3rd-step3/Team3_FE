@@ -20,7 +20,7 @@ export default function TeamCard({ team, onJoin }: TeamCardProps) {
     () => [
       { label: '실력', value: team.skillLevel },
       { label: '멤버', value: `${team.memberCount}명` },
-      { label: '주장', value: team.captainName },
+      { label: '회장', value: team.captainName },
     ],
     [team.skillLevel, team.memberCount, team.captainName]
   );
@@ -47,7 +47,7 @@ export default function TeamCard({ team, onJoin }: TeamCardProps) {
       </View>
 
       <View style={styles.joinButton}>
-        <Text style={styles.joinButtonText}>참여하기</Text>
+        <Text style={styles.joinButtonText}>신청하기</Text>
       </View>
     </TouchableOpacity>
   );

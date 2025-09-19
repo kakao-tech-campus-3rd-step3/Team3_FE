@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
   },
   universityList: {
     paddingHorizontal: theme.spacing.spacing5,
-    paddingBottom: theme.spacing.spacing10,
+    paddingBottom: theme.spacing.spacing3,
   },
   universityCard: {
     marginBottom: theme.spacing.spacing3,
@@ -62,15 +62,13 @@ export const styles = StyleSheet.create({
     width: theme.spacing.spacing12,
     height: theme.spacing.spacing12,
     borderRadius: theme.spacing.spacing6,
-    backgroundColor: theme.colors.blue[500],
+    backgroundColor: theme.colors.blue[50],
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: theme.spacing.spacing4,
   },
-  universityLogoText: {
-    color: theme.colors.white,
-    fontSize: theme.typography.fontSize.font6,
-    fontWeight: theme.typography.fontWeight.bold,
+  universityLogoSelected: {
+    backgroundColor: theme.colors.blue[500],
   },
   universityInfo: {
     flex: 1,
@@ -100,8 +98,8 @@ export const styles = StyleSheet.create({
   },
   bottomButtonContainer: {
     paddingHorizontal: theme.spacing.spacing5,
-    paddingVertical: theme.spacing.spacing6,
-    paddingBottom: theme.spacing.spacing10,
+    paddingTop: theme.spacing.spacing3,
+    paddingBottom: theme.spacing.spacing8,
   },
   connectButton: {
     backgroundColor: theme.colors.gray[200],
@@ -112,6 +110,7 @@ export const styles = StyleSheet.create({
   },
   connectButtonActive: {
     backgroundColor: theme.colors.blue[500],
+    opacity: 0.8,
   },
   connectButtonText: {
     fontSize: theme.typography.fontSize.font5,

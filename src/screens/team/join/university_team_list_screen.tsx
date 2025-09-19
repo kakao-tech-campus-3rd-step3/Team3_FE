@@ -1,11 +1,12 @@
-import { useLocalSearchParams } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useLocalSearchParams, router } from 'expo-router';
+import { useState, useMemo } from 'react';
 import {
   View,
   FlatList,
   StatusBar,
   Animated,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
@@ -16,6 +17,7 @@ import type { TeamListItem } from '@/src/types';
 import { SkillLevel, TeamType } from '@/src/types/team';
 
 import FilterModal from './components/filter_modal';
+import JoinConfirmationModal from './components/join_confirmation_modal';
 import TeamCard from './components/team_card';
 import TeamListHeader from './components/team_list_header';
 import { styles } from './university_team_list_style';
@@ -28,14 +30,16 @@ interface FilterOptions {
 
 export default function UniversityTeamListScreen() {
   const { university } = useLocalSearchParams<{ university: string }>();
-  const [filteredTeams, setFilteredTeams] = useState<TeamListItem[]>([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<TeamListItem | null>(null);
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     skillLevel: [],
     teamType: [],
     maxMemberCount: 50,
   });
   const slideAnim = useState(new Animated.Value(0))[0];
+  const joinModalAnim = useState(new Animated.Value(0))[0];
 
   const {
     data: teams = [],
@@ -44,11 +48,8 @@ export default function UniversityTeamListScreen() {
     refetch,
   } = useTeamsByUniversity(university || '');
 
-  useEffect(() => {
-    setFilteredTeams(teams);
-  }, [teams]);
-
-  const applyFilters = () => {
+  // useMemo를 사용하여 필터링된 팀 목록을 계산
+  const filteredTeams = useMemo(() => {
     let filtered = [...teams];
 
     if (filterOptions.skillLevel.length > 0) {
@@ -67,7 +68,12 @@ export default function UniversityTeamListScreen() {
       team => team.memberCount <= filterOptions.maxMemberCount
     );
 
-    setFilteredTeams(filtered);
+    return filtered;
+  }, [teams, filterOptions]);
+
+  const applyFilters = () => {
+    // 필터링은 이미 useMemo에서 처리되므로 빈 함수로 유지
+    // 또는 필터 모달을 닫는 로직만 남겨둘 수 있음
   };
 
   const openFilterModal = () => {
@@ -95,10 +101,59 @@ export default function UniversityTeamListScreen() {
       teamType: [],
       maxMemberCount: 50,
     });
-    setFilteredTeams(teams);
   };
 
-  const handleJoinTeam = async (teamId: number) => {};
+  const handleJoinTeam = (teamId: number) => {
+    const team = filteredTeams.find(t => t.id === teamId);
+    if (team) {
+      setSelectedTeam(team);
+      setShowJoinModal(true);
+      Animated.timing(joinModalAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+  const handleConfirmJoin = async () => {
+    if (selectedTeam) {
+      // 모달 닫기
+      Animated.timing(joinModalAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        setShowJoinModal(false);
+        setSelectedTeam(null);
+
+        // Alert 표시 후 홈으로 이동
+        Alert.alert(
+          '팀 가입 신청완료',
+          `${selectedTeam.name}에 성공적으로 신청되었습니다!`,
+          [
+            {
+              text: '확인',
+              onPress: () => {
+                router.push('/(tabs)');
+              },
+            },
+          ]
+        );
+      });
+    }
+  };
+
+  const handleCancelJoin = () => {
+    Animated.timing(joinModalAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setShowJoinModal(false);
+      setSelectedTeam(null);
+    });
+  };
 
   const renderTeamItem = ({ item }: { item: TeamListItem }) => (
     <TeamCard team={item} onJoin={handleJoinTeam} />
@@ -172,6 +227,18 @@ export default function UniversityTeamListScreen() {
           }))
         }
       />
+
+      {selectedTeam && (
+        <JoinConfirmationModal
+          visible={showJoinModal}
+          teamName={selectedTeam.name}
+          teamType={selectedTeam.teamType}
+          captainName={selectedTeam.captainName}
+          onConfirm={handleConfirmJoin}
+          onCancel={handleCancelJoin}
+          slideAnim={joinModalAnim}
+        />
+      )}
     </View>
   );
 }

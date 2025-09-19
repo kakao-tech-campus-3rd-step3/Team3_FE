@@ -9,7 +9,8 @@ export const styles = StyleSheet.create({
   },
   headerSection: {
     paddingHorizontal: theme.spacing.spacing5,
-    paddingVertical: theme.spacing.spacing6,
+    paddingTop: theme.spacing.spacing4,
+    paddingBottom: theme.spacing.spacing3,
   },
   filterRow: {
     flexDirection: 'row',
@@ -42,7 +43,6 @@ export const styles = StyleSheet.create({
   },
   teamList: {
     paddingHorizontal: theme.spacing.spacing5,
-    paddingTop: theme.spacing.spacing3,
     paddingBottom: theme.spacing.spacing10,
   },
   teamCard: {
@@ -105,6 +105,7 @@ export const styles = StyleSheet.create({
     borderRadius: theme.spacing.spacing2,
     paddingVertical: theme.spacing.spacing3,
     alignItems: 'center',
+    opacity: 0.8,
   },
   joinButtonText: {
     fontSize: theme.typography.fontSize.font4,
@@ -113,15 +114,20 @@ export const styles = StyleSheet.create({
   },
   filterButton: {
     backgroundColor: theme.colors.blue[500],
-    paddingHorizontal: theme.spacing.spacing3,
-    paddingVertical: theme.spacing.spacing2,
-    borderRadius: theme.spacing.spacing1,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
-  },
-  filterButtonText: {
-    fontSize: theme.typography.fontSize.font3,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.white,
+    opacity: 0.9,
+    justifyContent: 'center',
+    shadowColor: theme.colors.blue[500],
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   modalOverlay: {
     flex: 1,
@@ -280,7 +286,7 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.colors.blue[50],
   },
   sliderLabelText: {
-    fontSize: theme.typography.fontSize.font2,
+    fontSize: theme.typography.fontSize.font1,
     color: theme.colors.text.sub,
     textAlign: 'center',
   },
@@ -292,7 +298,7 @@ export const styles = StyleSheet.create({
   filterActions: {
     flexDirection: 'row',
     paddingHorizontal: theme.spacing.spacing5,
-    paddingTop: theme.spacing.spacing5,
+    paddingTop: theme.spacing.spacing2,
     paddingBottom: theme.spacing.spacing6,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.light,

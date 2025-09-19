@@ -1,6 +1,13 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { View, Text, StatusBar, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StatusBar,
+  Alert,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { theme } from '@/src/theme';
@@ -13,14 +20,12 @@ import {
 
 import TeamBasicInfo from './components/steps/team_basic_info';
 import TeamDetails from './components/steps/team_details';
-import TeamSettings from './components/steps/team_settings';
 import { styles } from './team_creation_style';
 
 interface TeamFormData {
   name: string;
   university: string;
   teamType: TeamType;
-  memberCount: number;
   skillLevel: SkillLevel;
   description: string;
 }
@@ -32,7 +37,6 @@ export default function TeamCreationScreen() {
     name: '',
     university: '',
     teamType: DEFAULT_TEAM_TYPE,
-    memberCount: 0,
     skillLevel: DEFAULT_SKILL_LEVEL,
     description: '',
   });
@@ -56,8 +60,8 @@ export default function TeamCreationScreen() {
       newErrors.university = '대학교명은 100자 이하로 입력해주세요';
     }
 
-    if (formData.memberCount < 0) {
-      newErrors.memberCount = '멤버 수는 0명 이상이어야 합니다';
+    if (!formData.teamType.trim()) {
+      newErrors.teamType = '팀 유형을 선택해주세요';
     }
 
     if (formData.description && formData.description.length > 1000) {
@@ -89,7 +93,7 @@ export default function TeamCreationScreen() {
     }
   };
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 3));
+  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 2));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   const renderCurrentStep = () => {
@@ -104,28 +108,21 @@ export default function TeamCreationScreen() {
           <TeamBasicInfo
             teamName={formData.name}
             university={formData.university}
+            teamType={formData.teamType}
             onTeamNameChange={name => updateFormData('name', name)}
             onUniversityChange={university =>
               updateFormData('university', university)
             }
+            onTeamTypeChange={type => updateFormData('teamType', type)}
             {...stepProps}
             errors={{
               name: errors.name,
               university: errors.university,
+              teamType: errors.teamType,
             }}
           />
         );
       case 2:
-        return (
-          <TeamSettings
-            teamType={formData.teamType}
-            memberCount={formData.memberCount}
-            onTeamTypeChange={type => updateFormData('teamType', type)}
-            onMemberCountChange={count => updateFormData('memberCount', count)}
-            {...stepProps}
-          />
-        );
-      case 3:
         return (
           <TeamDetails
             skillLevel={formData.skillLevel}
@@ -145,27 +142,29 @@ export default function TeamCreationScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={theme.colors.background.main}
-      />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor={theme.colors.background.main}
+        />
 
-      <CustomHeader title="팀 생성" showBackButton={true} />
+        <CustomHeader title="팀 생성" showBackButton={true} />
 
-      <View style={styles.progressContainer}>
-        <View style={styles.progressBar}>
-          <View
-            style={[
-              styles.progressFill,
-              { width: `${(currentStep / 3) * 100}%` },
-            ]}
-          />
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBar}>
+            <View
+              style={[
+                styles.progressFill,
+                { width: `${(currentStep / 2) * 100}%` },
+              ]}
+            />
+          </View>
+          <Text style={styles.progressText}>{currentStep} / 2</Text>
         </View>
-        <Text style={styles.progressText}>{currentStep} / 3</Text>
-      </View>
 
-      {renderCurrentStep()}
-    </View>
+        {renderCurrentStep()}
+      </View>
+    </TouchableWithoutFeedback>
   );
 }

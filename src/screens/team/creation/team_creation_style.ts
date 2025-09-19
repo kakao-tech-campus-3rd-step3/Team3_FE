@@ -87,7 +87,8 @@ export const styles = StyleSheet.create({
     paddingVertical: theme.spacing.spacing4,
     fontSize: theme.typography.fontSize.font4,
     backgroundColor: theme.colors.background.sub,
-    minHeight: theme.spacing.spacing15,
+    minHeight: 120,
+    textAlignVertical: 'top',
   },
   stepSelectorButton: {
     borderWidth: 1,
@@ -136,7 +137,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: theme.spacing.spacing4,
-    paddingHorizontal: theme.spacing.spacing6,
+    paddingHorizontal: theme.spacing.spacing8,
     backgroundColor: theme.colors.background.sub,
     borderRadius: theme.spacing.spacing3,
     borderWidth: 1,
