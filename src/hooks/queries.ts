@@ -30,6 +30,27 @@ export const queries = {
     fn: (university: string) =>
       api.teamListApi.getTeamsByUniversity(university),
   },
+  team: {
+    key: (teamId: string | number) => ['teams', teamId] as const,
+    fn: (teamId: string | number) => api.myTeamApi.getTeamById(teamId),
+  },
+  teamMembers: {
+    key: (teamId: string | number) => ['teamMembers', teamId] as const,
+    fn: (teamId: string | number) => api.teamMemberApi.getTeamMembers(teamId),
+  },
+  teamReviews: {
+    key: (teamId: string | number) => ['teamReviews', teamId] as const,
+    fn: (teamId: string | number) => api.teamReviewApi.getTeamReviews(teamId),
+  },
+  teamJoinRequests: {
+    key: (teamId: string | number) => ['teamJoinRequests', teamId] as const,
+    fn: (teamId: string | number) =>
+      api.teamJoinRequestApi.getTeamJoinRequests(teamId),
+  },
+  teamMatches: {
+    key: (teamId: string | number) => ['teamMatches', teamId] as const,
+    fn: (teamId: string | number) => api.teamMatchApi.getTeamMatches(teamId),
+  },
 } as const;
 
 export function useUserInfo() {
@@ -68,13 +89,51 @@ export function useTeamsByUniversity(university: string) {
   });
 }
 
+export function useTeam(teamId: string | number) {
+  return useQuery({
+    queryKey: queries.team.key(teamId),
+    queryFn: () => queries.team.fn(teamId),
+    enabled: !!teamId,
+  });
+}
+export function useTeamMembers(teamId: string | number) {
+  return useQuery({
+    queryKey: queries.teamMembers.key(teamId),
+    queryFn: () => queries.teamMembers.fn(teamId),
+    enabled: !!teamId,
+  });
+}
+
+export function useTeamReviews(teamId: string | number) {
+  return useQuery({
+    queryKey: queries.teamReviews.key(teamId),
+    queryFn: () => queries.teamReviews.fn(teamId),
+    enabled: !!teamId,
+  });
+}
+
+export function useTeamJoinRequests(teamId: string | number) {
+  return useQuery({
+    queryKey: queries.teamJoinRequests.key(teamId),
+    queryFn: () => queries.teamJoinRequests.fn(teamId),
+    enabled: !!teamId,
+  });
+}
+
+export function useTeamMatches(teamId: string | number) {
+  return useQuery({
+    queryKey: queries.teamMatches.key(teamId),
+    queryFn: () => queries.teamMatches.fn(teamId),
+    enabled: !!teamId,
+  });
+}
+
 export function useCreateTeamMutation() {
   return useMutation({
     mutationFn: async (
       teamData: CreateTeamRequest
     ): Promise<CreateTeamResponse> => {
-      const data: CreateTeamResponse =
-        await api.createTeamApi.createTeam(teamData);
+      const data: CreateTeamResponse = await api.createTeam(teamData);
       return data;
     },
     onSuccess: () => {

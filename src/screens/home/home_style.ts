@@ -89,7 +89,6 @@ export default StyleSheet.create({
     marginLeft: theme.spacing.spacing2,
   },
 
-  // 매치 상태 카드
   matchStatusCard: {
     width: '100%',
     marginBottom: theme.spacing.spacing4,
@@ -267,11 +266,6 @@ export default StyleSheet.create({
   },
   footballIcon: {
     fontSize: theme.typography.fontSize.font4,
-    marginRight: theme.spacing.spacing1,
-  },
-  assistIcon: {
-    width: theme.typography.fontSize.font4,
-    height: theme.typography.fontSize.font4,
     marginRight: theme.spacing.spacing1,
   },
   locationIcon: {

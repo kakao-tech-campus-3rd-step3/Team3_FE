@@ -39,6 +39,7 @@ class ApiClient {
     } catch (error: unknown) {
       if (isAxiosError(error) && error.response) {
         const errorData = error.response.data || {};
+
         const errorMessage =
           errorData.data &&
           typeof errorData.data === 'object' &&

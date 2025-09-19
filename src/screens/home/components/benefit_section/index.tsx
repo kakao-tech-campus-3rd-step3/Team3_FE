@@ -3,16 +3,32 @@ import { memo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { serviceCards } from '@/src/constants/service_card';
+import type { HomeData } from '@/src/types';
 
 import styles from '../../home_style';
 
-export default memo(function BenefitsSection() {
+interface BenefitsSectionProps {
+  homeData: HomeData;
+}
+
+export default memo(function BenefitsSection({
+  homeData,
+}: BenefitsSectionProps) {
   const router = useRouter();
+
   const handleServicePress = (serviceId: string) => {
+    if (serviceId === 'team') {
+      if (homeData?.user.teamId) {
+        router.push(`/team/management/${homeData.user.teamId}`);
+      } else {
+        router.push('/team/guide');
+      }
+      return;
+    }
+
     const routeMap: Record<string, string> = {
       tournament: '/tournament',
       mercenary: '/mercenary',
-      team: '/team/guide',
     };
 
     const route = routeMap[serviceId];

@@ -12,12 +12,14 @@ export interface UserProfile {
   mannerScore: number;
   totalReviews: number;
 
-  recentReviews: ReviewType[];
+  recentReviews: ProfileReviewType[];
 
   stats: MatchStats;
+
+  teamId: number | null;
 }
 
-export interface ReviewType {
+export interface ProfileReviewType {
   type: 'good_play' | 'good_manner' | 'team_player' | 'punctual' | 'bad_manner';
   count: number;
   label: string;
