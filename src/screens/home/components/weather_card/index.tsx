@@ -1,8 +1,10 @@
+import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+
 import { Card } from '@/src/components/card/card';
 import { theme } from '@/src/theme';
+
 import styles from '../../home_style';
 
 export default memo(function WeatherSection() {
@@ -19,7 +21,11 @@ export default memo(function WeatherSection() {
         <View style={styles.weatherCardHeader}>
           <View style={styles.weatherInfo}>
             <View style={styles.weatherMain}>
-              <Ionicons name="sunny" size={32} color="#FFA726" />
+              <Ionicons
+                name="sunny"
+                size={32}
+                color={theme.colors.orange[500]}
+              />
               <View style={styles.weatherDetails}>
                 <Text style={styles.temperature}>22°C</Text>
                 <Text style={styles.weatherDescription}>맑음</Text>

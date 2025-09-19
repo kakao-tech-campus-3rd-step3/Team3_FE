@@ -1,9 +1,11 @@
+import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { View, Text } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+
 import { Card } from '@/src/components/card/card';
 import { theme } from '@/src/theme';
-import styles from '@/src/screens/profile/profile_style';
+
+import styles from '../../profile_style';
 
 export default memo(function NoShowCard({
   noShowCount,

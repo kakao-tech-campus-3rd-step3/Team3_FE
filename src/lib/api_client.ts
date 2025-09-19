@@ -1,5 +1,6 @@
-import config from '@/src/config/environment';
 import axios, { AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
+
+import config from '@/src/config/environment';
 
 export class ApiError extends Error {
   constructor(
@@ -38,6 +39,7 @@ class ApiClient {
     } catch (error: unknown) {
       if (isAxiosError(error) && error.response) {
         const errorData = error.response.data || {};
+
         const errorMessage =
           errorData.data &&
           typeof errorData.data === 'object' &&

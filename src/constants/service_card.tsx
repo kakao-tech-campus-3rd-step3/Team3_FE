@@ -1,8 +1,10 @@
-import { Image } from 'react-native';
 import type { ReactNode } from 'react';
+import { Image } from 'react-native';
+
+import { colors } from '@/src/theme';
 
 export interface ServiceCard {
-  id: number;
+  id: string;
   title: string;
   subtitle: string;
   icon: string | ReactNode;
@@ -11,14 +13,14 @@ export interface ServiceCard {
 
 export const serviceCards: ServiceCard[] = [
   {
-    id: 1,
+    id: 'tournament',
     title: '토너먼트',
     subtitle: '토너먼트 신청',
     icon: '🏆',
-    backgroundColor: '#F0F8FF',
+    backgroundColor: colors.blue[50],
   },
   {
-    id: 2,
+    id: 'mercenary',
     title: '용병',
     subtitle: '용병으로 참여',
     icon: (
@@ -27,10 +29,10 @@ export const serviceCards: ServiceCard[] = [
         style={{ width: 28, height: 28 }}
       />
     ),
-    backgroundColor: '#E8F5E8',
+    backgroundColor: colors.grass[50],
   },
   {
-    id: 3,
+    id: 'team',
     title: '팀 관리',
     subtitle: '팀 관리 서비스',
     icon: (
@@ -39,6 +41,6 @@ export const serviceCards: ServiceCard[] = [
         style={{ width: 28, height: 28 }}
       />
     ),
-    backgroundColor: '#F0F8FF',
+    backgroundColor: colors.blue[50],
   },
 ];

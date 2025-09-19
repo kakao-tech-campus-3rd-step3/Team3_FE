@@ -1,7 +1,9 @@
+import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { Image, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+
 import { theme } from '@/src/theme';
+
 import styles from '../../home_style';
 
 export default memo(function EnvelopeSection() {

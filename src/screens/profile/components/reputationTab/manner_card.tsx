@@ -1,9 +1,12 @@
+import { Ionicons } from '@expo/vector-icons';
 import { memo, useMemo } from 'react';
 import { View, Text } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+
 import { Card } from '@/src/components/card/card';
-import styles from '@/src/screens/profile/profile_style';
+import { colors } from '@/src/theme';
 import { getMannerScoreColor } from '@/src/utils/manner';
+
+import styles from '../../profile_style';
 
 export default memo(function MannerCard({
   mannerScore,
@@ -23,7 +26,7 @@ export default memo(function MannerCard({
           key={i}
           name={i < filled ? 'star' : 'star-outline'}
           size={16}
-          color="#FFD700"
+          color={colors.orange[500]}
         />
       )),
     [filled]

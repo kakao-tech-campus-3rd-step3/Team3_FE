@@ -1,9 +1,41 @@
+import { useRouter } from 'expo-router';
 import { memo } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+
 import { serviceCards } from '@/src/constants/service_card';
+import type { HomeData } from '@/src/types';
+
 import styles from '../../home_style';
 
-export default memo(function BenefitsSection() {
+interface BenefitsSectionProps {
+  homeData: HomeData;
+}
+
+export default memo(function BenefitsSection({
+  homeData,
+}: BenefitsSectionProps) {
+  const router = useRouter();
+
+  const handleServicePress = (serviceId: string) => {
+    if (serviceId === 'team') {
+      if (homeData?.user.teamId) {
+        router.push(`/team/management/${homeData.user.teamId}`);
+      } else {
+        router.push('/team/guide');
+      }
+      return;
+    }
+
+    const routeMap: Record<string, string> = {
+      tournament: '/tournament',
+      mercenary: '/mercenary',
+    };
+
+    const route = routeMap[serviceId];
+    if (route) {
+      router.push(route);
+    }
+  };
   return (
     <View style={styles.benefitsSection}>
       <View style={styles.benefitsHeader}>
@@ -12,8 +44,10 @@ export default memo(function BenefitsSection() {
 
       <View style={styles.benefitsGrid}>
         {serviceCards.map(service => (
-          <View
+          <TouchableOpacity
             key={service.id}
+            onPress={() => handleServicePress(service.id)}
+            activeOpacity={0.8}
             style={[
               styles.benefitCard,
               { backgroundColor: service.backgroundColor },
@@ -26,7 +60,7 @@ export default memo(function BenefitsSection() {
             ) : (
               <View style={styles.benefitIconContainer}>{service.icon}</View>
             )}
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
     </View>

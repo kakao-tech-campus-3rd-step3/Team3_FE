@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+
 import { theme } from '@/src/theme';
 
 export default StyleSheet.create({
@@ -12,23 +13,6 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: theme.colors.background.sub,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.spacing6,
-    paddingVertical: theme.spacing.spacing4,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.gray[300],
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: theme.colors.text.main,
-  },
-  settingsButton: {
-    padding: theme.spacing.spacing2,
   },
   scrollContainer: {
     flex: 1,
