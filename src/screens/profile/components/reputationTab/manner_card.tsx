@@ -17,18 +17,26 @@ export default memo(function MannerCard({
   noShowCount: number;
 }) {
   const color = getMannerScoreColor(noShowCount);
-  const filled = Math.floor(mannerScore);
   const stars = useMemo(
     () =>
-      Array.from({ length: 5 }).map((_, i) => (
-        <Ionicons
-          key={i}
-          name={i < filled ? 'star' : 'star-outline'}
-          size={16}
-          color="#FFD700"
-        />
-      )),
-    [filled]
+      Array.from({ length: 5 }).map((_, i) => {
+        const starIndex = i + 1;
+        const isFilled = starIndex <= Math.floor(mannerScore);
+        const isHalfFilled =
+          starIndex === Math.ceil(mannerScore) && mannerScore % 1 !== 0;
+
+        return (
+          <Ionicons
+            key={i}
+            name={
+              isFilled ? 'star' : isHalfFilled ? 'star-half' : 'star-outline'
+            }
+            size={16}
+            color="#FFD700"
+          />
+        );
+      }),
+    [mannerScore]
   );
   return (
     <Card style={styles.mannerCard}>
