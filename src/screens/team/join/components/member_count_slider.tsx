@@ -21,16 +21,15 @@ export default function MemberCountSlider({
   value,
   onValueChange,
 }: MemberCountSliderProps) {
-  // 현재 값에 해당하는 슬라이더 값을 찾기
   const getSliderValue = (currentValue: number) => {
     const option = MEMBER_COUNT_OPTIONS.find(
       opt => currentValue <= opt.maxCount
     );
-    return option ? option.sliderValue : 6; // 기본값은 6 (30명+)
+    return option ? option.sliderValue : 6;
   };
 
   const currentSliderValue = getSliderValue(value);
-  const sliderWidth = (currentSliderValue / 6) * 100; // 6개 옵션 중 몇 번째까지
+  const sliderWidth = (currentSliderValue / 6) * 100;
 
   return (
     <View style={styles.memberCountSlider}>

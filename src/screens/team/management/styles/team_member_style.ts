@@ -158,9 +158,9 @@ export const styles = StyleSheet.create({
     color: colors.white,
   },
   joinDate: {
-    fontSize: typography.fontSize.font2,
-    color: colors.gray[400],
-    fontStyle: 'italic',
+    fontSize: typography.fontSize.font3,
+    color: colors.gray[500],
+    fontWeight: typography.fontWeight.medium,
   },
 
   memberActions: {

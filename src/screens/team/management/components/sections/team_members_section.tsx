@@ -3,7 +3,8 @@ import { memo, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import { colors } from '@/src/theme';
-import type { TeamMember, TeamMemberRole } from '@/src/types/team';
+import type { TeamMember } from '@/src/types/team';
+import { getRoleDisplayName } from '@/src/utils/team';
 
 import { styles } from '../../styles/team_management_styles';
 
@@ -17,19 +18,6 @@ export default memo(function TeamMembersSection({
   membersLoading,
 }: TeamMembersSectionProps) {
   const [showAllMembers, setShowAllMembers] = useState(false);
-
-  const getRoleDisplayName = (role: TeamMemberRole): string => {
-    switch (role) {
-      case 'LEADER':
-        return '회장';
-      case 'VICE_LEADER':
-        return '부회장';
-      case 'MEMBER':
-        return '일반멤버';
-      default:
-        return '일반멤버';
-    }
-  };
 
   if (membersLoading) {
     return (

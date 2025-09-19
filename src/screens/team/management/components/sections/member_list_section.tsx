@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 import { theme } from '@/src/theme';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
+import { getRoleDisplayName } from '@/src/utils/team';
 
 import { styles } from '../../styles/team_member_style';
 
@@ -18,19 +19,6 @@ export default memo(function MemberListSection({
   onRoleChange,
   onRemoveMember,
 }: MemberListSectionProps) {
-  const getRoleDisplayName = (role: TeamMemberRole): string => {
-    switch (role) {
-      case 'LEADER':
-        return '회장';
-      case 'VICE_LEADER':
-        return '부회장';
-      case 'MEMBER':
-        return '일반멤버';
-      default:
-        return '일반멤버';
-    }
-  };
-
   const getRoleColor = (role: TeamMemberRole): string => {
     switch (role) {
       case 'LEADER':

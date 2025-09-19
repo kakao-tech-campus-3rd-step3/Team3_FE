@@ -48,7 +48,6 @@ export default function UniversityTeamListScreen() {
     refetch,
   } = useTeamsByUniversity(university || '');
 
-  // useMemo를 사용하여 필터링된 팀 목록을 계산
   const filteredTeams = useMemo(() => {
     let filtered = [...teams];
 
@@ -70,11 +69,6 @@ export default function UniversityTeamListScreen() {
 
     return filtered;
   }, [teams, filterOptions]);
-
-  const applyFilters = () => {
-    // 필터링은 이미 useMemo에서 처리되므로 빈 함수로 유지
-    // 또는 필터 모달을 닫는 로직만 남겨둘 수 있음
-  };
 
   const openFilterModal = () => {
     setShowFilterModal(true);
@@ -118,7 +112,6 @@ export default function UniversityTeamListScreen() {
 
   const handleConfirmJoin = async () => {
     if (selectedTeam) {
-      // 모달 닫기
       Animated.timing(joinModalAnim, {
         toValue: 0,
         duration: 300,
@@ -127,7 +120,6 @@ export default function UniversityTeamListScreen() {
         setShowJoinModal(false);
         setSelectedTeam(null);
 
-        // Alert 표시 후 홈으로 이동
         Alert.alert(
           '팀 가입 신청완료',
           `${selectedTeam.name}에 성공적으로 신청되었습니다!`,
@@ -216,7 +208,7 @@ export default function UniversityTeamListScreen() {
         filterOptions={filterOptions}
         slideAnim={slideAnim}
         onClose={closeFilterModal}
-        onApply={applyFilters}
+        onApply={closeFilterModal}
         onReset={resetFilters}
         onToggleSkillLevel={toggleSkillLevel}
         onToggleTeamType={toggleTeamType}

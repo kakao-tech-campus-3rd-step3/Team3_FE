@@ -10,9 +10,11 @@ import {
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { LoadingState } from '@/src/components/ui/loading_state';
 import { useTeamMembers } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
+import { getRoleDisplayName } from '@/src/utils/team';
 
 import MemberInfoCard from '../components/cards/member_info_card';
 import RoleChangeModal from '../components/modals/role_change_modal';
@@ -39,11 +41,7 @@ export default function MemberManagementScreen({
   } = useTeamMembers(numericTeamId);
 
   if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.grass[500]} />
-      </View>
-    );
+    return <LoadingState message="팀원 정보를 불러오는 중..." />;
   }
 
   if (error) {
@@ -69,19 +67,6 @@ export default function MemberManagementScreen({
 
   const handleUpdateRole = (newRole: TeamMemberRole) => {
     if (!selectedMember) return;
-
-    const getRoleDisplayName = (role: TeamMemberRole): string => {
-      switch (role) {
-        case 'LEADER':
-          return '회장';
-        case 'VICE_LEADER':
-          return '부회장';
-        case 'MEMBER':
-          return '일반멤버';
-        default:
-          return '일반멤버';
-      }
-    };
 
     Alert.alert(
       '역할 변경',

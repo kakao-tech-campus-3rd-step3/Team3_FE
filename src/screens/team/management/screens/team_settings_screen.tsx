@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, Alert } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { LoadingState } from '@/src/components/ui/loading_state';
 import { useTeamJoinRequests } from '@/src/hooks/queries';
-import { theme } from '@/src/theme';
 
 import JoinRequestsModal from '../components/modals/join_requests_modal';
 import ManageSection from '../components/sections/manage_section';
@@ -26,11 +26,7 @@ export default function TeamSettingsScreen({
   } = useTeamJoinRequests(teamId);
 
   if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.grass[500]} />
-      </View>
-    );
+    return <LoadingState message="가입 요청 정보를 불러오는 중..." />;
   }
 
   if (error) {

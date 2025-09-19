@@ -99,12 +99,6 @@ export default function JoinRequestsModal({
                         {request.position}
                       </Text>
                     </View>
-                    <View style={styles.requestDetailRow}>
-                      <Text style={styles.requestDetailLabel}>경력:</Text>
-                      <Text style={styles.requestDetailValue}>
-                        {request.experience}
-                      </Text>
-                    </View>
                   </View>
 
                   <Text style={styles.requestMessage}>{request.message}</Text>
