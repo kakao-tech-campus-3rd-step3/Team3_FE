@@ -105,7 +105,6 @@ export interface JoinRequest {
   applicantName: string;
   applicantEmail: string;
   position: string;
-  experience: string;
   message: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
