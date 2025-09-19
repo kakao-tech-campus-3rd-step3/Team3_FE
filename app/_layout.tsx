@@ -22,11 +22,8 @@ function AppContent() {
     <ThemeProvider value={DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="team/guide" />
-        <Stack.Screen name="team/creation" />
-        <Stack.Screen name="team/join_university" />
-        <Stack.Screen name="team/join_list" />
-        <Stack.Screen name="team/management/[teamId]" />
+        <Stack.Screen name="team" />
+        <Stack.Screen name="profile" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
