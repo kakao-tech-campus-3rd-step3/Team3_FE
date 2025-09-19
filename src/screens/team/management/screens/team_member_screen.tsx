@@ -1,18 +1,10 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  Alert,
-  RefreshControl,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, ScrollView, Alert, RefreshControl } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { LoadingState } from '@/src/components/ui/loading_state';
 import { useTeamMembers } from '@/src/hooks/queries';
-import { theme } from '@/src/theme';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
 import { getRoleDisplayName } from '@/src/utils/team';
 
