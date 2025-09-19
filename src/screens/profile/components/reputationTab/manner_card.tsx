@@ -3,7 +3,6 @@ import { memo, useMemo } from 'react';
 import { View, Text } from 'react-native';
 
 import { Card } from '@/src/components/card/card';
-import { colors } from '@/src/theme';
 import { getMannerScoreColor } from '@/src/utils/manner';
 
 import styles from '../../profile_style';
@@ -26,7 +25,7 @@ export default memo(function MannerCard({
           key={i}
           name={i < filled ? 'star' : 'star-outline'}
           size={16}
-          color={colors.orange[500]}
+          color="#FFD700"
         />
       )),
     [filled]

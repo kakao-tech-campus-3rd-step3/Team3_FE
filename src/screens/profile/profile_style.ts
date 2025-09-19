@@ -14,6 +14,23 @@ export default StyleSheet.create({
     alignItems: 'center',
     backgroundColor: theme.colors.background.sub,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: theme.spacing.spacing6,
+    paddingVertical: theme.spacing.spacing4,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.gray[300],
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: theme.colors.text.main,
+  },
+  settingsButton: {
+    padding: theme.spacing.spacing2,
+  },
   scrollContainer: {
     flex: 1,
   },
@@ -24,7 +41,7 @@ export default StyleSheet.create({
   profileHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.spacing6,
+    marginBottom: theme.spacing.spacing3,
   },
   profileAvatar: {
     width: 80,
@@ -54,26 +71,7 @@ export default StyleSheet.create({
     fontSize: 14,
     color: theme.colors.text.sub,
   },
-  quickStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: theme.spacing.spacing6,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.gray[300],
-  },
-  quickStatItem: {
-    alignItems: 'center',
-  },
-  quickStatValue: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing2,
-  },
-  quickStatLabel: {
-    fontSize: 12,
-    color: theme.colors.text.sub,
-  },
+
   tabContainer: {
     flexDirection: 'row',
     marginHorizontal: theme.spacing.spacing6,
@@ -104,30 +102,7 @@ export default StyleSheet.create({
     color: theme.colors.text.main,
     fontWeight: '600',
   },
-  warningCard: {
-    margin: theme.spacing.spacing6,
-    marginBottom: theme.spacing.spacing4,
-  },
-  warningHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.spacing4,
-  },
-  warningTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.error,
-    marginLeft: theme.spacing.spacing4,
-  },
-  warningText: {
-    fontSize: 14,
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing2,
-  },
-  warningSubtext: {
-    fontSize: 12,
-    color: theme.colors.text.sub,
-  },
+
   mannerCard: {
     margin: theme.spacing.spacing6,
     marginBottom: theme.spacing.spacing4,
@@ -194,6 +169,11 @@ export default StyleSheet.create({
   settingText: {
     fontSize: 16,
     color: theme.colors.text.main,
+  },
+  settingValue: {
+    fontSize: 14,
+    color: theme.colors.text.sub,
+    marginRight: theme.spacing.spacing2,
   },
   bottomSpacer: {
     height: theme.spacing.spacing8,

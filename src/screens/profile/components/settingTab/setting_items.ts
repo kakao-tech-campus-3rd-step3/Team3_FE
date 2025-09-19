@@ -1,19 +1,49 @@
+import { router } from 'expo-router';
+
+import { ROUTES } from '@/src/constants/routes';
 import { theme } from '@/src/theme';
 import type { SettingItem } from '@/src/types';
 
 export const defaultSettingsItems: SettingItem[] = [
   {
-    key: 'notifications',
-    label: '알림 설정',
-    onPress: () => {},
+    key: 'edit-profile',
+    label: '개인정보 수정',
+    onPress: () => router.push(ROUTES.EDIT_PROFILE),
+    showChevron: true,
+  },
+
+  {
+    key: 'privacy-policy',
+    label: '개인정보 처리방침',
+    onPress: () => router.push(ROUTES.PRIVACY_POLICY),
     showChevron: true,
   },
   {
-    key: 'edit-profile',
-    label: '개인정보 수정',
-    onPress: () => {},
+    key: 'terms-of-service',
+    label: '서비스 이용약관',
+    onPress: () => router.push(ROUTES.TERMS_OF_SERVICE),
     showChevron: true,
   },
+  {
+    key: 'support',
+    label: '고객 지원',
+    onPress: () => router.push(ROUTES.SUPPORT),
+    showChevron: true,
+  },
+  {
+    key: 'data-deletion',
+    label: '계정 탈퇴',
+    onPress: () => router.push(ROUTES.DATA_DELETION),
+    showChevron: true,
+  },
+
+  {
+    key: 'app-version',
+    label: '앱 버전',
+    value: '1.0.0',
+    showChevron: false,
+  },
+
   {
     key: 'logout',
     label: '로그아웃',
