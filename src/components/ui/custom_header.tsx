@@ -22,22 +22,24 @@ export const CustomHeader = ({
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.content}>
-        {showBackButton && (
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <IconSymbol
-              size={24}
-              color={theme.colors.text.main}
-              name="chevron.left"
-            />
-          </TouchableOpacity>
+        {showBackButton ? (
+          <>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.backButton}
+            >
+              <IconSymbol
+                size={24}
+                color={theme.colors.text.main}
+                name="chevron.left"
+              />
+            </TouchableOpacity>
+            <Text style={styles.title}>{title}</Text>
+            <View style={styles.rightSpacer} />
+          </>
+        ) : (
+          <Text style={styles.titleCentered}>{title}</Text>
         )}
-
-        <Text style={styles.title}>{title}</Text>
-
-        <View style={styles.rightSpacer} />
       </View>
     </View>
   );
@@ -63,11 +65,18 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: theme.typography.fontSize.font6,
-    fontWeight: theme.typography.fontWeight.bold,
+    fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.main,
     flex: 1,
     textAlign: 'center',
     marginHorizontal: theme.spacing.spacing4,
+  },
+  titleCentered: {
+    fontSize: theme.typography.fontSize.font6,
+    fontWeight: theme.typography.fontWeight.semibold,
+    color: theme.colors.text.main,
+    textAlign: 'center',
+    flex: 1,
   },
   rightSpacer: {
     width: 40,

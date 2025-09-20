@@ -1,31 +1,26 @@
 export const ROUTES = {
   HOME: '/',
-  LOGIN: '/login',
-  MY_PAGE: '/my',
-  TEAM_MANAGEMENT: '/team/management/:teamId',
-  TEAM_MANAGEMENT_SETTINGS: '/team/management/:teamId/settings',
-  TEAM_MANAGEMENT_RECENT_MATCHES: '/team/management/:teamId/recent-matches',
-  TEAM_CREATION: '/team/creation',
-  TEAM_JOIN_LIST: '/team/join-list',
+  PROFILE: '/profile',
+
+  EDIT_PROFILE: '/profile/edit',
+  PRIVACY_POLICY: '/profile/privacy-policy',
+  TERMS_OF_SERVICE: '/profile/terms-of-service',
+  SUPPORT: '/profile/support',
+  DATA_DELETION: '/profile/data-deletion',
+
   TEAM_GUIDE: '/team/guide',
-  NOT_FOUND: '*',
+  TEAM_CREATION: '/team/creation',
+  TEAM_JOIN_UNIVERSITY: '/team/join-university',
+  TEAM_JOIN_LIST: '/team/join-list',
+
+  MERCENARY: '/mercenary',
+
+  TOURNAMENT: '/tournament',
 } as const;
 
-export function getTeamManagementUrl(teamId: string | number) {
-  return ROUTES.TEAM_MANAGEMENT.replace(':teamId', String(teamId));
-}
+export type RouteKey = keyof typeof ROUTES;
 
-export function getTeamManagementSettingsUrl(teamId: string | number) {
-  return ROUTES.TEAM_MANAGEMENT_SETTINGS.replace(':teamId', String(teamId));
-}
-
-export function getTeamManagementRecentMatchesUrl(teamId: string | number) {
-  return ROUTES.TEAM_MANAGEMENT_RECENT_MATCHES.replace(
-    ':teamId',
-    String(teamId)
-  );
-}
-
-export function getTeamApiUrl(teamId: string | number) {
-  return `/api/teams/${teamId}`;
-}
+export const getTeamManagementSettingsUrl = (teamId: string) =>
+  `/team/management/${teamId}/settings`;
+export const getTeamManagementRecentMatchesUrl = (teamId: string) =>
+  `/team/management/${teamId}/recent-matches`;

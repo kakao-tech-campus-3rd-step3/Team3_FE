@@ -58,7 +58,7 @@ export default function UniversityListScreen() {
   const handleConnect = () => {
     if (selectedUniversity) {
       router.push({
-        pathname: '/team/join_list',
+        pathname: '/team/join-list',
         params: { university: selectedUniversity },
       });
     }

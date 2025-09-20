@@ -20,11 +20,11 @@ export default memo(function TeamInfoCard({
   canManageTeam,
 }: TeamInfoCardProps) {
   const handleTeamManagement = () => {
-    router.push(getTeamManagementSettingsUrl(team.id));
+    router.push(getTeamManagementSettingsUrl(team.id.toString()));
   };
 
   const handleRecentMatches = () => {
-    router.push(getTeamManagementRecentMatchesUrl(team.id));
+    router.push(getTeamManagementRecentMatchesUrl(team.id.toString()));
   };
 
   return (

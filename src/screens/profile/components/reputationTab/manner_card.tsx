@@ -3,8 +3,7 @@ import { memo, useMemo } from 'react';
 import { View, Text } from 'react-native';
 
 import { Card } from '@/src/components/card/card';
-import { colors } from '@/src/theme';
-import { getMannerScoreColor } from '@/src/utils/manner';
+import { theme } from '@/src/theme';
 
 import styles from '../../profile_style';
 
@@ -17,26 +16,37 @@ export default memo(function MannerCard({
   totalReviews: number;
   noShowCount: number;
 }) {
-  const color = getMannerScoreColor(noShowCount);
-  const filled = Math.floor(mannerScore);
   const stars = useMemo(
     () =>
-      Array.from({ length: 5 }).map((_, i) => (
-        <Ionicons
-          key={i}
-          name={i < filled ? 'star' : 'star-outline'}
-          size={16}
-          color={colors.orange[500]}
-        />
-      )),
-    [filled]
+      Array.from({ length: 5 }).map((_, i) => {
+        const starIndex = i + 1;
+        const isFilled = starIndex <= Math.floor(mannerScore);
+        const isHalfFilled =
+          starIndex === Math.ceil(mannerScore) && mannerScore % 1 !== 0;
+
+        return (
+          <Ionicons
+            key={i}
+            name={
+              isFilled ? 'star' : isHalfFilled ? 'star-half' : 'star-outline'
+            }
+            size={16}
+            color="#FFD700"
+          />
+        );
+      }),
+    [mannerScore]
   );
   return (
     <Card style={styles.mannerCard}>
       <View style={styles.mannerHeader}>
         <Text style={styles.sectionTitle}>매너 점수</Text>
         <View style={styles.mannerScoreContainer}>
-          <Text style={[styles.mannerScore, { color }]}>{mannerScore}</Text>
+          <Text
+            style={[styles.mannerScore, { color: theme.colors.grass[500] }]}
+          >
+            {mannerScore}
+          </Text>
           <View style={styles.starsContainer}>{stars}</View>
         </View>
       </View>

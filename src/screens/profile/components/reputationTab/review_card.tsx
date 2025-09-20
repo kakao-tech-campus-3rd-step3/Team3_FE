@@ -2,15 +2,15 @@ import { memo } from 'react';
 import { View, Text } from 'react-native';
 
 import { Card } from '@/src/components/card/card';
-import { ProfileReviewType } from '@/src/types';
+import { Badge } from '@/src/screens/profile/components/badge/badge';
+import { ReviewStatsType } from '@/src/types';
 
 import styles from '../../profile_style';
-import { Badge } from '../badge/badge';
 
 export default memo(function ReviewCard({
   reviews,
 }: {
-  reviews: ProfileReviewType[];
+  reviews: ReviewStatsType[];
 }) {
   return (
     <Card style={styles.reviewsCard}>

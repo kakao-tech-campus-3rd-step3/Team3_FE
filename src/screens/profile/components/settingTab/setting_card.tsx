@@ -26,6 +26,7 @@ export default memo(function SettingCard({ items }: { items: SettingItem[] }) {
           >
             {item.label}
           </Text>
+          <Text style={styles.settingValue}>{item.value}</Text>
           {item.showChevron && (
             <Ionicons
               name="chevron-forward"

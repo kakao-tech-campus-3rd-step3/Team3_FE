@@ -14,7 +14,7 @@ export default memo(function Buttons() {
     <View style={styles.buttonContainer}>
       <TouchableOpacity
         style={styles.joinButton}
-        onPress={() => router.push('/team/join_university')}
+        onPress={() => router.push('/team/join-university')}
       >
         <Ionicons name="people-outline" size={24} color={colors.blue[500]} />
         <Text style={styles.joinButtonText}>팀 참여하기</Text>

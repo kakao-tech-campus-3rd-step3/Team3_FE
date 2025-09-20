@@ -9,9 +9,7 @@ import { useUserInfo } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 
 import ProfileHeader from './components/profileHeader';
-import QuickStats from './components/quickStats';
 import MannerCard from './components/reputationTab/manner_card';
-import NoShowCard from './components/reputationTab/noshow_card';
 import ReviewCard from './components/reputationTab/review_card';
 import SettingCard from './components/settingTab/setting_card';
 import { defaultSettingsItems } from './components/settingTab/setting_items';
@@ -46,7 +44,7 @@ function ProfileScreen() {
 
   if (!displayUser) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <Text>사용자 정보를 불러오는 중...</Text>
       </View>
     );
@@ -65,13 +63,11 @@ function ProfileScreen() {
           <CustomHeader title="프로필" showBackButton={false} />
           <Card style={styles.profileCard}>
             <ProfileHeader user={displayUser} />
-            <QuickStats user={displayUser} />
           </Card>
           <TabBar active={activeTab} onChange={handleChangeTab} />
 
           {activeTab === 'reputation' ? (
             <>
-              <NoShowCard noShowCount={displayUser.noShowCount} />
               <MannerCard
                 mannerScore={displayUser.mannerScore}
                 totalReviews={displayUser.totalReviews}
