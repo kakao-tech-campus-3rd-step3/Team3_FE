@@ -1,8 +1,7 @@
 import { View } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-
-import { styles } from '../teammate_register_style';
+import { styles } from '@/src/screens/match_making/teammate_register/teammate_register_style';
 
 export default function TeammateRegisterScreen() {
   return (
