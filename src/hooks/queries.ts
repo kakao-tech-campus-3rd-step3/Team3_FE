@@ -1,13 +1,20 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 
 import * as api from '@/src/api';
+import { useAuth } from '@/src/contexts/auth_context';
 import { queryClient } from '@/src/lib/query_client';
 import type {
   JoinTeamResponse,
   CreateTeamResponse,
   CreateTeamRequest,
+  LoginResponse,
 } from '@/src/types';
 export const queries = {
+  login: {
+    key: ['login'] as const,
+    fn: (email: string, password: string) => api.authApi.login(email, password),
+  },
+
   userProfile: {
     key: ['user', 'profile'] as const,
     fn: () => api.profileApi.getProfile(),
@@ -142,9 +149,6 @@ export function useCreateTeamMutation() {
     onError: (error: unknown) => {
       console.error('팀 생성 실패:', error);
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
-    },
   });
 }
 
@@ -162,6 +166,32 @@ export function useJoinTeamMutation() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+    },
+  });
+}
+
+export function useLogout() {
+  const { logout } = useAuth();
+
+  return useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      queryClient.clear();
+    },
+  });
+}
+
+export function useLoginMutation() {
+  const { login } = useAuth();
+
+  return useMutation({
+    mutationFn: (params: { email: string; password: string }) =>
+      api.authApi.login(params.email, params.password),
+    onSuccess: (data: LoginResponse) => {
+      login(data.authToken);
+
+      queryClient.invalidateQueries({ queryKey: queries.login.key });
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
 }
