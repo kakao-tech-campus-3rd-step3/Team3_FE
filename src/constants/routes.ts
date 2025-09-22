@@ -1,5 +1,6 @@
 export const ROUTES = {
   HOME: '/',
+  HOME_TABS: '/(tabs)',
   PROFILE: '/profile',
 
   EDIT_PROFILE: '/profile/edit',
@@ -24,3 +25,7 @@ export const getTeamManagementSettingsUrl = (teamId: string) =>
   `/team/management/${teamId}/settings`;
 export const getTeamManagementRecentMatchesUrl = (teamId: string) =>
   `/team/management/${teamId}/recent-matches`;
+export const getTeamManagementEditUrl = (teamId: string) =>
+  `/team/management/${teamId}/edit`;
+export const getTeamManagementMembersUrl = (teamId: string) =>
+  `/team/management/${teamId}/members`;
