@@ -73,7 +73,6 @@ export default function ApprovedDetailScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -89,7 +88,6 @@ export default function ApprovedDetailScreen() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* 승인 상태 */}
         <Card style={styles.statusCard}>
           <View style={styles.statusHeader}>
             <Text style={styles.statusTitle}>승인 상태</Text>
@@ -107,7 +105,6 @@ export default function ApprovedDetailScreen() {
           </Text>
         </Card>
 
-        {/* 매치 정보 */}
         <Card style={styles.matchCard}>
           <Text style={styles.cardTitle}>매치 정보</Text>
           <View style={styles.matchInfo}>
@@ -130,7 +127,6 @@ export default function ApprovedDetailScreen() {
           </View>
         </Card>
 
-        {/* 신청한 팀 정보 */}
         <Card style={styles.teamCard}>
           <View style={styles.teamHeader}>
             <Ionicons name="people" size={20} color={colors.brand.main} />
@@ -175,7 +171,6 @@ export default function ApprovedDetailScreen() {
           </View>
         </Card>
 
-        {/* 상대팀 정보 */}
         <Card style={styles.opponentCard}>
           <View style={styles.teamHeader}>
             <Ionicons name="shield" size={20} color={colors.text.sub} />
@@ -214,7 +209,6 @@ export default function ApprovedDetailScreen() {
           </View>
         </Card>
 
-        {/* 신청 메시지 */}
         <Card style={styles.messageCard}>
           <View style={styles.messageHeader}>
             <Ionicons
@@ -227,7 +221,6 @@ export default function ApprovedDetailScreen() {
           <Text style={styles.messageText}>{approvedMatch.message}</Text>
         </Card>
 
-        {/* 매치 시작 대기 카드 */}
         <Card style={styles.waitingCard}>
           <View style={styles.waitingHeader}>
             <Ionicons name="time-outline" size={20} color={colors.info} />
@@ -241,7 +234,6 @@ export default function ApprovedDetailScreen() {
           </Text>
         </Card>
 
-        {/* 액션 버튼들 */}
         <View style={styles.actionSection}>
           <TouchableOpacity
             style={styles.contactButton}
@@ -252,7 +244,6 @@ export default function ApprovedDetailScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* 안내 메시지 */}
         <Card style={styles.infoCard}>
           <View style={styles.infoHeader}>
             <Ionicons name="information-circle" size={20} color={colors.info} />

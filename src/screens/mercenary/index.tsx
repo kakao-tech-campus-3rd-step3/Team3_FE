@@ -149,7 +149,6 @@ export default function MercenaryMainScreen() {
           </View>
         </TouchableOpacity>
 
-        {/* 승인된 매치 */}
         {activeMatches.length > 0 && (
           <View style={styles.matchesSection}>
             <Text style={styles.sectionTitle}>승인된 매치</Text>

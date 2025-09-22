@@ -116,10 +116,9 @@ export default function MercenaryMatchInfoScreen() {
       {
         text: '완료',
         onPress: () => {
-          // 매치 완료 후 자동으로 리뷰 화면으로 이동
           setTimeout(() => {
             router.push(`/review/team/${matchId}`);
-          }, 1000); // 1초 후 자동 이동
+          }, 1000);
         },
       },
     ]);
@@ -153,7 +152,6 @@ export default function MercenaryMatchInfoScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -169,7 +167,6 @@ export default function MercenaryMatchInfoScreen() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* 매치 상태 */}
         <Card style={styles.statusCard}>
           <View style={styles.statusHeader}>
             <Text style={styles.statusTitle}>매치 상태</Text>
@@ -190,7 +187,6 @@ export default function MercenaryMatchInfoScreen() {
           </View>
         </Card>
 
-        {/* 매치 정보 */}
         <Card style={styles.matchCard}>
           <Text style={styles.cardTitle}>매치 정보</Text>
           <View style={styles.matchInfo}>
@@ -229,7 +225,6 @@ export default function MercenaryMatchInfoScreen() {
           </View>
         </Card>
 
-        {/* 용병 역할 안내 */}
         <Card style={styles.roleCard}>
           <View style={styles.roleHeader}>
             <Ionicons name="information-circle" size={20} color={colors.info} />
@@ -249,7 +244,6 @@ export default function MercenaryMatchInfoScreen() {
           </Text>
         </Card>
 
-        {/* 매치 시작 대기 카드 */}
         {matchInfo.matchDetails.status === 'scheduled' && (
           <Card style={styles.waitingCard}>
             <View style={styles.waitingHeader}>
@@ -266,7 +260,6 @@ export default function MercenaryMatchInfoScreen() {
           </Card>
         )}
 
-        {/* 액션 버튼들 */}
         <View style={styles.actionSection}>
           {matchInfo.matchDetails.status === 'in_progress' && (
             <TouchableOpacity
@@ -300,7 +293,6 @@ export default function MercenaryMatchInfoScreen() {
           )}
         </View>
 
-        {/* 관계 상태 */}
         <Card style={styles.relationshipCard}>
           <View style={styles.relationshipHeader}>
             <Ionicons name="link" size={20} color={colors.text.sub} />
