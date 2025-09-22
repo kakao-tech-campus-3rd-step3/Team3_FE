@@ -15,9 +15,19 @@ export class ApiError extends Error {
 
 class ApiClient {
   private baseURL: string;
+  private token: string | null = null;
+  private onTokenExpired?: () => void;
 
   constructor(baseURL: string) {
     this.baseURL = baseURL;
+  }
+
+  setToken(token: string | null) {
+    this.token = token;
+  }
+
+  setOnTokenExpired(callback: () => void) {
+    this.onTokenExpired = callback;
   }
 
   private async request<T>(
@@ -31,6 +41,7 @@ class ApiClient {
         baseURL: this.baseURL,
         headers: {
           'Content-Type': 'application/json',
+          ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}),
           ...options.headers,
         },
       });
@@ -38,8 +49,11 @@ class ApiClient {
       return response.data;
     } catch (error: unknown) {
       if (isAxiosError(error) && error.response) {
-        const errorData = error.response.data || {};
+        if (error.response.status === 401 && this.onTokenExpired) {
+          this.onTokenExpired();
+        }
 
+        const errorData = error.response.data || {};
         const errorMessage =
           errorData.data &&
           typeof errorData.data === 'object' &&
@@ -51,7 +65,6 @@ class ApiClient {
 
         throw new ApiError(errorMessage, error.response.status, errorData);
       }
-
       throw error;
     }
   }
@@ -61,23 +74,15 @@ class ApiClient {
   }
 
   async post<T>(endpoint: string, body: unknown): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'POST',
-      data: body,
-    });
+    return this.request<T>(endpoint, { method: 'POST', data: body });
   }
 
   async put<T>(endpoint: string, body: unknown): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'PUT',
-      data: body,
-    });
+    return this.request<T>(endpoint, { method: 'PUT', data: body });
   }
 
   async delete<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'DELETE',
-    });
+    return this.request<T>(endpoint, { method: 'DELETE' });
   }
 }
 
