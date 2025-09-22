@@ -8,13 +8,12 @@ import type { TeamReview } from '@/src/types/review';
 import type {
   CreateTeamRequest,
   CreateTeamResponse,
+  UpdateTeamRequest,
   TeamDetailResponse,
   JoinTeamResponse,
-  TeamListItem,
+  PagedTeamListResponse,
   TeamMember,
   TeamMemberRole,
-  SkillLevel,
-  TeamType,
   JoinRequest,
 } from '@/src/types/team';
 
@@ -27,9 +26,9 @@ export const universityListApi = {
 };
 
 export const teamListApi = {
-  getTeamsByUniversity: (university: string) =>
-    apiClient.get<TeamListItem[]>(
-      `${TEAM_API.GET_TEAMS_BY_UNIVERSITY}?university=${encodeURIComponent(university)}`
+  getTeamsByUniversity: (university: string, page = 0, size = 10) =>
+    apiClient.get<PagedTeamListResponse>(
+      `${TEAM_API.GET_TEAMS_BY_UNIVERSITY}?university=${encodeURIComponent(university)}&page=${page}&size=${size}`
     ),
 };
 
@@ -75,12 +74,7 @@ export const joinTeamApi = {
 export const teamEditApi = {
   updateTeam: (
     teamId: string | number,
-    data: {
-      name: string;
-      description: string;
-      skillLevel: SkillLevel;
-      teamType: TeamType;
-    }
+    data: UpdateTeamRequest
   ): Promise<TeamDetailResponse> => {
     return apiClient.put<TeamDetailResponse>(TEAM_API.UPDATE(teamId), data);
   },

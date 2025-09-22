@@ -6,6 +6,7 @@ import type {
   JoinTeamResponse,
   CreateTeamResponse,
   CreateTeamRequest,
+  UpdateTeamRequest,
 } from '@/src/types';
 export const queries = {
   userProfile: {
@@ -27,8 +28,8 @@ export const queries = {
   },
   teamsByUniversity: {
     key: ['teams', 'university'] as const,
-    fn: (university: string) =>
-      api.teamListApi.getTeamsByUniversity(university),
+    fn: (university: string, page = 0, size = 10) =>
+      api.teamListApi.getTeamsByUniversity(university, page, size),
   },
   team: {
     key: (teamId: string | number) => ['teams', teamId] as const,
@@ -81,10 +82,10 @@ export function useUniversityTeamList() {
   });
 }
 
-export function useTeamsByUniversity(university: string) {
+export function useTeamsByUniversity(university: string, page = 0, size = 10) {
   return useQuery({
-    queryKey: [...queries.teamsByUniversity.key, university],
-    queryFn: () => queries.teamsByUniversity.fn(university),
+    queryKey: [...queries.teamsByUniversity.key, university, page, size],
+    queryFn: () => queries.teamsByUniversity.fn(university, page, size),
     enabled: !!university,
   });
 }
@@ -162,6 +163,47 @@ export function useJoinTeamMutation() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+    },
+  });
+}
+
+export function useDeleteTeamMutation() {
+  return useMutation({
+    mutationFn: async (teamId: string | number): Promise<void> => {
+      await api.deleteTeam(teamId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 삭제 실패:', error);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+    },
+  });
+}
+
+export function useUpdateTeamMutation() {
+  return useMutation({
+    mutationFn: async ({
+      teamId,
+      data,
+    }: {
+      teamId: string | number;
+      data: UpdateTeamRequest;
+    }) => {
+      return await api.teamEditApi.updateTeam(teamId, data);
+    },
+    onSuccess: (_, variables) => {
+      // 팀 정보 캐시 무효화
+      queryClient.invalidateQueries({
+        queryKey: queries.team.key(variables.teamId),
+      });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 수정 실패:', error);
     },
   });
 }
