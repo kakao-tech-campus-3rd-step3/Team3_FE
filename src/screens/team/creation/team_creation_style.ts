@@ -276,4 +276,15 @@ export const styles = StyleSheet.create({
     color: theme.colors.blue[500],
     fontWeight: theme.typography.fontWeight.medium,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.colors.background.main,
+  },
+  loadingText: {
+    fontSize: theme.typography.fontSize.font4,
+    color: theme.colors.text.sub,
+    marginTop: theme.spacing.spacing4,
+  },
 });

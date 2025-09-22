@@ -9,6 +9,7 @@ import {
 } from '@/src/constants/routes';
 import { colors } from '@/src/theme';
 import type { TeamDetailResponse } from '@/src/types/team';
+import { getSkillLevelDisplay } from '@/src/types/team';
 
 interface TeamInfoCardProps {
   team: TeamDetailResponse;
@@ -83,7 +84,9 @@ export default memo(function TeamInfoCard({
                 color={colors.orange[700]}
               />
             </View>
-            <Text style={styles.statValue}>{team.skillLevel}</Text>
+            <Text style={styles.statValue}>
+              {getSkillLevelDisplay(team.skillLevel)}
+            </Text>
             <Text style={styles.statLabel}>실력</Text>
           </View>
 

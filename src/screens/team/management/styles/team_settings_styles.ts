@@ -50,6 +50,10 @@ export const styles = StyleSheet.create({
     fontSize: typography.fontSize.font4,
     fontWeight: typography.fontWeight.semibold,
   },
+  disabledButton: {
+    backgroundColor: colors.gray[400],
+    opacity: 0.6,
+  },
   secondaryButton: {
     backgroundColor: colors.white,
     borderWidth: 2,

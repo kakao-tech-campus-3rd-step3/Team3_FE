@@ -7,15 +7,19 @@ import {
   Alert,
   Keyboard,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { ROUTES } from '@/src/constants/routes';
+import { useCreateTeamMutation } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import {
   TeamType,
   SkillLevel,
   DEFAULT_TEAM_TYPE,
   DEFAULT_SKILL_LEVEL,
+  CreateTeamRequest,
 } from '@/src/types/team';
 
 import TeamBasicInfo from './components/steps/team_basic_info';
@@ -45,6 +49,8 @@ export default function TeamCreationScreen() {
     Partial<Record<keyof TeamFormData, string>>
   >({});
 
+  const createTeamMutation = useCreateTeamMutation();
+
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof TeamFormData, string>> = {};
 
@@ -73,14 +79,40 @@ export default function TeamCreationScreen() {
   };
 
   const handleSubmit = async () => {
-    if (validateForm()) {
-      Alert.alert('팀 생성 완료', '팀이 성공적으로 생성되었습니다!', [
-        {
-          text: '확인',
-          onPress: () => router.push('/'),
-        },
-      ]);
+    if (!validateForm()) {
+      return;
     }
+
+    const teamData: CreateTeamRequest = {
+      name: formData.name,
+      description: formData.description,
+      university: formData.university,
+      skillLevel: formData.skillLevel,
+      teamType: formData.teamType,
+    };
+
+    createTeamMutation.mutate(teamData, {
+      onSuccess: response => {
+        Alert.alert(
+          '팀 생성 완료',
+          response.message || '팀이 성공적으로 생성되었습니다!',
+          [
+            {
+              text: '확인',
+              onPress: () => router.push(ROUTES.HOME_TABS),
+            },
+          ]
+        );
+      },
+      onError: error => {
+        console.error('팀 생성 실패:', error);
+        Alert.alert(
+          '팀 생성 실패',
+          '팀 생성 중 오류가 발생했습니다. 다시 시도해주세요.',
+          [{ text: '확인' }]
+        );
+      },
+    });
   };
 
   const updateFormData = <Key extends keyof TeamFormData>(
@@ -151,19 +183,28 @@ export default function TeamCreationScreen() {
 
         <CustomHeader title="팀 생성" showBackButton={true} />
 
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <View
-              style={[
-                styles.progressFill,
-                { width: `${(currentStep / 2) * 100}%` },
-              ]}
-            />
+        {createTeamMutation.isPending ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={theme.colors.blue[500]} />
+            <Text style={styles.loadingText}>팀을 생성하는 중...</Text>
           </View>
-          <Text style={styles.progressText}>{currentStep} / 2</Text>
-        </View>
+        ) : (
+          <>
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBar}>
+                <View
+                  style={[
+                    styles.progressFill,
+                    { width: `${(currentStep / 2) * 100}%` },
+                  ]}
+                />
+              </View>
+              <Text style={styles.progressText}>{currentStep} / 2</Text>
+            </View>
 
-        {renderCurrentStep()}
+            {renderCurrentStep()}
+          </>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );

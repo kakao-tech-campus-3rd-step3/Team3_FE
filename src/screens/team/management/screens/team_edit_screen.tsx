@@ -10,9 +10,10 @@ import {
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
-import { useTeam } from '@/src/hooks/queries';
+import { useTeam, useUpdateTeamMutation } from '@/src/hooks/queries';
 import { colors } from '@/src/theme';
-import type { SkillLevel, TeamType } from '@/src/types/team';
+import type { SkillLevel, TeamType, UpdateTeamRequest } from '@/src/types/team';
+import { getSkillLevelDisplay, getTeamTypeDisplay } from '@/src/types/team';
 
 import ActionSection from '../components/sections/action_section';
 import FormSection from '../components/sections/form_section';
@@ -33,14 +34,15 @@ export default function TeamEditScreen({ teamId }: TeamEditScreenProps) {
 
   const numericTeamId = Number(teamId);
   const { data: team, isLoading, error, refetch } = useTeam(numericTeamId);
+  const updateTeamMutation = useUpdateTeamMutation();
 
   useEffect(() => {
     if (team) {
       setFormData({
         name: team.name || '',
         description: team.description || '',
-        skillLevel: (team.skillLevel as SkillLevel) || '아마추어',
-        teamType: (team.teamType as TeamType) || '중앙동아리',
+        skillLevel: getSkillLevelDisplay(team.skillLevel) || '아마추어',
+        teamType: getTeamTypeDisplay(team.teamType) || '중앙동아리',
       });
     }
   }, [team]);
@@ -49,7 +51,7 @@ export default function TeamEditScreen({ teamId }: TeamEditScreenProps) {
     await refetch();
   };
 
-  if (isLoading) {
+  if (isLoading || updateTeamMutation.isPending) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.grass[500]} />
@@ -89,7 +91,28 @@ export default function TeamEditScreen({ teamId }: TeamEditScreenProps) {
       {
         text: '수정',
         onPress: () => {
-          Alert.alert('알림', '팀 정보 수정 기능은 아직 구현 중입니다.');
+          const updateData: UpdateTeamRequest = {
+            name: formData.name,
+            description: formData.description,
+            skillLevel: formData.skillLevel,
+            teamType: formData.teamType,
+          };
+
+          updateTeamMutation.mutate(
+            { teamId: numericTeamId, data: updateData },
+            {
+              onSuccess: () => {
+                Alert.alert('성공', '팀 정보가 성공적으로 수정되었습니다.');
+              },
+              onError: error => {
+                console.error('팀 수정 실패:', error);
+                Alert.alert(
+                  '수정 실패',
+                  '팀 정보 수정 중 오류가 발생했습니다. 다시 시도해주세요.'
+                );
+              },
+            }
+          );
         },
       },
     ]);
@@ -108,7 +131,10 @@ export default function TeamEditScreen({ teamId }: TeamEditScreenProps) {
         <View style={styles.contentContainer}>
           <InfoSection />
           <FormSection formData={formData} updateFormData={updateFormData} />
-          <ActionSection onSave={handleSave} />
+          <ActionSection
+            onSave={handleSave}
+            isLoading={updateTeamMutation.isPending}
+          />
         </View>
       </ScrollView>
     </View>

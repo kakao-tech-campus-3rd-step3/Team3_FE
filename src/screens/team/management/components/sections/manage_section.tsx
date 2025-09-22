@@ -3,6 +3,10 @@ import { router } from 'expo-router';
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
+import {
+  getTeamManagementEditUrl,
+  getTeamManagementMembersUrl,
+} from '@/src/constants/routes';
 import { colors } from '@/src/theme';
 import type { JoinRequest } from '@/src/types/team';
 
@@ -13,6 +17,7 @@ interface ManageSectionProps {
   joinRequests: JoinRequest[];
   onShowJoinRequestsModal: () => void;
   onDeleteTeam: () => void;
+  isDeleting?: boolean;
 }
 
 export default function ManageSection({
@@ -20,6 +25,7 @@ export default function ManageSection({
   joinRequests,
   onShowJoinRequestsModal,
   onDeleteTeam,
+  isDeleting = false,
 }: ManageSectionProps) {
   return (
     <View style={styles.manageSection}>
@@ -51,7 +57,9 @@ export default function ManageSection({
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={() => router.push(`/team/management/${teamId}/edit`)}
+          onPress={() =>
+            router.push(getTeamManagementEditUrl(teamId.toString()))
+          }
         >
           <Ionicons
             name="settings-outline"
@@ -63,15 +71,23 @@ export default function ManageSection({
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={() => router.push(`/team/management/${teamId}/members`)}
+          onPress={() =>
+            router.push(getTeamManagementMembersUrl(teamId.toString()))
+          }
         >
           <Ionicons name="people-outline" size={20} color={colors.gray[700]} />
           <Text style={styles.secondaryButtonText}>팀원 관리</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.dangerButton} onPress={onDeleteTeam}>
+        <TouchableOpacity
+          style={[styles.dangerButton, isDeleting && styles.disabledButton]}
+          onPress={onDeleteTeam}
+          disabled={isDeleting}
+        >
           <Ionicons name="trash-outline" size={20} color={colors.white} />
-          <Text style={styles.dangerButtonText}>팀 삭제</Text>
+          <Text style={styles.dangerButtonText}>
+            {isDeleting ? '삭제 중...' : '팀 삭제'}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

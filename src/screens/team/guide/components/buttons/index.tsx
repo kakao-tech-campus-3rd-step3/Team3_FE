@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { memo } from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
 
+import { ROUTES } from '@/src/constants/routes';
 import { colors } from '@/src/theme';
 
 import { styles } from '../../team_guide_styles';
@@ -14,7 +15,7 @@ export default memo(function Buttons() {
     <View style={styles.buttonContainer}>
       <TouchableOpacity
         style={styles.joinButton}
-        onPress={() => router.push('/team/join-university')}
+        onPress={() => router.push(ROUTES.TEAM_JOIN_UNIVERSITY)}
       >
         <Ionicons name="people-outline" size={24} color={colors.blue[500]} />
         <Text style={styles.joinButtonText}>팀 참여하기</Text>
@@ -22,7 +23,7 @@ export default memo(function Buttons() {
 
       <TouchableOpacity
         style={styles.createButton}
-        onPress={() => router.push('/team/creation')}
+        onPress={() => router.push(ROUTES.TEAM_CREATION)}
       >
         <Ionicons
           name="add-circle-outline"

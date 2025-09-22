@@ -11,10 +11,16 @@ import {
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { ROUTES } from '@/src/constants/routes';
 import { useTeamsByUniversity } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import type { TeamListItem } from '@/src/types';
-import { SkillLevel, TeamType } from '@/src/types/team';
+import {
+  SkillLevel,
+  TeamType,
+  getSkillLevelCode,
+  getTeamTypeCode,
+} from '@/src/types/team';
 
 import FilterModal from './components/filter_modal';
 import JoinConfirmationModal from './components/join_confirmation_modal';
@@ -42,25 +48,30 @@ export default function UniversityTeamListScreen() {
   const joinModalAnim = useState(new Animated.Value(0))[0];
 
   const {
-    data: teams = [],
+    data: teamListResponse,
     isLoading: loading,
     error,
     refetch,
   } = useTeamsByUniversity(university || '');
 
+  const teams = useMemo(
+    () => teamListResponse?.content || [],
+    [teamListResponse?.content]
+  );
+
   const filteredTeams = useMemo(() => {
     let filtered = [...teams];
 
     if (filterOptions.skillLevel.length > 0) {
+      const skillLevelCodes = filterOptions.skillLevel.map(getSkillLevelCode);
       filtered = filtered.filter(team =>
-        filterOptions.skillLevel.includes(team.skillLevel)
+        skillLevelCodes.includes(team.skillLevel)
       );
     }
 
     if (filterOptions.teamType.length > 0) {
-      filtered = filtered.filter(team =>
-        filterOptions.teamType.includes(team.teamType)
-      );
+      const teamTypeCodes = filterOptions.teamType.map(getTeamTypeCode);
+      filtered = filtered.filter(team => teamTypeCodes.includes(team.teamType));
     }
 
     filtered = filtered.filter(
@@ -127,7 +138,7 @@ export default function UniversityTeamListScreen() {
             {
               text: '확인',
               onPress: () => {
-                router.push('/(tabs)');
+                router.push(ROUTES.HOME_TABS);
               },
             },
           ]

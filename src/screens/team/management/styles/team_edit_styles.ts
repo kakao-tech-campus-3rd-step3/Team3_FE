@@ -210,6 +210,10 @@ export const styles = StyleSheet.create({
     borderRadius: spacing.spacing2,
     alignItems: 'center',
   },
+  disabledButton: {
+    backgroundColor: colors.gray[400],
+    opacity: 0.6,
+  },
   saveButtonDisabled: {
     backgroundColor: colors.gray[400],
   },
