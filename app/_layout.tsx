@@ -7,6 +7,7 @@ import ErrorBoundary from 'react-native-error-boundary';
 import 'react-native-reanimated';
 
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { AuthProvider } from '@/src/contexts/auth_context';
 import { queryClient } from '@/src/lib/query_client';
 
 function AppContent() {
@@ -34,7 +35,9 @@ export default function RootLayout() {
   return (
     <ErrorBoundary FallbackComponent={GlobalErrorFallback}>
       <QueryClientProvider client={queryClient}>
-        <AppContent />
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
