@@ -1,5 +1,7 @@
 import { router } from 'expo-router';
+import { Linking } from 'react-native';
 
+import { EXTERNAL_LINKS } from '@/src/constants/external_links';
 import { ROUTES } from '@/src/constants/routes';
 import { theme } from '@/src/theme';
 import type { SettingItem } from '@/src/types';
@@ -15,13 +17,13 @@ export const defaultSettingsItems: SettingItem[] = [
   {
     key: 'privacy-policy',
     label: '개인정보 처리방침',
-    onPress: () => router.push(ROUTES.PRIVACY_POLICY),
+    onPress: () => Linking.openURL(EXTERNAL_LINKS.PRIVACY_POLICY),
     showChevron: true,
   },
   {
     key: 'terms-of-service',
     label: '서비스 이용약관',
-    onPress: () => router.push(ROUTES.TERMS_OF_SERVICE),
+    onPress: () => Linking.openURL(EXTERNAL_LINKS.TERMS_OF_SERVICE),
     showChevron: true,
   },
   {
