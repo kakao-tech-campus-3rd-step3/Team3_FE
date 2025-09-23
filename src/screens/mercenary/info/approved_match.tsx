@@ -1,14 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import React from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 
 import { Card } from '@/src/components/card/card';
 import { colors } from '@/src/theme/colors';
@@ -48,17 +41,18 @@ export default function ApprovedDetailScreen() {
     },
   };
 
-  const handleStartMatch = () => {
-    Alert.alert('매치 시작', '매치를 시작하시겠습니까?', [
-      { text: '취소', style: 'cancel' },
-      {
-        text: '시작',
-        onPress: () => {
-          router.push(`/mercenary/match-info/${id}`);
-        },
-      },
-    ]);
-  };
+  // TODO: 매치 시작 기능 구현 예정
+  // const handleStartMatch = () => {
+  //   Alert.alert('매치 시작', '매치를 시작하시겠습니까?', [
+  //     { text: '취소', style: 'cancel' },
+  //     {
+  //       text: '시작',
+  //       onPress: () => {
+  //         router.push(`/mercenary/match-info/${id}`);
+  //       },
+  //     },
+  //   ]);
+  // };
 
   const handleContactTeam = () => {
     Alert.alert(

@@ -1,14 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 
 import { Card } from '@/src/components/card/card';
 import { colors } from '@/src/theme/colors';
@@ -97,18 +90,19 @@ export default function MercenaryMatchInfoScreen() {
     }
   };
 
-  const handleStartMatch = () => {
-    Alert.alert('매치 시작', '매치를 시작하시겠습니까?', [
-      { text: '취소', style: 'cancel' },
-      {
-        text: '시작',
-        onPress: () => {
-          // 매치 상태를 in_progress로 변경
-          Alert.alert('매치 시작', '매치가 시작되었습니다!');
-        },
-      },
-    ]);
-  };
+  // TODO: 매치 시작 기능 구현 예정
+  // const handleStartMatch = () => {
+  //   Alert.alert('매치 시작', '매치를 시작하시겠습니까?', [
+  //     { text: '취소', style: 'cancel' },
+  //     {
+  //       text: '시작',
+  //       onPress: () => {
+  //         // 매치 상태를 in_progress로 변경
+  //         Alert.alert('매치 시작', '매치가 시작되었습니다!');
+  //       },
+  //     },
+  //   ]);
+  // };
 
   const handleCompleteMatch = () => {
     Alert.alert('매치 완료', '매치를 완료하시겠습니까?', [

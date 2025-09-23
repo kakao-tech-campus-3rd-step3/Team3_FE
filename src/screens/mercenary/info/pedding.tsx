@@ -1,14 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 
 import { Card } from '@/src/components/card/card';
 import { colors } from '@/src/theme/colors';
