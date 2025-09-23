@@ -1,3 +1,8 @@
+export const AUTH_API = {
+  LOGIN: '/auth/login',
+  LOGOUT: '/auth/logout',
+};
+
 export const PROFILE_API = {
   GET_PROFILE: '/profile',
 };
