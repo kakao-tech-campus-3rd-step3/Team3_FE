@@ -46,6 +46,9 @@ export default function MercenaryMainScreen() {
     },
   ]);
 
+  // TODO: pendingApplications 사용 예정
+  console.log('Pending applications:', pendingApplications);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
