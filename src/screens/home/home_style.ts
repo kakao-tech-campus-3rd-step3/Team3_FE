@@ -46,25 +46,46 @@ export default StyleSheet.create({
     paddingBottom: theme.spacing.spacing8,
   },
 
-  greetingSection: {
-    backgroundColor: theme.colors.background.main,
+  // 새로운 섹션 스타일들
+  mainSection: {
+    marginHorizontal: theme.spacing.spacing4,
+    marginBottom: theme.spacing.spacing6,
+  },
+  matchSection: {
+    marginHorizontal: theme.spacing.spacing4,
+    marginBottom: theme.spacing.spacing6,
+  },
+  serviceSection: {
     marginHorizontal: theme.spacing.spacing4,
     marginBottom: theme.spacing.spacing4,
-    borderRadius: theme.spacing.spacing4,
-    padding: theme.spacing.spacing6,
+    gap: theme.spacing.spacing4,
+  },
+
+  greetingSection: {
+    backgroundColor: theme.colors.background.main,
+    borderRadius: theme.spacing.spacing5,
+    padding: theme.spacing.spacing7,
     alignItems: 'center',
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
   greetingText: {
     fontSize: theme.typography.fontSize.font4,
     color: theme.colors.text.sub,
-    marginBottom: theme.spacing.spacing2,
+    marginBottom: theme.spacing.spacing4,
+    fontWeight: theme.typography.fontWeight.medium,
   },
   greetingSubtext: {
-    fontSize: theme.typography.fontSize.font6,
+    fontSize: theme.typography.fontSize.font5,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.main,
     textAlign: 'center',
-    marginBottom: theme.spacing.spacing6,
   },
   highlightText: {
     color: theme.colors.grass[300],
@@ -142,10 +163,16 @@ export default StyleSheet.create({
 
   envelopeSection: {
     backgroundColor: theme.colors.background.main,
-    marginHorizontal: theme.spacing.spacing4,
-    marginBottom: theme.spacing.spacing4,
-    borderRadius: theme.spacing.spacing4,
-    padding: theme.spacing.spacing4,
+    borderRadius: theme.spacing.spacing5,
+    padding: theme.spacing.spacing6,
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
   envelopeHeader: {
     flexDirection: 'row',
@@ -168,8 +195,17 @@ export default StyleSheet.create({
   },
 
   benefitsSection: {
-    marginHorizontal: theme.spacing.spacing4,
-    marginBottom: theme.spacing.spacing4,
+    backgroundColor: theme.colors.background.main,
+    borderRadius: theme.spacing.spacing5,
+    padding: theme.spacing.spacing6,
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
   benefitsHeader: {
     flexDirection: 'row',
@@ -186,13 +222,18 @@ export default StyleSheet.create({
   benefitsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: theme.spacing.spacing3,
   },
   benefitCard: {
     flex: 1,
-    marginHorizontal: theme.spacing.spacing1,
-    padding: theme.spacing.spacing4,
-    borderRadius: theme.spacing.spacing3,
+    padding: theme.spacing.spacing5,
+    borderRadius: theme.spacing.spacing4,
     alignItems: 'center',
+    backgroundColor: theme.colors.background.sub,
+    borderWidth: 1,
+    borderColor: theme.colors.gray[200],
+    minHeight: 120,
+    justifyContent: 'center',
   },
   benefitTitle: {
     fontSize: theme.typography.fontSize.font3,
@@ -274,11 +315,12 @@ export default StyleSheet.create({
   },
 
   headerDivider: {
-    height: 5,
+    height: 1,
     backgroundColor: theme.colors.gray[200],
-    marginTop: theme.spacing.spacing1,
-    marginBottom: theme.spacing.spacing4,
-    marginHorizontal: -theme.spacing.spacing4,
+    marginTop: theme.spacing.spacing8,
+    marginBottom: theme.spacing.spacing6,
+    marginHorizontal: theme.spacing.spacing4,
+    borderRadius: theme.spacing.spacing1,
   },
 
   weatherSection: {

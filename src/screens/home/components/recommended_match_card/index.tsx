@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
 
-import { useRecommendedMatch, useHome } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
+import { RecommendedMatch } from '@/src/types/home';
 
 import { styles } from './styles';
 
@@ -12,22 +12,56 @@ interface SafeMatchPreviewProps {
 
 const CARD_WIDTH = 150 + theme.spacing.spacing2;
 
+// 임시 추천 매치 데이터
+const mockRecommendedMatches: RecommendedMatch[] = [
+  {
+    id: 1,
+    location: '서울대학교 운동장',
+    time: '오후 2시',
+    currentPlayers: 8,
+    totalPlayers: 10,
+    level: '아마추어',
+    popularity: '인기',
+  },
+  {
+    id: 2,
+    location: '연세대학교 체육관',
+    time: '오후 4시',
+    currentPlayers: 6,
+    totalPlayers: 8,
+    level: '세미프로',
+    popularity: '보통',
+  },
+  {
+    id: 3,
+    location: '고려대학교 운동장',
+    time: '오후 6시',
+    currentPlayers: 9,
+    totalPlayers: 10,
+    level: '아마추어',
+    popularity: '인기',
+  },
+  {
+    id: 4,
+    location: '홍익대학교 체육관',
+    time: '오후 8시',
+    currentPlayers: 4,
+    totalPlayers: 8,
+    level: '프로',
+    popularity: '보통',
+  },
+];
+
 export default function SafeMatchPreview({
   onMatchPress,
 }: SafeMatchPreviewProps) {
-  const { data: recommendedData } = useRecommendedMatch();
-  const { data: homeData, isLoading, error } = useHome();
-
   const [modalVisible, setModalVisible] = useState(false);
   const flatListRef = useRef<FlatList>(null);
   const scrollOffset = useRef(0);
   const userInteracting = useRef(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const matches = useMemo(
-    () => recommendedData?.recommendedMatches || [],
-    [recommendedData?.recommendedMatches]
-  );
+  const matches = useMemo(() => mockRecommendedMatches, []);
 
   const extendedMatches = useMemo(
     () => (matches.length > 1 ? [...matches, ...matches, ...matches] : matches),
@@ -134,9 +168,6 @@ export default function SafeMatchPreview({
       </View>
     </TouchableOpacity>
   );
-
-  if (error) throw error;
-  if (isLoading || !homeData) return null;
 
   return (
     <View style={styles.container} pointerEvents="box-none">
