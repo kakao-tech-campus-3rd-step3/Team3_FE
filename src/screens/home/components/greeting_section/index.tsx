@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import { Text, View } from 'react-native';
 
-import { theme } from '@/src/theme';
 import { HomeData } from '@/src/types/home';
 import { UserProfile } from '@/src/types/profile';
 
