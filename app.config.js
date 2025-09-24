@@ -15,7 +15,10 @@ export default {
       resizeMode: 'contain',
       backgroundColor: '#ffffff',
     },
-    ios: { supportsTablet: true },
+    ios: {
+      supportsTablet: true,
+      bundleIdentifier: 'com.cheogo.shootdoori',
+    },
     android: {
       package: 'com.cheogo.shootdoori',
       adaptiveIcon: {
