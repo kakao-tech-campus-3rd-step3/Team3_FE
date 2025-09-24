@@ -24,10 +24,10 @@ const mockHomeData: HomeData = {
     hasMatch: true,
     matchInfo: {
       time: '오후 2시',
-      location: '서울대학교 운동장',
+      location: '강원대학교 운동장',
       type: 'team_match',
-      opponent: '연세대학교',
-      teamName: '서울대학교 축구팀',
+      opponent: '춘천교대',
+      teamName: '강원대학교 축구팀',
     },
   },
 };
@@ -36,7 +36,7 @@ const mockUserInfo: UserProfile = {
   id: '1',
   name: '김축구',
   email: 'kim@example.com',
-  university: '서울대학교',
+  university: '강원대학교',
   major: '컴퓨터공학과',
   studentId: '2020123456',
   joinDate: '2024-01-01',

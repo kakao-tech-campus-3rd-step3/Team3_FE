@@ -136,4 +136,48 @@ export const styles = StyleSheet.create({
   separator: {
     height: theme.spacing.spacing3,
   },
+
+  // 빈 상태 스타일
+  emptyStateContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: theme.spacing.spacing6,
+    paddingHorizontal: theme.spacing.spacing4,
+    minHeight: 120,
+  },
+  emptyStateContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyStateEmoji: {
+    fontSize: 32,
+    marginBottom: theme.spacing.spacing3,
+  },
+  emptyStateTitle: {
+    fontSize: theme.typography.fontSize.font4,
+    fontWeight: theme.typography.fontWeight.semibold,
+    color: theme.colors.brand.main,
+    marginBottom: theme.spacing.spacing2,
+    textAlign: 'center',
+  },
+  emptyStateSubtitle: {
+    fontSize: theme.typography.fontSize.font2,
+    color: theme.colors.text.sub,
+    textAlign: 'center',
+    lineHeight: 18,
+    opacity: 0.8,
+  },
+  emptyStateFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.spacing1,
+    marginTop: theme.spacing.spacing4,
+  },
+  emptyStateDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: theme.colors.gray[300],
+    opacity: 0.5,
+  },
 });
