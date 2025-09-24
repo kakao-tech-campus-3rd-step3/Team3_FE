@@ -8,6 +8,10 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
+  Keyboard,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -43,54 +47,62 @@ function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.title}>비밀번호 찾기</Text>
-          <Text style={styles.subtitle}>
-            가입하신 이메일 주소를 입력해주세요.{'\n'}
-            비밀번호 재설정 링크를 보내드립니다.
-          </Text>
-        </View>
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.content}>
+            <View style={styles.header}>
+              <Text style={styles.title}>비밀번호 찾기</Text>
+              <Text style={styles.subtitle}>
+                가입하신 이메일 주소를 입력해주세요.{'\n'}
+                비밀번호 재설정 링크를 보내드립니다.
+              </Text>
+            </View>
 
-        <View style={styles.formContainer}>
-          <View style={styles.inputGroup}>
-            <Ionicons
-              name="mail-outline"
-              size={20}
-              color={theme.colors.brand.main}
-              style={styles.inputIcon}
-            />
-            <TextInput
-              style={styles.textInput}
-              placeholder="이메일을 입력하세요"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
+            <View style={styles.formContainer}>
+              <View style={styles.inputGroup}>
+                <Ionicons
+                  name="mail-outline"
+                  size={20}
+                  color={theme.colors.brand.main}
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="이메일을 입력하세요"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
+
+              <TouchableOpacity
+                style={[
+                  styles.submitButton,
+                  isLoading && styles.submitButtonDisabled,
+                ]}
+                onPress={handleSubmit}
+                disabled={isLoading}
+              >
+                <Text style={styles.submitButtonText}>
+                  {isLoading ? '발송 중...' : '비밀번호 재설정 링크 발송'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.backSection}>
+              <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+                <Text style={styles.backText}>로그인으로 돌아가기</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-
-          <TouchableOpacity
-            style={[
-              styles.submitButton,
-              isLoading && styles.submitButtonDisabled,
-            ]}
-            onPress={handleSubmit}
-            disabled={isLoading}
-          >
-            <Text style={styles.submitButtonText}>
-              {isLoading ? '발송 중...' : '비밀번호 재설정 링크 발송'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.backSection}>
-          <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
-            <Text style={styles.backText}>로그인으로 돌아가기</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -101,6 +113,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background.main,
+  },
+  keyboardAvoidingView: {
+    flex: 1,
   },
   content: {
     flex: 1,
