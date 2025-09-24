@@ -1,6 +1,6 @@
 import { AUTH_API } from '@/src/constants/endpoints';
 import { apiClient } from '@/src/lib/api_client';
-import { LoginResponse } from '@/src/types';
+import { LoginResponse, RegisterRequest, RegisterResponse } from '@/src/types';
 
 export const authApi = {
   login: (email: string, password: string) =>
@@ -8,4 +8,6 @@ export const authApi = {
       email,
       password,
     }),
+  register: (registerData: RegisterRequest) =>
+    apiClient.post<RegisterResponse>(AUTH_API.REGISTER, registerData),
 };
