@@ -152,4 +152,19 @@ export default StyleSheet.create({
     justifyContent: 'center',
     gap: theme.spacing.spacing2,
   },
+  tempButton: {
+    position: 'absolute',
+    top: theme.spacing.spacing4,
+    right: theme.spacing.spacing4,
+    backgroundColor: theme.colors.brand.main,
+    borderRadius: theme.spacing.spacing2,
+    paddingVertical: theme.spacing.spacing2,
+    paddingHorizontal: theme.spacing.spacing3,
+    zIndex: 1,
+  },
+  tempButtonText: {
+    color: theme.colors.white,
+    fontSize: theme.typography.text.bodySmall.fontSize,
+    fontWeight: theme.typography.fontWeight.medium,
+  },
 });

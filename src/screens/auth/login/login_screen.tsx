@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAuth } from '@/src/contexts/auth_context';
 import { useLoginMutation } from '@/src/hooks/queries';
 import type { LoginRequest } from '@/src/types';
 
@@ -24,6 +25,7 @@ interface LoginScreenProps {
 
 function LoginScreen({ onSwitchToRegister }: LoginScreenProps) {
   const loginMutation = useLoginMutation();
+  const { login } = useAuth();
   const [passwordError, setPasswordError] = useState<string>('');
 
   const handleSubmit = async (credentials: LoginRequest) => {
@@ -59,6 +61,13 @@ function LoginScreen({ onSwitchToRegister }: LoginScreenProps) {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.content}>
+            <TouchableOpacity
+              style={styles.tempButton}
+              onPress={() => login('temp-token')}
+            >
+              <Text style={styles.tempButtonText}>임시 로그인</Text>
+            </TouchableOpacity>
+
             <View style={styles.header}>
               <Text style={styles.logoText}>ShootDoori</Text>
               <Text style={styles.tagline}>대학교 축구 연결 서비스</Text>
