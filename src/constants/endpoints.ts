@@ -1,6 +1,7 @@
 export const AUTH_API = {
   LOGIN: '/auth/login',
   LOGOUT: '/auth/logout',
+  REGISTER: '/api/auth/register',
 };
 
 export const PROFILE_API = {
