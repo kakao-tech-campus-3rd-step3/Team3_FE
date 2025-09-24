@@ -13,6 +13,9 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background.main,
   },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   content: {
     flex: 1,
     paddingHorizontal: theme.spacing.spacing8,
@@ -22,6 +25,7 @@ export default StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: theme.spacing.spacing15,
+    marginTop: -theme.spacing.spacing20,
   },
   logoText: {
     fontSize: theme.typography.text.auth.logo.fontSize,
@@ -122,7 +126,10 @@ export default StyleSheet.create({
     marginLeft: theme.spacing.spacing1,
   },
   signupSection: {
-    marginTop: theme.spacing.spacing10,
+    position: 'absolute',
+    bottom: theme.spacing.spacing10,
+    left: 0,
+    right: 0,
     alignItems: 'center',
     paddingHorizontal: theme.spacing.spacing5,
   },
