@@ -10,7 +10,6 @@ import { styles } from './mercenary_request_style';
 
 export default function MercenaryApplyScreen() {
   const [selectedPosition, setSelectedPosition] = useState<string>('');
-  const [message, setMessage] = useState('');
 
   const matchInfo = {
     teamName: '한림대 유나이티드',
