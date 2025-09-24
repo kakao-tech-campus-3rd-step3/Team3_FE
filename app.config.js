@@ -18,6 +18,9 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.cheogo.shootdoori',
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
+      },
     },
     android: {
       package: 'com.cheogo.shootdoori',

@@ -72,9 +72,11 @@ jobs:
       - name: EAS Build 실행
         run: |
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            eas build --platform all --profile production --non-interactive
+            # iOS 추가 시: eas build --platform all --profile production --non-interactive
+            eas build --platform android --profile production --non-interactive
           else
-            eas build --platform all --profile preview --non-interactive
+            # iOS 추가 시: eas build --platform all --profile preview --non-interactive
+            eas build --platform android --profile preview --non-interactive
           fi
 
       - name: 빌드 후 작업 실행
