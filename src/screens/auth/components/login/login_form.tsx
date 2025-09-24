@@ -47,7 +47,7 @@ function LoginForm({
           name="school-outline"
           size={20}
           color={theme.colors.brand.main}
-          style={styles.inputIcon}
+          style={styles.emailIcon}
         />
         <TextInput
           style={[styles.textInput, errors.email && styles.inputError]}
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.input,
-    paddingVertical: theme.spacing.spacing4,
+    paddingVertical: theme.spacing.spacing2,
     marginBottom: theme.spacing.spacing3,
     width: '100%',
     height: theme.spacing.spacing14,
@@ -146,6 +146,12 @@ const styles = StyleSheet.create({
     height: theme.spacing.spacing5,
     width: theme.spacing.spacing5,
   },
+  emailIcon: {
+    marginRight: theme.spacing.spacing2,
+    alignSelf: 'center',
+    height: theme.spacing.spacing5,
+    width: theme.spacing.spacing5,
+  },
   textInput: {
     flex: 1,
     fontSize: theme.typography.text.body.fontSize,
@@ -153,7 +159,6 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     textAlignVertical: 'center',
     includeFontPadding: false,
-    lineHeight: theme.typography.text.body.lineHeight,
     height: theme.spacing.spacing6,
     paddingTop: 0,
     paddingBottom: 0,
@@ -164,6 +169,7 @@ const styles = StyleSheet.create({
   passwordToggle: {
     padding: theme.spacing.spacing1,
     opacity: 0.7,
+    marginTop: -theme.spacing.spacing1,
   },
   forgotPassword: {
     alignSelf: 'flex-end',
@@ -194,7 +200,6 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: theme.typography.text.caption.fontSize,
     color: theme.colors.error,
-    marginTop: theme.spacing.spacing1,
     marginLeft: theme.spacing.spacing1,
   },
 });
