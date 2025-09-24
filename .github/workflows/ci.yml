@@ -41,7 +41,7 @@ jobs:
         run: npx tsc --noEmit
 
       - name: Expo Doctor 체크
-        run: npx expo doctor
+        run: npx expo-doctor
 
       - name: 의존성 호환성 검사
         run: npm audit --audit-level=moderate
