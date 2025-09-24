@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
 
