@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
 
-import { useRecommendedMatch, useHome } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
+import { RecommendedMatch } from '@/src/types/home';
 
 import { styles } from './styles';
 
@@ -12,22 +12,19 @@ interface SafeMatchPreviewProps {
 
 const CARD_WIDTH = 150 + theme.spacing.spacing2;
 
+// 추천 매치 데이터 (빈 배열로 설정하여 빈 상태 테스트)
+const mockRecommendedMatches: RecommendedMatch[] = [];
+
 export default function SafeMatchPreview({
   onMatchPress,
 }: SafeMatchPreviewProps) {
-  const { data: recommendedData } = useRecommendedMatch();
-  const { data: homeData, isLoading, error } = useHome();
-
   const [modalVisible, setModalVisible] = useState(false);
   const flatListRef = useRef<FlatList>(null);
   const scrollOffset = useRef(0);
   const userInteracting = useRef(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const matches = useMemo(
-    () => recommendedData?.recommendedMatches || [],
-    [recommendedData?.recommendedMatches]
-  );
+  const matches = useMemo(() => mockRecommendedMatches, []);
 
   const extendedMatches = useMemo(
     () => (matches.length > 1 ? [...matches, ...matches, ...matches] : matches),
@@ -135,8 +132,22 @@ export default function SafeMatchPreview({
     </TouchableOpacity>
   );
 
-  if (error) throw error;
-  if (isLoading || !homeData) return null;
+  // 빈 상태 렌더링
+  const renderEmptyState = () => (
+    <View style={styles.emptyStateContainer}>
+      <View style={styles.emptyStateContent}>
+        <Text style={styles.emptyStateTitle}>추천 매치가 없어요</Text>
+        <Text style={styles.emptyStateSubtitle}>
+          새로운 매치가 등록되면{'\n'}알려드릴게요!
+        </Text>
+      </View>
+      <View style={styles.emptyStateFooter}>
+        <View style={styles.emptyStateDot} />
+        <View style={styles.emptyStateDot} />
+        <View style={styles.emptyStateDot} />
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.container} pointerEvents="box-none">
@@ -153,45 +164,51 @@ export default function SafeMatchPreview({
         )}
       </View>
 
-      <FlatList
-        ref={flatListRef}
-        data={extendedMatches}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
-        renderItem={({ item, index }) => renderPreviewCard(item, index)}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        snapToInterval={CARD_WIDTH}
-        decelerationRate="fast"
-        contentContainerStyle={styles.carouselContent}
-        onScrollBeginDrag={() => (userInteracting.current = true)}
-        onScrollEndDrag={() => (userInteracting.current = false)}
-      />
-
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent={false}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>추천 매치 전체</Text>
-            <TouchableOpacity
-              onPress={() => setModalVisible(false)}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.modalClose}>닫기</Text>
-            </TouchableOpacity>
-          </View>
+      {matches.length === 0 ? (
+        renderEmptyState()
+      ) : (
+        <>
           <FlatList
-            data={matches}
-            keyExtractor={item => String(item.id)}
-            renderItem={renderFullItem}
-            contentContainerStyle={styles.flatListContent}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            ref={flatListRef}
+            data={extendedMatches}
+            keyExtractor={(item, index) => `${item.id}-${index}`}
+            renderItem={({ item, index }) => renderPreviewCard(item, index)}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={CARD_WIDTH}
+            decelerationRate="fast"
+            contentContainerStyle={styles.carouselContent}
+            onScrollBeginDrag={() => (userInteracting.current = true)}
+            onScrollEndDrag={() => (userInteracting.current = false)}
           />
-        </View>
-      </Modal>
+
+          <Modal
+            visible={modalVisible}
+            animationType="slide"
+            transparent={false}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>추천 매치 전체</Text>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(false)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.modalClose}>닫기</Text>
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                data={matches}
+                keyExtractor={item => String(item.id)}
+                renderItem={renderFullItem}
+                contentContainerStyle={styles.flatListContent}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
+              />
+            </View>
+          </Modal>
+        </>
+      )}
     </View>
   );
 }
