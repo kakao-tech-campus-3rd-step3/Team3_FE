@@ -59,91 +59,95 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
       keyboardVerticalOffset={UI_CONSTANTS.KEYBOARD_VERTICAL_OFFSET}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          automaticallyAdjustKeyboardInsets={true}
-        >
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>이름</Text>
-            <TextInput
-              style={[
-                styles.input,
-                (focusedField === 'name' || data.name) && styles.inputFilled,
-                errors.name && styles.inputError,
-              ]}
-              placeholder="이름을 입력하세요"
-              value={data.name}
-              onChangeText={text => handleFieldChange('name', text)}
-              onFocus={() => setFocusedField('name')}
-              onBlur={() => setFocusedField(null)}
-            />
-            {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
-          </View>
+        <View style={styles.container}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            automaticallyAdjustKeyboardInsets={true}
+          >
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>이름</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  (focusedField === 'name' || data.name) && styles.inputFilled,
+                  errors.name && styles.inputError,
+                ]}
+                placeholder="이름을 입력하세요"
+                value={data.name}
+                onChangeText={text => handleFieldChange('name', text)}
+                onFocus={() => setFocusedField('name')}
+                onBlur={() => setFocusedField(null)}
+              />
+              {errors.name && (
+                <Text style={styles.errorText}>{errors.name}</Text>
+              )}
+            </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>카카오 아이디</Text>
-            <TextInput
-              style={[
-                styles.input,
-                (focusedField === 'kakaoId' || data.kakaoId) &&
-                  styles.inputFilled,
-                errors.kakaoId && styles.inputError,
-              ]}
-              placeholder="카카오 아이디를 입력하세요"
-              value={data.kakaoId}
-              onChangeText={text => handleFieldChange('kakaoId', text)}
-              onFocus={() => setFocusedField('kakaoId')}
-              onBlur={() => setFocusedField(null)}
-            />
-            {errors.kakaoId && (
-              <Text style={styles.errorText}>{errors.kakaoId}</Text>
-            )}
-          </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>카카오 아이디</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  (focusedField === 'kakaoId' || data.kakaoId) &&
+                    styles.inputFilled,
+                  errors.kakaoId && styles.inputError,
+                ]}
+                placeholder="카카오 아이디를 입력하세요"
+                value={data.kakaoId}
+                onChangeText={text => handleFieldChange('kakaoId', text)}
+                onFocus={() => setFocusedField('kakaoId')}
+                onBlur={() => setFocusedField(null)}
+              />
+              {errors.kakaoId && (
+                <Text style={styles.errorText}>{errors.kakaoId}</Text>
+              )}
+            </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>학과</Text>
-            <TextInput
-              style={[
-                styles.input,
-                (focusedField === 'department' || data.department) &&
-                  styles.inputFilled,
-                errors.department && styles.inputError,
-              ]}
-              placeholder="학과를 입력하세요"
-              value={data.department}
-              onChangeText={text => handleFieldChange('department', text)}
-              onFocus={() => setFocusedField('department')}
-              onBlur={() => setFocusedField(null)}
-            />
-            {errors.department && (
-              <Text style={styles.errorText}>{errors.department}</Text>
-            )}
-          </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>학과</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  (focusedField === 'department' || data.department) &&
+                    styles.inputFilled,
+                  errors.department && styles.inputError,
+                ]}
+                placeholder="학과를 입력하세요"
+                value={data.department}
+                onChangeText={text => handleFieldChange('department', text)}
+                onFocus={() => setFocusedField('department')}
+                onBlur={() => setFocusedField(null)}
+              />
+              {errors.department && (
+                <Text style={styles.errorText}>{errors.department}</Text>
+              )}
+            </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>학번</Text>
-            <TextInput
-              style={[
-                styles.input,
-                (focusedField === 'studentYear' || data.studentYear) &&
-                  styles.inputFilled,
-                errors.studentYear && styles.inputError,
-              ]}
-              placeholder="예: 25 (2자리 숫자)"
-              value={data.studentYear}
-              onChangeText={text => handleFieldChange('studentYear', text)}
-              keyboardType="number-pad"
-              maxLength={2}
-              onFocus={() => setFocusedField('studentYear')}
-              onBlur={() => setFocusedField(null)}
-            />
-            {errors.studentYear && (
-              <Text style={styles.errorText}>{errors.studentYear}</Text>
-            )}
-          </View>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>학번</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  (focusedField === 'studentYear' || data.studentYear) &&
+                    styles.inputFilled,
+                  errors.studentYear && styles.inputError,
+                ]}
+                placeholder="예: 25 (2자리 숫자)"
+                value={data.studentYear}
+                onChangeText={text => handleFieldChange('studentYear', text)}
+                keyboardType="number-pad"
+                maxLength={2}
+                onFocus={() => setFocusedField('studentYear')}
+                onBlur={() => setFocusedField(null)}
+              />
+              {errors.studentYear && (
+                <Text style={styles.errorText}>{errors.studentYear}</Text>
+              )}
+            </View>
+          </ScrollView>
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.prevButton} onPress={handlePrev}>
@@ -161,7 +165,7 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
               <Text style={styles.nextButtonText}>다음</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
+        </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
@@ -174,6 +178,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background.main,
+  },
+  scrollView: {
+    flex: 1,
   },
   scrollContent: {
     paddingHorizontal: theme.spacing.spacing2,
@@ -213,8 +220,11 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 'auto',
-    marginBottom: theme.spacing.spacing8,
+    paddingHorizontal: theme.spacing.spacing2,
+    paddingVertical: theme.spacing.spacing4,
+    backgroundColor: theme.colors.background.main,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border.light,
     gap: theme.spacing.spacing4,
   },
   prevButton: {
