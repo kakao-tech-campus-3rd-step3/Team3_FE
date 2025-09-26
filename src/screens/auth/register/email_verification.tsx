@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 import { Dropdown } from '@/src/components/dropdown';
+import { UI_CONSTANTS } from '@/src/constants/ui';
 import { UNIVERSITIES } from '@/src/constants/universities';
 import {
   useVerifyEmailMutation,
@@ -38,8 +39,7 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
   const [isVerificationSent, setIsVerificationSent] = useState(false);
   const [verificationCode, setVerificationCode] = useState<string>('');
   const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
-  const { errors, validateField, validateAll } =
-    useRegisterValidation(emailValidationRules);
+  const { errors, validateField } = useRegisterValidation(emailValidationRules);
   const verifyEmailMutation = useVerifyEmailMutation();
   const sendVerificationMutation = useSendVerificationMutation();
   const verificationInputRef = useRef<TextInput>(null);
@@ -95,7 +95,7 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
     <KeyboardAvoidingView
       style={styles.keyboardAvoidingView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 50}
+      keyboardVerticalOffset={UI_CONSTANTS.KEYBOARD_VERTICAL_OFFSET}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
@@ -247,93 +247,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.spacing2,
     paddingBottom: theme.spacing.spacing20,
     minHeight: '100%',
-  },
-  dropdownButton: {
-    borderWidth: 1,
-    borderColor: theme.colors.border.input,
-    borderRadius: 8,
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    backgroundColor: theme.colors.background.input,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  dropdownText: {
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    flex: 1,
-  },
-  placeholderText: { color: theme.colors.text.light },
-  dropdownArrow: {
-    fontSize: theme.typography.fontSize.font3,
-    color: theme.colors.text.sub,
-    paddingBottom: theme.spacing.spacing2,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  dropdownList: {
-    backgroundColor: theme.colors.white,
-    borderRadius: 8,
-    maxHeight: 300,
-    width: '80%',
-    shadowColor: theme.colors.shadow.medium,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  dropdownItem: {
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  dropdownItemText: {
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-  },
-  emailContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.spacing2,
-  },
-  emailInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: theme.colors.border.input,
-    borderRadius: 8,
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    backgroundColor: theme.colors.background.input,
-  },
-  atSymbol: {
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    fontWeight: theme.typography.fontWeight.bold,
-  },
-  domainButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: theme.colors.border.input,
-    borderRadius: 8,
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    backgroundColor: theme.colors.background.input,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  domainText: {
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    flex: 1,
   },
   inputGroup: { marginBottom: theme.spacing.spacing6 },
   label: {
