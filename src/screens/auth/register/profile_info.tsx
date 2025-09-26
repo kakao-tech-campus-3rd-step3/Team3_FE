@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,35 +7,58 @@ import {
   StyleSheet,
 } from 'react-native';
 
-import { useRegisterStore } from '@/src/store/register_store';
+import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
+import {
+  useRegisterValidation,
+  profileValidationRules,
+} from '@/src/hooks/useRegisterValidation';
 import { theme } from '@/src/theme';
 
-export function Step2ProfileInfo() {
-  const { step2Data, setStep2Data, prevStep, nextStep } = useRegisterStore();
-  const [focusedField, setFocusedField] = React.useState<string | null>(null);
+interface Props {
+  data: RegisterFormData;
+  onChange: <K extends keyof RegisterFormData>(
+    key: K,
+    value: RegisterFormData[K]
+  ) => void;
+  handlePrev: () => void;
+  handleNext: () => void;
+}
+
+export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const { errors, validateField, hasErrors } = useRegisterValidation(
+    profileValidationRules
+  );
+
+  const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
+    onChange(field, value);
+    validateField(field, value);
+  };
+
+  const isFormValid =
+    data.name.trim().length >= 2 &&
+    data.kakaoId.trim().length >= 3 &&
+    data.department.trim().length > 0 &&
+    /^\d{2}$/.test(data.studentYear) &&
+    !hasErrors();
 
   return (
     <View style={styles.container}>
-      <View style={styles.progressContainer}>
-        <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: '66%' }]} />
-        </View>
-        <Text style={styles.progressText}>2/3</Text>
-      </View>
-
       <View style={styles.inputGroup}>
         <Text style={styles.label}>이름</Text>
         <TextInput
           style={[
             styles.input,
-            (focusedField === 'name' || step2Data.name) && styles.inputFocused,
+            (focusedField === 'name' || data.name) && styles.inputFilled,
+            errors.name && styles.inputError,
           ]}
           placeholder="이름을 입력하세요"
-          value={step2Data.name}
-          onChangeText={text => setStep2Data({ name: text })}
+          value={data.name}
+          onChangeText={text => handleFieldChange('name', text)}
           onFocus={() => setFocusedField('name')}
           onBlur={() => setFocusedField(null)}
         />
+        {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
       </View>
 
       <View style={styles.inputGroup}>
@@ -43,15 +66,18 @@ export function Step2ProfileInfo() {
         <TextInput
           style={[
             styles.input,
-            (focusedField === 'kakaoId' || step2Data.kakaoId) &&
-              styles.inputFocused,
+            (focusedField === 'kakaoId' || data.kakaoId) && styles.inputFilled,
+            errors.kakaoId && styles.inputError,
           ]}
           placeholder="카카오 아이디를 입력하세요"
-          value={step2Data.kakaoId}
-          onChangeText={text => setStep2Data({ kakaoId: text })}
+          value={data.kakaoId}
+          onChangeText={text => handleFieldChange('kakaoId', text)}
           onFocus={() => setFocusedField('kakaoId')}
           onBlur={() => setFocusedField(null)}
         />
+        {errors.kakaoId && (
+          <Text style={styles.errorText}>{errors.kakaoId}</Text>
+        )}
       </View>
 
       <View style={styles.inputGroup}>
@@ -59,15 +85,19 @@ export function Step2ProfileInfo() {
         <TextInput
           style={[
             styles.input,
-            (focusedField === 'department' || step2Data.department) &&
-              styles.inputFocused,
+            (focusedField === 'department' || data.department) &&
+              styles.inputFilled,
+            errors.department && styles.inputError,
           ]}
           placeholder="학과를 입력하세요"
-          value={step2Data.department}
-          onChangeText={text => setStep2Data({ department: text })}
+          value={data.department}
+          onChangeText={text => handleFieldChange('department', text)}
           onFocus={() => setFocusedField('department')}
           onBlur={() => setFocusedField(null)}
         />
+        {errors.department && (
+          <Text style={styles.errorText}>{errors.department}</Text>
+        )}
       </View>
 
       <View style={styles.inputGroup}>
@@ -75,40 +105,32 @@ export function Step2ProfileInfo() {
         <TextInput
           style={[
             styles.input,
-            (focusedField === 'studentYear' || step2Data.studentYear) &&
-              styles.inputFocused,
+            (focusedField === 'studentYear' || data.studentYear) &&
+              styles.inputFilled,
+            errors.studentYear && styles.inputError,
           ]}
           placeholder="예: 25 (2자리 숫자)"
-          value={step2Data.studentYear}
-          onChangeText={text => setStep2Data({ studentYear: text })}
+          value={data.studentYear}
+          onChangeText={text => handleFieldChange('studentYear', text)}
           keyboardType="number-pad"
           maxLength={2}
           onFocus={() => setFocusedField('studentYear')}
           onBlur={() => setFocusedField(null)}
         />
+        {errors.studentYear && (
+          <Text style={styles.errorText}>{errors.studentYear}</Text>
+        )}
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.prevButton} onPress={prevStep}>
+        <TouchableOpacity style={styles.prevButton} onPress={handlePrev}>
           <Text style={styles.prevButtonText}>이전</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[
-            styles.nextButton,
-            (!step2Data.name ||
-              !step2Data.kakaoId ||
-              !step2Data.department ||
-              !step2Data.studentYear) &&
-              styles.nextButtonDisabled,
-          ]}
-          onPress={nextStep}
-          disabled={
-            !step2Data.name ||
-            !step2Data.kakaoId ||
-            !step2Data.department ||
-            !step2Data.studentYear
-          }
+          style={[styles.nextButton, !isFormValid && styles.nextButtonDisabled]}
+          onPress={handleNext}
+          disabled={!isFormValid}
         >
           <Text style={styles.nextButtonText}>다음</Text>
         </TouchableOpacity>
@@ -122,25 +144,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background.main,
     paddingHorizontal: theme.spacing.spacing2,
-  },
-  progressContainer: {
-    marginBottom: theme.spacing.spacing6,
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: theme.colors.gray[200],
-    borderRadius: 4,
-    marginBottom: theme.spacing.spacing2,
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: theme.colors.brand.main,
-    borderRadius: 4,
-  },
-  progressText: {
-    fontSize: theme.typography.fontSize.font3,
-    color: theme.colors.text.sub,
-    textAlign: 'center',
   },
   inputGroup: {
     marginBottom: theme.spacing.spacing6,
@@ -161,8 +164,16 @@ const styles = StyleSheet.create({
     color: theme.colors.text.main,
     backgroundColor: theme.colors.background.input,
   },
-  inputFocused: {
-    borderColor: theme.colors.green[800],
+  inputFilled: {
+    borderColor: theme.colors.brand.main,
+  },
+  inputError: {
+    borderColor: theme.colors.red[500],
+  },
+  errorText: {
+    color: theme.colors.red[500],
+    fontSize: theme.typography.fontSize.font3,
+    marginTop: theme.spacing.spacing2,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -185,7 +196,7 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     flex: 1,
-    backgroundColor: theme.colors.green[700],
+    backgroundColor: theme.colors.brand.main,
     borderRadius: 8,
     paddingVertical: theme.spacing.spacing4,
     alignItems: 'center',
