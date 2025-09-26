@@ -6,17 +6,49 @@ export interface ValidationRule {
   required?: boolean;
   minLength?: number;
   pattern?: RegExp;
-  custom?: (value: string) => string | null;
+  custom?: (
+    value: string,
+    allValues?: Partial<RegisterFormData>
+  ) => string | null;
 }
 
 export interface ValidationRules {
   [key: string]: ValidationRule;
 }
 
+const runValidation = (
+  field: string,
+  value: string,
+  rule: ValidationRule,
+  allValues?: Partial<RegisterFormData>
+): string | null => {
+  if (rule.required && !value.trim()) {
+    return `${getFieldLabel(field)}을(를) 입력해주세요`;
+  }
+
+  if (rule.minLength && value.trim().length < rule.minLength) {
+    return `${getFieldLabel(field)}은(는) ${rule.minLength}자 이상 입력해주세요`;
+  }
+
+  if (rule.pattern && !rule.pattern.test(value)) {
+    return getPatternErrorMessage(field);
+  }
+
+  if (rule.custom) {
+    return rule.custom(value, allValues);
+  }
+
+  return null;
+};
+
 export const useRegisterValidation = (rules: ValidationRules) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const validateField = (field: string, value: string) => {
+  const validateField = (
+    field: string,
+    value: string,
+    allValues?: Partial<RegisterFormData>
+  ) => {
     const newErrors = { ...errors };
     const rule = rules[field];
 
@@ -26,17 +58,7 @@ export const useRegisterValidation = (rules: ValidationRules) => {
       return;
     }
 
-    let errorMessage: string | null = null;
-
-    if (rule.required && !value.trim()) {
-      errorMessage = `${getFieldLabel(field)}을(를) 입력해주세요`;
-    } else if (rule.minLength && value.trim().length < rule.minLength) {
-      errorMessage = `${getFieldLabel(field)}은(는) ${rule.minLength}자 이상 입력해주세요`;
-    } else if (rule.pattern && !rule.pattern.test(value)) {
-      errorMessage = getPatternErrorMessage(field);
-    } else if (rule.custom) {
-      errorMessage = rule.custom(value);
-    }
+    const errorMessage = runValidation(field, value, rule, allValues);
 
     if (errorMessage) {
       newErrors[field] = errorMessage;
@@ -54,17 +76,7 @@ export const useRegisterValidation = (rules: ValidationRules) => {
       const value = (data[field as keyof RegisterFormData] as string) || '';
       const rule = rules[field];
 
-      let errorMessage: string | null = null;
-
-      if (rule.required && !value.trim()) {
-        errorMessage = `${getFieldLabel(field)}을(를) 입력해주세요`;
-      } else if (rule.minLength && value.trim().length < rule.minLength) {
-        errorMessage = `${getFieldLabel(field)}은(는) ${rule.minLength}자 이상 입력해주세요`;
-      } else if (rule.pattern && !rule.pattern.test(value)) {
-        errorMessage = getPatternErrorMessage(field);
-      } else if (rule.custom) {
-        errorMessage = rule.custom(value);
-      }
+      const errorMessage = runValidation(field, value, rule, data);
 
       if (errorMessage) {
         newErrors[field] = errorMessage;
@@ -159,10 +171,43 @@ export const accountValidationRules: ValidationRules = {
   password: {
     required: true,
     minLength: 8,
+    custom: (value: string) => {
+      if (!value) return null;
+
+      const errors: string[] = [];
+
+      if (value.length < 8) {
+        errors.push('8자 이상');
+      }
+
+      const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+      if (!hasSpecialChar) {
+        errors.push('특수문자');
+      }
+
+      const hasNumber = /[0-9]/.test(value);
+      if (!hasNumber) {
+        errors.push('숫자');
+      }
+
+      const hasLetter = /[a-zA-Z]/.test(value);
+      if (!hasLetter) {
+        errors.push('문자');
+      }
+
+      if (errors.length > 0) {
+        return `${errors.join(', ')}를 포함해서 입력해주세요`;
+      }
+
+      return null;
+    },
   },
   confirmPassword: {
     required: true,
-    custom: (value: string) => {
+    custom: (value: string, allValues?: Partial<RegisterFormData>) => {
+      if (value && allValues?.password && value !== allValues.password) {
+        return '비밀번호가 일치하지 않습니다';
+      }
       return null;
     },
   },
