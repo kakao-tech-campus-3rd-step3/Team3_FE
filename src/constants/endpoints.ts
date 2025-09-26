@@ -2,6 +2,8 @@ export const AUTH_API = {
   LOGIN: '/auth/login',
   LOGOUT: '/auth/logout',
   REGISTER: '/api/auth/register',
+  VERIFY_EMAIL: '/api/auth/verify-email',
+  SEND_VERIFICATION: '/api/auth/send-verification',
 };
 
 export const PROFILE_API = {
