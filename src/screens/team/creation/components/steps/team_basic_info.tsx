@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   FlatList,
 } from 'react-native';
 
-import { universityListApi } from '@/src/api/team';
+import { UNIVERSITIES } from '@/src/constants/universities';
 import { colors } from '@/src/theme';
 import { TeamType, TEAM_TYPES } from '@/src/types/team';
 
@@ -43,20 +43,6 @@ export default function TeamBasicInfo({
   errors,
 }: TeamBasicInfoProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [universities, setUniversities] = useState<
-    { id: number; name: string }[]
-  >([]);
-
-  useEffect(() => {
-    const fetchUniversities = async () => {
-      try {
-        const data = await universityListApi.getUniversities();
-        setUniversities(data);
-      } catch {}
-    };
-
-    fetchUniversities();
-  }, []);
 
   const isValid =
     teamName.trim().length > 0 &&
@@ -175,7 +161,7 @@ export default function TeamBasicInfo({
               </TouchableOpacity>
             </View>
             <FlatList
-              data={universities}
+              data={UNIVERSITIES}
               keyExtractor={item => item.id.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity

@@ -35,8 +35,12 @@ export default memo(function TeamMembersSection({
       <Text style={styles.sectionTitle}>팀 멤버</Text>
       <View style={styles.memberList}>
         {(showAllMembers
-          ? teamMembers || []
-          : teamMembers?.slice(0, 6) || []
+          ? Array.isArray(teamMembers)
+            ? teamMembers
+            : []
+          : Array.isArray(teamMembers)
+            ? teamMembers.slice(0, 6)
+            : []
         ).map(member => (
           <View key={member.id} style={styles.memberCard}>
             <Ionicons
@@ -61,7 +65,7 @@ export default memo(function TeamMembersSection({
           </View>
         ))}
 
-        {(!teamMembers || teamMembers.length === 0) && (
+        {(!Array.isArray(teamMembers) || teamMembers.length === 0) && (
           <View style={styles.emptyState}>
             <Text style={styles.emptyStateTitle}>멤버가 없습니다</Text>
             <Text style={styles.emptyStateText}>
@@ -70,7 +74,7 @@ export default memo(function TeamMembersSection({
           </View>
         )}
 
-        {teamMembers && teamMembers.length > 6 && (
+        {Array.isArray(teamMembers) && teamMembers.length > 6 && (
           <TouchableOpacity
             style={styles.showMoreButton}
             onPress={() => setShowAllMembers(!showAllMembers)}
@@ -78,7 +82,7 @@ export default memo(function TeamMembersSection({
             <Text style={styles.showMoreText}>
               {showAllMembers
                 ? '간단히 보기'
-                : `전체 보기 (${teamMembers?.length || 0}명)`}
+                : `전체 보기 (${Array.isArray(teamMembers) ? teamMembers.length : 0}명)`}
             </Text>
             <Ionicons
               name={showAllMembers ? 'chevron-up' : 'chevron-down'}

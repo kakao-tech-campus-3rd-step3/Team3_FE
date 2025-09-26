@@ -45,7 +45,7 @@ export default memo(function TeamReviewsSection({
   };
 
   const getReviewSummary = () => {
-    if (!teamReviews || teamReviews.length === 0) {
+    if (!Array.isArray(teamReviews) || teamReviews.length === 0) {
       return { averageRating: 0, reviewTypeCounts: {} };
     }
 
@@ -84,7 +84,7 @@ export default memo(function TeamReviewsSection({
     <View style={styles.reviewsCard}>
       <Text style={styles.sectionTitle}>받은 후기</Text>
 
-      {!teamReviews || teamReviews.length === 0 ? (
+      {!Array.isArray(teamReviews) || teamReviews.length === 0 ? (
         <View style={styles.emptyState}>
           <Text style={styles.emptyStateTitle}>아직 받은 후기가 없습니다</Text>
           <Text style={styles.emptyStateText}>
@@ -105,7 +105,7 @@ export default memo(function TeamReviewsSection({
                 </View>
                 <Text style={styles.averageRatingText}>{averageRating}</Text>
                 <Text style={styles.averageRatingSubtext}>
-                  ({teamReviews.length}개 후기)
+                  ({Array.isArray(teamReviews) ? teamReviews.length : 0}개 후기)
                 </Text>
               </View>
             </View>

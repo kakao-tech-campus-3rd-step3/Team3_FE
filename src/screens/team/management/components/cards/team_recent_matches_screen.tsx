@@ -13,6 +13,7 @@ import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { useTeamMatches, useTeam } from '@/src/hooks/queries';
 import { colors, spacing, typography, theme } from '@/src/theme';
 import type { Match } from '@/src/types/match';
+import { formatDate, formatTime } from '@/src/utils/date';
 
 interface TeamRecentMatchesScreenProps {
   teamId: string;
@@ -34,16 +35,6 @@ export default memo(function TeamRecentMatchesScreen({
       color: colors.gray[500],
       text: '경기 완료',
     };
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
-  };
-
-  const formatTime = (timeString: string) => {
-    const [hours, minutes] = timeString.split(':');
-    return `${hours}:${minutes}`;
   };
 
   if (isLoading) {

@@ -17,38 +17,27 @@ import LoadingState from '../components/states/loading_state';
 import { styles } from '../styles/team_management_styles';
 
 interface TeamManagementScreenProps {
-  teamId: string | number | null;
+  teamId: string | number;
 }
 
 export default function TeamManagementScreen({
   teamId,
 }: TeamManagementScreenProps) {
-  const numericTeamId = teamId ? Number(teamId) : null;
+  const numericTeamId = Number(teamId);
   const { data: homeData } = useHome();
-  const { data: team, isLoading, error, refetch } = useTeam(numericTeamId || 0);
+  const { data: team, isLoading, error, refetch } = useTeam(numericTeamId);
   const {
     data: teamMembers,
     isLoading: membersLoading,
     error: membersError,
     refetch: refetchMembers,
-  } = useTeamMembers(numericTeamId || 0);
+  } = useTeamMembers(numericTeamId);
   const {
     data: teamReviews,
     isLoading: reviewsLoading,
     error: reviewsError,
     refetch: refetchReviews,
-  } = useTeamReviews(numericTeamId || 0);
-
-  if (teamId === null) {
-    return (
-      <EmptyState
-        icon="⚽"
-        title="팀 관리"
-        subtitle="아직 소속된 팀이 없습니다"
-        description="팀을 생성하거나 참여해보세요. 팀에 가입하면 여기서 팀을 관리할 수 있습니다."
-      />
-    );
-  }
+  } = useTeamReviews(numericTeamId);
 
   if (isLoading || membersLoading || reviewsLoading) {
     return <LoadingState />;
@@ -68,9 +57,9 @@ export default function TeamManagementScreen({
   }
 
   const currentUserName = homeData?.user?.name;
-  const currentUserMember = teamMembers?.find(
-    member => member.user?.name === currentUserName
-  );
+  const currentUserMember = Array.isArray(teamMembers)
+    ? teamMembers.find(member => member.user?.name === currentUserName)
+    : undefined;
   const canManageTeam =
     currentUserMember?.role === 'LEADER' ||
     currentUserMember?.role === 'VICE_LEADER';
