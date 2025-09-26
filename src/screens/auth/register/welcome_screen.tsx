@@ -2,13 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useEffect } from 'react';
-import { Image, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
@@ -30,7 +29,7 @@ export function WelcomeScreen({ onSwitchToLogin }: WelcomeScreenProps) {
   useEffect(() => {
     logoScale.value = withSpring(1, { damping: 20, stiffness: 80 });
     logoOpacity.value = withTiming(1, { duration: 600 });
-  }, []);
+  }, [logoScale, logoOpacity]);
 
   const logoAnimatedStyle = useAnimatedStyle(() => ({
     opacity: logoOpacity.value,

@@ -5,6 +5,11 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from 'react-native';
 
 import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
@@ -26,124 +31,143 @@ interface Props {
 
 export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const { errors, validateField, hasErrors } = useRegisterValidation(
-    profileValidationRules
-  );
+  const { errors, validateField, hasErrors, validateAll } =
+    useRegisterValidation(profileValidationRules);
 
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
     onChange(field, value);
-    validateField(field, value);
+    validateField(field, value, data);
   };
 
-  const isFormValid =
-    data.name.trim().length >= 2 &&
-    data.kakaoId.trim().length >= 3 &&
-    data.department.trim().length > 0 &&
-    /^\d{2}$/.test(data.studentYear) &&
-    !hasErrors();
+  const isFormValid = validateAll(data) && !hasErrors();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>이름</Text>
-        <TextInput
-          style={[
-            styles.input,
-            (focusedField === 'name' || data.name) && styles.inputFilled,
-            errors.name && styles.inputError,
-          ]}
-          placeholder="이름을 입력하세요"
-          value={data.name}
-          onChangeText={text => handleFieldChange('name', text)}
-          onFocus={() => setFocusedField('name')}
-          onBlur={() => setFocusedField(null)}
-        />
-        {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
-      </View>
-
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>카카오 아이디</Text>
-        <TextInput
-          style={[
-            styles.input,
-            (focusedField === 'kakaoId' || data.kakaoId) && styles.inputFilled,
-            errors.kakaoId && styles.inputError,
-          ]}
-          placeholder="카카오 아이디를 입력하세요"
-          value={data.kakaoId}
-          onChangeText={text => handleFieldChange('kakaoId', text)}
-          onFocus={() => setFocusedField('kakaoId')}
-          onBlur={() => setFocusedField(null)}
-        />
-        {errors.kakaoId && (
-          <Text style={styles.errorText}>{errors.kakaoId}</Text>
-        )}
-      </View>
-
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>학과</Text>
-        <TextInput
-          style={[
-            styles.input,
-            (focusedField === 'department' || data.department) &&
-              styles.inputFilled,
-            errors.department && styles.inputError,
-          ]}
-          placeholder="학과를 입력하세요"
-          value={data.department}
-          onChangeText={text => handleFieldChange('department', text)}
-          onFocus={() => setFocusedField('department')}
-          onBlur={() => setFocusedField(null)}
-        />
-        {errors.department && (
-          <Text style={styles.errorText}>{errors.department}</Text>
-        )}
-      </View>
-
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>학번</Text>
-        <TextInput
-          style={[
-            styles.input,
-            (focusedField === 'studentYear' || data.studentYear) &&
-              styles.inputFilled,
-            errors.studentYear && styles.inputError,
-          ]}
-          placeholder="예: 25 (2자리 숫자)"
-          value={data.studentYear}
-          onChangeText={text => handleFieldChange('studentYear', text)}
-          keyboardType="number-pad"
-          maxLength={2}
-          onFocus={() => setFocusedField('studentYear')}
-          onBlur={() => setFocusedField(null)}
-        />
-        {errors.studentYear && (
-          <Text style={styles.errorText}>{errors.studentYear}</Text>
-        )}
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.prevButton} onPress={handlePrev}>
-          <Text style={styles.prevButtonText}>이전</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.nextButton, !isFormValid && styles.nextButtonDisabled]}
-          onPress={handleNext}
-          disabled={!isFormValid}
+    <KeyboardAvoidingView
+      style={styles.keyboardAvoidingView}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 50}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          automaticallyAdjustKeyboardInsets={true}
         >
-          <Text style={styles.nextButtonText}>다음</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>이름</Text>
+            <TextInput
+              style={[
+                styles.input,
+                (focusedField === 'name' || data.name) && styles.inputFilled,
+                errors.name && styles.inputError,
+              ]}
+              placeholder="이름을 입력하세요"
+              value={data.name}
+              onChangeText={text => handleFieldChange('name', text)}
+              onFocus={() => setFocusedField('name')}
+              onBlur={() => setFocusedField(null)}
+            />
+            {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>카카오 아이디</Text>
+            <TextInput
+              style={[
+                styles.input,
+                (focusedField === 'kakaoId' || data.kakaoId) &&
+                  styles.inputFilled,
+                errors.kakaoId && styles.inputError,
+              ]}
+              placeholder="카카오 아이디를 입력하세요"
+              value={data.kakaoId}
+              onChangeText={text => handleFieldChange('kakaoId', text)}
+              onFocus={() => setFocusedField('kakaoId')}
+              onBlur={() => setFocusedField(null)}
+            />
+            {errors.kakaoId && (
+              <Text style={styles.errorText}>{errors.kakaoId}</Text>
+            )}
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>학과</Text>
+            <TextInput
+              style={[
+                styles.input,
+                (focusedField === 'department' || data.department) &&
+                  styles.inputFilled,
+                errors.department && styles.inputError,
+              ]}
+              placeholder="학과를 입력하세요"
+              value={data.department}
+              onChangeText={text => handleFieldChange('department', text)}
+              onFocus={() => setFocusedField('department')}
+              onBlur={() => setFocusedField(null)}
+            />
+            {errors.department && (
+              <Text style={styles.errorText}>{errors.department}</Text>
+            )}
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>학번</Text>
+            <TextInput
+              style={[
+                styles.input,
+                (focusedField === 'studentYear' || data.studentYear) &&
+                  styles.inputFilled,
+                errors.studentYear && styles.inputError,
+              ]}
+              placeholder="예: 25 (2자리 숫자)"
+              value={data.studentYear}
+              onChangeText={text => handleFieldChange('studentYear', text)}
+              keyboardType="number-pad"
+              maxLength={2}
+              onFocus={() => setFocusedField('studentYear')}
+              onBlur={() => setFocusedField(null)}
+            />
+            {errors.studentYear && (
+              <Text style={styles.errorText}>{errors.studentYear}</Text>
+            )}
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.prevButton} onPress={handlePrev}>
+              <Text style={styles.prevButtonText}>이전</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.nextButton,
+                !isFormValid && styles.nextButtonDisabled,
+              ]}
+              onPress={handleNext}
+              disabled={!isFormValid}
+            >
+              <Text style={styles.nextButtonText}>다음</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.colors.background.main,
+  },
+  scrollContent: {
     paddingHorizontal: theme.spacing.spacing2,
+    paddingBottom: theme.spacing.spacing20,
+    minHeight: '100%',
   },
   inputGroup: {
     marginBottom: theme.spacing.spacing6,
