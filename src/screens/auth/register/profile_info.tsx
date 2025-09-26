@@ -12,6 +12,7 @@ import {
   ScrollView,
 } from 'react-native';
 
+import { UI_CONSTANTS } from '@/src/constants/ui';
 import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 import {
   useRegisterValidation,
@@ -31,8 +32,9 @@ interface Props {
 
 export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const { errors, validateField, hasErrors, validateAll } =
-    useRegisterValidation(profileValidationRules);
+  const { errors, validateField } = useRegisterValidation(
+    profileValidationRules
+  );
 
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
     onChange(field, value);
@@ -40,7 +42,6 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
   };
 
   const isFormValid = useMemo(() => {
-    // 현재 단계(프로필 정보)의 필드만 검증
     const nameValid = data.name && data.name.trim().length >= 2;
     const kakaoIdValid = data.kakaoId && data.kakaoId.trim().length >= 3;
     const departmentValid =
@@ -55,7 +56,7 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
     <KeyboardAvoidingView
       style={styles.keyboardAvoidingView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 50}
+      keyboardVerticalOffset={UI_CONSTANTS.KEYBOARD_VERTICAL_OFFSET}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView

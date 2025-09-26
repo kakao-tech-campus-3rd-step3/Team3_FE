@@ -16,6 +16,7 @@ import {
 import { Dropdown } from '@/src/components/dropdown';
 import { EMAIL_DOMAINS } from '@/src/constants/email_domains';
 import { EXTERNAL_LINKS } from '@/src/constants/external_links';
+import { UI_CONSTANTS } from '@/src/constants/ui';
 import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 import {
   useRegisterValidation,
@@ -44,8 +45,9 @@ export function AccountSetup({
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [emailId, setEmailId] = useState<string>('');
   const [emailDomain, setEmailDomain] = useState<string>('naver.com');
-  const { errors, validateField, hasErrors, validateAll } =
-    useRegisterValidation(accountValidationRules);
+  const { errors, validateField } = useRegisterValidation(
+    accountValidationRules
+  );
 
   const handleEmailIdChange = (value: string) => {
     setEmailId(value);
@@ -99,7 +101,7 @@ export function AccountSetup({
     <KeyboardAvoidingView
       style={styles.keyboardAvoidingView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 50}
+      keyboardVerticalOffset={UI_CONSTANTS.KEYBOARD_VERTICAL_OFFSET}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
