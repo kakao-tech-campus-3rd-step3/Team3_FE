@@ -12,6 +12,12 @@ import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { useTeam } from '@/src/hooks/queries';
 import { colors } from '@/src/theme';
+import {
+  DEFAULT_SKILL_LEVEL,
+  DEFAULT_TEAM_TYPE,
+  SKILL_LEVELS,
+  TEAM_TYPES,
+} from '@/src/types/team';
 import type { SkillLevel, TeamType } from '@/src/types/team';
 
 import ActionSection from '../components/sections/action_section';
@@ -27,8 +33,8 @@ export default function TeamEditScreen({ teamId }: TeamEditScreenProps) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    skillLevel: '아마추어' as SkillLevel,
-    teamType: '중앙동아리' as TeamType,
+    skillLevel: DEFAULT_SKILL_LEVEL,
+    teamType: DEFAULT_TEAM_TYPE,
   });
 
   const numericTeamId = Number(teamId);
@@ -39,8 +45,12 @@ export default function TeamEditScreen({ teamId }: TeamEditScreenProps) {
       setFormData({
         name: team.name || '',
         description: team.description || '',
-        skillLevel: (team.skillLevel as SkillLevel) || '아마추어',
-        teamType: (team.teamType as TeamType) || '중앙동아리',
+        skillLevel: (SKILL_LEVELS.includes(team.skillLevel as SkillLevel)
+          ? team.skillLevel
+          : DEFAULT_SKILL_LEVEL) as SkillLevel,
+        teamType: (TEAM_TYPES.includes(team.teamType as TeamType)
+          ? team.teamType
+          : DEFAULT_TEAM_TYPE) as TeamType,
       });
     }
   }, [team]);

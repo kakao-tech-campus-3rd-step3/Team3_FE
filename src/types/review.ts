@@ -1,15 +1,7 @@
 export enum ReviewType {
-  AMATEUR_BETTER = '수준보다 잘해요',
-  AMATEUR_SAME = '수준과 똑같아요',
-  AMATEUR_WORSE = '수준보다 아쉬워요',
-
-  SEMI_PRO_BETTER = '수준보다 잘해요',
-  SEMI_PRO_SAME = '수준과 똑같아요',
-  SEMI_PRO_WORSE = '수준보다 아쉬워요',
-
-  PRO_BETTER = '수준보다 잘해요',
-  PRO_SAME = '수준과 똑같아요',
-  PRO_WORSE = '수준보다 아쉬워요',
+  BETTER = '수준보다 잘해요',
+  SAME = '수준과 똑같아요',
+  WORSE = '수준보다 아쉬워요',
 
   MANNER_GOOD = '매너가 좋았어요',
   MANNER_BAD = '매너가 아쉬워요',

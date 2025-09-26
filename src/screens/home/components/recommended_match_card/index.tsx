@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
 
+import { MatchLevel } from '@/src/constants/match';
 import { theme } from '@/src/theme';
 import { RecommendedMatch } from '@/src/types/home';
 
@@ -213,13 +214,28 @@ export default function SafeMatchPreview({
   );
 }
 
-const badgeBg = (level?: string) => {
-  if (level === '아마추어') return { backgroundColor: theme.colors.blue[50] };
-  if (level === '세미프로') return { backgroundColor: theme.colors.green[50] };
-  return { backgroundColor: theme.colors.red[50] };
+const badgeBg = (level?: MatchLevel) => {
+  switch (level) {
+    case '아마추어':
+      return { backgroundColor: theme.colors.blue[50] };
+    case '세미프로':
+      return { backgroundColor: theme.colors.green[50] };
+    case '프로':
+      return { backgroundColor: theme.colors.red[50] };
+    default:
+      return { backgroundColor: theme.colors.gray[50] };
+  }
 };
-const badgeTextColor = (level?: string) => {
-  if (level === '아마추어') return { color: theme.colors.blue[700] };
-  if (level === '세미프로') return { color: theme.colors.green[700] };
-  return { color: theme.colors.red[700] };
+
+const badgeTextColor = (level?: MatchLevel) => {
+  switch (level) {
+    case '아마추어':
+      return { color: theme.colors.blue[700] };
+    case '세미프로':
+      return { color: theme.colors.green[700] };
+    case '프로':
+      return { color: theme.colors.red[700] };
+    default:
+      return { color: theme.colors.gray[700] };
+  }
 };

@@ -6,11 +6,5 @@ import TeamManagementScreen from '@/src/screens/team/management/screens/team_man
 export default function TeamManagementRoute() {
   const { teamId } = useLocalSearchParams<{ teamId: string }>();
 
-  const currentTeamId = teamId;
-
-  if (!currentTeamId) {
-    return <TeamManagementScreen teamId={null} />;
-  }
-
-  return <TeamManagementScreen teamId={currentTeamId} />;
+  return <TeamManagementScreen teamId={teamId} />;
 }
