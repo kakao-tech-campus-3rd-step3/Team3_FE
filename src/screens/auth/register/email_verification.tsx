@@ -108,7 +108,7 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>대학교명</Text>
             <Dropdown
-              items={UNIVERSITIES}
+              items={UNIVERSITIES.map(uni => uni.name)}
               value={data.university}
               onChange={item => onChange('university', item)}
               placeholder="대학교를 선택하세요"
