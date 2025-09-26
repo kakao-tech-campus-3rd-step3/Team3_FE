@@ -6,6 +6,7 @@ import {
   Modal,
   FlatList,
   StyleSheet,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 import { theme } from '@/src/theme';
@@ -27,6 +28,7 @@ export function Dropdown<T extends string | number>({
 
   return (
     <View>
+      {/* Dropdown 버튼 */}
       <TouchableOpacity
         style={styles.dropdownButton}
         onPress={() => setIsOpen(true)}
@@ -38,28 +40,27 @@ export function Dropdown<T extends string | number>({
       </TouchableOpacity>
 
       <Modal visible={isOpen} transparent animationType="fade">
-        <TouchableOpacity
-          style={styles.overlay}
-          onPress={() => setIsOpen(false)}
-        >
-          <View style={styles.list}>
-            <FlatList
-              data={items}
-              keyExtractor={(item, index) => String(item) + index}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.item}
-                  onPress={() => {
-                    onChange(item);
-                    setIsOpen(false);
-                  }}
-                >
-                  <Text style={styles.itemText}>{String(item)}</Text>
-                </TouchableOpacity>
-              )}
-            />
+        <TouchableWithoutFeedback onPress={() => setIsOpen(false)}>
+          <View style={styles.overlay}>
+            <View style={styles.list}>
+              <FlatList
+                data={items}
+                keyExtractor={(item, index) => String(item) + index}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.item}
+                    onPress={() => {
+                      onChange(item);
+                      setIsOpen(false);
+                    }}
+                  >
+                    <Text style={styles.itemText}>{String(item)}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
           </View>
-        </TouchableOpacity>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );
@@ -69,52 +70,62 @@ const styles = StyleSheet.create({
   dropdownButton: {
     borderWidth: 1,
     borderColor: theme.colors.border.input,
-    borderRadius: 8,
+    borderRadius: 12,
     paddingHorizontal: theme.spacing.spacing4,
     paddingVertical: theme.spacing.spacing3,
     backgroundColor: theme.colors.background.input,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: 48,
+    height: 52,
+    shadowColor: theme.colors.shadow.light,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   dropdownText: {
     fontSize: theme.typography.fontSize.font4,
     color: theme.colors.text.main,
     flex: 1,
+    fontWeight: '500',
   },
   placeholder: {
     color: theme.colors.text.light,
+    fontWeight: '400',
   },
   dropdownArrow: {
-    fontSize: theme.typography.fontSize.font3,
+    fontSize: 18,
     color: theme.colors.text.sub,
+    transform: [{ rotate: '0deg' }],
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   list: {
     backgroundColor: theme.colors.white,
-    borderRadius: 8,
-    maxHeight: 300,
-    width: '80%',
+    borderRadius: 16,
+    maxHeight: 320,
+    width: '85%',
     shadowColor: theme.colors.shadow.medium,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 12,
+    overflow: 'hidden',
   },
   item: {
     paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    borderBottomWidth: 1,
+    paddingVertical: theme.spacing.spacing4,
+    borderBottomWidth: 0.5,
     borderBottomColor: theme.colors.border.light,
   },
   itemText: {
     fontSize: theme.typography.fontSize.font4,
     color: theme.colors.text.main,
+    fontWeight: '400',
   },
 });
