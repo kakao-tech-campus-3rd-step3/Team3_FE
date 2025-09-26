@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -70,7 +70,30 @@ export function AccountSetup({
     }
   };
 
-  const isValid = validateAll(data) && !hasErrors();
+  const isValid = useMemo(() => {
+    // 현재 단계(계정 설정)의 필드만 검증
+    const emailValid =
+      data.email &&
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(data.email);
+    const passwordValid =
+      data.password &&
+      data.password.length >= 8 &&
+      /[!@#$%^&*(),.?":{}|<>]/.test(data.password) &&
+      /[0-9]/.test(data.password) &&
+      /[a-zA-Z]/.test(data.password);
+    const confirmPasswordValid =
+      data.confirmPassword && data.password === data.confirmPassword;
+    const termsAgreed = data.termsAgreed;
+    const privacyAgreed = data.privacyAgreed;
+
+    return (
+      emailValid &&
+      passwordValid &&
+      confirmPasswordValid &&
+      termsAgreed &&
+      privacyAgreed
+    );
+  }, [data]);
 
   return (
     <KeyboardAvoidingView

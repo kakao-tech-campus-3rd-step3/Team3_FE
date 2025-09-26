@@ -55,16 +55,11 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
   };
 
   const handleSendVerification = async () => {
-    // 이메일 유효성 검사
-    if (!validateAll(data)) {
-      Alert.alert('입력 오류', '대학교명과 이메일을 올바르게 입력해주세요.');
+    if (!data.university || !data.universityEmail) {
+      Alert.alert('입력 오류', '대학교명과 이메일을 입력해주세요.');
       return;
     }
 
-    // if (!data.universityEmail) {
-    //   Alert.alert('입력 오류', '학교 이메일을 입력해주세요.');
-    //   return;
-    // }
     // try {
     // await sendVerificationMutation.mutateAsync(data.universityEmail);
     setIsVerificationSent(true);
@@ -72,7 +67,6 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
       {
         text: '확인',
         onPress: () => {
-          // Alert 확인 후 인증번호 입력 필드에 포커스
           setTimeout(() => {
             verificationInputRef.current?.focus();
           }, 100);

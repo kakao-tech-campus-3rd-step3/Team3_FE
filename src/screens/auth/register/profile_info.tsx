@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -39,7 +39,17 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
     validateField(field, value, data);
   };
 
-  const isFormValid = validateAll(data) && !hasErrors();
+  const isFormValid = useMemo(() => {
+    // 현재 단계(프로필 정보)의 필드만 검증
+    const nameValid = data.name && data.name.trim().length >= 2;
+    const kakaoIdValid = data.kakaoId && data.kakaoId.trim().length >= 3;
+    const departmentValid =
+      data.department && data.department.trim().length > 0;
+    const studentYearValid =
+      data.studentYear && /^\d{2}$/.test(data.studentYear);
+
+    return nameValid && kakaoIdValid && departmentValid && studentYearValid;
+  }, [data]);
 
   return (
     <KeyboardAvoidingView
