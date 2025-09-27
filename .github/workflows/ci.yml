@@ -5,6 +5,7 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+    types: [closed]
 
 jobs:
   # 코드 품질 검사만 GitHub Actions에서 처리
@@ -51,7 +52,9 @@ jobs:
     name: EAS Build 실행
     needs: quality-check
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
 
     steps:
       - name: 코드 체크아웃
