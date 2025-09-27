@@ -54,6 +54,7 @@ class ApiClient {
         }
 
         const errorData = error.response.data || {};
+
         const errorMessage =
           errorData.data &&
           typeof errorData.data === 'object' &&
