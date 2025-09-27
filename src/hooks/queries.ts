@@ -11,6 +11,9 @@ import type {
   LoginResponse,
   RegisterRequest,
   RegisterResponse,
+  SendVerificationResponse,
+  VerifyEmailResponse,
+  VerifyEmailRequest,
 } from '@/src/types';
 
 export const queries = {
@@ -22,6 +25,15 @@ export const queries = {
   register: {
     key: ['register'] as const,
     fn: (registerData: RegisterRequest) => api.authApi.register(registerData),
+  },
+  sendVerification: {
+    key: ['sendVerification'] as const,
+    fn: (email: string) => api.authApi.sendVerification(email),
+  },
+  verifyEmail: {
+    key: ['verifyEmail'] as const,
+    fn: (verifyEmailCode: VerifyEmailRequest) =>
+      api.authApi.verifyEmail(verifyEmailCode),
   },
   userProfile: {
     key: ['user', 'profile'] as const,
@@ -217,6 +229,30 @@ export function useRegisterMutation() {
     },
     onError: (error: unknown) => {
       console.error('회원가입 실패:', error);
+    },
+  });
+}
+
+export function useSendVerificationMutation() {
+  return useMutation({
+    mutationFn: queries.sendVerification.fn,
+    onSuccess: (data: SendVerificationResponse) => {
+      console.log('이메일 인증번호 전송 성공:', data);
+    },
+    onError: (error: unknown) => {
+      console.error('이메일 인증번호 전송 실패:', error);
+    },
+  });
+}
+
+export function useVerifyEmailMutation() {
+  return useMutation({
+    mutationFn: queries.verifyEmail.fn,
+    onSuccess: (data: VerifyEmailResponse) => {
+      console.log('이메일 인증 성공:', data);
+    },
+    onError: (error: unknown) => {
+      console.error('이메일 인증 실패:', error);
     },
   });
 }

@@ -24,3 +24,16 @@ export interface RegisterRequest {
 export interface RegisterResponse {
   accessToken: string;
 }
+
+export interface SendVerificationResponse {
+  success: boolean;
+}
+
+export interface VerifyEmailResponse {
+  success: boolean;
+}
+
+export interface VerifyEmailRequest {
+  universityEmail: string;
+  code: string;
+}

@@ -27,6 +27,8 @@ export default function AuthLayout() {
       }}
     >
       <Stack.Screen name="login" />
+      <Stack.Screen name="welcome" />
+      <Stack.Screen name="register" />
       <Stack.Screen name="forgot_password" />
     </Stack>
   );
