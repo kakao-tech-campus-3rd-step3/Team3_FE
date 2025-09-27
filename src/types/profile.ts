@@ -6,18 +6,21 @@ export interface UserProfile {
   major?: string;
   studentId?: string;
   joinDate: string;
+  level: string;
 
   totalMatches: number;
   noShowCount: number;
   mannerScore: number;
   totalReviews: number;
+  bio: string;
+  phoneNumber: string;
 
-  recentReviews: ReviewType[];
+  recentReviews: ReviewStatsType[];
 
   stats: MatchStats;
 }
 
-export interface ReviewType {
+export interface ReviewStatsType {
   type: 'good_play' | 'good_manner' | 'team_player' | 'punctual' | 'bad_manner';
   count: number;
   label: string;
@@ -33,10 +36,13 @@ export interface MatchStats {
 }
 
 export interface UpdateProfileRequest {
-  name?: string;
-  university?: string;
-  major?: string;
-  studentId?: string;
+  name: string;
+  phoneNumber: string;
+  university: string;
+  department: string;
+  studentId: string;
+  level: string;
+  bio: string;
 }
 
 export interface UpdateProfileResponse {
@@ -50,4 +56,5 @@ export type SettingItem = {
   onPress?: () => void;
   color?: string;
   showChevron?: boolean;
+  value?: string;
 };

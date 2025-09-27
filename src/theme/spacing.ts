@@ -18,6 +18,15 @@ export const spacing = {
   spacing16: 64,
   spacing17: 68,
   spacing18: 72,
+  spacing19: 76,
+  spacing20: 80,
+  spacing21: 84,
+  spacing22: 88,
+  spacing23: 92,
+  spacing24: 96,
+  spacing25: 100,
+  spacing26: 104,
+  spacing27: 108,
 } as const;
 
 export type SpacingSize = keyof typeof spacing;

@@ -3,6 +3,7 @@ export interface HomeData {
     name: string;
     teamLevel?: string;
     preferredPositions?: string[];
+    teamId?: number | null;
   };
   todayMatch: {
     hasMatch: boolean;

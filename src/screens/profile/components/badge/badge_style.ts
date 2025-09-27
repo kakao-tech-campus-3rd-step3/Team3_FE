@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+
 import { colors, spacing, typography } from '@/src/theme';
 
 export const BadgeStyles = StyleSheet.create({
@@ -10,7 +11,6 @@ export const BadgeStyles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  // 크기별 스타일
   small: {
     paddingHorizontal: spacing.spacing1,
     paddingVertical: spacing.spacing1 / 2,
@@ -29,7 +29,6 @@ export const BadgeStyles = StyleSheet.create({
     borderRadius: spacing.spacing2,
   },
 
-  // 텍스트 스타일 - typography의 text 스타일 사용
   textSmall: {
     ...typography.text.caption,
     color: colors.text.main,
@@ -45,7 +44,6 @@ export const BadgeStyles = StyleSheet.create({
     color: colors.text.main,
   },
 
-  // 색상별 스타일
   primary: {
     backgroundColor: colors.grass[500],
   },

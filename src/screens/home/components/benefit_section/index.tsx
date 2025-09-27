@@ -1,18 +1,39 @@
+import { useRouter } from 'expo-router';
 import { memo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { serviceCards } from '@/src/constants/service_card';
-import styles from '@/src/screens/home/home_style';
-import { useRouter } from 'expo-router';
 
-export default memo(function BenefitsSection() {
+import { serviceCards } from '@/src/constants/service_card';
+import type { HomeData } from '@/src/types';
+
+import styles from '../../home_style';
+
+interface BenefitsSectionProps {
+  homeData: HomeData;
+}
+
+export default memo(function BenefitsSection({
+  homeData,
+}: BenefitsSectionProps) {
   const router = useRouter();
-  const handleServicePress = (serviceId: number) => {
-    if (serviceId === 1) {
-      router.push('/tournament');
-    } else if (serviceId === 2) {
-      router.push('/mercenary');
-    } else if (serviceId === 3) {
-      router.push('/team/guide');
+
+  const handleServicePress = (serviceId: string) => {
+    if (serviceId === 'team') {
+      if (homeData?.user.teamId) {
+        router.push(`/team/management/${homeData.user.teamId}`);
+      } else {
+        router.push('/team/guide');
+      }
+      return;
+    }
+
+    const routeMap: Record<string, string> = {
+      tournament: '/tournament',
+      mercenary: '/mercenary',
+    };
+
+    const route = routeMap[serviceId];
+    if (route) {
+      router.push(route);
     }
   };
   return (
