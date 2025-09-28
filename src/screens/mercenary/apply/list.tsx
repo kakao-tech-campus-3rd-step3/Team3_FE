@@ -5,12 +5,14 @@ import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 
 import { Card } from '@/src/components/card/card';
 import { colors } from '@/src/theme/colors';
+import { getDateOptions } from '@/src/utils/date';
 
 import { styles } from './list_style';
 
 export default function MercenaryFindScreen() {
   const [selectedPosition, setSelectedPosition] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<string>('all');
+  const dateOptions = getDateOptions(new Date());
 
   const positions = [
     '골키퍼',
@@ -66,33 +68,6 @@ export default function MercenaryFindScreen() {
       },
     ]);
   };
-
-  const getDateOptions = () => {
-    const dates = [];
-    const today = new Date('2025-01-25');
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-
-      const dateStr = date.toISOString().split('T')[0];
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][
-        date.getDay()
-      ];
-
-      dates.push({
-        value: dateStr,
-        label: `${month}.${day} ${dayOfWeek}`,
-        isToday: i === 0,
-      });
-    }
-
-    return dates;
-  };
-
-  const dateOptions = getDateOptions();
 
   const filteredMatches = availableMatches.filter(match => {
     if (selectedPosition && !match.positions.includes(selectedPosition)) {
