@@ -1,13 +1,16 @@
 import React, { createContext, useContext, useEffect } from 'react';
+import { View, ActivityIndicator } from 'react-native';
 
 import { useStorageState } from '@/src/hooks/useStorageState';
 import { apiClient } from '@/src/lib/api_client';
 import { queryClient } from '@/src/lib/query_client';
+import { theme } from '@/src/theme';
 
 interface AuthContextType {
   token: string | null;
+  userId: string | null;
   isAuthenticated: boolean;
-  login: (token: string) => Promise<void>;
+  login: (token: string, userId: string) => Promise<void>;
   logout: () => Promise<void>;
   isLoading: boolean;
 }
@@ -17,6 +20,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken, isLoading] = useStorageState<string | null>(
     'authToken',
+    null
+  );
+  const [userId, setUserId, isUserIdLoading] = useStorageState<string | null>(
+    'userId',
     null
   );
 
@@ -31,28 +38,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   }, [setToken]);
 
-  const login = async (newToken: string) => {
+  const login = async (newToken: string, newUserId: string) => {
     setToken(newToken);
+    setUserId(newUserId);
   };
 
   const logout = async () => {
     setToken(null);
+    setUserId(null);
     queryClient.clear();
   };
 
-  // 로딩 중일 때 스플래시 같은 화면을 보여줄 수 있음
-  if (isLoading) {
-    return <></>; // TODO: 여기서 SplashScreen 컴포넌트 렌더링 가능
+  const isAuthLoading = isLoading || isUserIdLoading;
+  if (isAuthLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={theme.colors.grass[500]} />
+      </View>
+    );
   }
 
   return (
     <AuthContext.Provider
       value={{
         token,
+        userId,
         isAuthenticated: !!token,
         login,
         logout,
-        isLoading,
+        isLoading: isAuthLoading,
       }}
     >
       {children}

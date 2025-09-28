@@ -66,7 +66,7 @@ export default function RegisterScreen() {
           <AccountSetup
             data={formData}
             onChange={updateForm}
-            onSubmit={() => login('temp-register-token')} //{handleSubmit}
+            onSubmit={() => login('temp-register-token', 'temp-user-id')} //{handleSubmit}
             isLoading={registerMutation.isPending}
             handlePrev={handlePrev}
           />

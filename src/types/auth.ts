@@ -5,6 +5,7 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   authToken: string;
+  userId: string;
 }
 
 export interface RegisterRequest {
@@ -23,6 +24,7 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
   accessToken: string;
+  userId: string;
 }
 
 export interface SendVerificationResponse {

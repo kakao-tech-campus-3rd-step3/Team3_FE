@@ -3,7 +3,8 @@ import { ScrollView, Text, View, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Card } from '@/src/components/card/card';
-import { useUserInfo } from '@/src/hooks/queries';
+import { useAuth } from '@/src/contexts/auth_context';
+import { useUserProfile } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 
 import { styles } from './edit_profile_style';
@@ -11,7 +12,8 @@ import { ProfileForm } from './ProfileForm';
 
 export default function EditProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { data: userInfo, refetch } = useUserInfo();
+  const { userId } = useAuth();
+  const { data: userInfo, refetch } = useUserProfile(userId!);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSave = async (formData: any) => {

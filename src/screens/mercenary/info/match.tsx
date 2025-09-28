@@ -60,34 +60,32 @@ export default function MercenaryMatchInfoScreen() {
     matchInfo.matchDetails.status,
   ]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'scheduled':
-        return colors.info;
-      case 'in_progress':
-        return colors.warning;
-      case 'completed':
-        return colors.success;
-      case 'cancelled':
-        return colors.error;
-      default:
-        return colors.gray[500];
-    }
-  };
+  const statusConfig = {
+    scheduled: {
+      color: colors.info,
+      text: '예정됨',
+    },
+    in_progress: {
+      color: colors.warning,
+      text: '진행중',
+    },
+    completed: {
+      color: colors.success,
+      text: '완료됨',
+    },
+    cancelled: {
+      color: colors.error,
+      text: '취소됨',
+    },
+  } as const;
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'scheduled':
-        return '예정됨';
-      case 'in_progress':
-        return '진행중';
-      case 'completed':
-        return '완료됨';
-      case 'cancelled':
-        return '취소됨';
-      default:
-        return '알 수 없음';
-    }
+  const getStatusInfo = (status: string) => {
+    return (
+      statusConfig[status as keyof typeof statusConfig] || {
+        color: colors.gray[500],
+        text: '알 수 없음',
+      }
+    );
   };
 
   // TODO: 매치 시작 기능 구현 예정
@@ -164,20 +162,21 @@ export default function MercenaryMatchInfoScreen() {
         <Card style={styles.statusCard}>
           <View style={styles.statusHeader}>
             <Text style={styles.statusTitle}>매치 상태</Text>
-            <View
-              style={[
-                styles.statusBadge,
-                {
-                  backgroundColor: getStatusColor(
-                    matchInfo.matchDetails.status
-                  ),
-                },
-              ]}
-            >
-              <Text style={styles.statusText}>
-                {getStatusText(matchInfo.matchDetails.status)}
-              </Text>
-            </View>
+            {(() => {
+              const statusInfo = getStatusInfo(matchInfo.matchDetails.status);
+              return (
+                <View
+                  style={[
+                    styles.statusBadge,
+                    {
+                      backgroundColor: statusInfo.color,
+                    },
+                  ]}
+                >
+                  <Text style={styles.statusText}>{statusInfo.text}</Text>
+                </View>
+              );
+            })()}
           </View>
         </Card>
 

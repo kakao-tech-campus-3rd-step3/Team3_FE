@@ -62,30 +62,28 @@ export default function MercenaryPendingScreen() {
     },
   ]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return colors.warning;
-      case 'approved':
-        return colors.success;
-      case 'rejected':
-        return colors.error;
-      default:
-        return colors.gray[500];
-    }
-  };
+  const statusConfig = {
+    pending: {
+      color: colors.warning,
+      text: '승인 대기중',
+    },
+    approved: {
+      color: colors.success,
+      text: '승인됨',
+    },
+    rejected: {
+      color: colors.error,
+      text: '거절됨',
+    },
+  } as const;
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return '승인 대기중';
-      case 'approved':
-        return '승인됨';
-      case 'rejected':
-        return '거절됨';
-      default:
-        return '알 수 없음';
-    }
+  const getStatusInfo = (status: string) => {
+    return (
+      statusConfig[status as keyof typeof statusConfig] || {
+        color: colors.gray[500],
+        text: '알 수 없음',
+      }
+    );
   };
 
   const handleApplicationPress = (application: any) => {
@@ -140,16 +138,19 @@ export default function MercenaryPendingScreen() {
                       vs {application.opponent}
                     </Text>
                   </View>
-                  <View
-                    style={[
-                      styles.statusBadge,
-                      { backgroundColor: getStatusColor(application.status) },
-                    ]}
-                  >
-                    <Text style={styles.statusText}>
-                      {getStatusText(application.status)}
-                    </Text>
-                  </View>
+                  {(() => {
+                    const statusInfo = getStatusInfo(application.status);
+                    return (
+                      <View
+                        style={[
+                          styles.statusBadge,
+                          { backgroundColor: statusInfo.color },
+                        ]}
+                      >
+                        <Text style={styles.statusText}>{statusInfo.text}</Text>
+                      </View>
+                    );
+                  })()}
                 </View>
 
                 <View style={styles.matchDetails}>

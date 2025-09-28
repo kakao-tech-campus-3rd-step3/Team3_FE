@@ -7,6 +7,7 @@ export interface UserProfile {
   studentId?: string;
   joinDate: string;
   level: string;
+  teamId?: number | null;
 
   totalMatches: number;
   noShowCount: number;
@@ -36,13 +37,10 @@ export interface MatchStats {
 }
 
 export interface UpdateProfileRequest {
-  name: string;
-  phoneNumber: string;
-  university: string;
-  department: string;
-  studentId: string;
-  level: string;
-  bio: string;
+  name?: string;
+  skillLevel?: string;
+  position?: string;
+  bio?: string;
 }
 
 export interface UpdateProfileResponse {
