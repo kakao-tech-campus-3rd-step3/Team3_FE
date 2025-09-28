@@ -20,7 +20,7 @@ type Member = {
   jerseyNumber?: number;
 };
 
-// ⚠️ 임시 Mock (API 붙이기 전)
+//  임시 Mock
 const MOCK_MEMBERS: Member[] = [
   { id: '1', name: '김스트라이커', position: 'FW', jerseyNumber: 9 },
   { id: '2', name: '박미드필더', position: 'MF', jerseyNumber: 8 },
@@ -46,7 +46,7 @@ export default function TeammateRegisterScreen() {
   const [pos, setPos] = useState<Member['position'] | 'ALL'>('ALL');
   const [selected, setSelected] = useState<string[]>([]);
 
-  // ✅ 검색 + 포지션 필터
+  //  검색 + 포지션 필터
   const data = useMemo(() => {
     let arr = MOCK_MEMBERS;
     if (pos !== 'ALL') arr = arr.filter(m => m.position === pos);
@@ -85,14 +85,12 @@ export default function TeammateRegisterScreen() {
 
   const canSubmit = selectedCount > 0;
 
-  // ✅ 등록 버튼 눌렀을 때 → 선택된 선수 객체를 team_formation으로 전달
   const submit = () => {
     if (selected.length === 0) return;
 
     // 선택된 선수 정보 가져오기
     const selectedMembers = MOCK_MEMBERS.filter(m => selected.includes(m.id));
 
-    // JSON으로 직렬화해서 전달
     router.push({
       pathname: '/match_making/team_formation',
       params: {

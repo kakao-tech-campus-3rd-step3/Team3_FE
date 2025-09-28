@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export const style = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb', // ✅ 다크모드 → 밝은 톤
+    backgroundColor: '#f9fafb',
   },
 
   searchWrap: {
@@ -14,10 +14,10 @@ export const style = StyleSheet.create({
     height: 44,
     borderRadius: 12,
     paddingHorizontal: 14,
-    backgroundColor: '#ffffff', // ✅ 흰 배경
-    color: '#111827', // ✅ 진한 글씨
+    backgroundColor: '#ffffff',
+    color: '#111827',
     borderWidth: 1,
-    borderColor: '#d1d5db', // ✅ 연한 회색 테두리
+    borderColor: '#d1d5db',
   },
 
   filterWrap: {
@@ -35,16 +35,16 @@ export const style = StyleSheet.create({
     borderColor: '#d1d5db',
   },
   chipOn: {
-    backgroundColor: '#dbeafe', // ✅ 연한 파랑 배경
-    borderColor: '#2563eb', // ✅ 파랑 테두리
+    backgroundColor: '#dbeafe',
+    borderColor: '#2563eb',
   },
   chipText: {
-    color: '#6b7280', // ✅ 회색 글씨
+    color: '#6b7280',
     fontSize: 12,
     fontWeight: '600',
   },
   chipTextOn: {
-    color: '#2563eb', // ✅ 활성화 시 파랑
+    color: '#2563eb',
   },
 
   row: {
@@ -54,11 +54,11 @@ export const style = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderColor: '#e5e7eb', // ✅ 밝은 회색 구분선
+    borderColor: '#e5e7eb',
     backgroundColor: '#ffffff',
   },
   rowOn: {
-    backgroundColor: '#f0f9ff', // ✅ 선택 시 연한 하늘색
+    backgroundColor: '#f0f9ff',
   },
   rowLeft: {
     flexDirection: 'row',
@@ -69,7 +69,7 @@ export const style = StyleSheet.create({
     height: 20,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: '#9ca3af', // ✅ 회색
+    borderColor: '#9ca3af',
     backgroundColor: '#ffffff',
   },
   checkboxOn: {
@@ -77,7 +77,7 @@ export const style = StyleSheet.create({
     borderColor: '#2563eb',
   },
   name: {
-    color: '#111827', // ✅ 진한 글씨
+    color: '#111827',
     fontSize: 16,
     fontWeight: '700',
   },
@@ -129,10 +129,10 @@ export const style = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#2563eb', // ✅ 파랑 CTA 버튼
+    backgroundColor: '#2563eb',
   },
   ctaDisabled: {
-    backgroundColor: '#d1d5db', // ✅ 비활성화 시 회색
+    backgroundColor: '#d1d5db',
   },
   ctaText: {
     color: '#ffffff',

@@ -58,8 +58,6 @@ export const style = StyleSheet.create({
     marginTop: 12,
     alignItems: 'center',
   },
-
-  // ✅ 하단 바
   bottomBar: {
     position: 'absolute',
     left: 0,

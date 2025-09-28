@@ -1,5 +1,5 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useRouter } from 'expo-router'; // ✅ 추가
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   View,
@@ -20,7 +20,7 @@ type Stadium = {
   name: string;
 };
 
-// ⚠️ 임시 Mock 데이터
+//  임시 Mock 데이터
 const MOCK_STADIUMS: Stadium[] = [
   { id: '1', name: '서울월드컵경기장' },
   { id: '2', name: '잠실종합운동장' },
@@ -30,7 +30,7 @@ const MOCK_STADIUMS: Stadium[] = [
 ];
 
 export default function MatchInfoScreen() {
-  const router = useRouter(); // ✅ 추가
+  const router = useRouter();
 
   const [stadiumQuery, setStadiumQuery] = useState('');
   const [stadiumModalVisible, setStadiumModalVisible] = useState(false);
@@ -50,7 +50,6 @@ export default function MatchInfoScreen() {
   };
 
   const onSubmit = () => {
-    // ✅ match_making_success_screen 으로 라우팅
     router.push({
       pathname: '/match_making/match_making_success',
       params: {
@@ -101,14 +100,14 @@ export default function MatchInfoScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* ✅ 하단 바 */}
+      {/*  하단 바 */}
       <View style={style.bottomBar}>
         <TouchableOpacity style={style.nextButton} onPress={onSubmit}>
           <Text style={style.nextButtonText}>매치 등록하기</Text>
         </TouchableOpacity>
       </View>
 
-      {/* 경기장 선택 모달, DateTimePicker 부분은 그대로 */}
+      {/* 경기장 선택 모달 */}
       {stadiumModalVisible && (
         <Modal visible={stadiumModalVisible} transparent animationType="slide">
           <View style={style.modalWrap}>

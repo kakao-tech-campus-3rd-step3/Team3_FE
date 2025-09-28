@@ -15,7 +15,7 @@ export const style = StyleSheet.create({
   successText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#16a34a', // ✅ 초록색 성공 문구
+    color: '#16a34a',
     marginBottom: 24,
   },
   infoBox: {
