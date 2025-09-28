@@ -15,6 +15,7 @@ import type {
   VerifyEmailResponse,
   VerifyEmailRequest,
   UpdateProfileRequest,
+  TeamMemberRole,
 } from '@/src/types';
 
 export const queries = {
@@ -268,6 +269,44 @@ export function useUpdateProfileMutation() {
     },
     onError: (error: unknown) => {
       console.error('프로필 수정 실패:', error);
+    },
+  });
+}
+
+export function useRemoveMemberMutation() {
+  return useMutation({
+    mutationFn: ({
+      teamId,
+      userId,
+    }: {
+      teamId: string | number;
+      userId: string | number;
+    }) => api.teamMemberApi.removeMember(teamId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
+    },
+    onError: (error: unknown) => {
+      console.error('멤버 삭제 실패:', error);
+    },
+  });
+}
+
+export function useUpdateMemberRoleMutation() {
+  return useMutation({
+    mutationFn: ({
+      teamId,
+      userId,
+      role,
+    }: {
+      teamId: string | number;
+      userId: string | number;
+      role: TeamMemberRole;
+    }) => api.teamMemberApi.updateMemberRole(teamId, userId, role),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
+    },
+    onError: (error: unknown) => {
+      console.error('멤버 역할 수정 실패:', error);
     },
   });
 }
