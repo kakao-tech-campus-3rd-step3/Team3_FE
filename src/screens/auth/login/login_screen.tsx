@@ -34,7 +34,7 @@ function LoginScreen({ onSwitchToRegister }: LoginScreenProps) {
           <View style={styles.content}>
             <TouchableOpacity
               style={styles.tempButton}
-              onPress={() => login('temp-token')}
+              onPress={() => login('temp-token', 'temp-user-id')}
             >
               <Text style={styles.tempButtonText}>임시 로그인</Text>
             </TouchableOpacity>
