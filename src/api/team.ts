@@ -88,7 +88,7 @@ export const teamEditApi = {
 
 export const teamJoinRequestApi = {
   getTeamJoinRequests: (teamId: string | number) => {
-    return apiClient.get<JoinRequest[]>('/joinRequests');
+    return apiClient.get<JoinRequest[]>(TEAM_API.GET_JOIN_REQUESTS(teamId));
   },
 };
 export const deleteTeam = (teamId: string | number) =>

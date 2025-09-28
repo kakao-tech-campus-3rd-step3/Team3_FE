@@ -1,7 +1,13 @@
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, Redirect } from 'expo-router';
+
+import { ROUTES } from '@/src/constants/routes';
 
 export default function TeamManagementLayout() {
   const { teamId } = useLocalSearchParams<{ teamId: string }>();
+
+  if (!teamId) {
+    return <Redirect href={ROUTES.TEAM_GUIDE} />;
+  }
 
   const screens = [
     { name: 'index', title: '팀 관리' },
