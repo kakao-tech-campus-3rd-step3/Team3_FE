@@ -7,7 +7,8 @@ export const AUTH_API = {
 };
 
 export const PROFILE_API = {
-  GET_PROFILE: '/profile',
+  GET_PROFILE: (userId: string) => `/api/profiles/${userId}`,
+  UPDATE_PROFILE: '/api/profiles/me',
 };
 
 export const HOME_API = {

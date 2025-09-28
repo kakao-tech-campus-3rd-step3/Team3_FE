@@ -20,6 +20,8 @@ export const ROUTES = {
 
 export type RouteKey = keyof typeof ROUTES;
 
+export const getTeamManagementUrl = (teamId: string | number) =>
+  `/team/management/${teamId}`;
 export const getTeamManagementSettingsUrl = (teamId: string) =>
   `/team/management/${teamId}/settings`;
 export const getTeamManagementRecentMatchesUrl = (teamId: string) =>
