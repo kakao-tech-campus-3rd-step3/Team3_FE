@@ -26,7 +26,6 @@ export default memo(function BenefitsSection({ teamId }: BenefitsSectionProps) {
 
     const routeMap: Record<string, string> = {
       tournament: ROUTES.TOURNAMENT,
-      mercenary: ROUTES.MERCENARY,
     };
 
     const route = routeMap[serviceId];
