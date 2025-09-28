@@ -26,7 +26,7 @@ function AppContent() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="team" />
         <Stack.Screen name="profile" />
-        <Stack.Screen name="mercenary" />
+        <Stack.Screen name="match_making/teammate_register" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

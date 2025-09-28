@@ -8,32 +8,48 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
+  Alert,
 } from 'react-native';
 
+import { useLoginMutation } from '@/src/hooks/queries';
 import { useLoginForm } from '@/src/hooks/useLoginForm';
 import { theme } from '@/src/theme';
-import type { LoginRequest } from '@/src/types';
 
 interface LoginFormProps {
-  onSubmit: (data: LoginRequest) => void;
-  isLoading?: boolean;
-  passwordError?: string;
-  onPasswordChange?: () => void;
+  onLoginSuccess?: () => void;
 }
 
-function LoginForm({
-  onSubmit,
-  isLoading,
-  passwordError,
-  onPasswordChange,
-}: LoginFormProps) {
+function LoginForm({ onLoginSuccess }: LoginFormProps) {
   const { formData, errors, updateField, validateForm } = useLoginForm();
+  const loginMutation = useLoginMutation();
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string>('');
 
-  const handleSubmit = () => {
-    if (validateForm()) {
-      onSubmit(formData);
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+
+    setPasswordError('');
+    try {
+      await loginMutation.mutateAsync(formData);
+      onLoginSuccess?.();
+    } catch (error: unknown) {
+      const errorMessage = (error as Error).message || '로그인에 실패했습니다.';
+
+      if (
+        errorMessage.includes('비밀번호') ||
+        errorMessage.includes('password') ||
+        errorMessage.includes('인증') ||
+        errorMessage.includes('credentials')
+      ) {
+        setPasswordError('비밀번호가 올바르지 않습니다.');
+      } else {
+        Alert.alert('로그인 실패', errorMessage);
+      }
     }
+  };
+
+  const handlePasswordChange = () => {
+    setPasswordError('');
   };
 
   const togglePasswordVisibility = () => {
@@ -77,7 +93,7 @@ function LoginForm({
           value={formData.password}
           onChangeText={text => {
             updateField('password', text);
-            onPasswordChange?.();
+            handlePasswordChange();
           }}
           secureTextEntry={!showPassword}
           autoCapitalize="none"
@@ -106,11 +122,14 @@ function LoginForm({
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+        style={[
+          styles.loginButton,
+          loginMutation.isPending && styles.loginButtonDisabled,
+        ]}
         onPress={handleSubmit}
-        disabled={isLoading}
+        disabled={loginMutation.isPending}
       >
-        {isLoading ? (
+        {loginMutation.isPending ? (
           <ActivityIndicator color={theme.colors.white} />
         ) : (
           <Text style={styles.loginButtonText}>로그인</Text>

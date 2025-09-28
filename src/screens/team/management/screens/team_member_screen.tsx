@@ -4,7 +4,11 @@ import { View, Text, ScrollView, Alert, RefreshControl } from 'react-native';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { LoadingState } from '@/src/components/ui/loading_state';
-import { useTeamMembers } from '@/src/hooks/queries';
+import {
+  useTeamMembers,
+  useRemoveMemberMutation,
+  useUpdateMemberRoleMutation,
+} from '@/src/hooks/queries';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
 import { getRoleDisplayName } from '@/src/utils/team';
 
@@ -31,6 +35,9 @@ export default function MemberManagementScreen({
     error,
     refetch,
   } = useTeamMembers(numericTeamId);
+
+  const removeMemberMutation = useRemoveMemberMutation();
+  const updateMemberRoleMutation = useUpdateMemberRoleMutation();
 
   if (isLoading) {
     return <LoadingState message="팀원 정보를 불러오는 중..." />;
@@ -60,6 +67,11 @@ export default function MemberManagementScreen({
   const handleUpdateRole = (newRole: TeamMemberRole) => {
     if (!selectedMember) return;
 
+    if (!numericTeamId || !selectedMember.userId) {
+      Alert.alert('오류', '팀 정보 또는 사용자 정보가 올바르지 않습니다.');
+      return;
+    }
+
     Alert.alert(
       '역할 변경',
       `${selectedMember.user?.name}님의 역할을 ${getRoleDisplayName(newRole)}로 변경하시겠습니까?`,
@@ -68,9 +80,28 @@ export default function MemberManagementScreen({
         {
           text: '확인',
           onPress: () => {
-            Alert.alert('알림', '역할 변경 기능은 아직 구현 중입니다.');
-            setShowRoleModal(false);
-            setSelectedMember(null);
+            updateMemberRoleMutation.mutate(
+              {
+                teamId: numericTeamId,
+                userId: selectedMember.userId,
+                role: newRole,
+              },
+              {
+                onSuccess: () => {
+                  Alert.alert('성공', '역할이 성공적으로 변경되었습니다.');
+                  setShowRoleModal(false);
+                  setSelectedMember(null);
+                  refetch();
+                },
+                onError: error => {
+                  console.error('역할 변경 실패:', error);
+                  Alert.alert(
+                    '오류',
+                    '역할 변경에 실패했습니다. 다시 시도해주세요.'
+                  );
+                },
+              }
+            );
           },
         },
       ]
@@ -83,6 +114,11 @@ export default function MemberManagementScreen({
       return;
     }
 
+    if (!numericTeamId || !member.userId) {
+      Alert.alert('오류', '팀 정보 또는 사용자 정보가 올바르지 않습니다.');
+      return;
+    }
+
     Alert.alert(
       '팀원 강퇴',
       `${member.user?.name}님을 팀에서 강퇴하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`,
@@ -92,7 +128,25 @@ export default function MemberManagementScreen({
           text: '강퇴',
           style: 'destructive',
           onPress: () => {
-            Alert.alert('알림', '팀원 강퇴 기능은 아직 구현 중입니다.');
+            removeMemberMutation.mutate(
+              {
+                teamId: numericTeamId,
+                userId: member.userId,
+              },
+              {
+                onSuccess: () => {
+                  Alert.alert('성공', '팀원이 성공적으로 강퇴되었습니다.');
+                  refetch();
+                },
+                onError: error => {
+                  console.error('팀원 강퇴 실패:', error);
+                  Alert.alert(
+                    '오류',
+                    '팀원 강퇴에 실패했습니다. 다시 시도해주세요.'
+                  );
+                },
+              }
+            );
           },
         },
       ]

@@ -13,13 +13,13 @@ export const ROUTES = {
   TEAM_JOIN_UNIVERSITY: '/team/join-university',
   TEAM_JOIN_LIST: '/team/join-list',
 
-  MERCENARY: '/mercenary',
-
   TOURNAMENT: '/tournament',
 } as const;
 
 export type RouteKey = keyof typeof ROUTES;
 
+export const getTeamManagementUrl = (teamId: string | number) =>
+  `/team/management/${teamId}`;
 export const getTeamManagementSettingsUrl = (teamId: string) =>
   `/team/management/${teamId}/settings`;
 export const getTeamManagementRecentMatchesUrl = (teamId: string) =>

@@ -5,7 +5,7 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
-    types: [closed]
+    types: [opened, synchronize, reopened]
 
 jobs:
   # 코드 품질 검사만 GitHub Actions에서 처리

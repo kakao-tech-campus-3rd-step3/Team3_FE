@@ -44,6 +44,15 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
   const sendVerificationMutation = useSendVerificationMutation();
   const verificationInputRef = useRef<TextInput>(null);
 
+  const isVerifyButtonDisabled =
+    !data.university ||
+    !data.universityEmail ||
+    sendVerificationMutation.isPending ||
+    isVerificationSent;
+
+  const isVerifyCodeButtonDisabled =
+    verificationCode.length !== 6 || verifyEmailMutation.isPending;
+
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
     onChange(field, value);
     validateField(field, value, data);
@@ -137,28 +146,15 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
                 styles.verifyButton,
                 { marginTop: theme.spacing.spacing3 },
                 isVerificationSent && styles.verifyButtonCompleted,
-                (!data.university ||
-                  !data.universityEmail ||
-                  sendVerificationMutation.isPending ||
-                  isVerificationSent) &&
-                  styles.verifyButtonDisabled,
+                isVerifyButtonDisabled && styles.verifyButtonDisabled,
               ]}
               onPress={handleSendVerification}
-              disabled={
-                !data.university ||
-                !data.universityEmail ||
-                sendVerificationMutation.isPending ||
-                isVerificationSent
-              }
+              disabled={isVerifyButtonDisabled}
             >
               <Text
                 style={[
                   styles.verifyButtonText,
-                  (!data.university ||
-                    !data.universityEmail ||
-                    sendVerificationMutation.isPending ||
-                    isVerificationSent) &&
-                    styles.verifyButtonTextDisabled,
+                  isVerifyButtonDisabled && styles.verifyButtonTextDisabled,
                 ]}
               >
                 {sendVerificationMutation.isPending
@@ -198,21 +194,15 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
                 <TouchableOpacity
                   style={[
                     styles.verifyButton,
-                    (verificationCode.length !== 6 ||
-                      verifyEmailMutation.isPending) &&
-                      styles.verifyButtonDisabled,
+                    isVerifyCodeButtonDisabled && styles.verifyButtonDisabled,
                   ]}
                   onPress={handleVerify}
-                  disabled={
-                    verificationCode.length !== 6 ||
-                    verifyEmailMutation.isPending
-                  }
+                  disabled={isVerifyCodeButtonDisabled}
                 >
                   <Text
                     style={[
                       styles.verifyButtonText,
-                      (verificationCode.length !== 6 ||
-                        verifyEmailMutation.isPending) &&
+                      isVerifyCodeButtonDisabled &&
                         styles.verifyButtonTextDisabled,
                     ]}
                   >

@@ -1,6 +1,8 @@
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useAuth } from '@/src/contexts/auth_context';
+import { useUserProfile } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import { HomeData } from '@/src/types/home';
 import { UserProfile } from '@/src/types/profile';
@@ -66,6 +68,21 @@ const mockUserInfo: UserProfile = {
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const { userId } = useAuth();
+  const { data: userProfile, isLoading } = useUserProfile(userId!);
+
+  if (isLoading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: 'center', alignItems: 'center' },
+        ]}
+      >
+        <ActivityIndicator size="large" color={theme.colors.grass[500]} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -82,7 +99,7 @@ export default function HomeScreen() {
       >
         {/* 메인 환영 섹션 */}
         <View style={styles.mainSection}>
-          <GreetingSection homeData={mockHomeData} userInfo={mockUserInfo} />
+          <GreetingSection />
         </View>
 
         {/* 추천 매치 섹션 */}
@@ -93,7 +110,7 @@ export default function HomeScreen() {
         {/* 서비스 카드 섹션 */}
         <View style={styles.serviceSection}>
           <EnvelopeSection />
-          <BenefitsSection homeData={mockHomeData} />
+          <BenefitsSection teamId={userProfile?.teamId || null} />
         </View>
       </ScrollView>
     </View>

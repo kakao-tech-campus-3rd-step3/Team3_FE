@@ -1,20 +1,9 @@
 import { memo } from 'react';
 import { Text, View } from 'react-native';
 
-import { HomeData } from '@/src/types/home';
-import { UserProfile } from '@/src/types/profile';
-
 import styles from '../../home_style';
 
-interface GreetingSectionProps {
-  homeData: HomeData;
-  userInfo: UserProfile;
-}
-
-export default memo(function GreetingSection({
-  homeData,
-  userInfo,
-}: GreetingSectionProps) {
+export default memo(function GreetingSection() {
   return (
     <View style={styles.greetingSection}>
       <Text style={styles.greetingSubtext}>
