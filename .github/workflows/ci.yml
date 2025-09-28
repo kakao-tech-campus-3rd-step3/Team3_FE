@@ -1,0 +1,88 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+    types: [closed]
+
+jobs:
+  # 코드 품질 검사만 GitHub Actions에서 처리
+  quality-check:
+    name: 코드 품질 검사
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: ESLint 검사
+        run: npm run lint
+
+      - name: ESLint 자동 수정
+        run: npm run lint -- --fix
+
+      - name: Prettier 포맷 검사
+        run: npm run format:check
+
+      - name: Prettier 자동 포맷팅
+        run: npm run format
+
+      - name: TypeScript 타입 체크
+        run: npx tsc --noEmit
+
+      - name: Expo Doctor 체크
+        run: npx expo-doctor
+
+      - name: 의존성 호환성 검사
+        run: npm audit --audit-level=moderate
+
+  # 실제 빌드는 EAS Build에서 처리
+  build:
+    name: EAS Build 실행
+    needs: quality-check
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Expo 설정
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 빌드 전 작업 실행
+        run: |
+          chmod +x scripts/prebuild.sh
+          ./scripts/prebuild.sh
+
+      - name: EAS Build 실행
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            # iOS 추가 시: eas build --platform all --profile production --non-interactive
+            eas build --platform android --profile production --non-interactive
+          else
+            # iOS 추가 시: eas build --platform all --profile preview --non-interactive
+            eas build --platform android --profile preview --non-interactive
+          fi
+
+      - name: 빌드 후 작업 실행
+        run: |
+          chmod +x scripts/postbuild.sh
+          ./scripts/postbuild.sh

@@ -4,14 +4,23 @@ import { theme } from '@/src/theme';
 
 export const styles = StyleSheet.create({
   container: {
-    marginHorizontal: theme.spacing.spacing4,
-    marginBottom: theme.spacing.spacing4,
+    backgroundColor: theme.colors.background.main,
+    borderRadius: theme.spacing.spacing5,
+    padding: theme.spacing.spacing6,
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.spacing2,
+    marginBottom: theme.spacing.spacing4,
   },
   title: {
     ...theme.typography.text.card.title,
@@ -28,17 +37,24 @@ export const styles = StyleSheet.create({
   },
   card: {
     width: 150,
-    marginRight: theme.spacing.spacing2,
-    minHeight: 92,
-    backgroundColor: theme.colors.background.main,
-    borderRadius: theme.spacing.spacing3,
-    padding: theme.spacing.spacing3,
+    height: 120,
+    marginRight: theme.spacing.spacing3,
+    backgroundColor: theme.colors.background.sub,
+    borderRadius: theme.spacing.spacing4,
+    padding: theme.spacing.spacing4,
     justifyContent: 'space-between',
-    shadowColor: Platform.OS === 'ios' ? theme.colors.black : undefined,
-    shadowOpacity: Platform.OS === 'ios' ? 0.05 : 0,
-    shadowRadius: Platform.OS === 'ios' ? theme.spacing.spacing2 : 0,
-    elevation: 1,
+    borderWidth: 1,
+    borderColor: theme.colors.gray[200],
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
   },
+
   location: {
     fontSize: theme.typography.fontSize.font3,
     fontWeight: theme.typography.fontWeight.semibold,
@@ -119,5 +135,49 @@ export const styles = StyleSheet.create({
   },
   separator: {
     height: theme.spacing.spacing3,
+  },
+
+  // 빈 상태 스타일
+  emptyStateContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: theme.spacing.spacing6,
+    paddingHorizontal: theme.spacing.spacing4,
+    minHeight: 120,
+  },
+  emptyStateContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyStateEmoji: {
+    fontSize: 32,
+    marginBottom: theme.spacing.spacing3,
+  },
+  emptyStateTitle: {
+    fontSize: theme.typography.fontSize.font4,
+    fontWeight: theme.typography.fontWeight.semibold,
+    color: theme.colors.brand.main,
+    marginBottom: theme.spacing.spacing2,
+    textAlign: 'center',
+  },
+  emptyStateSubtitle: {
+    fontSize: theme.typography.fontSize.font2,
+    color: theme.colors.text.sub,
+    textAlign: 'center',
+    lineHeight: 18,
+    opacity: 0.8,
+  },
+  emptyStateFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.spacing1,
+    marginTop: theme.spacing.spacing4,
+  },
+  emptyStateDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: theme.colors.gray[300],
+    opacity: 0.5,
   },
 });

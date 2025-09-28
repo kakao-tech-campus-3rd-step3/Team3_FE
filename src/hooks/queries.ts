@@ -1,22 +1,51 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 
 import * as api from '@/src/api';
+import { useAuth } from '@/src/contexts/auth_context';
 import { queryClient } from '@/src/lib/query_client';
 import type {
   JoinTeamResponse,
   CreateTeamResponse,
   CreateTeamRequest,
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+  SendVerificationResponse,
+  VerifyEmailResponse,
+  VerifyEmailRequest,
 } from '@/src/types';
+
 export const queries = {
+  login: {
+    key: ['login'] as const,
+    fn: (loginData: LoginRequest) =>
+      api.authApi.login(loginData.email, loginData.password),
+  },
+  register: {
+    key: ['register'] as const,
+    fn: (registerData: RegisterRequest) => api.authApi.register(registerData),
+  },
+  sendVerification: {
+    key: ['sendVerification'] as const,
+    fn: (email: string) => api.authApi.sendVerification(email),
+  },
+  verifyEmail: {
+    key: ['verifyEmail'] as const,
+    fn: (verifyEmailCode: VerifyEmailRequest) =>
+      api.authApi.verifyEmail(verifyEmailCode),
+  },
   userProfile: {
     key: ['user', 'profile'] as const,
     fn: () => api.profileApi.getProfile(),
+  },
+  user: {
+    key: ['user'] as const,
   },
   home: {
     key: ['home'] as const,
     fn: () => api.homeApi.getHome(),
   },
-
   recommendedMatch: {
     key: ['recommendedMatch'] as const,
     fn: () => api.recommendedMatchApi.getRecommendedMatch(),
@@ -96,6 +125,7 @@ export function useTeam(teamId: string | number) {
     enabled: !!teamId,
   });
 }
+
 export function useTeamMembers(teamId: string | number) {
   return useQuery({
     queryKey: queries.teamMembers.key(teamId),
@@ -128,32 +158,25 @@ export function useTeamMatches(teamId: string | number) {
   });
 }
 
+// --- Mutations ---
+
 export function useCreateTeamMutation() {
   return useMutation({
-    mutationFn: async (
-      teamData: CreateTeamRequest
-    ): Promise<CreateTeamResponse> => {
-      const data: CreateTeamResponse = await api.createTeam(teamData);
-      return data;
-    },
+    mutationFn: (teamData: CreateTeamRequest): Promise<CreateTeamResponse> =>
+      api.createTeam(teamData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('팀 생성 실패:', error);
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
-    },
   });
 }
 
 export function useJoinTeamMutation() {
   return useMutation({
-    mutationFn: async (teamId: number): Promise<JoinTeamResponse> => {
-      const data: JoinTeamResponse = await api.joinTeamApi.joinTeam(teamId);
-      return data;
-    },
+    mutationFn: (teamId: number): Promise<JoinTeamResponse> =>
+      api.joinTeamApi.joinTeam(teamId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
@@ -162,6 +185,74 @@ export function useJoinTeamMutation() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+    },
+  });
+}
+
+export function useLogout() {
+  const { logout } = useAuth();
+
+  return useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      queryClient.clear();
+    },
+  });
+}
+
+export function useLoginMutation() {
+  const { login } = useAuth();
+
+  return useMutation({
+    mutationFn: queries.login.fn,
+    onSuccess: (data: LoginResponse) => {
+      login(data.authToken);
+
+      queryClient.invalidateQueries({ queryKey: queries.login.key });
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+    },
+  });
+}
+
+export function useRegisterMutation() {
+  const { login } = useAuth();
+
+  return useMutation({
+    mutationFn: queries.register.fn,
+    onSuccess: (data: RegisterResponse) => {
+      login(data.accessToken);
+
+      queryClient.invalidateQueries({ queryKey: queries.login.key });
+      queryClient.invalidateQueries({
+        queryKey: [{ queryKey: queries.user.key }],
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('회원가입 실패:', error);
+    },
+  });
+}
+
+export function useSendVerificationMutation() {
+  return useMutation({
+    mutationFn: queries.sendVerification.fn,
+    onSuccess: (data: SendVerificationResponse) => {
+      console.log('이메일 인증번호 전송 성공:', data);
+    },
+    onError: (error: unknown) => {
+      console.error('이메일 인증번호 전송 실패:', error);
+    },
+  });
+}
+
+export function useVerifyEmailMutation() {
+  return useMutation({
+    mutationFn: queries.verifyEmail.fn,
+    onSuccess: (data: VerifyEmailResponse) => {
+      console.log('이메일 인증 성공:', data);
+    },
+    onError: (error: unknown) => {
+      console.error('이메일 인증 실패:', error);
     },
   });
 }

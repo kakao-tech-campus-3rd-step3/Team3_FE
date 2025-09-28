@@ -7,6 +7,7 @@ import ErrorBoundary from 'react-native-error-boundary';
 import 'react-native-reanimated';
 
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { AuthProvider } from '@/src/contexts/auth_context';
 import { queryClient } from '@/src/lib/query_client';
 
 function AppContent() {
@@ -21,9 +22,11 @@ function AppContent() {
   return (
     <ThemeProvider value={DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="team" />
         <Stack.Screen name="profile" />
+        <Stack.Screen name="mercenary" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
@@ -34,7 +37,9 @@ export default function RootLayout() {
   return (
     <ErrorBoundary FallbackComponent={GlobalErrorFallback}>
       <QueryClientProvider client={queryClient}>
-        <AppContent />
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

@@ -3,6 +3,14 @@ import { Stack } from 'expo-router';
 import { theme } from '@/src/theme';
 
 export default function TeamLayout() {
+  const screensWithoutHeader = [
+    'guide',
+    'creation',
+    'join-university',
+    'join-list',
+    'management/[teamId]',
+  ];
+
   return (
     <Stack
       screenOptions={{
@@ -16,36 +24,16 @@ export default function TeamLayout() {
         },
       }}
     >
-      <Stack.Screen
-        name="guide"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="creation"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="join-university"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="join-list"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="management/[teamId]"
-        options={{
-          headerShown: false, // 하위 레이아웃에서 처리
-        }}
-      />
+      {screensWithoutHeader.map(screenName => (
+        <Stack.Screen
+          key={screenName}
+          name={screenName}
+          options={{
+            headerShown: false,
+            ...(screenName === 'management/[teamId]' && {}),
+          }}
+        />
+      ))}
     </Stack>
   );
 }
