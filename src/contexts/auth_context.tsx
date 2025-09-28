@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useEffect } from 'react';
+import { View, ActivityIndicator } from 'react-native';
 
 import { useStorageState } from '@/src/hooks/useStorageState';
 import { apiClient } from '@/src/lib/api_client';
 import { queryClient } from '@/src/lib/query_client';
+import { theme } from '@/src/theme';
 
 interface AuthContextType {
   token: string | null;
@@ -40,9 +42,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     queryClient.clear();
   };
 
-  // 로딩 중일 때 스플래시 같은 화면을 보여줄 수 있음
   if (isLoading) {
-    return <></>; // TODO: 여기서 SplashScreen 컴포넌트 렌더링 가능
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.colors.background.sub,
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.colors.grass[500]} />
+      </View>
+    );
   }
 
   return (
