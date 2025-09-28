@@ -14,6 +14,7 @@ import type {
   SendVerificationResponse,
   VerifyEmailResponse,
   VerifyEmailRequest,
+  UpdateProfileRequest,
 } from '@/src/types';
 
 export const queries = {
@@ -36,8 +37,8 @@ export const queries = {
       api.authApi.verifyEmail(verifyEmailCode),
   },
   userProfile: {
-    key: ['user', 'profile'] as const,
-    fn: () => api.profileApi.getProfile(),
+    key: (userId: string) => ['user', 'profile', userId] as const,
+    fn: (userId: string) => api.profileApi.getProfile(userId),
   },
   user: {
     key: ['user'] as const,
@@ -82,10 +83,11 @@ export const queries = {
   },
 } as const;
 
-export function useUserInfo() {
+export function useUserProfile(userId: string) {
   return useQuery({
-    queryKey: queries.userProfile.key,
-    queryFn: queries.userProfile.fn,
+    queryKey: ['userProfile', userId],
+    queryFn: () => api.profileApi.getProfile(userId),
+    enabled: !!userId,
   });
 }
 
@@ -165,7 +167,7 @@ export function useCreateTeamMutation() {
     mutationFn: (teamData: CreateTeamRequest): Promise<CreateTeamResponse> =>
       api.createTeam(teamData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
     },
     onError: (error: unknown) => {
       console.error('팀 생성 실패:', error);
@@ -178,13 +180,13 @@ export function useJoinTeamMutation() {
     mutationFn: (teamId: number): Promise<JoinTeamResponse> =>
       api.joinTeamApi.joinTeam(teamId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
     },
     onError: (error: unknown) => {
       console.error('팀 참여 실패:', error);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
     },
   });
 }
@@ -206,7 +208,7 @@ export function useLoginMutation() {
   return useMutation({
     mutationFn: queries.login.fn,
     onSuccess: (data: LoginResponse) => {
-      login(data.authToken);
+      login(data.authToken, data.userId);
 
       queryClient.invalidateQueries({ queryKey: queries.login.key });
       queryClient.invalidateQueries({ queryKey: ['user'] });
@@ -220,7 +222,7 @@ export function useRegisterMutation() {
   return useMutation({
     mutationFn: queries.register.fn,
     onSuccess: (data: RegisterResponse) => {
-      login(data.accessToken);
+      login(data.accessToken, data.userId);
 
       queryClient.invalidateQueries({ queryKey: queries.login.key });
       queryClient.invalidateQueries({
@@ -253,6 +255,19 @@ export function useVerifyEmailMutation() {
     },
     onError: (error: unknown) => {
       console.error('이메일 인증 실패:', error);
+    },
+  });
+}
+
+export function useUpdateProfileMutation() {
+  return useMutation({
+    mutationFn: (data: UpdateProfileRequest) =>
+      api.profileApi.updateProfile(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+    },
+    onError: (error: unknown) => {
+      console.error('프로필 수정 실패:', error);
     },
   });
 }
