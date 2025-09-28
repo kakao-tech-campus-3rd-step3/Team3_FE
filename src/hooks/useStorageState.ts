@@ -14,24 +14,29 @@ export function useStorageState<T>(
     isMounted.current = true;
 
     const loadStoredValue = async () => {
+      if (!isMounted.current) {
+        return;
+      }
+
       try {
         const stored = await SecureStore.getItemAsync(key);
+
         if (stored !== null) {
           try {
             const parsed = JSON.parse(stored) as T;
-            if (isMounted.current) setState(parsed);
+            setState(parsed);
           } catch {
             console.warn(`저장된 데이터가 손상되었습니다: ${key}`);
-            if (isMounted.current) setState(initialValue);
+            setState(initialValue);
           }
         } else {
-          if (isMounted.current) setState(initialValue);
+          setState(initialValue);
         }
       } catch (error) {
         console.error(`데이터를 불러올 수 없습니다: ${key}:`, error);
-        if (isMounted.current) setState(initialValue);
+        setState(initialValue);
       } finally {
-        if (isMounted.current) setIsLoading(false);
+        setIsLoading(false);
       }
     };
 
