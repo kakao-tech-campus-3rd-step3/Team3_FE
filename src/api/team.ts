@@ -44,19 +44,24 @@ export const teamMemberApi = {
   },
 
   updateMemberRole: (
-    memberId: number,
+    teamId: string | number,
+    userId: string | number,
     role: TeamMemberRole
   ): Promise<TeamMember> => {
-    return apiClient.put<TeamMember>(TEAM_MEMBER_API.UPDATE_ROLE(memberId), {
-      role,
-    });
+    return apiClient.put<TeamMember>(
+      TEAM_MEMBER_API.UPDATE_ROLE(teamId, userId),
+      {
+        role,
+      }
+    );
   },
 
   removeMember: (
-    memberId: number
+    teamId: string | number,
+    userId: string | number
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient.delete<{ success: boolean; message: string }>(
-      TEAM_MEMBER_API.REMOVE_MEMBER(memberId)
+      TEAM_MEMBER_API.REMOVE_MEMBER(teamId, userId)
     );
   },
 };
