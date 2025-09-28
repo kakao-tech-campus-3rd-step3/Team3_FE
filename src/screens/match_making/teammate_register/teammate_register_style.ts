@@ -1,10 +1,142 @@
 import { StyleSheet } from 'react-native';
 
-import { colors, spacing, typography } from '@/src/theme';
-
-export const styles = StyleSheet.create({
+export const style = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.gray[50],
+    backgroundColor: '#f9fafb', // ✅ 다크모드 → 밝은 톤
+  },
+
+  searchWrap: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+  search: {
+    height: 44,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    backgroundColor: '#ffffff', // ✅ 흰 배경
+    color: '#111827', // ✅ 진한 글씨
+    borderWidth: 1,
+    borderColor: '#d1d5db', // ✅ 연한 회색 테두리
+  },
+
+  filterWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    padding: 16,
+  },
+  chip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+  },
+  chipOn: {
+    backgroundColor: '#dbeafe', // ✅ 연한 파랑 배경
+    borderColor: '#2563eb', // ✅ 파랑 테두리
+  },
+  chipText: {
+    color: '#6b7280', // ✅ 회색 글씨
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  chipTextOn: {
+    color: '#2563eb', // ✅ 활성화 시 파랑
+  },
+
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderColor: '#e5e7eb', // ✅ 밝은 회색 구분선
+    backgroundColor: '#ffffff',
+  },
+  rowOn: {
+    backgroundColor: '#f0f9ff', // ✅ 선택 시 연한 하늘색
+  },
+  rowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#9ca3af', // ✅ 회색
+    backgroundColor: '#ffffff',
+  },
+  checkboxOn: {
+    backgroundColor: '#2563eb',
+    borderColor: '#2563eb',
+  },
+  name: {
+    color: '#111827', // ✅ 진한 글씨
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  meta: {
+    color: '#6b7280',
+    fontSize: 12,
+    marginTop: 2,
+  },
+  pick: {
+    color: '#6b7280',
+    fontSize: 12,
+  },
+
+  empty: {
+    alignItems: 'center',
+    padding: 24,
+  },
+  emptyText: {
+    color: '#6b7280',
+  },
+
+  bottomBar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: 12,
+    paddingTop: 12,
+    backgroundColor: '#ffffff',
+    borderTopWidth: 1,
+    borderColor: '#e5e7eb',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  bottomLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  bottomText: {
+    color: '#111827',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  cta: {
+    paddingHorizontal: 18,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2563eb', // ✅ 파랑 CTA 버튼
+  },
+  ctaDisabled: {
+    backgroundColor: '#d1d5db', // ✅ 비활성화 시 회색
+  },
+  ctaText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '800',
   },
 });
