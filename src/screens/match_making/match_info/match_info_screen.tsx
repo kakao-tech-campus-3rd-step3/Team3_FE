@@ -20,7 +20,7 @@ type Stadium = {
   name: string;
 };
 
-//  임시 Mock 데이터
+// ⚠️ 임시 Mock 데이터
 const MOCK_STADIUMS: Stadium[] = [
   { id: '1', name: '서울월드컵경기장' },
   { id: '2', name: '잠실종합운동장' },
@@ -36,9 +36,15 @@ export default function MatchInfoScreen() {
   const [stadiumModalVisible, setStadiumModalVisible] = useState(false);
   const [selectedStadium, setSelectedStadium] = useState<Stadium | null>(null);
 
+  // 날짜
   const [date, setDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
+
+  // 시작/종료 시간
+  const [timeStart, setTimeStart] = useState<Date>(new Date());
+  const [timeEnd, setTimeEnd] = useState<Date>(new Date());
+  const [showTimeStartPicker, setShowTimeStartPicker] = useState(false);
+  const [showTimeEndPicker, setShowTimeEndPicker] = useState(false);
 
   const filteredStadiums = MOCK_STADIUMS.filter(s =>
     s.name.toLowerCase().includes(stadiumQuery.toLowerCase())
@@ -50,11 +56,21 @@ export default function MatchInfoScreen() {
   };
 
   const onSubmit = () => {
+    // TODO: API 연동 시 이 값들을 body에 넣어 전송
+    console.log('매치 등록:', {
+      preferredDate: date.toISOString().split('T')[0], // YYYY-MM-DD
+      preferredTimeStart: timeStart.toTimeString().slice(0, 8), // HH:mm:ss
+      preferredTimeEnd: timeEnd.toTimeString().slice(0, 8),
+      preferredVenueId: selectedStadium?.id,
+    });
+
     router.push({
       pathname: '/match_making/match_making_success',
       params: {
         stadium: JSON.stringify(selectedStadium),
         date: date.toISOString(),
+        timeStart: timeStart.toISOString(),
+        timeEnd: timeEnd.toISOString(),
       },
     });
   };
@@ -80,6 +96,7 @@ export default function MatchInfoScreen() {
       <View style={style.section}>
         <Text style={style.label}>경기 일정</Text>
 
+        {/* 날짜 선택 */}
         <TouchableOpacity
           style={style.input}
           onPress={() => setShowDatePicker(true)}
@@ -87,12 +104,28 @@ export default function MatchInfoScreen() {
           <Text>{date.toLocaleDateString()}</Text>
         </TouchableOpacity>
 
+        {/* 시작 시간 */}
         <TouchableOpacity
           style={style.input}
-          onPress={() => setShowTimePicker(true)}
+          onPress={() => setShowTimeStartPicker(true)}
         >
           <Text>
-            {date.toLocaleTimeString([], {
+            시작:{' '}
+            {timeStart.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </Text>
+        </TouchableOpacity>
+
+        {/* 종료 시간 */}
+        <TouchableOpacity
+          style={style.input}
+          onPress={() => setShowTimeEndPicker(true)}
+        >
+          <Text>
+            종료:{' '}
+            {timeEnd.toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit',
             })}
@@ -100,7 +133,7 @@ export default function MatchInfoScreen() {
         </TouchableOpacity>
       </View>
 
-      {/*  하단 바 */}
+      {/* 하단 바 */}
       <View style={style.bottomBar}>
         <TouchableOpacity style={style.nextButton} onPress={onSubmit}>
           <Text style={style.nextButtonText}>매치 등록하기</Text>
@@ -108,40 +141,39 @@ export default function MatchInfoScreen() {
       </View>
 
       {/* 경기장 선택 모달 */}
-      {stadiumModalVisible && (
-        <Modal visible={stadiumModalVisible} transparent animationType="slide">
-          <View style={style.modalWrap}>
-            <View style={style.modalContent}>
-              <Text style={style.modalTitle}>경기장 선택</Text>
-              <TextInput
-                style={style.searchInput}
-                placeholder="경기장 검색"
-                value={stadiumQuery}
-                onChangeText={setStadiumQuery}
-              />
-              <FlatList
-                data={filteredStadiums}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={style.stadiumItem}
-                    onPress={() => onSelectStadium(item)}
-                  >
-                    <Text>{item.name}</Text>
-                  </TouchableOpacity>
-                )}
-              />
-              <TouchableOpacity
-                onPress={() => setStadiumModalVisible(false)}
-                style={style.closeButton}
-              >
-                <Text style={{ color: 'white' }}>닫기</Text>
-              </TouchableOpacity>
-            </View>
+      <Modal visible={stadiumModalVisible} transparent animationType="slide">
+        <View style={style.modalWrap}>
+          <View style={style.modalContent}>
+            <Text style={style.modalTitle}>경기장 선택</Text>
+            <TextInput
+              style={style.searchInput}
+              placeholder="경기장 검색"
+              value={stadiumQuery}
+              onChangeText={setStadiumQuery}
+            />
+            <FlatList
+              data={filteredStadiums}
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={style.stadiumItem}
+                  onPress={() => onSelectStadium(item)}
+                >
+                  <Text>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+            />
+            <TouchableOpacity
+              onPress={() => setStadiumModalVisible(false)}
+              style={style.closeButton}
+            >
+              <Text style={{ color: 'white' }}>닫기</Text>
+            </TouchableOpacity>
           </View>
-        </Modal>
-      )}
+        </View>
+      </Modal>
 
+      {/* Date Picker */}
       {showDatePicker && (
         <DateTimePicker
           value={date}
@@ -154,14 +186,28 @@ export default function MatchInfoScreen() {
         />
       )}
 
-      {showTimePicker && (
+      {/* 시작 시간 Picker */}
+      {showTimeStartPicker && (
         <DateTimePicker
-          value={date}
+          value={timeStart}
           mode="time"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={(event, selectedDate) => {
-            setShowTimePicker(false);
-            if (selectedDate) setDate(selectedDate);
+            setShowTimeStartPicker(false);
+            if (selectedDate) setTimeStart(selectedDate);
+          }}
+        />
+      )}
+
+      {/* 종료 시간 Picker */}
+      {showTimeEndPicker && (
+        <DateTimePicker
+          value={timeEnd}
+          mode="time"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          onChange={(event, selectedDate) => {
+            setShowTimeEndPicker(false);
+            if (selectedDate) setTimeEnd(selectedDate);
           }}
         />
       )}
