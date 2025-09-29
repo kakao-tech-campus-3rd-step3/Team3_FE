@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import SkillLevelRangeSelector from '@/src/screens/match_making/match_info/component/skill_level_selector';
 
 import { style } from './match_info_style';
 
@@ -46,6 +47,10 @@ export default function MatchInfoScreen() {
   const [showTimeStartPicker, setShowTimeStartPicker] = useState(false);
   const [showTimeEndPicker, setShowTimeEndPicker] = useState(false);
 
+  // 실력 수준
+  const [skillMin, setSkillMin] = useState('AMATEUR');
+  const [skillMax, setSkillMax] = useState('PRO');
+
   const filteredStadiums = MOCK_STADIUMS.filter(s =>
     s.name.toLowerCase().includes(stadiumQuery.toLowerCase())
   );
@@ -56,12 +61,13 @@ export default function MatchInfoScreen() {
   };
 
   const onSubmit = () => {
-    // TODO: API 연동 시 이 값들을 body에 넣어 전송
     console.log('매치 등록:', {
-      preferredDate: date.toISOString().split('T')[0], // YYYY-MM-DD
-      preferredTimeStart: timeStart.toTimeString().slice(0, 8), // HH:mm:ss
+      preferredDate: date.toISOString().split('T')[0],
+      preferredTimeStart: timeStart.toTimeString().slice(0, 8),
       preferredTimeEnd: timeEnd.toTimeString().slice(0, 8),
       preferredVenueId: selectedStadium?.id,
+      skillLevelMin: skillMin,
+      skillLevelMax: skillMax,
     });
 
     router.push({
@@ -71,6 +77,8 @@ export default function MatchInfoScreen() {
         date: date.toISOString(),
         timeStart: timeStart.toISOString(),
         timeEnd: timeEnd.toISOString(),
+        skillLevelMin: skillMin,
+        skillLevelMax: skillMax,
       },
     });
   };
@@ -133,6 +141,14 @@ export default function MatchInfoScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* ✅ 실력 수준 선택 */}
+      <SkillLevelRangeSelector
+        onChange={(min, max) => {
+          setSkillMin(min);
+          setSkillMax(max);
+        }}
+      />
+
       {/* 하단 바 */}
       <View style={style.bottomBar}>
         <TouchableOpacity style={style.nextButton} onPress={onSubmit}>
@@ -140,40 +156,7 @@ export default function MatchInfoScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* 경기장 선택 모달 */}
-      <Modal visible={stadiumModalVisible} transparent animationType="slide">
-        <View style={style.modalWrap}>
-          <View style={style.modalContent}>
-            <Text style={style.modalTitle}>경기장 선택</Text>
-            <TextInput
-              style={style.searchInput}
-              placeholder="경기장 검색"
-              value={stadiumQuery}
-              onChangeText={setStadiumQuery}
-            />
-            <FlatList
-              data={filteredStadiums}
-              keyExtractor={item => item.id}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={style.stadiumItem}
-                  onPress={() => onSelectStadium(item)}
-                >
-                  <Text>{item.name}</Text>
-                </TouchableOpacity>
-              )}
-            />
-            <TouchableOpacity
-              onPress={() => setStadiumModalVisible(false)}
-              style={style.closeButton}
-            >
-              <Text style={{ color: 'white' }}>닫기</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Date Picker */}
+      {/* 경기장 선택 모달, DateTimePickers → 그대로 */}
       {showDatePicker && (
         <DateTimePicker
           value={date}
@@ -185,8 +168,6 @@ export default function MatchInfoScreen() {
           }}
         />
       )}
-
-      {/* 시작 시간 Picker */}
       {showTimeStartPicker && (
         <DateTimePicker
           value={timeStart}
@@ -198,8 +179,6 @@ export default function MatchInfoScreen() {
           }}
         />
       )}
-
-      {/* 종료 시간 Picker */}
       {showTimeEndPicker && (
         <DateTimePicker
           value={timeEnd}
