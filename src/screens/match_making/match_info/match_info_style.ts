@@ -13,6 +13,7 @@ export const style = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 8,
+    color: '#111827',
   },
   input: {
     padding: 12,
@@ -22,6 +23,8 @@ export const style = StyleSheet.create({
     backgroundColor: '#ffffff',
     marginBottom: 12,
   },
+
+  // 모달
   modalWrap: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
@@ -38,6 +41,7 @@ export const style = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     marginBottom: 12,
+    color: '#111827',
   },
   searchInput: {
     borderWidth: 1,
@@ -45,6 +49,7 @@ export const style = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     marginBottom: 12,
+    backgroundColor: '#ffffff',
   },
   stadiumItem: {
     paddingVertical: 12,
@@ -58,6 +63,29 @@ export const style = StyleSheet.create({
     marginTop: 12,
     alignItems: 'center',
   },
+
+  // 체크박스
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: '#2563eb',
+    marginRight: 8,
+  },
+  checkboxOn: {
+    backgroundColor: '#2563eb',
+  },
+  checkboxLabel: {
+    fontSize: 14,
+    color: '#111827',
+  },
+
+  // 하단 바
   bottomBar: {
     position: 'absolute',
     left: 0,
