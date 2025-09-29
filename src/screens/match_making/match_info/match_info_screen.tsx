@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import Message from '@/src/screens/match_making/match_info/component/message/message';
 import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
 
 import { style } from './match_info_style';
@@ -54,6 +55,9 @@ export default function MatchInfoScreen() {
   // 같은 대학 여부
   const [universityOnly, setUniversityOnly] = useState(false);
 
+  // 추가 설명
+  const [message, setMessage] = useState('');
+
   const filteredStadiums = MOCK_STADIUMS.filter(s =>
     s.name.toLowerCase().includes(stadiumQuery.toLowerCase())
   );
@@ -72,6 +76,7 @@ export default function MatchInfoScreen() {
       skillLevelMin: skillMin,
       skillLevelMax: skillMax,
       universityOnly: universityOnly,
+      message: message,
     });
 
     router.push({
@@ -84,6 +89,7 @@ export default function MatchInfoScreen() {
         skillLevelMin: skillMin,
         skillLevelMax: skillMax,
         universityOnly: String(universityOnly),
+        message: message,
       },
     });
   };
@@ -164,6 +170,9 @@ export default function MatchInfoScreen() {
           <Text style={style.checkboxLabel}>같은 대학 상대만 구합니다</Text>
         </TouchableOpacity>
       </View>
+
+      {/* 추가 설명 입력 */}
+      <Message value={message} onChange={setMessage} />
 
       {/* 하단 바 */}
       <View style={style.bottomBar}>
