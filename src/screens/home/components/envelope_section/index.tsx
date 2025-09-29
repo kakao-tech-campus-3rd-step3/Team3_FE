@@ -10,9 +10,7 @@ import styles from '../../home_style';
 export default memo(function EnvelopeSection() {
   return (
     <View style={styles.envelopeSection}>
-      <TouchableOpacity
-        onPress={() => router.push('/match_making/teammate_register')}
-      >
+      <TouchableOpacity onPress={() => router.push('/match_making/match_info')}>
         <View style={styles.envelopeHeader}>
           <View style={styles.envelopeIcon}>
             <Image
