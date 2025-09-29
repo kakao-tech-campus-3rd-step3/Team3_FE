@@ -2,13 +2,16 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 
+import { style } from './skill_level_selector_style';
+
+// 실력 레벨 정의
 const LEVELS = ['AMATEUR', 'SEMI_PRO', 'PRO'];
 
 type Props = {
   onChange: (min: string, max: string) => void;
 };
 
-export default function SkillLevelRangeSelector({ onChange }: Props) {
+export default function SkillLevelSelector({ onChange }: Props) {
   const [values, setValues] = useState<[number, number]>([0, 2]);
 
   const handleChange = (val: number[]) => {
@@ -18,11 +21,9 @@ export default function SkillLevelRangeSelector({ onChange }: Props) {
   };
 
   return (
-    <View style={{ marginBottom: 24 }}>
-      <Text style={{ fontSize: 14, fontWeight: '600', marginBottom: 8 }}>
-        선호하는 수준
-      </Text>
-      <Text style={{ fontSize: 14, marginBottom: 12 }}>
+    <View style={style.section}>
+      <Text style={style.label}>선호하는 수준</Text>
+      <Text style={style.selectedText}>
         최소: {LEVELS[values[0]]} / 최대: {LEVELS[values[1]]}
       </Text>
 
@@ -33,27 +34,15 @@ export default function SkillLevelRangeSelector({ onChange }: Props) {
         max={2}
         step={1}
         onValuesChange={handleChange}
-        selectedStyle={{ backgroundColor: '#2563eb' }}
-        unselectedStyle={{ backgroundColor: '#d1d5db' }}
-        markerStyle={{
-          backgroundColor: '#2563eb',
-          height: 24,
-          width: 24,
-          borderRadius: 12,
-        }}
-        containerStyle={{ alignSelf: 'center' }}
+        selectedStyle={style.selectedTrack}
+        unselectedStyle={style.unselectedTrack}
+        markerStyle={style.marker}
+        containerStyle={style.sliderContainer}
       />
 
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginTop: 8,
-          paddingHorizontal: 8,
-        }}
-      >
+      <View style={style.levelLabels}>
         {LEVELS.map(level => (
-          <Text key={level} style={{ fontSize: 12, color: '#6b7280' }}>
+          <Text key={level} style={style.levelLabel}>
             {level}
           </Text>
         ))}

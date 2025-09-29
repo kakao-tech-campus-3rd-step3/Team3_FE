@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import SkillLevelRangeSelector from '@/src/screens/match_making/match_info/component/skill_level_selector';
+import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
 
 import { style } from './match_info_style';
 
@@ -142,7 +142,7 @@ export default function MatchInfoScreen() {
       </View>
 
       {/* ✅ 실력 수준 선택 */}
-      <SkillLevelRangeSelector
+      <SkillLevelSelector
         onChange={(min, max) => {
           setSkillMin(min);
           setSkillMax(max);
