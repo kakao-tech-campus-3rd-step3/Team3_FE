@@ -7,8 +7,8 @@ import type {
 } from '@/src/types';
 
 export const profileApi = {
-  getProfile: (userId: string) =>
-    apiClient.get<UserProfile>(PROFILE_API.GET_PROFILE(userId)),
+  getProfile: () => apiClient.get<UserProfile>(PROFILE_API.GET_PROFILE),
   updateProfile: (data: UpdateProfileRequest) =>
     apiClient.put<UpdateProfileResponse>(PROFILE_API.UPDATE_PROFILE, data),
+  deleteProfile: () => apiClient.delete(PROFILE_API.DELETE_PROFILE),
 };
