@@ -10,9 +10,9 @@ import {
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
-import { useTeamMatches, useTeam } from '@/src/hooks/queries';
+import { useTeamRecentMatches, useTeam } from '@/src/hooks/queries';
 import { colors, spacing, typography, theme } from '@/src/theme';
-import type { Match } from '@/src/types/match';
+import type { RecentMatchResponse } from '@/src/types/match';
 import { formatDate, formatTime } from '@/src/utils/date';
 
 interface TeamRecentMatchesScreenProps {
@@ -22,7 +22,12 @@ interface TeamRecentMatchesScreenProps {
 export default memo(function TeamRecentMatchesScreen({
   teamId,
 }: TeamRecentMatchesScreenProps) {
-  const { data: matches, isLoading, error, refetch } = useTeamMatches(teamId);
+  const {
+    data: matches,
+    isLoading,
+    error,
+    refetch,
+  } = useTeamRecentMatches(teamId, 'FINISHED');
   const { data: team } = useTeam(teamId);
 
   if (!teamId || teamId === null || teamId === undefined) {
@@ -57,16 +62,36 @@ export default memo(function TeamRecentMatchesScreen({
     );
   }
 
-  const getOpponentTeam = (match: Match, currentTeamId: number) => {
-    return match.team1.teamId === currentTeamId ? match.team2 : match.team1;
+  const getOpponentTeamName = (
+    match: RecentMatchResponse,
+    currentTeamName: string
+  ) => {
+    return match.team1Name === currentTeamName
+      ? match.team2Name
+      : match.team1Name;
   };
 
-  const getResultIcon = (match: Match, currentTeamId: number) => {
-    return {
-      icon: 'football-outline' as const,
-      color: colors.gray[500],
-      text: '경기 완료',
-    };
+  const getResultIcon = (match: RecentMatchResponse) => {
+    switch (match.status) {
+      case 'FINISHED':
+        return {
+          icon: 'checkmark-circle-outline' as const,
+          color: colors.green[600],
+          text: '경기 완료',
+        };
+      case 'MATCHED':
+        return {
+          icon: 'football-outline' as const,
+          color: colors.blue[600],
+          text: '매치 확정',
+        };
+      default:
+        return {
+          icon: 'football-outline' as const,
+          color: colors.gray[500],
+          text: '경기 완료',
+        };
+    }
   };
 
   if (isLoading) {
@@ -81,8 +106,7 @@ export default memo(function TeamRecentMatchesScreen({
     return <GlobalErrorFallback error={error} resetError={() => refetch()} />;
   }
 
-  const teamMatches = matches as { [key: string]: Match[] } | undefined;
-  const currentTeamMatches = teamMatches?.[teamId] || [];
+  const currentTeamMatches = matches || [];
 
   if (!matches) {
     return (
@@ -125,19 +149,17 @@ export default memo(function TeamRecentMatchesScreen({
         ) : (
           <View style={styles.matchesList}>
             {currentTeamMatches.map(match => {
-              const opponent = getOpponentTeam(match, parseInt(teamId));
-              const result = getResultIcon(match, parseInt(teamId));
+              const opponentName = getOpponentTeamName(match, team?.name || '');
+              const result = getResultIcon(match);
 
               return (
                 <View key={match.matchId} style={styles.matchCard}>
                   <View style={styles.matchHeader}>
                     <View style={styles.opponentInfo}>
                       <Text style={styles.opponentTeamName}>
-                        {opponent.name}
+                        {opponentName}
                       </Text>
-                      <Text style={styles.opponentUniversity}>
-                        {opponent.university}
-                      </Text>
+                      <Text style={styles.opponentUniversity}>상대팀</Text>
                     </View>
                     <View style={styles.resultContainer}>
                       <Ionicons
@@ -182,7 +204,7 @@ export default memo(function TeamRecentMatchesScreen({
                           color={colors.gray[500]}
                         />
                         <Text style={styles.matchInfoText}>
-                          {match.venue.name}
+                          {match.venueName}
                         </Text>
                       </View>
                     </View>
@@ -269,6 +291,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 3,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.green[500],
   },
   matchHeader: {
     flexDirection: 'row',
@@ -288,11 +312,20 @@ const styles = StyleSheet.create({
   opponentUniversity: {
     fontSize: typography.fontSize.font3,
     color: colors.gray[500],
+    backgroundColor: colors.gray[100],
+    paddingHorizontal: spacing.spacing2,
+    paddingVertical: spacing.spacing1,
+    borderRadius: spacing.spacing2,
+    alignSelf: 'flex-start',
   },
   resultContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.spacing1,
+    backgroundColor: colors.gray[50],
+    paddingHorizontal: spacing.spacing3,
+    paddingVertical: spacing.spacing2,
+    borderRadius: spacing.spacing3,
   },
   resultText: {
     fontSize: typography.fontSize.font4,

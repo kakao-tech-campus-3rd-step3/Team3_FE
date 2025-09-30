@@ -81,6 +81,12 @@ export const queries = {
     key: (teamId: string | number) => ['teamMatches', teamId] as const,
     fn: (teamId: string | number) => api.teamMatchApi.getTeamMatches(teamId),
   },
+  teamRecentMatches: {
+    key: (teamId: string | number, status?: string) =>
+      ['teamRecentMatches', teamId, status] as const,
+    fn: (teamId: string | number, status?: string) =>
+      api.teamMatchApi.getTeamRecentMatches(teamId, status),
+  },
   teamJoinWaitingList: {
     key: (
       teamId: string | number,
@@ -190,6 +196,14 @@ export function useTeamMatches(teamId: string | number) {
   return useQuery({
     queryKey: queries.teamMatches.key(teamId),
     queryFn: () => queries.teamMatches.fn(teamId),
+    enabled: !!teamId,
+  });
+}
+
+export function useTeamRecentMatches(teamId: string | number, status?: string) {
+  return useQuery({
+    queryKey: queries.teamRecentMatches.key(teamId, status),
+    queryFn: () => queries.teamRecentMatches.fn(teamId, status),
     enabled: !!teamId,
   });
 }
