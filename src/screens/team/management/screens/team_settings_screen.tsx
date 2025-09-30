@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
@@ -8,6 +9,7 @@ import {
   useTeamJoinWaitingList,
   useTeamMembers,
   useUserProfile,
+  useDeleteTeamMutation,
 } from '@/src/hooks/queries';
 import { colors } from '@/src/theme';
 
@@ -23,6 +25,7 @@ export default function TeamSettingsScreen({
 }: TeamSettingsScreenProps) {
   const [showJoinRequestsModal, setShowJoinRequestsModal] = useState(false);
   const { data: userProfile } = useUserProfile();
+  const deleteTeamMutation = useDeleteTeamMutation();
 
   const numericTeamId = teamId ? Number(teamId) : 0;
   const {
@@ -144,7 +147,25 @@ export default function TeamSettingsScreen({
           text: '삭제',
           style: 'destructive',
           onPress: () => {
-            Alert.alert('알림', '팀 삭제 기능은 아직 구현 중입니다.');
+            deleteTeamMutation.mutate(numericTeamId, {
+              onSuccess: () => {
+                Alert.alert('성공', '팀이 성공적으로 삭제되었습니다.', [
+                  {
+                    text: '확인',
+                    onPress: () => {
+                      router.push('/');
+                    },
+                  },
+                ]);
+              },
+              onError: error => {
+                console.error('팀 삭제 실패:', error);
+                Alert.alert(
+                  '오류',
+                  '팀 삭제에 실패했습니다. 다시 시도해주세요.'
+                );
+              },
+            });
           },
         },
       ]
