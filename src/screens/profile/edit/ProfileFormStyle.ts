@@ -59,7 +59,7 @@ export const styles = StyleSheet.create({
   levelOption: {
     flex: 1,
     paddingVertical: theme.spacing.spacing3,
-    paddingHorizontal: theme.spacing.spacing4,
+    paddingHorizontal: theme.spacing.spacing2,
     borderRadius: theme.spacing.spacing2,
     borderWidth: 1,
     borderColor: theme.colors.gray[300],
@@ -71,7 +71,7 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.colors.grass[50],
   },
   levelOptionText: {
-    fontSize: theme.typography.fontSize.font4,
+    fontSize: theme.typography.fontSize.font3,
     color: theme.colors.text.sub,
     fontWeight: theme.typography.fontWeight.medium,
   },
