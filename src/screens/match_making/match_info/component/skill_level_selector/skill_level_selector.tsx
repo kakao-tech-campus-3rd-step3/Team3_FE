@@ -5,10 +5,12 @@ import { View, Text } from 'react-native';
 import { style } from './skill_level_selector_style';
 
 // 실력 레벨 정의
-const LEVELS = ['AMATEUR', 'SEMI_PRO', 'PRO'];
+const LEVELS = ['AMATEUR', 'SEMI_PRO', 'PRO'] as const;
+
+type SkillLevel = (typeof LEVELS)[number];
 
 type Props = {
-  onChange: (min: string, max: string) => void;
+  onChange: (min: SkillLevel, max: SkillLevel) => void;
 };
 
 export default function SkillLevelSelector({ onChange }: Props) {

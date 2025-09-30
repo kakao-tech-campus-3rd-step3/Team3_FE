@@ -9,9 +9,13 @@ import {
   FlatList,
   Modal,
   Platform,
+  Alert,
 } from 'react-native';
 
+import { MatchCreateRequestDto } from '@/src/api/match';
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { useHome } from '@/src/hooks/queries';
+import { useCreateMatch } from '@/src/hooks/useCreateMatch';
 import Message from '@/src/screens/match_making/match_info/component/message/message';
 import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
 
@@ -22,7 +26,7 @@ type Stadium = {
   name: string;
 };
 
-// ⚠️ 임시 Mock 데이터
+// ⚠️ 임시 Mock 데이터 (서버 API 완성 시 교체 예정)
 const MOCK_STADIUMS: Stadium[] = [
   { id: '1', name: '서울월드컵경기장' },
   { id: '2', name: '잠실종합운동장' },
@@ -31,8 +35,12 @@ const MOCK_STADIUMS: Stadium[] = [
   { id: '5', name: '대전월드컵경기장' },
 ];
 
+type SkillLevel = 'AMATEUR' | 'SEMI_PRO' | 'PRO';
+
 export default function MatchInfoScreen() {
   const router = useRouter();
+  const { data: home } = useHome();
+  const { mutate: createMatch, isPending } = useCreateMatch();
 
   const [stadiumQuery, setStadiumQuery] = useState('');
   const [stadiumModalVisible, setStadiumModalVisible] = useState(false);
@@ -49,8 +57,8 @@ export default function MatchInfoScreen() {
   const [showTimeEndPicker, setShowTimeEndPicker] = useState(false);
 
   // 실력 수준
-  const [skillMin, setSkillMin] = useState('AMATEUR');
-  const [skillMax, setSkillMax] = useState('PRO');
+  const [skillMin, setSkillMin] = useState<SkillLevel>('AMATEUR');
+  const [skillMax, setSkillMax] = useState<SkillLevel>('PRO');
 
   // 같은 대학 여부
   const [universityOnly, setUniversityOnly] = useState(false);
@@ -67,29 +75,50 @@ export default function MatchInfoScreen() {
     setStadiumModalVisible(false);
   };
 
-  const onSubmit = () => {
-    console.log('매치 등록:', {
-      preferredDate: date.toISOString().split('T')[0],
-      preferredTimeStart: timeStart.toTimeString().slice(0, 8),
-      preferredTimeEnd: timeEnd.toTimeString().slice(0, 8),
-      preferredVenueId: selectedStadium?.id,
-      skillLevelMin: skillMin,
-      skillLevelMax: skillMax,
-      universityOnly: universityOnly,
-      message: message,
-    });
+  // 날짜/시간 포맷 함수
+  const pad2 = (n: number) => String(n).padStart(2, '0');
+  const fmtDate = (d: Date) =>
+    `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  const fmtTime = (d: Date) =>
+    `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
 
-    router.push({
-      pathname: '/match_making/match_making_success',
-      params: {
-        stadium: JSON.stringify(selectedStadium),
-        date: date.toISOString(),
-        timeStart: timeStart.toISOString(),
-        timeEnd: timeEnd.toISOString(),
-        skillLevelMin: skillMin,
-        skillLevelMax: skillMax,
-        universityOnly: String(universityOnly),
-        message: message,
+  const onSubmit = () => {
+    if (!selectedStadium) {
+      Alert.alert('안내', '경기장을 선택해주세요.');
+      return;
+    }
+
+    if (!home?.user?.teamId) {
+      Alert.alert('안내', '팀 정보가 없습니다. 다시 시도해주세요.');
+      return;
+    }
+
+    const payload: MatchCreateRequestDto = {
+      teamId: Number(home.user.teamId),
+      preferredDate: fmtDate(date),
+      preferredTimeStart: fmtTime(timeStart),
+      preferredTimeEnd: fmtTime(timeEnd),
+      preferredVenueId: Number(selectedStadium.id),
+      skillLevelMin: skillMin ?? 'AMATEUR',
+      skillLevelMax: skillMax ?? 'PRO',
+      universityOnly,
+      message,
+    };
+
+    createMatch(payload, {
+      onSuccess: data => {
+        router.push({
+          pathname: '/match_making/match_making_success',
+          params: {
+            waitingId: String(data.waitingId),
+            teamId: String(data.teamId),
+            status: data.status,
+            expiresAt: data.expiresAt,
+          },
+        });
+      },
+      onError: err => {
+        Alert.alert('매치 생성 실패', err.message ?? '다시 시도해주세요.');
       },
     });
   };
@@ -152,7 +181,7 @@ export default function MatchInfoScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* ✅ 실력 수준 선택 */}
+      {/* 실력 수준 선택 */}
       <SkillLevelSelector
         onChange={(min, max) => {
           setSkillMin(min);
@@ -160,7 +189,7 @@ export default function MatchInfoScreen() {
         }}
       />
 
-      {/* ✅ 같은 대학 여부 */}
+      {/* 같은 대학 여부 */}
       <View style={style.section}>
         <TouchableOpacity
           style={style.checkboxRow}
@@ -176,8 +205,14 @@ export default function MatchInfoScreen() {
 
       {/* 하단 바 */}
       <View style={style.bottomBar}>
-        <TouchableOpacity style={style.nextButton} onPress={onSubmit}>
-          <Text style={style.nextButtonText}>매치 등록하기</Text>
+        <TouchableOpacity
+          style={[style.nextButton, isPending && { opacity: 0.6 }]}
+          onPress={onSubmit}
+          disabled={isPending}
+        >
+          <Text style={style.nextButtonText}>
+            {isPending ? '등록 중...' : '매치 등록하기'}
+          </Text>
         </TouchableOpacity>
       </View>
 

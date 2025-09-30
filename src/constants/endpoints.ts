@@ -48,3 +48,7 @@ export const TEAM_MATCH_API = {
   GET_TEAM_RECENT_MATCHES: (teamId: string | number) =>
     `/api/teams/${teamId}/matches`,
 };
+
+export const MATCH_CREATE_API = {
+  CREATE: '/api/matches',
+};
