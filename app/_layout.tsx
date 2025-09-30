@@ -27,7 +27,7 @@ function AppContent() {
         <Stack.Screen name="team" />
         <Stack.Screen name="profile" />
         <Stack.Screen name="match_making/match_info" />
-        <Stack.Screen name="match_application/match_application" />
+        <Stack.Screen name="match_application/index" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

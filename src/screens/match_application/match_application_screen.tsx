@@ -1,4 +1,3 @@
-// src/screens/match_application/match_application_screen.tsx
 import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 
