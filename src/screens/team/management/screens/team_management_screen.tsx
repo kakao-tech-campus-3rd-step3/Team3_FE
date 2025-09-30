@@ -2,15 +2,9 @@ import React from 'react';
 import { View, ScrollView, RefreshControl } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import {
-  useTeam,
-  useTeamMembers,
-  useTeamReviews,
-  useHome,
-} from '@/src/hooks/queries';
+import { useTeam, useTeamMembers, useUserProfile } from '@/src/hooks/queries';
 
 import TeamInfoCard from '../components/cards/team_info_card';
-import TeamReviewsSection from '../components/cards/team_reviews_section';
 import TeamMembersSection from '../components/sections/team_members_section';
 import EmptyState from '../components/states/empty_state';
 import LoadingState from '../components/states/loading_state';
@@ -23,27 +17,48 @@ interface TeamManagementScreenProps {
 export default function TeamManagementScreen({
   teamId,
 }: TeamManagementScreenProps) {
-  const numericTeamId = Number(teamId);
-  const { data: homeData } = useHome();
+  const { data: userProfile } = useUserProfile();
+
+  const numericTeamId = teamId ? Number(teamId) : 0;
   const { data: team, isLoading, error, refetch } = useTeam(numericTeamId);
   const {
-    data: teamMembers,
+    data: teamMembersData,
     isLoading: membersLoading,
     error: membersError,
     refetch: refetchMembers,
   } = useTeamMembers(numericTeamId);
-  const {
-    data: teamReviews,
-    isLoading: reviewsLoading,
-    error: reviewsError,
-    refetch: refetchReviews,
-  } = useTeamReviews(numericTeamId);
 
-  if (isLoading || membersLoading || reviewsLoading) {
+  if (!teamId || teamId === null || teamId === undefined) {
+    return (
+      <EmptyState
+        icon="⚠️"
+        title="잘못된 팀 ID"
+        subtitle="유효하지 않은 팀 ID입니다"
+        description="올바른 팀 ID로 다시 시도해주세요."
+      />
+    );
+  }
+
+  if (
+    isNaN(numericTeamId) ||
+    !Number.isInteger(numericTeamId) ||
+    numericTeamId <= 0
+  ) {
+    return (
+      <EmptyState
+        icon="⚠️"
+        title="잘못된 팀 ID"
+        subtitle="유효하지 않은 팀 ID입니다"
+        description="올바른 팀 ID로 다시 시도해주세요."
+      />
+    );
+  }
+
+  if (isLoading || membersLoading) {
     return <LoadingState />;
   }
 
-  if (error || membersError || reviewsError) {
+  if (error || membersError) {
     return (
       <EmptyState
         icon="❌"
@@ -56,15 +71,16 @@ export default function TeamManagementScreen({
     );
   }
 
-  const currentUserName = homeData?.user?.name;
-  const currentUserMember = Array.isArray(teamMembers)
-    ? teamMembers.find(member => member.user?.name === currentUserName)
-    : undefined;
+  const currentUserName = userProfile?.name;
+  const teamMembers = teamMembersData?.content || [];
+  const currentUserMember = teamMembers.find(
+    member => member.name === currentUserName
+  );
   const canManageTeam =
     currentUserMember?.role === 'LEADER' ||
     currentUserMember?.role === 'VICE_LEADER';
 
-  if (!team || teamMembers === undefined || teamReviews === undefined) {
+  if (!team || !teamMembersData) {
     return (
       <EmptyState
         icon="🔍"
@@ -83,11 +99,10 @@ export default function TeamManagementScreen({
         style={styles.scrollContainer}
         refreshControl={
           <RefreshControl
-            refreshing={isLoading || membersLoading || reviewsLoading}
+            refreshing={isLoading || membersLoading}
             onRefresh={() => {
               refetch();
               refetchMembers();
-              refetchReviews();
             }}
           />
         }
@@ -97,10 +112,6 @@ export default function TeamManagementScreen({
           <TeamMembersSection
             teamMembers={teamMembers}
             membersLoading={membersLoading}
-          />
-          <TeamReviewsSection
-            teamReviews={teamReviews}
-            reviewsLoading={reviewsLoading}
           />
         </View>
       </ScrollView>

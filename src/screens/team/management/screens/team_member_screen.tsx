@@ -27,8 +27,7 @@ export default function MemberManagementScreen({
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
-  const numericTeamId = Number(teamId);
-
+  const numericTeamId = teamId ? Number(teamId) : 0;
   const {
     data: teamMembers,
     isLoading,
@@ -38,6 +37,36 @@ export default function MemberManagementScreen({
 
   const removeMemberMutation = useRemoveMemberMutation();
   const updateMemberRoleMutation = useUpdateMemberRoleMutation();
+
+  if (!teamId || teamId === null || teamId === undefined) {
+    return (
+      <View style={styles.container}>
+        <CustomHeader title="팀원 관리" />
+        <View style={styles.contentContainer}>
+          <Text style={{ textAlign: 'center', color: '#ff4444' }}>
+            유효하지 않은 팀 ID입니다.
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (
+    isNaN(numericTeamId) ||
+    !Number.isInteger(numericTeamId) ||
+    numericTeamId <= 0
+  ) {
+    return (
+      <View style={styles.container}>
+        <CustomHeader title="팀원 관리" />
+        <View style={styles.contentContainer}>
+          <Text style={{ textAlign: 'center', color: '#ff4444' }}>
+            유효하지 않은 팀 ID입니다.
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   if (isLoading) {
     return <LoadingState message="팀원 정보를 불러오는 중..." />;
@@ -74,7 +103,7 @@ export default function MemberManagementScreen({
 
     Alert.alert(
       '역할 변경',
-      `${selectedMember.user?.name}님의 역할을 ${getRoleDisplayName(newRole)}로 변경하시겠습니까?`,
+      `${selectedMember.name}님의 역할을 ${getRoleDisplayName(newRole)}로 변경하시겠습니까?`,
       [
         { text: '취소', style: 'cancel' },
         {
@@ -121,7 +150,7 @@ export default function MemberManagementScreen({
 
     Alert.alert(
       '팀원 강퇴',
-      `${member.user?.name}님을 팀에서 강퇴하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`,
+      `${member.name}님을 팀에서 강퇴하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`,
       [
         { text: '취소', style: 'cancel' },
         {
@@ -166,7 +195,7 @@ export default function MemberManagementScreen({
         <View style={styles.contentContainer}>
           <MemberInfoCard />
           <MemberListSection
-            teamMembers={teamMembers}
+            teamMembers={teamMembers.content}
             onRoleChange={handleRoleChange}
             onRemoveMember={handleRemoveMember}
           />

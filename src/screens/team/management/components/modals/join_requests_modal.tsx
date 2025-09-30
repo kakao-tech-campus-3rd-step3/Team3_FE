@@ -3,15 +3,16 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native';
 
 import { colors } from '@/src/theme';
-import type { JoinRequest } from '@/src/types/team';
+import type { TeamJoinRequest } from '@/src/types/team';
+import { getJoinRequestStatusDisplayName } from '@/src/utils/team';
 
 import { styles } from '../../styles/team_settings_styles';
 
 interface JoinRequestsModalProps {
   visible: boolean;
-  joinRequests: JoinRequest[];
+  joinRequests: TeamJoinRequest[];
   onClose: () => void;
-  onJoinRequest: (requestId: string, status: 'approved' | 'rejected') => void;
+  onJoinRequest: (requestId: number, status: 'approved' | 'rejected') => void;
 }
 
 export default function JoinRequestsModal({
@@ -54,39 +55,35 @@ export default function JoinRequestsModal({
                   <View style={styles.requestHeader}>
                     <View style={styles.applicantInfo}>
                       <Text style={styles.applicantName}>
-                        {request.applicantName}
+                        신청자 ID: {request.applicantId}
                       </Text>
                       <Text style={styles.applicantEmail}>
-                        {request.applicantEmail}
+                        신청 ID: {request.id}
                       </Text>
                     </View>
                     <View style={styles.requestStatus}>
                       <View
                         style={[
                           styles.statusBadge,
-                          request.status === 'pending' && styles.statusPending,
-                          request.status === 'approved' &&
+                          request.status === 'PENDING' && styles.statusPending,
+                          request.status === 'APPROVED' &&
                             styles.statusApproved,
-                          request.status === 'rejected' &&
+                          request.status === 'REJECTED' &&
                             styles.statusRejected,
                         ]}
                       >
                         <Text
                           style={[
                             styles.statusText,
-                            request.status === 'pending' &&
+                            request.status === 'PENDING' &&
                               styles.statusTextPending,
-                            request.status === 'approved' &&
+                            request.status === 'APPROVED' &&
                               styles.statusTextApproved,
-                            request.status === 'rejected' &&
+                            request.status === 'REJECTED' &&
                               styles.statusTextRejected,
                           ]}
                         >
-                          {request.status === 'pending'
-                            ? '대기중'
-                            : request.status === 'approved'
-                              ? '승인됨'
-                              : '거절됨'}
+                          {getJoinRequestStatusDisplayName(request.status)}
                         </Text>
                       </View>
                     </View>
@@ -94,16 +91,42 @@ export default function JoinRequestsModal({
 
                   <View style={styles.requestDetails}>
                     <View style={styles.requestDetailRow}>
-                      <Text style={styles.requestDetailLabel}>포지션:</Text>
+                      <Text style={styles.requestDetailLabel}>팀 ID:</Text>
                       <Text style={styles.requestDetailValue}>
-                        {request.position}
+                        {request.teamId}
                       </Text>
                     </View>
+                    {request.decisionReason && (
+                      <View style={styles.requestDetailRow}>
+                        <Text style={styles.requestDetailLabel}>
+                          결정 사유:
+                        </Text>
+                        <Text style={styles.requestDetailValue}>
+                          {request.decisionReason}
+                        </Text>
+                      </View>
+                    )}
+                    {request.decidedBy && (
+                      <View style={styles.requestDetailRow}>
+                        <Text style={styles.requestDetailLabel}>결정자:</Text>
+                        <Text style={styles.requestDetailValue}>
+                          {request.decidedBy}
+                        </Text>
+                      </View>
+                    )}
+                    {request.decidedAt && (
+                      <View style={styles.requestDetailRow}>
+                        <Text style={styles.requestDetailLabel}>결정일:</Text>
+                        <Text style={styles.requestDetailValue}>
+                          {new Date(request.decidedAt).toLocaleDateString(
+                            'ko-KR'
+                          )}
+                        </Text>
+                      </View>
+                    )}
                   </View>
 
-                  <Text style={styles.requestMessage}>{request.message}</Text>
-
-                  {request.status === 'pending' && (
+                  {request.status === 'PENDING' && (
                     <View style={styles.requestActions}>
                       <TouchableOpacity
                         style={styles.approveButton}
@@ -125,10 +148,6 @@ export default function JoinRequestsModal({
                       </TouchableOpacity>
                     </View>
                   )}
-
-                  <Text style={styles.requestDate}>
-                    {new Date(request.createdAt).toLocaleDateString('ko-KR')}
-                  </Text>
                 </View>
               ))}
             </View>

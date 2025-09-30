@@ -12,10 +12,6 @@ export const PROFILE_API = {
   DELETE_PROFILE: '/api/profiles/me',
 };
 
-export const HOME_API = {
-  GET_HOME: '/home',
-};
-
 export const RECOMMENDED_MATCH_API = {
   GET_RECOMMENDED_MATCH: '/recommendedMatch',
 };
@@ -29,19 +25,18 @@ export const TEAM_API = {
   GET_TEAMS_BY_UNIVERSITY: '/api/teams',
   JOIN_TEAM: '/api/teams/join',
   GET_JOIN_REQUESTS: (teamId: string | number) =>
-    `/teams/${teamId}/joinRequests`,
+    `/api/teams/${teamId}/joinRequests`,
+  GET_JOIN_WAITING_LIST: (teamId: string | number) =>
+    `/api/teams/${teamId}/join-waiting`,
 };
 
 export const TEAM_MEMBER_API = {
-  GET_MEMBERS: (teamId: string | number) => `/teamMembers?teamId=${teamId}`,
+  GET_MEMBERS: (teamId: string | number, page: number = 0, size: number = 10) =>
+    `/api/teams/${teamId}/users?page=${page}&size=${size}`,
   UPDATE_ROLE: (teamId: string | number, userId: string | number) =>
     `/api/teams/${teamId}/users/${userId}`,
   REMOVE_MEMBER: (teamId: string | number, userId: string | number) =>
     `/api/teams/${teamId}/users/${userId}`,
-};
-
-export const TEAM_REVIEW_API = {
-  GET_REVIEWS: (teamId: string | number) => `/teamReviews?teamId=${teamId}`,
 };
 
 export const TEAM_MATCH_API = {

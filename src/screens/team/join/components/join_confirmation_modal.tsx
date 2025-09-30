@@ -16,7 +16,6 @@ interface JoinConfirmationModalProps {
   visible: boolean;
   teamName: string;
   teamType: string;
-  captainName: string;
   onConfirm: () => void;
   onCancel: () => void;
   slideAnim: Animated.Value;
@@ -28,7 +27,6 @@ export default function JoinConfirmationModal({
   visible,
   teamName,
   teamType,
-  captainName,
   onConfirm,
   onCancel,
   slideAnim,
@@ -78,14 +76,6 @@ export default function JoinConfirmationModal({
                 <Text style={styles.teamName}>{teamName}</Text>
                 <View style={styles.teamTypeBadge}>
                   <Text style={styles.teamTypeText}>{teamType}</Text>
-                </View>
-              </View>
-
-              <View style={styles.teamDetails}>
-                <View style={styles.detailItem}>
-                  <Ionicons name="person" size={16} color={colors.gray[600]} />
-                  <Text style={styles.detailLabel}>주장</Text>
-                  <Text style={styles.detailValue}>{captainName}</Text>
                 </View>
               </View>
             </View>

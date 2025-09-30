@@ -37,7 +37,7 @@ export default function TeamEditScreen({ teamId }: TeamEditScreenProps) {
     teamType: DEFAULT_TEAM_TYPE,
   });
 
-  const numericTeamId = Number(teamId);
+  const numericTeamId = teamId ? Number(teamId) : 0;
   const { data: team, isLoading, error, refetch } = useTeam(numericTeamId);
 
   useEffect(() => {
@@ -54,6 +54,36 @@ export default function TeamEditScreen({ teamId }: TeamEditScreenProps) {
       });
     }
   }, [team]);
+
+  if (!teamId || teamId === null || teamId === undefined) {
+    return (
+      <View style={styles.container}>
+        <CustomHeader title="팀 정보 수정" />
+        <View style={styles.loadingContainer}>
+          <Text style={{ textAlign: 'center', color: colors.red[500] }}>
+            유효하지 않은 팀 ID입니다.
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (
+    isNaN(numericTeamId) ||
+    !Number.isInteger(numericTeamId) ||
+    numericTeamId <= 0
+  ) {
+    return (
+      <View style={styles.container}>
+        <CustomHeader title="팀 정보 수정" />
+        <View style={styles.loadingContainer}>
+          <Text style={{ textAlign: 'center', color: colors.red[500] }}>
+            유효하지 않은 팀 ID입니다.
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   const handleRefresh = async () => {
     await refetch();

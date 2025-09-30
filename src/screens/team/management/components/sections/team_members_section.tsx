@@ -51,7 +51,7 @@ export default memo(function TeamMembersSection({
             />
             <View style={styles.memberInfo}>
               <Text style={styles.memberName}>
-                {member.user?.name || '알 수 없음'}
+                {member.name || '알 수 없음'}
               </Text>
               <Text style={styles.memberRole}>
                 {getRoleDisplayName(member.role)}

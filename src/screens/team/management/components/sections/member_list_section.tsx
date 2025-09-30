@@ -49,7 +49,7 @@ export default memo(function MemberListSection({
               <View style={styles.memberDetails}>
                 <View style={styles.memberHeader}>
                   <Text style={styles.memberName}>
-                    {member.user?.name || '알 수 없음'}
+                    {member.name || '알 수 없음'}
                   </Text>
                   <View
                     style={[
@@ -62,12 +62,8 @@ export default memo(function MemberListSection({
                     </Text>
                   </View>
                 </View>
-                <Text style={styles.memberEmail}>
-                  {member.user?.email || ''}
-                </Text>
-                <Text style={styles.memberUniversity}>
-                  {member.user?.university} • {member.user?.major}
-                </Text>
+                <Text style={styles.memberEmail}>{member.email || ''}</Text>
+                <Text style={styles.memberUniversity}>{member.position}</Text>
                 <Text style={styles.joinDate}>
                   가입일:{' '}
                   {new Date(member.joinedAt).toLocaleDateString('ko-KR')}
