@@ -27,3 +27,24 @@ export interface Match {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface MatchWaitingListRequestDto {
+  teamId: number;
+  selectDate: string; // yyyy-MM-dd
+  startTime?: string; // HH:mm:ss (없으면 필터 미적용)
+}
+
+export interface MatchWaitingResponseDto {
+  waitingId: number;
+  teamId: number;
+  preferredDate: string;
+  preferredTimeStart: string;
+  preferredTimeEnd: string;
+  preferredVenueId: number;
+  skillLevelMin: 'AMATEUR' | 'SEMI_PRO' | 'PRO';
+  skillLevelMax: 'AMATEUR' | 'SEMI_PRO' | 'PRO';
+  universityOnly: boolean;
+  message: string;
+  status: 'WAITING' | 'MATCHED' | 'CANCELLED';
+  expiresAt: string;
+}

@@ -52,3 +52,7 @@ export const TEAM_MATCH_API = {
 export const MATCH_CREATE_API = {
   CREATE: '/api/matches',
 };
+
+export const MATCH_WAITING_API = {
+  GET_WAITING_LIST: '/api/matches/waiting',
+};
