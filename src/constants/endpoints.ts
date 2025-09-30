@@ -33,6 +33,8 @@ export const TEAM_API = {
 export const TEAM_MEMBER_API = {
   GET_MEMBERS: (teamId: string | number, page: number = 0, size: number = 10) =>
     `/api/teams/${teamId}/users?page=${page}&size=${size}`,
+  GET_MEMBER: (teamId: string | number, userId: string | number) =>
+    `/api/teams/${teamId}/users/${userId}`,
   UPDATE_ROLE: (teamId: string | number, userId: string | number) =>
     `/api/teams/${teamId}/users/${userId}`,
   REMOVE_MEMBER: (teamId: string | number, userId: string | number) =>
