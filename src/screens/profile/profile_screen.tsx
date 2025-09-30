@@ -10,8 +10,6 @@ import { useUserProfile } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 
 import ProfileHeader from './components/profileHeader';
-import MannerCard from './components/reputationTab/manner_card';
-import ReviewCard from './components/reputationTab/review_card';
 import SettingCard from './components/settingTab/setting_card';
 import { defaultSettingsItems } from './components/settingTab/setting_items';
 import TabBar from './components/TabBar';
@@ -19,18 +17,26 @@ import styles from './profile_style';
 
 function ProfileScreen() {
   const [activeTab, setActiveTab] = useState<'reputation' | 'settings'>(
-    'reputation'
+    'settings'
   );
   const insets = useSafeAreaInsets();
-  const { userId } = useAuth();
+  const { token } = useAuth();
 
-  const { data: userInfo, isLoading, error, refetch } = useUserProfile(userId!);
+  const { data: userInfo, isLoading, error, refetch } = useUserProfile();
 
   const displayUser = userInfo;
   const handleChangeTab = useCallback(
     (t: 'reputation' | 'settings') => setActiveTab(t),
     []
   );
+
+  if (!token) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>로그인이 필요합니다.</Text>
+      </View>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -68,16 +74,7 @@ function ProfileScreen() {
           </Card>
           <TabBar active={activeTab} onChange={handleChangeTab} />
 
-          {activeTab === 'reputation' ? (
-            <>
-              <MannerCard
-                mannerScore={displayUser.mannerScore}
-                totalReviews={displayUser.totalReviews}
-                noShowCount={displayUser.noShowCount}
-              />
-              <ReviewCard reviews={displayUser.recentReviews} />
-            </>
-          ) : (
+          {activeTab === 'settings' && (
             <SettingCard items={defaultSettingsItems} />
           )}
 

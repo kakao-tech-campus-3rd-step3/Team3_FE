@@ -10,8 +10,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useAuth } from '@/src/contexts/auth_context';
-
 import LoginForm from '../components/login/login_form';
 
 import styles from './login_style';
@@ -21,8 +19,6 @@ interface LoginScreenProps {
 }
 
 function LoginScreen({ onSwitchToRegister }: LoginScreenProps) {
-  const { login } = useAuth();
-
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -32,13 +28,6 @@ function LoginScreen({ onSwitchToRegister }: LoginScreenProps) {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.content}>
-            <TouchableOpacity
-              style={styles.tempButton}
-              onPress={() => login('temp-token', 'temp-user-id')}
-            >
-              <Text style={styles.tempButtonText}>임시 로그인</Text>
-            </TouchableOpacity>
-
             <View style={styles.header}>
               <Text style={styles.logoText}>ShootDoori</Text>
               <Text style={styles.tagline}>대학교 축구 연결 서비스</Text>
