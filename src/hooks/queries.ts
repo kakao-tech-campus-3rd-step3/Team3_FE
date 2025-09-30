@@ -21,7 +21,6 @@ import type {
   VerifyEmailRequest,
   UpdateProfileRequest,
   TeamMemberRole,
-  RecentMatchResponse,
 } from '@/src/types';
 
 export const queries = {
