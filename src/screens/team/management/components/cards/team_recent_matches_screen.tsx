@@ -25,6 +25,38 @@ export default memo(function TeamRecentMatchesScreen({
   const { data: matches, isLoading, error, refetch } = useTeamMatches(teamId);
   const { data: team } = useTeam(teamId);
 
+  if (!teamId || teamId === null || teamId === undefined) {
+    return (
+      <View style={styles.container}>
+        <CustomHeader title="최근 경기" />
+        <View style={styles.loadingContainer}>
+          <Text style={{ textAlign: 'center', color: colors.red[500] }}>
+            유효하지 않은 팀 ID입니다.
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  const numericTeamId = Number(teamId);
+
+  if (
+    isNaN(numericTeamId) ||
+    !Number.isInteger(numericTeamId) ||
+    numericTeamId <= 0
+  ) {
+    return (
+      <View style={styles.container}>
+        <CustomHeader title="최근 경기" />
+        <View style={styles.loadingContainer}>
+          <Text style={{ textAlign: 'center', color: colors.red[500] }}>
+            유효하지 않은 팀 ID입니다.
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
   const getOpponentTeam = (match: Match, currentTeamId: number) => {
     return match.team1.teamId === currentTeamId ? match.team2 : match.team1;
   };

@@ -27,8 +27,7 @@ export default function MemberManagementScreen({
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
-  const numericTeamId = Number(teamId);
-
+  const numericTeamId = teamId ? Number(teamId) : 0;
   const {
     data: teamMembers,
     isLoading,
@@ -38,6 +37,36 @@ export default function MemberManagementScreen({
 
   const removeMemberMutation = useRemoveMemberMutation();
   const updateMemberRoleMutation = useUpdateMemberRoleMutation();
+
+  if (!teamId || teamId === null || teamId === undefined) {
+    return (
+      <View style={styles.container}>
+        <CustomHeader title="팀원 관리" />
+        <View style={styles.contentContainer}>
+          <Text style={{ textAlign: 'center', color: '#ff4444' }}>
+            유효하지 않은 팀 ID입니다.
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (
+    isNaN(numericTeamId) ||
+    !Number.isInteger(numericTeamId) ||
+    numericTeamId <= 0
+  ) {
+    return (
+      <View style={styles.container}>
+        <CustomHeader title="팀원 관리" />
+        <View style={styles.contentContainer}>
+          <Text style={{ textAlign: 'center', color: '#ff4444' }}>
+            유효하지 않은 팀 ID입니다.
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   if (isLoading) {
     return <LoadingState message="팀원 정보를 불러오는 중..." />;

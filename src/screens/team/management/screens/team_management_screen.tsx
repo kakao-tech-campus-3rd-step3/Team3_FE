@@ -17,8 +17,9 @@ interface TeamManagementScreenProps {
 export default function TeamManagementScreen({
   teamId,
 }: TeamManagementScreenProps) {
-  const numericTeamId = Number(teamId);
   const { data: userProfile } = useUserProfile();
+
+  const numericTeamId = teamId ? Number(teamId) : 0;
   const { data: team, isLoading, error, refetch } = useTeam(numericTeamId);
   const {
     data: teamMembersData,
@@ -26,6 +27,32 @@ export default function TeamManagementScreen({
     error: membersError,
     refetch: refetchMembers,
   } = useTeamMembers(numericTeamId);
+
+  if (!teamId || teamId === null || teamId === undefined) {
+    return (
+      <EmptyState
+        icon="⚠️"
+        title="잘못된 팀 ID"
+        subtitle="유효하지 않은 팀 ID입니다"
+        description="올바른 팀 ID로 다시 시도해주세요."
+      />
+    );
+  }
+
+  if (
+    isNaN(numericTeamId) ||
+    !Number.isInteger(numericTeamId) ||
+    numericTeamId <= 0
+  ) {
+    return (
+      <EmptyState
+        icon="⚠️"
+        title="잘못된 팀 ID"
+        subtitle="유효하지 않은 팀 ID입니다"
+        description="올바른 팀 ID로 다시 시도해주세요."
+      />
+    );
+  }
 
   if (isLoading || membersLoading) {
     return <LoadingState />;
