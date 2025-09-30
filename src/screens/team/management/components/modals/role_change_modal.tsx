@@ -38,7 +38,7 @@ export default memo(function RoleChangeModal({
 
           <View style={styles.modalContent}>
             <Text style={styles.modalMemberName}>
-              {selectedMember?.user?.name}님의 역할을 선택해주세요
+              {selectedMember?.name}님의 역할을 선택해주세요
             </Text>
 
             <View style={styles.roleOptions}>
