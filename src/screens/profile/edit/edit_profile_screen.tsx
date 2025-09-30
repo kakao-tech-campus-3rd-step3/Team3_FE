@@ -1,32 +1,41 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ScrollView, Text, View, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Card } from '@/src/components/card/card';
-import { useAuth } from '@/src/contexts/auth_context';
-import { useUserProfile } from '@/src/hooks/queries';
+import { useUserProfile, useUpdateProfileMutation } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
+import { UpdateProfileRequest } from '@/src/types/profile';
 
 import { styles } from './edit_profile_style';
 import { ProfileForm } from './ProfileForm';
 
 export default function EditProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { userId } = useAuth();
-  const { data: userInfo, refetch } = useUserProfile(userId!);
-  const [isLoading, setIsLoading] = useState(false);
+  const { data: userInfo, refetch } = useUserProfile();
+  const updateProfileMutation = useUpdateProfileMutation();
 
-  const handleSave = async (formData: any) => {
+  const handleSave = async (formData: UpdateProfileRequest) => {
     try {
-      setIsLoading(true);
-      console.log('저장할 데이터:', formData);
+      const cleanData: UpdateProfileRequest = {
+        name: formData.name?.trim() || '',
+        skillLevel: formData.skillLevel?.trim() || '',
+        position: formData.position?.trim() || '',
+        bio: formData.bio?.trim() || '',
+      };
 
+      // 필수 필드 검증
+      if (!cleanData.name || !cleanData.name.trim()) {
+        Alert.alert('오류', '이름을 입력해주세요.');
+        return;
+      }
+
+      await updateProfileMutation.mutateAsync(cleanData);
       Alert.alert('성공', '프로필이 수정되었습니다.');
       refetch();
-    } catch {
+    } catch (error) {
+      console.error('프로필 수정 실패:', error);
       Alert.alert('오류', '프로필 수정에 실패했습니다.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -51,7 +60,7 @@ export default function EditProfileScreen() {
           <ProfileForm
             initialData={userInfo}
             onSave={handleSave}
-            isLoading={isLoading}
+            isLoading={updateProfileMutation.isPending}
           />
         </Card>
       </View>

@@ -65,10 +65,12 @@ export function AccountSetup({
 
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
     onChange(field, value);
-    validateField(field, value, data);
+    // 업데이트된 데이터로 검증
+    const updatedData = { ...data, [field]: value };
+    validateField(field, value, updatedData);
 
     if (field === 'password' && data.confirmPassword) {
-      validateField('confirmPassword', data.confirmPassword, data);
+      validateField('confirmPassword', data.confirmPassword, updatedData);
     }
   };
 
@@ -77,14 +79,9 @@ export function AccountSetup({
     const emailValid =
       data.email &&
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(data.email);
-    const passwordValid =
-      data.password &&
-      data.password.length >= 8 &&
-      /[!@#$%^&*(),.?":{}|<>]/.test(data.password) &&
-      /[0-9]/.test(data.password) &&
-      /[a-zA-Z]/.test(data.password);
+    const passwordValid = !errors.password && data.password;
     const confirmPasswordValid =
-      data.confirmPassword && data.password === data.confirmPassword;
+      !errors.confirmPassword && data.confirmPassword;
     const termsAgreed = data.termsAgreed;
     const privacyAgreed = data.privacyAgreed;
 
@@ -95,7 +92,7 @@ export function AccountSetup({
       termsAgreed &&
       privacyAgreed
     );
-  }, [data]);
+  }, [data, errors]);
 
   return (
     <KeyboardAvoidingView
