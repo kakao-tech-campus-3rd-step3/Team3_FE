@@ -9,6 +9,7 @@ import type {
   TeamListPageResponse,
   ApiTeamListPageResponse,
   TeamMember,
+  ApiTeamMember,
   TeamMemberPageResponse,
   ApiTeamMemberPageResponse,
   TeamMemberRole,
@@ -22,6 +23,7 @@ import {
   transformTeamListPageResponse,
   transformTeamDetailResponse,
   transformTeamMemberPageResponse,
+  transformTeamMemberItem,
   transformTeamJoinRequestPageResponse,
   getTeamTypeInEnglish,
   getSkillLevelInEnglish,
@@ -78,6 +80,16 @@ export const teamMemberApi = {
       TEAM_MEMBER_API.GET_MEMBERS(teamId, page, size)
     );
     return transformTeamMemberPageResponse(apiResponse);
+  },
+
+  getTeamMember: async (
+    teamId: string | number,
+    userId: string | number
+  ): Promise<TeamMember> => {
+    const apiResponse = await apiClient.get<ApiTeamMember>(
+      TEAM_MEMBER_API.GET_MEMBER(teamId, userId)
+    );
+    return transformTeamMemberItem(apiResponse);
   },
 
   updateMemberRole: (
