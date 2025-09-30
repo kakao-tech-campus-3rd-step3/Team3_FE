@@ -74,7 +74,7 @@ export default function MemberManagementScreen({
 
     Alert.alert(
       '역할 변경',
-      `${selectedMember.user?.name}님의 역할을 ${getRoleDisplayName(newRole)}로 변경하시겠습니까?`,
+      `${selectedMember.name}님의 역할을 ${getRoleDisplayName(newRole)}로 변경하시겠습니까?`,
       [
         { text: '취소', style: 'cancel' },
         {
@@ -121,7 +121,7 @@ export default function MemberManagementScreen({
 
     Alert.alert(
       '팀원 강퇴',
-      `${member.user?.name}님을 팀에서 강퇴하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`,
+      `${member.name}님을 팀에서 강퇴하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.`,
       [
         { text: '취소', style: 'cancel' },
         {
@@ -166,7 +166,7 @@ export default function MemberManagementScreen({
         <View style={styles.contentContainer}>
           <MemberInfoCard />
           <MemberListSection
-            teamMembers={teamMembers}
+            teamMembers={teamMembers.content}
             onRoleChange={handleRoleChange}
             onRemoveMember={handleRemoveMember}
           />
