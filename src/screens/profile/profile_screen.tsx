@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react';
 import { ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -12,23 +11,15 @@ import { theme } from '@/src/theme';
 import ProfileHeader from './components/profileHeader';
 import SettingCard from './components/settingTab/setting_card';
 import { defaultSettingsItems } from './components/settingTab/setting_items';
-import TabBar from './components/TabBar';
 import styles from './profile_style';
 
 function ProfileScreen() {
-  const [activeTab, setActiveTab] = useState<'reputation' | 'settings'>(
-    'settings'
-  );
   const insets = useSafeAreaInsets();
   const { token } = useAuth();
 
   const { data: userInfo, isLoading, error, refetch } = useUserProfile();
 
   const displayUser = userInfo;
-  const handleChangeTab = useCallback(
-    (t: 'reputation' | 'settings') => setActiveTab(t),
-    []
-  );
 
   if (!token) {
     return (
@@ -72,11 +63,8 @@ function ProfileScreen() {
           <Card style={styles.profileCard}>
             <ProfileHeader user={displayUser} />
           </Card>
-          <TabBar active={activeTab} onChange={handleChangeTab} />
 
-          {activeTab === 'settings' && (
-            <SettingCard items={defaultSettingsItems} />
-          )}
+          <SettingCard items={defaultSettingsItems} />
 
           <View style={styles.bottomSpacer} />
         </View>
