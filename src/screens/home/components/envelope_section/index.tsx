@@ -32,9 +32,7 @@ export default memo(function EnvelopeSection() {
       </View>
 
       <View style={styles.envelopeSection}>
-        <TouchableOpacity
-          onPress={() => router.push('/match_application/match_application')}
-        >
+        <TouchableOpacity onPress={() => router.push(ROUTES.MATCH_APPLICATION)}>
           <View style={styles.envelopeHeader}>
             <View style={styles.envelopeIcon}>
               <Image
