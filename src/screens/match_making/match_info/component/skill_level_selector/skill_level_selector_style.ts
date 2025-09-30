@@ -1,43 +1,45 @@
 import { StyleSheet } from 'react-native';
 
+import { theme } from '@/src/theme';
+
 export const style = StyleSheet.create({
   section: {
-    marginBottom: 24,
+    marginBottom: theme.spacing.spacing6,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
-    color: '#111827',
+    fontSize: theme.typography.fontSize.font3,
+    fontWeight: theme.typography.fontWeight.semibold,
+    marginBottom: theme.spacing.spacing2,
+    color: theme.colors.gray[900],
   },
   selectedText: {
-    fontSize: 14,
-    marginBottom: 12,
-    color: '#374151',
+    fontSize: theme.typography.fontSize.font3,
+    marginBottom: theme.spacing.spacing3,
+    color: theme.colors.gray[700],
   },
   sliderContainer: {
     alignSelf: 'center',
   },
   selectedTrack: {
-    backgroundColor: '#2563eb',
+    backgroundColor: theme.colors.blue[600],
   },
   unselectedTrack: {
-    backgroundColor: '#d1d5db',
+    backgroundColor: theme.colors.gray[300],
   },
   marker: {
-    backgroundColor: '#2563eb',
-    height: 24,
-    width: 24,
-    borderRadius: 12,
+    backgroundColor: theme.colors.blue[600],
+    height: theme.spacing.spacing6,
+    width: theme.spacing.spacing6,
+    borderRadius: theme.spacing.spacing3,
   },
   levelLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 8,
-    paddingHorizontal: 8,
+    marginTop: theme.spacing.spacing2,
+    paddingHorizontal: theme.spacing.spacing2,
   },
   levelLabel: {
-    fontSize: 12,
-    color: '#6b7280',
+    fontSize: theme.typography.fontSize.font2,
+    color: theme.colors.gray[500],
   },
 });

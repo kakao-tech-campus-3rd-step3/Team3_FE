@@ -10,11 +10,10 @@ export const DEFAULT_SKILL_LEVEL: SkillLevel = '아마추어';
 
 export interface CreateTeamRequest {
   name: string;
-  description: string;
+  description?: string;
   university: string;
   skillLevel: SkillLevel;
   teamType: TeamType;
-  memberCount: number;
 }
 
 export interface CreateTeamResponse {

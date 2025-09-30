@@ -1,22 +1,24 @@
 import { StyleSheet } from 'react-native';
 
+import { theme } from '@/src/theme';
+
 export const style = StyleSheet.create({
   section: {
-    marginBottom: 24,
+    marginBottom: theme.spacing.spacing6,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
-    color: '#111827',
+    fontSize: theme.typography.fontSize.font3,
+    fontWeight: theme.typography.fontWeight.semibold,
+    marginBottom: theme.spacing.spacing2,
+    color: theme.colors.gray[900],
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
-    backgroundColor: '#ffffff',
-    padding: 12,
-    fontSize: 14,
+    borderColor: theme.colors.gray[300],
+    borderRadius: theme.spacing.spacing2,
+    backgroundColor: theme.colors.white,
+    padding: theme.spacing.spacing3,
+    fontSize: theme.typography.fontSize.font3,
     minHeight: 100,
     textAlignVertical: 'top',
   },

@@ -8,9 +8,10 @@ export interface RegisterFormData {
   universityEmail: string;
   // step 2
   name: string;
-  kakaoId: string;
-  department: string;
+  kakaoTalkId: string;
   studentYear: string;
+  department: string;
+  bio: string;
   // step 3
   email: string;
   password: string;
@@ -23,9 +24,10 @@ const initialFormData: RegisterFormData = {
   university: '',
   universityEmail: '',
   name: '',
-  kakaoId: '',
-  department: '',
+  kakaoTalkId: '',
   studentYear: '',
+  department: '',
+  bio: '',
   email: '',
   password: '',
   confirmPassword: '',
@@ -47,16 +49,16 @@ export const useRegisterForm = () => {
 
   const getRegisterData = (): RegisterRequest => ({
     name: formData.name,
-    skillLevel: '중급',
+    skillLevel: '아마추어',
     email: formData.email,
     universityEmail: formData.universityEmail,
     password: formData.password,
-    kakaoId: formData.kakaoId,
-    position: '미드필더',
+    kakaoTalkId: formData.kakaoTalkId,
+    position: '공격수',
     university: formData.university,
     department: formData.department,
     studentYear: formData.studentYear,
-    bio: '',
+    bio: formData.bio,
   });
 
   return { formData, updateForm, resetForm, getRegisterData };

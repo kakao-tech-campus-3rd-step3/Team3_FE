@@ -1,5 +1,5 @@
 export const AUTH_API = {
-  LOGIN: '/auth/login',
+  LOGIN: '/api/auth/login',
   LOGOUT: '/auth/logout',
   REGISTER: '/api/auth/register',
   VERIFY_EMAIL: '/api/auth/verify-email',
@@ -7,8 +7,9 @@ export const AUTH_API = {
 };
 
 export const PROFILE_API = {
-  GET_PROFILE: (userId: string) => `/api/profiles/${userId}`,
+  GET_PROFILE: '/api/profiles/me',
   UPDATE_PROFILE: '/api/profiles/me',
+  DELETE_PROFILE: '/api/profiles/me',
 };
 
 export const HOME_API = {
@@ -20,13 +21,13 @@ export const RECOMMENDED_MATCH_API = {
 };
 
 export const TEAM_API = {
-  CREATE: '/teams',
-  DETAIL: (teamId: string | number) => `/teams/${teamId}`,
-  UPDATE: (teamId: string | number) => `/teams/${teamId}`,
-  DELETE: (teamId: string | number) => `/teams/${teamId}`,
-  GET_UNIVERSITY_LIST: '/universities',
-  GET_TEAMS_BY_UNIVERSITY: '/teams',
-  JOIN_TEAM: '/teams/join',
+  CREATE: '/api/teams',
+  DETAIL: (teamId: string | number) => `/api/teams/${teamId}`,
+  UPDATE: (teamId: string | number) => `/api/teams/${teamId}`,
+  DELETE: (teamId: string | number) => `/api/teams/${teamId}`,
+  GET_UNIVERSITY_LIST: '/api/universities',
+  GET_TEAMS_BY_UNIVERSITY: '/api/teams',
+  JOIN_TEAM: '/api/teams/join',
   GET_JOIN_REQUESTS: (teamId: string | number) =>
     `/teams/${teamId}/joinRequests`,
 };
@@ -45,5 +46,5 @@ export const TEAM_REVIEW_API = {
 
 export const TEAM_MATCH_API = {
   GET_TEAM_RECENT_MATCHES: (teamId: string | number) =>
-    `/teamMatches?teamId=${teamId}`,
+    `/api/teams/${teamId}/matches`,
 };

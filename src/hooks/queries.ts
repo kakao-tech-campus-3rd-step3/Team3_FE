@@ -38,8 +38,8 @@ export const queries = {
       api.authApi.verifyEmail(verifyEmailCode),
   },
   userProfile: {
-    key: (userId: string) => ['user', 'profile', userId] as const,
-    fn: (userId: string) => api.profileApi.getProfile(userId),
+    key: ['user', 'profile'] as const,
+    fn: () => api.profileApi.getProfile(),
   },
   user: {
     key: ['user'] as const,
@@ -84,11 +84,13 @@ export const queries = {
   },
 } as const;
 
-export function useUserProfile(userId: string) {
+export function useUserProfile() {
+  const { token } = useAuth();
+
   return useQuery({
-    queryKey: ['userProfile', userId],
-    queryFn: () => api.profileApi.getProfile(userId),
-    enabled: !!userId,
+    queryKey: queries.userProfile.key,
+    queryFn: queries.userProfile.fn,
+    enabled: !!token,
   });
 }
 
@@ -209,7 +211,7 @@ export function useLoginMutation() {
   return useMutation({
     mutationFn: queries.login.fn,
     onSuccess: (data: LoginResponse) => {
-      login(data.authToken, data.userId);
+      login(data.accessToken);
 
       queryClient.invalidateQueries({ queryKey: queries.login.key });
       queryClient.invalidateQueries({ queryKey: ['user'] });
@@ -223,7 +225,7 @@ export function useRegisterMutation() {
   return useMutation({
     mutationFn: queries.register.fn,
     onSuccess: (data: RegisterResponse) => {
-      login(data.accessToken, data.userId);
+      login(data.accessToken);
 
       queryClient.invalidateQueries({ queryKey: queries.login.key });
       queryClient.invalidateQueries({
@@ -269,6 +271,18 @@ export function useUpdateProfileMutation() {
     },
     onError: (error: unknown) => {
       console.error('프로필 수정 실패:', error);
+    },
+  });
+}
+
+export function useDeleteProfileMutation() {
+  return useMutation({
+    mutationFn: () => api.profileApi.deleteProfile(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+    },
+    onError: (error: unknown) => {
+      console.error('계정 탈퇴 실패:', error);
     },
   });
 }

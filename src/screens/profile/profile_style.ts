@@ -55,11 +55,16 @@ export default StyleSheet.create({
   profileInfo: {
     flex: 1,
   },
+  nameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.spacing2,
+    gap: theme.spacing.spacing3,
+  },
   profileName: {
     fontSize: 20,
     fontWeight: '600',
     color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing2,
   },
   profileUniversity: {
     fontSize: 16,

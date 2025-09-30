@@ -8,9 +8,8 @@ import { theme } from '@/src/theme';
 
 interface AuthContextType {
   token: string | null;
-  userId: string | null;
   isAuthenticated: boolean;
-  login: (token: string, userId: string) => Promise<void>;
+  login: (token: string) => Promise<void>;
   logout: () => Promise<void>;
   isLoading: boolean;
 }
@@ -20,10 +19,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken, isLoading] = useStorageState<string | null>(
     'authToken',
-    null
-  );
-  const [userId, setUserId, isUserIdLoading] = useStorageState<string | null>(
-    'userId',
     null
   );
 
@@ -38,19 +33,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   }, [setToken]);
 
-  const login = async (newToken: string, newUserId: string) => {
+  const login = async (newToken: string) => {
     setToken(newToken);
-    setUserId(newUserId);
   };
 
   const logout = async () => {
     setToken(null);
-    setUserId(null);
     queryClient.clear();
   };
 
-  const isAuthLoading = isLoading || isUserIdLoading;
-  if (isAuthLoading) {
+  if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={theme.colors.grass[500]} />
@@ -62,11 +54,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         token,
-        userId,
         isAuthenticated: !!token,
         login,
         logout,
-        isLoading: isAuthLoading,
+        isLoading,
       }}
     >
       {children}

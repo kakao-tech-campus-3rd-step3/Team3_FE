@@ -4,8 +4,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  authToken: string;
-  userId: string;
+  accessToken: string;
 }
 
 export interface RegisterRequest {
@@ -14,7 +13,7 @@ export interface RegisterRequest {
   email: string;
   universityEmail: string;
   password: string;
-  kakaoId: string;
+  kakaoTalkId: string;
   position: string;
   university: string;
   department: string;
@@ -24,7 +23,6 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
   accessToken: string;
-  userId: string;
 }
 
 export interface SendVerificationResponse {

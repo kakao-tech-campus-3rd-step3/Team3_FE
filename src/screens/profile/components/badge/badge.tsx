@@ -5,7 +5,15 @@ import { BadgeStyles } from './badge_style';
 
 interface BadgeProps {
   text: string;
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
+  variant?:
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'warning'
+    | 'danger'
+    | 'gold'
+    | 'silver'
+    | 'bronze';
   size?: 'small' | 'medium' | 'large';
 }
 
@@ -46,6 +54,12 @@ export const Badge = ({
         return BadgeStyles.warning;
       case 'danger':
         return BadgeStyles.danger;
+      case 'gold':
+        return BadgeStyles.gold;
+      case 'silver':
+        return BadgeStyles.silver;
+      case 'bronze':
+        return BadgeStyles.bronze;
       default:
         return BadgeStyles.primary;
     }
