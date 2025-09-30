@@ -4,7 +4,7 @@ import { View, Text, ScrollView, Alert } from 'react-native';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { LoadingState } from '@/src/components/ui/loading_state';
-import { useTeamJoinRequests } from '@/src/hooks/queries';
+import { useTeamJoinWaitingList } from '@/src/hooks/queries';
 
 import JoinRequestsModal from '../components/modals/join_requests_modal';
 import ManageSection from '../components/sections/manage_section';
@@ -19,11 +19,11 @@ export default function TeamSettingsScreen({
   const [showJoinRequestsModal, setShowJoinRequestsModal] = useState(false);
 
   const {
-    data: joinRequests,
+    data: joinRequestsData,
     isLoading,
     error,
     refetch,
-  } = useTeamJoinRequests(teamId);
+  } = useTeamJoinWaitingList(teamId, 'PENDING', 0, 10);
 
   if (isLoading) {
     return <LoadingState message="가입 요청 정보를 불러오는 중..." />;
@@ -33,7 +33,7 @@ export default function TeamSettingsScreen({
     return <GlobalErrorFallback error={error} resetError={() => refetch()} />;
   }
 
-  if (!joinRequests) {
+  if (!joinRequestsData) {
     return (
       <View style={styles.loadingContainer}>
         <Text>가입 요청 정보를 불러오는 중...</Text>
@@ -41,8 +41,10 @@ export default function TeamSettingsScreen({
     );
   }
 
+  const joinRequests = joinRequestsData.content;
+
   const handleJoinRequest = (
-    requestId: string,
+    requestId: number,
     status: 'approved' | 'rejected'
   ) => {
     const action = status === 'approved' ? '승인' : '거절';
