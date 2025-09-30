@@ -3,7 +3,6 @@ import { ScrollView, Text, View, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Card } from '@/src/components/card/card';
-import { useAuth } from '@/src/contexts/auth_context';
 import { useUserProfile, useUpdateProfileMutation } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import { UpdateProfileRequest } from '@/src/types/profile';
@@ -13,7 +12,6 @@ import { ProfileForm } from './ProfileForm';
 
 export default function EditProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { token } = useAuth();
   const { data: userInfo, refetch } = useUserProfile();
   const updateProfileMutation = useUpdateProfileMutation();
 
