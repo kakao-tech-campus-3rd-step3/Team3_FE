@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import React from 'react';
 import { ScrollView, Text, View, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -31,7 +32,12 @@ export default function EditProfileScreen() {
       }
 
       await updateProfileMutation.mutateAsync(cleanData);
-      Alert.alert('성공', '프로필이 수정되었습니다.');
+      Alert.alert('성공', '프로필이 수정되었습니다.', [
+        {
+          text: '확인',
+          onPress: () => router.back(),
+        },
+      ]);
       refetch();
     } catch (error) {
       console.error('프로필 수정 실패:', error);

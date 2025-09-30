@@ -34,6 +34,10 @@ export const styles = StyleSheet.create({
   inputError: {
     borderColor: theme.colors.error,
   },
+  inputDisabled: {
+    backgroundColor: theme.colors.gray[100],
+    color: theme.colors.text.sub,
+  },
   textArea: {
     height: 100,
     textAlignVertical: 'top',

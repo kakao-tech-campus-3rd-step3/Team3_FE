@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 
+import { Dropdown } from '@/src/components/dropdown';
 import { UserProfile, UpdateProfileRequest } from '@/src/types/profile';
 
 import { styles } from './ProfileFormStyle';
@@ -44,6 +45,21 @@ export function ProfileForm({
     }
   };
 
+  const convertKoreanToPosition = (korean: string) => {
+    switch (korean) {
+      case '골키퍼':
+        return '골키퍼';
+      case '수비수':
+        return '수비수';
+      case '미드필더':
+        return '미드필더';
+      case '공격수':
+        return '공격수';
+      default:
+        return korean;
+    }
+  };
+
   const [formData, setFormData] = useState({
     name: initialData.name || '',
     skillLevel: convertSkillLevelToKorean(initialData.skillLevel || 'AMATEUR'),
@@ -55,12 +71,6 @@ export function ProfileForm({
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = '이름을 입력해주세요.';
-    } else if (formData.name.length < 2 || formData.name.length > 100) {
-      newErrors.name = '이름은 2~100자 사이여야 합니다.';
-    }
 
     if (formData.skillLevel && formData.skillLevel.length > 4) {
       newErrors.skillLevel = '실력은 4자 이하여야 합니다.';
@@ -80,7 +90,13 @@ export function ProfileForm({
 
   const handleSave = () => {
     if (validateForm()) {
-      onSave(formData);
+      const dataToSave = {
+        name: initialData.name, // 원본 이름 유지
+        skillLevel: formData.skillLevel,
+        position: convertKoreanToPosition(formData.position),
+        bio: formData.bio,
+      };
+      onSave(dataToSave);
     }
   };
 
@@ -96,14 +112,13 @@ export function ProfileForm({
       <Text style={styles.sectionTitle}>프로필 수정</Text>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.label}>이름 *</Text>
+        <Text style={styles.label}>이름</Text>
         <TextInput
-          style={[styles.input, errors.name && styles.inputError]}
+          style={[styles.input, styles.inputDisabled]}
           value={formData.name}
-          onChangeText={value => updateField('name', value)}
-          placeholder="이름을 입력하세요"
+          editable={false}
+          placeholder="이름"
         />
-        {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
       </View>
 
       <View style={styles.inputGroup}>
@@ -137,11 +152,11 @@ export function ProfileForm({
 
       <View style={styles.inputGroup}>
         <Text style={styles.label}>포지션</Text>
-        <TextInput
-          style={[styles.input, errors.position && styles.inputError]}
-          value={formData.position}
-          onChangeText={value => updateField('position', value)}
-          placeholder="포지션을 입력하세요 (예: 공격수, 미드필더, 수비수)"
+        <Dropdown
+          items={['골키퍼', '수비수', '미드필더', '공격수'] as const}
+          value={formData.position || null}
+          onChange={value => updateField('position', value)}
+          placeholder="포지션을 선택하세요"
         />
         {errors.position && (
           <Text style={styles.errorText}>{errors.position}</Text>
