@@ -115,8 +115,8 @@ export const transformTeamMemberPageResponse = (
 // 팀 멤버 역할을 한글로 변환
 export const getRoleDisplayName = (role: TeamMemberRole): string => {
   const roleMapping: Record<TeamMemberRole, string> = {
-    LEADER: '팀장',
-    VICE_LEADER: '부팀장',
+    LEADER: '회장',
+    VICE_LEADER: '부회장',
     MEMBER: '팀원',
   };
   return roleMapping[role] || '팀원';
