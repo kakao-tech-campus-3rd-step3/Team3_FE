@@ -88,11 +88,11 @@ export default function MatchInfoScreen() {
       return;
     }
 
-    const teamId = 1;
-    // if (!home?.user?.teamId) {
-    //   Alert.alert('안내', '팀 정보가 없습니다. 다시 시도해주세요.');
-    //   return;
-    // }
+    const teamId = userProfile?.teamId;
+    if (!teamId) {
+      Alert.alert('안내', '팀 정보가 없습니다. 다시 시도해주세요.');
+      return;
+    }
 
     const payload: MatchCreateRequestDto = {
       teamId,

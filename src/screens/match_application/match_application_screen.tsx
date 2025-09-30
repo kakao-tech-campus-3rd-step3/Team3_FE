@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { useUserProfile } from '@/src/hooks/queries'; // ✅ 유저 정보 가져오기
 import { useMatchWaitingList } from '@/src/hooks/useMatchWaitingList';
 import DateFilter from '@/src/screens/match_application/component/date_filter';
 import TimeFilter from '@/src/screens/match_application/component/time_filter';
@@ -14,9 +15,12 @@ export default function MatchApplicationScreen() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
 
-  // ✅ params 구성 (시간 없으면 제외)
+  // ✅ 로그인 유저 프로필
+  const { data: userProfile } = useUserProfile();
+
+  // ✅ teamId 동적으로 할당
   const params: MatchWaitingListRequestDto = {
-    teamId: 2, // TODO: 로그인 유저의 실제 팀 ID로 교체
+    teamId: userProfile?.teamId ?? 0, // 로그인 유저 팀 ID
     selectDate: selectedDate
       ? selectedDate.toISOString().split('T')[0]
       : new Date().toISOString().split('T')[0],
@@ -26,12 +30,6 @@ export default function MatchApplicationScreen() {
   };
 
   const { data, isLoading, error } = useMatchWaitingList(params);
-
-  useEffect(() => {
-    console.log('📡 요청 Params:', params);
-    console.log('📡 응답 Data:', data);
-    console.log('📡 에러:', error);
-  }, [data, error]);
 
   if (isLoading) {
     return (
