@@ -10,16 +10,17 @@ import { theme } from '@/src/theme';
 
 import ProfileHeader from './components/profileHeader';
 import SettingCard from './components/settingTab/setting_card';
-import { defaultSettingsItems } from './components/settingTab/setting_items';
+import { getDefaultSettingsItems } from './components/settingTab/setting_items';
 import styles from './profile_style';
 
 function ProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
 
   const { data: userInfo, isLoading, error, refetch } = useUserProfile();
 
   const displayUser = userInfo;
+  const settingsItems = getDefaultSettingsItems(logout);
 
   if (!token) {
     return (
@@ -64,7 +65,7 @@ function ProfileScreen() {
             <ProfileHeader user={displayUser} />
           </Card>
 
-          <SettingCard items={defaultSettingsItems} />
+          <SettingCard items={settingsItems} />
 
           <View style={styles.bottomSpacer} />
         </View>
