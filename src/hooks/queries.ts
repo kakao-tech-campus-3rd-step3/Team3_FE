@@ -74,6 +74,12 @@ export const queries = {
     fn: (teamId: string | number, page: number = 0, size: number = 10) =>
       api.teamMemberApi.getTeamMembers(teamId, page, size),
   },
+  teamMember: {
+    key: (teamId: string | number, userId: string | number) =>
+      ['teamMember', teamId, userId] as const,
+    fn: (teamId: string | number, userId: string | number) =>
+      api.teamMemberApi.getTeamMember(teamId, userId),
+  },
   teamJoinRequests: {
     key: (teamId: string | number) => ['teamJoinRequests', teamId] as const,
     fn: (teamId: string | number) =>
@@ -183,6 +189,17 @@ export function useTeamMembers(
     queryKey: queries.teamMembers.key(teamId, page, size),
     queryFn: () => queries.teamMembers.fn(teamId, page, size),
     enabled: !!teamId,
+  });
+}
+
+export function useTeamMember(
+  teamId: string | number,
+  userId: string | number
+) {
+  return useQuery({
+    queryKey: queries.teamMember.key(teamId, userId),
+    queryFn: () => queries.teamMember.fn(teamId, userId),
+    enabled: !!teamId && !!userId,
   });
 }
 
