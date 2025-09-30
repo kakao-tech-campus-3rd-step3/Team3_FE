@@ -6,7 +6,6 @@ export default function ProfileLayout() {
   const screens = [
     { name: 'edit', title: '개인정보 수정' },
     { name: 'privacy-policy', title: '개인정보 처리방침' },
-    { name: 'terms-of-service', title: '서비스 이용약관' },
     { name: 'support', title: '고객 지원' },
     { name: 'data-deletion', title: '계정 탈퇴' },
   ];
