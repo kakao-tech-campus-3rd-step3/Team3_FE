@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: theme.colors.text.sub,
     transform: [{ rotate: '0deg' }],
+    marginTop: -6,
   },
   overlay: {
     flex: 1,
