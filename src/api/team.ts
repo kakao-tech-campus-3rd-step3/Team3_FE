@@ -109,16 +109,28 @@ export const joinTeamApi = {
 };
 
 export const teamEditApi = {
-  updateTeam: (
+  updateTeam: async (
     teamId: string | number,
     data: {
       name: string;
       description: string;
+      university: string;
       skillLevel: SkillLevel;
       teamType: TeamType;
     }
   ): Promise<TeamDetailResponse> => {
-    return apiClient.put<TeamDetailResponse>(TEAM_API.UPDATE(teamId), data);
+    const apiData = {
+      name: data.name,
+      description: data.description,
+      university: data.university,
+      skillLevel: getSkillLevelInEnglish(data.skillLevel),
+      teamType: getTeamTypeInEnglish(data.teamType),
+    };
+    const apiResponse = await apiClient.put<ApiTeamDetailResponse>(
+      TEAM_API.UPDATE(teamId),
+      apiData
+    );
+    return transformTeamDetailResponse(apiResponse);
   },
 };
 
@@ -146,5 +158,12 @@ export const teamJoinRequestApi = {
     return transformTeamJoinRequestPageResponse(apiResponse);
   },
 };
-export const deleteTeam = (teamId: string | number) =>
-  apiClient.delete(TEAM_API.DELETE(teamId));
+export const teamDeleteApi = {
+  deleteTeam: (
+    teamId: string | number
+  ): Promise<{ success: boolean; message: string }> => {
+    return apiClient.delete<{ success: boolean; message: string }>(
+      TEAM_API.DELETE(teamId)
+    );
+  },
+};
