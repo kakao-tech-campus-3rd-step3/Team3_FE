@@ -88,13 +88,14 @@ export default function MatchInfoScreen() {
       return;
     }
 
-    if (!home?.user?.teamId) {
-      Alert.alert('안내', '팀 정보가 없습니다. 다시 시도해주세요.');
-      return;
-    }
+    const teamId = 1;
+    // if (!home?.user?.teamId) {
+    //   Alert.alert('안내', '팀 정보가 없습니다. 다시 시도해주세요.');
+    //   return;
+    // }
 
     const payload: MatchCreateRequestDto = {
-      teamId: Number(home.user.teamId),
+      teamId,
       preferredDate: fmtDate(date),
       preferredTimeStart: fmtTime(timeStart),
       preferredTimeEnd: fmtTime(timeEnd),
@@ -114,6 +115,16 @@ export default function MatchInfoScreen() {
             teamId: String(data.teamId),
             status: data.status,
             expiresAt: data.expiresAt,
+
+            // ✅ 화면 표시용 정보도 같이 넘김
+            stadium: JSON.stringify(selectedStadium),
+            date: date.toISOString(),
+            timeStart: timeStart.toISOString(),
+            timeEnd: timeEnd.toISOString(),
+            skillLevelMin: skillMin,
+            skillLevelMax: skillMax,
+            universityOnly: String(universityOnly),
+            message,
           },
         });
       },
