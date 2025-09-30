@@ -60,7 +60,7 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
   const isFormValid = useMemo(() => {
     const nameValid = data.name && data.name.trim().length >= 2;
     const kakaotalkIdValid =
-      data.kakaoTalkId && data.kakaoTalkId.trim().length >= 3;
+      data.kakaoTalkId && data.kakaoTalkId.trim().length >= 4;
     const studentYearValid =
       data.studentYear && /^\d{2}$/.test(data.studentYear);
     const departmentValid =
