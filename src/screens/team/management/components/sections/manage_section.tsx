@@ -4,13 +4,13 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import { colors } from '@/src/theme';
-import type { JoinRequest } from '@/src/types/team';
+import type { TeamJoinRequest } from '@/src/types/team';
 
 import { styles } from '../../styles/team_settings_styles';
 
 interface ManageSectionProps {
   teamId: string | number;
-  joinRequests: JoinRequest[];
+  joinRequests: TeamJoinRequest[];
   onShowJoinRequestsModal: () => void;
   onDeleteTeam: () => void;
 }
@@ -24,7 +24,7 @@ export default function ManageSection({
   return (
     <View style={styles.manageSection}>
       <Text style={styles.manageDescription}>
-        팀 설정 및 관리 기능입니다. 주장만 접근할 수 있습니다.
+        팀 설정 및 관리 기능입니다. 회장만 접근할 수 있습니다.
       </Text>
 
       <View style={styles.manageActions}>
@@ -39,11 +39,11 @@ export default function ManageSection({
           />
           <Text style={styles.secondaryButtonText}>
             가입 요청 관리
-            {joinRequests.filter(req => req.status === 'pending').length >
+            {joinRequests.filter(req => req.status === 'PENDING').length >
               0 && (
               <Text style={styles.badgeText}>
                 {' '}
-                ({joinRequests.filter(req => req.status === 'pending').length})
+                ({joinRequests.filter(req => req.status === 'PENDING').length})
               </Text>
             )}
           </Text>

@@ -1,4 +1,9 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  keepPreviousData,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
 
 import * as api from '@/src/api';
 import { useAuth } from '@/src/contexts/auth_context';
@@ -44,10 +49,6 @@ export const queries = {
   user: {
     key: ['user'] as const,
   },
-  home: {
-    key: ['home'] as const,
-    fn: () => api.homeApi.getHome(),
-  },
   recommendedMatch: {
     key: ['recommendedMatch'] as const,
     fn: () => api.recommendedMatchApi.getRecommendedMatch(),
@@ -58,20 +59,18 @@ export const queries = {
   },
   teamsByUniversity: {
     key: ['teams', 'university'] as const,
-    fn: (university: string) =>
-      api.teamListApi.getTeamsByUniversity(university),
+    fn: (university: string, page: number = 0, size: number = 10) =>
+      api.teamListApi.getTeamsByUniversity(university, page, size),
   },
   team: {
     key: (teamId: string | number) => ['teams', teamId] as const,
     fn: (teamId: string | number) => api.myTeamApi.getTeamById(teamId),
   },
   teamMembers: {
-    key: (teamId: string | number) => ['teamMembers', teamId] as const,
-    fn: (teamId: string | number) => api.teamMemberApi.getTeamMembers(teamId),
-  },
-  teamReviews: {
-    key: (teamId: string | number) => ['teamReviews', teamId] as const,
-    fn: (teamId: string | number) => api.teamReviewApi.getTeamReviews(teamId),
+    key: (teamId: string | number, page: number = 0, size: number = 10) =>
+      ['teamMembers', teamId, page, size] as const,
+    fn: (teamId: string | number, page: number = 0, size: number = 10) =>
+      api.teamMemberApi.getTeamMembers(teamId, page, size),
   },
   teamJoinRequests: {
     key: (teamId: string | number) => ['teamJoinRequests', teamId] as const,
@@ -82,6 +81,27 @@ export const queries = {
     key: (teamId: string | number) => ['teamMatches', teamId] as const,
     fn: (teamId: string | number) => api.teamMatchApi.getTeamMatches(teamId),
   },
+  teamRecentMatches: {
+    key: (teamId: string | number, status?: string) =>
+      ['teamRecentMatches', teamId, status] as const,
+    fn: (teamId: string | number, status?: string) =>
+      api.teamMatchApi.getTeamRecentMatches(teamId, status),
+  },
+  teamJoinWaitingList: {
+    key: (
+      teamId: string | number,
+      status: string = 'PENDING',
+      page: number = 0,
+      size: number = 10
+    ) => ['teamJoinWaitingList', teamId, status, page, size] as const,
+    fn: (
+      teamId: string | number,
+      status: string = 'PENDING',
+      page: number = 0,
+      size: number = 10
+    ) =>
+      api.teamJoinRequestApi.getTeamJoinWaitingList(teamId, status, page, size),
+  },
 } as const;
 
 export function useUserProfile() {
@@ -91,13 +111,6 @@ export function useUserProfile() {
     queryKey: queries.userProfile.key,
     queryFn: queries.userProfile.fn,
     enabled: !!token,
-  });
-}
-
-export function useHome() {
-  return useQuery({
-    queryKey: queries.home.key,
-    queryFn: queries.home.fn,
   });
 }
 
@@ -115,11 +128,39 @@ export function useUniversityTeamList() {
   });
 }
 
-export function useTeamsByUniversity(university: string) {
+export function useTeamsByUniversity(
+  university: string,
+  page: number = 0,
+  size: number = 10
+) {
   return useQuery({
-    queryKey: [...queries.teamsByUniversity.key, university],
-    queryFn: () => queries.teamsByUniversity.fn(university),
+    queryKey: [...queries.teamsByUniversity.key, university, page, size],
+    queryFn: () => queries.teamsByUniversity.fn(university, page, size),
     enabled: !!university,
+    placeholderData: keepPreviousData, // 페이지 바뀌어도 이전 데이터 유지
+    staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
+    refetchOnWindowFocus: false, // 포커스 시 자동 refetch 비활성화
+    refetchOnReconnect: true,
+  });
+}
+
+export function useTeamsByUniversityInfinite(
+  university: string,
+  size: number = 10
+) {
+  return useInfiniteQuery({
+    queryKey: [...queries.teamsByUniversity.key, university, 'infinite'],
+    queryFn: ({ pageParam = 0 }) =>
+      queries.teamsByUniversity.fn(university, pageParam as number, size),
+    getNextPageParam: (lastPage: any, allPages) => {
+      if (lastPage.last) return undefined;
+      return allPages.length; // 다음 페이지 번호
+    },
+    initialPageParam: 0,
+    enabled: !!university,
+    staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
+    refetchOnWindowFocus: true, // 포커스 시 최신화
+    refetchOnReconnect: true,
   });
 }
 
@@ -131,18 +172,14 @@ export function useTeam(teamId: string | number) {
   });
 }
 
-export function useTeamMembers(teamId: string | number) {
+export function useTeamMembers(
+  teamId: string | number,
+  page: number = 0,
+  size: number = 10
+) {
   return useQuery({
-    queryKey: queries.teamMembers.key(teamId),
-    queryFn: () => queries.teamMembers.fn(teamId),
-    enabled: !!teamId,
-  });
-}
-
-export function useTeamReviews(teamId: string | number) {
-  return useQuery({
-    queryKey: queries.teamReviews.key(teamId),
-    queryFn: () => queries.teamReviews.fn(teamId),
+    queryKey: queries.teamMembers.key(teamId, page, size),
+    queryFn: () => queries.teamMembers.fn(teamId, page, size),
     enabled: !!teamId,
   });
 }
@@ -160,6 +197,31 @@ export function useTeamMatches(teamId: string | number) {
     queryKey: queries.teamMatches.key(teamId),
     queryFn: () => queries.teamMatches.fn(teamId),
     enabled: !!teamId,
+  });
+}
+
+export function useTeamRecentMatches(teamId: string | number, status?: string) {
+  return useQuery({
+    queryKey: queries.teamRecentMatches.key(teamId, status),
+    queryFn: () => queries.teamRecentMatches.fn(teamId, status),
+    enabled: !!teamId,
+  });
+}
+
+export function useTeamJoinWaitingList(
+  teamId: string | number,
+  status: string = 'PENDING',
+  page: number = 0,
+  size: number = 10
+) {
+  return useQuery({
+    queryKey: queries.teamJoinWaitingList.key(teamId, status, page, size),
+    queryFn: () => queries.teamJoinWaitingList.fn(teamId, status, page, size),
+    enabled: !!teamId,
+    placeholderData: keepPreviousData,
+    staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
   });
 }
 

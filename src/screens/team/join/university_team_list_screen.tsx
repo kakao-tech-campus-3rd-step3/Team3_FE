@@ -1,5 +1,5 @@
 import { useLocalSearchParams, router } from 'expo-router';
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   FlatList,
@@ -7,11 +7,12 @@ import {
   Animated,
   ActivityIndicator,
   Alert,
+  Text,
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
-import { useTeamsByUniversity } from '@/src/hooks/queries';
+import { useTeamsByUniversityInfinite } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import type { TeamListItem } from '@/src/types';
 import { SkillLevel, TeamType } from '@/src/types/team';
@@ -42,14 +43,17 @@ export default function UniversityTeamListScreen() {
   const joinModalAnim = useState(new Animated.Value(0))[0];
 
   const {
-    data: teams = [],
+    data,
     isLoading: loading,
     error,
+    fetchNextPage,
+    hasNextPage,
     refetch,
-  } = useTeamsByUniversity(university || '');
+  } = useTeamsByUniversityInfinite(university || '', 10);
 
   const filteredTeams = useMemo(() => {
-    let filtered = [...teams];
+    const allTeams = data?.pages.flatMap((page: any) => page.content) ?? [];
+    let filtered = [...allTeams];
 
     if (filterOptions.skillLevel.length > 0) {
       filtered = filtered.filter(team =>
@@ -68,7 +72,7 @@ export default function UniversityTeamListScreen() {
     );
 
     return filtered;
-  }, [teams, filterOptions]);
+  }, [data?.pages, filterOptions]);
 
   const openFilterModal = () => {
     setShowFilterModal(true);
@@ -95,6 +99,12 @@ export default function UniversityTeamListScreen() {
       teamType: [],
       maxMemberCount: 50,
     });
+  };
+
+  const loadMoreTeams = () => {
+    if (hasNextPage && !loading) {
+      fetchNextPage();
+    }
   };
 
   const handleJoinTeam = (teamId: number) => {
@@ -169,7 +179,7 @@ export default function UniversityTeamListScreen() {
     }));
   };
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color={theme.colors.blue[500]} />
@@ -201,6 +211,20 @@ export default function UniversityTeamListScreen() {
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.teamList}
         showsVerticalScrollIndicator={false}
+        onEndReached={loadMoreTeams}
+        onEndReachedThreshold={0.5}
+        ListEmptyComponent={() => (
+          <View style={{ padding: 20, alignItems: 'center' }}>
+            <Text>팀이 없습니다.</Text>
+          </View>
+        )}
+        ListFooterComponent={
+          loading && data ? (
+            <View style={{ padding: 20, alignItems: 'center' }}>
+              <ActivityIndicator size="small" color={theme.colors.blue[500]} />
+            </View>
+          ) : null
+        }
       />
 
       <FilterModal
@@ -225,7 +249,6 @@ export default function UniversityTeamListScreen() {
           visible={showJoinModal}
           teamName={selectedTeam.name}
           teamType={selectedTeam.teamType}
-          captainName={selectedTeam.captainName}
           onConfirm={handleConfirmJoin}
           onCancel={handleCancelJoin}
           slideAnim={joinModalAnim}
