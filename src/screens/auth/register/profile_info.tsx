@@ -37,19 +37,36 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
   );
 
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
-    onChange(field, value);
-    validateField(field, value, data);
+    // studentYear는 2자리 숫자만 허용
+    if (field === 'studentYear') {
+      const numericValue = value.replace(/[^0-9]/g, '').slice(0, 2);
+      onChange(field, numericValue);
+      const updatedData = { ...data, [field]: numericValue };
+      validateField(field, numericValue, updatedData);
+    }
+    // kakaoTalkId는 영문, 숫자, ., _, - 만 허용
+    else if (field === 'kakaoTalkId') {
+      const validValue = value.replace(/[^a-zA-Z0-9._-]/g, '');
+      onChange(field, validValue);
+      const updatedData = { ...data, [field]: validValue };
+      validateField(field, validValue, updatedData);
+    } else {
+      onChange(field, value);
+      const updatedData = { ...data, [field]: value };
+      validateField(field, value, updatedData);
+    }
   };
 
   const isFormValid = useMemo(() => {
     const nameValid = data.name && data.name.trim().length >= 2;
-    const kakaoIdValid = data.kakaoId && data.kakaoId.trim().length >= 3;
-    const departmentValid =
-      data.department && data.department.trim().length > 0;
+    const kakaotalkIdValid =
+      data.kakaoTalkId && data.kakaoTalkId.trim().length >= 3;
     const studentYearValid =
       data.studentYear && /^\d{2}$/.test(data.studentYear);
+    const departmentValid =
+      data.department && data.department.trim().length >= 2;
 
-    return nameValid && kakaoIdValid && departmentValid && studentYearValid;
+    return nameValid && kakaotalkIdValid && studentYearValid && departmentValid;
   }, [data]);
 
   return (
@@ -91,18 +108,40 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
               <TextInput
                 style={[
                   styles.input,
-                  (focusedField === 'kakaoId' || data.kakaoId) &&
+                  (focusedField === 'kakaoTalkId' || data.kakaoTalkId) &&
                     styles.inputFilled,
-                  errors.kakaoId && styles.inputError,
+                  errors.kakaoTalkId && styles.inputError,
                 ]}
-                placeholder="카카오 아이디를 입력하세요"
-                value={data.kakaoId}
-                onChangeText={text => handleFieldChange('kakaoId', text)}
-                onFocus={() => setFocusedField('kakaoId')}
+                placeholder="예: mykakao_id (영문, 숫자, ., _, - 사용)"
+                value={data.kakaoTalkId}
+                onChangeText={text => handleFieldChange('kakaoTalkId', text)}
+                onFocus={() => setFocusedField('kakaoTalkId')}
                 onBlur={() => setFocusedField(null)}
               />
-              {errors.kakaoId && (
-                <Text style={styles.errorText}>{errors.kakaoId}</Text>
+              {errors.kakaoTalkId && (
+                <Text style={styles.errorText}>{errors.kakaoTalkId}</Text>
+              )}
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>입학년도</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  (focusedField === 'studentYear' || data.studentYear) &&
+                    styles.inputFilled,
+                  errors.studentYear && styles.inputError,
+                ]}
+                placeholder="예: 25 (입학년도 2자리)"
+                value={data.studentYear}
+                onChangeText={text => handleFieldChange('studentYear', text)}
+                keyboardType="number-pad"
+                maxLength={2}
+                onFocus={() => setFocusedField('studentYear')}
+                onBlur={() => setFocusedField(null)}
+              />
+              {errors.studentYear && (
+                <Text style={styles.errorText}>{errors.studentYear}</Text>
               )}
             </View>
 
@@ -123,28 +162,6 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
               />
               {errors.department && (
                 <Text style={styles.errorText}>{errors.department}</Text>
-              )}
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>학번</Text>
-              <TextInput
-                style={[
-                  styles.input,
-                  (focusedField === 'studentYear' || data.studentYear) &&
-                    styles.inputFilled,
-                  errors.studentYear && styles.inputError,
-                ]}
-                placeholder="예: 25 (2자리 숫자)"
-                value={data.studentYear}
-                onChangeText={text => handleFieldChange('studentYear', text)}
-                keyboardType="number-pad"
-                maxLength={2}
-                onFocus={() => setFocusedField('studentYear')}
-                onBlur={() => setFocusedField(null)}
-              />
-              {errors.studentYear && (
-                <Text style={styles.errorText}>{errors.studentYear}</Text>
               )}
             </View>
           </ScrollView>
