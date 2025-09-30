@@ -11,11 +11,13 @@ import { styles } from '../../styles/team_management_styles';
 interface TeamMembersSectionProps {
   teamMembers: TeamMember[] | undefined;
   membersLoading: boolean;
+  onMemberPress?: (member: TeamMember) => void;
 }
 
 export default memo(function TeamMembersSection({
   teamMembers,
   membersLoading,
+  onMemberPress,
 }: TeamMembersSectionProps) {
   const [showAllMembers, setShowAllMembers] = useState(false);
 
@@ -42,7 +44,12 @@ export default memo(function TeamMembersSection({
             ? teamMembers.slice(0, 6)
             : []
         ).map(member => (
-          <View key={member.id} style={styles.memberCard}>
+          <TouchableOpacity
+            key={member.id}
+            style={styles.memberCard}
+            onPress={() => onMemberPress?.(member)}
+            activeOpacity={0.7}
+          >
             <Ionicons
               name="shirt"
               size={24}
@@ -62,7 +69,7 @@ export default memo(function TeamMembersSection({
                 <Text style={styles.memberBadgeText}>👑</Text>
               </View>
             )}
-          </View>
+          </TouchableOpacity>
         ))}
 
         {(!Array.isArray(teamMembers) || teamMembers.length === 0) && (
