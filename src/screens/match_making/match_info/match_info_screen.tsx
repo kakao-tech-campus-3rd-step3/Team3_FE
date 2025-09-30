@@ -14,7 +14,7 @@ import {
 
 import { MatchCreateRequestDto } from '@/src/api/match';
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { useHome } from '@/src/hooks/queries';
+import { useUserProfile } from '@/src/hooks/queries';
 import { useCreateMatch } from '@/src/hooks/useCreateMatch';
 import Message from '@/src/screens/match_making/match_info/component/message/message';
 import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
@@ -39,7 +39,7 @@ type SkillLevel = 'AMATEUR' | 'SEMI_PRO' | 'PRO';
 
 export default function MatchInfoScreen() {
   const router = useRouter();
-  const { data: home } = useHome();
+  const { data: userProfile } = useUserProfile();
   const { mutate: createMatch, isPending } = useCreateMatch();
 
   const [stadiumQuery, setStadiumQuery] = useState('');
