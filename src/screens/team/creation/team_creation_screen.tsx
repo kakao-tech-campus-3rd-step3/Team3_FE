@@ -9,8 +9,8 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
+import TeamDetails from '@/src/components/team/steps/team_details';
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { getTeamManagementUrl } from '@/src/constants/routes';
 import { useCreateTeamMutation } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import {
@@ -21,7 +21,6 @@ import {
 } from '@/src/types/team';
 
 import TeamBasicInfo from './components/steps/team_basic_info';
-import TeamDetails from './components/steps/team_details';
 import { styles } from './team_creation_style';
 
 interface TeamFormData {
@@ -85,7 +84,7 @@ export default function TeamCreationScreen() {
           {
             text: '확인',
             onPress: () => {
-              router.replace(getTeamManagementUrl(response.teamId));
+              router.replace('/');
             },
           },
         ]);
@@ -140,8 +139,10 @@ export default function TeamCreationScreen() {
           <TeamDetails
             skillLevel={formData.skillLevel}
             description={formData.description}
-            onSkillLevelChange={level => updateFormData('skillLevel', level)}
-            onDescriptionChange={description =>
+            onSkillLevelChange={(level: SkillLevel) =>
+              updateFormData('skillLevel', level)
+            }
+            onDescriptionChange={(description: string) =>
               updateFormData('description', description)
             }
             onSubmit={handleSubmit}

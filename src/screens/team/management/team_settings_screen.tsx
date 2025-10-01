@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
 import JoinRequestsModal from '@/src/components/team/modals/join_requests_modal';
-import MatchRequestsModal from '@/src/components/team/modals/match_requests_modal';
+import MatchRequestsModal, {
+  type MatchRequest,
+} from '@/src/components/team/modals/match_requests_modal';
 import ManageSection from '@/src/components/team/sections/manage_section';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
@@ -30,6 +32,9 @@ export default function TeamSettingsScreen({
   const deleteTeamMutation = useDeleteTeamMutation();
 
   const numericTeamId = teamId ? Number(teamId) : 0;
+  const matchRequestsLoading = false;
+  const matchRequestsError = null;
+  const matchRequests: MatchRequest[] = [];
   const {
     data: teamMembersData,
     isLoading: membersLoading,
@@ -81,12 +86,12 @@ export default function TeamSettingsScreen({
     currentUserMember?.role === 'LEADER' ||
     currentUserMember?.role === 'VICE_LEADER';
 
-  if (isLoading || membersLoading) {
+  if (isLoading || membersLoading || matchRequestsLoading) {
     return <LoadingState message="팀 정보를 불러오는 중..." />;
   }
 
-  if (error || membersError) {
-    const errorToShow = error || membersError;
+  if (error || membersError || matchRequestsError) {
+    const errorToShow = error || membersError || matchRequestsError;
     return (
       <GlobalErrorFallback error={errorToShow!} resetError={() => refetch()} />
     );
@@ -143,8 +148,7 @@ export default function TeamSettingsScreen({
     requestId: number,
     status: 'approved' | 'rejected'
   ) => {
-    const action = status === 'approved' ? '승인' : '거절';
-    Alert.alert('알림', `매치 요청 ${action} 기능은 아직 구현 중입니다.`);
+    Alert.alert('알림', '매치 요청 기능이 임시로 비활성화되었습니다.');
   };
 
   const handleDeleteTeam = () => {
@@ -163,7 +167,7 @@ export default function TeamSettingsScreen({
                   {
                     text: '확인',
                     onPress: () => {
-                      router.push('/');
+                      router.replace('/');
                     },
                   },
                 ]);
@@ -191,7 +195,7 @@ export default function TeamSettingsScreen({
           <ManageSection
             teamId={teamId}
             joinRequests={joinRequests}
-            matchRequests={[]} // TODO: 실제 매치 요청 데이터로 교체
+            matchRequests={matchRequests}
             onShowJoinRequestsModal={() => setShowJoinRequestsModal(true)}
             onShowMatchRequestsModal={() => setShowMatchRequestsModal(true)}
             onDeleteTeam={handleDeleteTeam}
@@ -208,7 +212,7 @@ export default function TeamSettingsScreen({
 
       <MatchRequestsModal
         visible={showMatchRequestsModal}
-        matchRequests={[]} // TODO: 실제 매치 요청 데이터로 교체
+        matchRequests={matchRequests}
         onClose={() => setShowMatchRequestsModal(false)}
         onMatchRequest={handleMatchRequest}
       />

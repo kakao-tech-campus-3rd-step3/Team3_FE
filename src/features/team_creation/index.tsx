@@ -12,7 +12,6 @@ import {
 import TeamBasicInfo from '@/src/components/team/steps/team_basic_info';
 import TeamDetails from '@/src/components/team/steps/team_details';
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { getTeamManagementUrl } from '@/src/constants/routes';
 import { useCreateTeamMutation } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import {
@@ -85,7 +84,7 @@ export default function TeamCreationScreen() {
           {
             text: '확인',
             onPress: () => {
-              router.replace(getTeamManagementUrl(response.teamId));
+              router.replace('/');
             },
           },
         ]);
