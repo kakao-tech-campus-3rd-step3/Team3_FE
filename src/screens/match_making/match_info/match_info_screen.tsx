@@ -27,7 +27,7 @@ type SkillLevel = 'AMATEUR' | 'SEMI_PRO' | 'PRO';
 
 export default function MatchInfoScreen() {
   const router = useRouter();
-  const { data: userProfile } = useUserProfile();
+  const { data: userProfile, refetch } = useUserProfile();
   const { mutate: createMatch, isPending } = useCreateMatch();
   const { data: venues, isLoading, error } = useVenues();
 
@@ -64,24 +64,36 @@ export default function MatchInfoScreen() {
   const fmtTime = (d: Date) =>
     `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!selectedStadium) {
       Alert.alert('안내', '경기장을 선택해주세요.');
       return;
     }
 
-    const teamId = userProfile?.teamId;
-    if (!teamId) {
-      Alert.alert('안내', '팀 정보가 없습니다. 다시 시도해주세요.');
+    // userProfile을 먼저 새로고침
+    await refetch();
+
+    const rawTeamId = userProfile?.teamId;
+
+    if (!rawTeamId) {
+      Alert.alert('안내', '팀 정보가 없습니다. 팀을 먼저 생성해주세요.');
+      return;
+    }
+
+    // teamId를 number로 변환
+    const numericTeamId = Number(rawTeamId);
+
+    if (isNaN(numericTeamId) || numericTeamId <= 0) {
+      Alert.alert('안내', '유효하지 않은 팀 ID입니다. 다시 시도해주세요.');
       return;
     }
 
     const payload: MatchCreateRequestDto = {
-      teamId,
+      teamId: numericTeamId,
       preferredDate: fmtDate(date),
       preferredTimeStart: fmtTime(timeStart),
       preferredTimeEnd: fmtTime(timeEnd),
-      preferredVenueId: selectedStadium.venueId, // ✅ 이제 venueId 사용 가능
+      preferredVenueId: selectedStadium.venueId || 1, // 기본값 설정
       skillLevelMin: skillMin,
       skillLevelMax: skillMax,
       universityOnly,

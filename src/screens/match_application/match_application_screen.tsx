@@ -15,13 +15,11 @@ import type {
 import MatchCard from './component/match_card';
 import { styles } from './match_application_style';
 
-// ✅ 추가
-
 export default function MatchApplicationScreen() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
 
-  const { data: userProfile } = useUserProfile();
+  const { data: userProfile, refetch } = useUserProfile();
 
   const params: MatchWaitingListRequestDto = {
     teamId: userProfile?.teamId ?? 0,
@@ -38,16 +36,29 @@ export default function MatchApplicationScreen() {
   // ✅ 매치 요청 훅
   const { mutate: requestMatch, isPending } = useMatchRequest();
 
-  const handlePressRequest = (waitingId: number) => {
-    if (!userProfile?.teamId) {
-      Alert.alert('알림', '팀 정보가 없습니다.');
+  const handlePressRequest = async (waitingId: number) => {
+    // userProfile을 먼저 새로고침
+    await refetch();
+
+    const rawTeamId = userProfile?.teamId;
+
+    if (!rawTeamId) {
+      Alert.alert('알림', '팀 정보가 없습니다. 팀을 먼저 생성해주세요.');
+      return;
+    }
+
+    // teamId를 number로 변환
+    const numericTeamId = Number(rawTeamId);
+
+    if (isNaN(numericTeamId) || numericTeamId <= 0) {
+      Alert.alert('알림', '유효하지 않은 팀 ID입니다.');
       return;
     }
 
     // 메시지는 단순히 내 팀/내 유저 기준으로 생성
     const payload: MatchRequestRequestDto = {
-      requestTeamId: userProfile.teamId,
-      requestMessage: `${userProfile.name}(${userProfile.teamId}) 팀이 매치 요청`,
+      requestTeamId: numericTeamId,
+      requestMessage: `${userProfile.name}(${numericTeamId}) 팀이 매치 요청`,
     };
 
     requestMatch(
