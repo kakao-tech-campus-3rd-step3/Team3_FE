@@ -1,10 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 
-import {
-  createMatch,
-  MatchCreateRequestDto,
-  MatchCreateResponseDto,
-} from '@/src/api/match';
+import { createMatch } from '@/src/api/match';
+
+import { MatchCreateRequestDto, MatchCreateResponseDto } from '../types';
 
 export function useCreateMatch() {
   return useMutation<MatchCreateResponseDto, Error, MatchCreateRequestDto>({
