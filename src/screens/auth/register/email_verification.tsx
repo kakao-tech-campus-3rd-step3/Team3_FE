@@ -34,11 +34,11 @@ interface Props {
 export function EmailVerification({ data, onChange, handleNext }: Props) {
   const { errors, validateField } = useRegisterValidation(emailValidationRules);
 
-  const isNextButtonDisabled = !data.university || !data.universityEmail;
+  const isNextButtonDisabled =
+    !data.university || !data.universityEmail || !!errors.universityEmail;
 
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
     onChange(field, value);
-    // 업데이트된 데이터로 검증
     const updatedData = { ...data, [field]: value };
     validateField(field, value, updatedData);
   };
@@ -46,6 +46,13 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
   const handleNextStep = () => {
     if (!data.university || !data.universityEmail) {
       Alert.alert('입력 오류', '대학교명과 이메일을 입력해주세요.');
+      return;
+    }
+    if (errors.universityEmail) {
+      Alert.alert(
+        '입력 오류',
+        '대학교 이메일은 *.ac.kr 도메인으로 입력해주세요.'
+      );
       return;
     }
     handleNext();
