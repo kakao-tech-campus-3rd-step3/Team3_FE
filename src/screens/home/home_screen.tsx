@@ -1,3 +1,5 @@
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 import { ScrollView, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -13,7 +15,13 @@ import styles from './home_style';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { data: userProfile, isLoading } = useUserProfile();
+  const { data: userProfile, isLoading, refetch } = useUserProfile();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   if (isLoading) {
     return (

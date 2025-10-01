@@ -4,6 +4,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 import { ROUTES, getTeamManagementUrl } from '@/src/constants/routes';
 import { serviceCards } from '@/src/constants/service_card';
+import { useUserProfile } from '@/src/hooks/queries';
 
 import styles from '../../home_style';
 
@@ -13,11 +14,14 @@ interface BenefitsSectionProps {
 
 export default memo(function BenefitsSection({ teamId }: BenefitsSectionProps) {
   const router = useRouter();
+  const { data: userProfile } = useUserProfile();
+
+  const currentTeamId = userProfile?.teamId || teamId;
 
   const handleServicePress = (serviceId: string) => {
     if (serviceId === 'team') {
-      if (teamId) {
-        router.push(getTeamManagementUrl(teamId));
+      if (currentTeamId) {
+        router.push(getTeamManagementUrl(currentTeamId));
       } else {
         router.push(ROUTES.TEAM_GUIDE);
       }

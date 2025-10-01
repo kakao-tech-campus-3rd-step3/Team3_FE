@@ -44,6 +44,10 @@ export const TEAM_MEMBER_API = {
 export const TEAM_MATCH_API = {
   GET_TEAM_RECENT_MATCHES: (teamId: string | number) =>
     `/api/teams/${teamId}/matches`,
+  GET_TEAM_MATCH_REQUESTS: (teamId: string | number) =>
+    `/api/matches/receive/${teamId}/pending`,
+  UPDATE_MATCH_REQUEST: (teamId: string | number, requestId: string | number) =>
+    `/api/teams/${teamId}/match-requests/${requestId}`,
 };
 
 export const MATCH_CREATE_API = {
@@ -61,4 +65,8 @@ export const VENUE_API = {
 export const MATCH_REQUEST_API = {
   MATCH_REQUEST: (waitingId: string | number) =>
     `/api/matches/${waitingId}/request`,
+  ACCEPT_REQUEST: (requestId: string | number) =>
+    `/api/matches/requests/${requestId}/accept`,
+  REJECT_REQUEST: (requestId: string | number) =>
+    `/api/matches/requests/${requestId}/reject`,
 };

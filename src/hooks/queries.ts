@@ -145,9 +145,9 @@ export function useTeamsByUniversity(
     queryKey: [...queries.teamsByUniversity.key, university, page, size],
     queryFn: () => queries.teamsByUniversity.fn(university, page, size),
     enabled: !!university,
-    placeholderData: keepPreviousData, // 페이지 바뀌어도 이전 데이터 유지
-    staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
-    refetchOnWindowFocus: false, // 포커스 시 자동 refetch 비활성화
+    placeholderData: keepPreviousData,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
     refetchOnReconnect: true,
   });
 }
@@ -162,12 +162,12 @@ export function useTeamsByUniversityInfinite(
       queries.teamsByUniversity.fn(university, pageParam as number, size),
     getNextPageParam: (lastPage: any, allPages) => {
       if (lastPage.last) return undefined;
-      return allPages.length; // 다음 페이지 번호
+      return allPages.length;
     },
     initialPageParam: 0,
     enabled: !!university,
-    staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
-    refetchOnWindowFocus: true, // 포커스 시 최신화
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
     refetchOnReconnect: true,
   });
 }
@@ -238,13 +238,11 @@ export function useTeamJoinWaitingList(
     queryFn: () => queries.teamJoinWaitingList.fn(teamId, status, page, size),
     enabled: !!teamId,
     placeholderData: keepPreviousData,
-    staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
   });
 }
-
-// --- Mutations ---
 
 export function useCreateTeamMutation() {
   return useMutation({
@@ -322,9 +320,7 @@ export function useRegisterMutation() {
 export function useSendVerificationMutation() {
   return useMutation({
     mutationFn: queries.sendVerification.fn,
-    onSuccess: (data: SendVerificationResponse) => {
-      console.log('이메일 인증번호 전송 성공:', data);
-    },
+    onSuccess: (data: SendVerificationResponse) => {},
     onError: (error: unknown) => {
       console.error('이메일 인증번호 전송 실패:', error);
     },
@@ -334,9 +330,7 @@ export function useSendVerificationMutation() {
 export function useVerifyEmailMutation() {
   return useMutation({
     mutationFn: queries.verifyEmail.fn,
-    onSuccess: (data: VerifyEmailResponse) => {
-      console.log('이메일 인증 성공:', data);
-    },
+    onSuccess: (data: VerifyEmailResponse) => {},
     onError: (error: unknown) => {
       console.error('이메일 인증 실패:', error);
     },

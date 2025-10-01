@@ -95,4 +95,19 @@ export interface MatchRequestResponseDto {
   targetTeamId: number;
   requestMessage: string;
   status: MatchRequestStatus; // 명세 예시는 PENDING
+  waitingId?: number;
+  decisionReason?: string;
+  decidedBy?: number;
+  decidedAt?: string;
+  createdAt: string;
+}
+
+export interface MatchConfirmedResponseDto {
+  matchId: number;
+  team1Id: number;
+  team2Id: number;
+  matchDate: string;
+  matchTime: string;
+  venueId: number;
+  status: string;
 }
