@@ -100,7 +100,11 @@ export default function TeamDetails({
             <Text style={styles.backButtonText}>이전</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.nextButton} onPress={onSubmit}>
+          <TouchableOpacity
+            style={[styles.nextButton, !description.trim() && { opacity: 0.5 }]}
+            onPress={onSubmit}
+            disabled={!description.trim()}
+          >
             <Ionicons name="checkmark-circle" size={20} color={colors.white} />
             <Text style={styles.nextButtonText}> 팀 생성</Text>
           </TouchableOpacity>
