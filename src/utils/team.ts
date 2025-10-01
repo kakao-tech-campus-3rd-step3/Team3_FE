@@ -18,41 +18,34 @@ import type {
   TeamJoinRequestPageResponse,
 } from '@/src/types/team';
 
-// 팀 타입 매핑
 export const TEAM_TYPE_MAPPING: Record<string, TeamType> = {
   CENTRAL_CLUB: '중앙동아리',
   DEPARTMENT_CLUB: '과동아리',
   OTHER: '기타',
 };
 
-// 실력 레벨 매핑
 export const SKILL_LEVEL_MAPPING: Record<string, SkillLevel> = {
   AMATEUR: '아마추어',
   SEMI_PRO: '세미프로',
   PRO: '프로',
 };
 
-// 팀 타입을 한글로 변환
 export const getTeamTypeInKorean = (apiType: string): TeamType => {
   return TEAM_TYPE_MAPPING[apiType] || '기타';
 };
 
-// 실력 레벨을 한글로 변환
 export const getSkillLevelInKorean = (apiLevel: string): SkillLevel => {
   return SKILL_LEVEL_MAPPING[apiLevel] || '아마추어';
 };
 
-// 한글 팀 타입을 영문 코드로 변환 (API 전송용)
 export const getTeamTypeInEnglish = (koreanType: TeamType): string => {
   return koreanType;
 };
 
-// 한글 실력 레벨을 영문 코드로 변환 (API 전송용)
 export const getSkillLevelInEnglish = (koreanLevel: SkillLevel): string => {
   return koreanLevel;
 };
 
-// API 팀 리스트 아이템을 프론트엔드 타입으로 변환
 export const transformTeamListItem = (
   apiItem: ApiTeamListItem
 ): TeamListItem => {
@@ -63,7 +56,6 @@ export const transformTeamListItem = (
   };
 };
 
-// API 페이지 응답을 프론트엔드 타입으로 변환
 export const transformTeamListPageResponse = (
   apiResponse: ApiTeamListPageResponse
 ): TeamListPageResponse => {
@@ -73,7 +65,6 @@ export const transformTeamListPageResponse = (
   };
 };
 
-// API 팀 상세 응답을 프론트엔드 타입으로 변환
 export const transformTeamDetailResponse = (
   apiResponse: ApiTeamDetailResponse
 ): TeamDetailResponse => {
@@ -89,7 +80,6 @@ export const transformTeamDetailResponse = (
   };
 };
 
-// API 팀 멤버 아이템을 프론트엔드 타입으로 변환
 export const transformTeamMemberItem = (apiItem: ApiTeamMember): TeamMember => {
   return {
     id: apiItem.id,
@@ -102,7 +92,6 @@ export const transformTeamMemberItem = (apiItem: ApiTeamMember): TeamMember => {
   };
 };
 
-// API 팀 멤버 페이지 응답을 프론트엔드 타입으로 변환
 export const transformTeamMemberPageResponse = (
   apiResponse: ApiTeamMemberPageResponse
 ): TeamMemberPageResponse => {
@@ -112,7 +101,6 @@ export const transformTeamMemberPageResponse = (
   };
 };
 
-// 팀 멤버 역할을 한글로 변환
 export const getRoleDisplayName = (role: TeamMemberRole): string => {
   const roleMapping: Record<TeamMemberRole, string> = {
     LEADER: '회장',
@@ -122,7 +110,6 @@ export const getRoleDisplayName = (role: TeamMemberRole): string => {
   return roleMapping[role] || '팀원';
 };
 
-// 팀 가입 신청 상태 매핑
 export const JOIN_REQUEST_STATUS_MAPPING: Record<
   string,
   TeamJoinRequest['status']
@@ -133,14 +120,12 @@ export const JOIN_REQUEST_STATUS_MAPPING: Record<
   취소: 'CANCELED',
 };
 
-// 팀 가입 신청 상태를 영문 코드로 변환
 export const getJoinRequestStatusInEnglish = (
   koreanStatus: string
 ): TeamJoinRequest['status'] => {
   return JOIN_REQUEST_STATUS_MAPPING[koreanStatus] || 'PENDING';
 };
 
-// API 팀 가입 신청 아이템을 프론트엔드 타입으로 변환
 export const transformTeamJoinRequestItem = (
   apiItem: ApiTeamJoinRequest
 ): TeamJoinRequest => {
@@ -155,7 +140,6 @@ export const transformTeamJoinRequestItem = (
   };
 };
 
-// API 팀 가입 신청 페이지 응답을 프론트엔드 타입으로 변환
 export const transformTeamJoinRequestPageResponse = (
   apiResponse: ApiTeamJoinRequestPageResponse
 ): TeamJoinRequestPageResponse => {
@@ -165,7 +149,6 @@ export const transformTeamJoinRequestPageResponse = (
   };
 };
 
-// 팀 가입 신청 상태를 한글로 변환
 export const getJoinRequestStatusDisplayName = (
   status: TeamJoinRequest['status']
 ): string => {
