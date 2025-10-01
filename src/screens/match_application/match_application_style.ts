@@ -43,49 +43,59 @@ export const styles = StyleSheet.create({
     fontWeight: '500',
   },
   // ✅ 카드 스타일
-  card: {
-    backgroundColor: 'white',
+  cardContainer: {
     padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
   },
-  cardText: {
-    fontSize: 14,
+
+  cardLocation: {
+    fontSize: 16,
+    fontWeight: '600',
     marginBottom: 4,
-    color: colors.gray[800],
+    color: '#111',
   },
-  button: {
-    marginTop: 10,
+
+  cardTime: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 8,
+  },
+
+  requestButton: {
+    marginTop: 8,
     paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: colors.blue[500],
+    backgroundColor: '#007AFF',
     alignItems: 'center',
   },
-  buttonText: {
-    color: 'white',
+
+  requestButtonDisabled: {
+    backgroundColor: '#ccc',
+  },
+
+  requestButtonText: {
+    color: '#fff',
     fontWeight: '600',
   },
   timeFilterRow: {
+    marginTop: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
+    justifyContent: 'space-between',
   },
+
   resetButton: {
     marginLeft: 12,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    backgroundColor: colors.gray[300],
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: colors.gray[200],
   },
+
   resetButtonText: {
-    color: colors.gray[800],
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: '600',
+    color: colors.gray[700],
   },
 });

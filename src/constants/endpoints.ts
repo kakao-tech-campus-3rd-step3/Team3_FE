@@ -55,3 +55,8 @@ export const MATCH_WAITING_API = {
 export const VENUE_API = {
   GET_VENUES: '/api/venues',
 };
+
+export const MATCH_REQUEST_API = {
+  MATCH_REQUEST: (waitingId: string | number) =>
+    `/api/matches/${waitingId}/request`,
+};

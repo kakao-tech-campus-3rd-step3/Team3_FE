@@ -12,13 +12,13 @@ import {
   Alert,
 } from 'react-native';
 
-import { MatchCreateRequestDto } from '@/src/api/match';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { useUserProfile } from '@/src/hooks/queries';
 import { useCreateMatch } from '@/src/hooks/useCreateMatch';
 import { useVenues } from '@/src/hooks/useVenues';
 import Message from '@/src/screens/match_making/match_info/component/message/message';
 import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
+import { MatchCreateRequestDto } from '@/src/types/match';
 import type { Venue } from '@/src/types/venue';
 
 import { style } from './match_info_style';

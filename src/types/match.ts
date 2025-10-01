@@ -63,3 +63,36 @@ export interface MatchWaitingResponseDto {
   status: 'WAITING' | 'MATCHED' | 'CANCELLED';
   expiresAt: string;
 }
+
+export interface MatchCreateRequestDto {
+  teamId: number;
+  preferredDate: string; // "YYYY-MM-DD"
+  preferredTimeStart: string; // "HH:mm:ss"
+  preferredTimeEnd: string; // "HH:mm:ss"
+  preferredVenueId: number;
+  skillLevelMin: string; // "AMATEUR" | "PRO" 등
+  skillLevelMax: string;
+  universityOnly: boolean;
+  message: string;
+}
+
+export interface MatchCreateResponseDto {
+  waitingId: number;
+  teamId: number;
+  status: string; // e.g. "WAITING"
+  expiresAt: string;
+}
+export interface MatchRequestRequestDto {
+  requestTeamId: number;
+  requestMessage: string;
+}
+
+export type MatchRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface MatchRequestResponseDto {
+  requestId: number;
+  requestTeamId: number;
+  targetTeamId: number;
+  requestMessage: string;
+  status: MatchRequestStatus; // 명세 예시는 PENDING
+}

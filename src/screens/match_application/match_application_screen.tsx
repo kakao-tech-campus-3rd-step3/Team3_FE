@@ -1,26 +1,30 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { useUserProfile } from '@/src/hooks/queries'; // ✅ 유저 정보 가져오기
+import { useUserProfile } from '@/src/hooks/queries';
+import { useMatchRequest } from '@/src/hooks/useMatchRequest';
 import { useMatchWaitingList } from '@/src/hooks/useMatchWaitingList';
 import DateFilter from '@/src/screens/match_application/component/date_filter';
 import TimeFilter from '@/src/screens/match_application/component/time_filter';
-import type { MatchWaitingListRequestDto } from '@/src/types/match';
+import type {
+  MatchWaitingListRequestDto,
+  MatchRequestRequestDto,
+} from '@/src/types/match';
 
 import MatchCard from './component/match_card';
 import { styles } from './match_application_style';
+
+// ✅ 추가
 
 export default function MatchApplicationScreen() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
 
-  // ✅ 로그인 유저 프로필
   const { data: userProfile } = useUserProfile();
 
-  // ✅ teamId 동적으로 할당
   const params: MatchWaitingListRequestDto = {
-    teamId: userProfile?.teamId ?? 0, // 로그인 유저 팀 ID
+    teamId: userProfile?.teamId ?? 0,
     selectDate: selectedDate
       ? selectedDate.toISOString().split('T')[0]
       : new Date().toISOString().split('T')[0],
@@ -30,6 +34,37 @@ export default function MatchApplicationScreen() {
   };
 
   const { data, isLoading, error } = useMatchWaitingList(params);
+
+  // ✅ 매치 요청 훅
+  const { mutate: requestMatch, isPending } = useMatchRequest();
+
+  const handlePressRequest = (waitingId: number) => {
+    if (!userProfile?.teamId) {
+      Alert.alert('알림', '팀 정보가 없습니다.');
+      return;
+    }
+
+    // 메시지는 단순히 내 팀/내 유저 기준으로 생성
+    const payload: MatchRequestRequestDto = {
+      requestTeamId: userProfile.teamId,
+      requestMessage: `${userProfile.name}(${userProfile.teamId}) 팀이 매치 요청`,
+    };
+
+    requestMatch(
+      { waitingId, payload },
+      {
+        onSuccess: res => {
+          Alert.alert(
+            '✅ 신청 완료',
+            `매치 요청이 전송되었습니다.\n상태: ${res.status}`
+          );
+        },
+        onError: () => {
+          Alert.alert('❌ 오류', '매치 요청 중 문제가 발생했습니다.');
+        },
+      }
+    );
+  };
 
   if (isLoading) {
     return (
@@ -53,10 +88,7 @@ export default function MatchApplicationScreen() {
     <View style={styles.container}>
       <CustomHeader title="매치 참여" />
 
-      {/* 날짜 필터 */}
       <DateFilter onDateChange={setSelectedDate} />
-
-      {/* 시간 필터 */}
       <TimeFilter onTimeChange={setSelectedTime} />
 
       {selectedDate && (
@@ -86,7 +118,13 @@ export default function MatchApplicationScreen() {
       <FlatList
         data={data || []}
         keyExtractor={(item, index) => String(item.waitingId ?? index)}
-        renderItem={({ item }) => <MatchCard match={item} />}
+        renderItem={({ item }) => (
+          <MatchCard
+            match={item}
+            onPressRequest={() => handlePressRequest(item.waitingId)} // ✅ waitingId만 넘김
+            disabled={isPending}
+          />
+        )}
         ListEmptyComponent={
           <Text style={styles.emptyText}>조건에 맞는 경기가 없습니다.</Text>
         }
