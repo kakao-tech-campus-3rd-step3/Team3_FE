@@ -16,24 +16,12 @@ import { MatchCreateRequestDto } from '@/src/api/match';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { useUserProfile } from '@/src/hooks/queries';
 import { useCreateMatch } from '@/src/hooks/useCreateMatch';
+import { useVenues } from '@/src/hooks/useVenues';
 import Message from '@/src/screens/match_making/match_info/component/message/message';
 import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
+import type { Venue } from '@/src/types/venue';
 
 import { style } from './match_info_style';
-
-type Stadium = {
-  id: string;
-  name: string;
-};
-
-// ⚠️ 임시 Mock 데이터 (서버 API 완성 시 교체 예정)
-const MOCK_STADIUMS: Stadium[] = [
-  { id: '1', name: '서울월드컵경기장' },
-  { id: '2', name: '잠실종합운동장' },
-  { id: '3', name: '인천축구전용경기장' },
-  { id: '4', name: '수원월드컵경기장' },
-  { id: '5', name: '대전월드컵경기장' },
-];
 
 type SkillLevel = 'AMATEUR' | 'SEMI_PRO' | 'PRO';
 
@@ -41,41 +29,35 @@ export default function MatchInfoScreen() {
   const router = useRouter();
   const { data: userProfile } = useUserProfile();
   const { mutate: createMatch, isPending } = useCreateMatch();
+  const { data: venues, isLoading, error } = useVenues();
 
   const [stadiumQuery, setStadiumQuery] = useState('');
   const [stadiumModalVisible, setStadiumModalVisible] = useState(false);
-  const [selectedStadium, setSelectedStadium] = useState<Stadium | null>(null);
+  const [selectedStadium, setSelectedStadium] = useState<Venue | null>(null);
 
-  // 날짜
   const [date, setDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  // 시작/종료 시간
   const [timeStart, setTimeStart] = useState<Date>(new Date());
   const [timeEnd, setTimeEnd] = useState<Date>(new Date());
   const [showTimeStartPicker, setShowTimeStartPicker] = useState(false);
   const [showTimeEndPicker, setShowTimeEndPicker] = useState(false);
 
-  // 실력 수준
   const [skillMin, setSkillMin] = useState<SkillLevel>('AMATEUR');
   const [skillMax, setSkillMax] = useState<SkillLevel>('PRO');
 
-  // 같은 대학 여부
   const [universityOnly, setUniversityOnly] = useState(false);
-
-  // 추가 설명
   const [message, setMessage] = useState('');
 
-  const filteredStadiums = MOCK_STADIUMS.filter(s =>
-    s.name.toLowerCase().includes(stadiumQuery.toLowerCase())
+  const filteredStadiums = (venues ?? []).filter(s =>
+    s.venueName.toLowerCase().includes(stadiumQuery.toLowerCase())
   );
 
-  const onSelectStadium = (stadium: Stadium) => {
-    setSelectedStadium(stadium);
+  const onSelectStadium = (venue: Venue) => {
+    setSelectedStadium(venue);
     setStadiumModalVisible(false);
   };
 
-  // 날짜/시간 포맷 함수
   const pad2 = (n: number) => String(n).padStart(2, '0');
   const fmtDate = (d: Date) =>
     `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
@@ -99,9 +81,9 @@ export default function MatchInfoScreen() {
       preferredDate: fmtDate(date),
       preferredTimeStart: fmtTime(timeStart),
       preferredTimeEnd: fmtTime(timeEnd),
-      preferredVenueId: Number(selectedStadium.id),
-      skillLevelMin: skillMin ?? 'AMATEUR',
-      skillLevelMax: skillMax ?? 'PRO',
+      preferredVenueId: selectedStadium.venueId, // ✅ 이제 venueId 사용 가능
+      skillLevelMin: skillMin,
+      skillLevelMax: skillMax,
       universityOnly,
       message,
     };
@@ -115,8 +97,6 @@ export default function MatchInfoScreen() {
             teamId: String(data.teamId),
             status: data.status,
             expiresAt: data.expiresAt,
-
-            // ✅ 화면 표시용 정보도 같이 넘김
             stadium: JSON.stringify(selectedStadium),
             date: date.toISOString(),
             timeStart: timeStart.toISOString(),
@@ -146,7 +126,9 @@ export default function MatchInfoScreen() {
           onPress={() => setStadiumModalVisible(true)}
         >
           <Text>
-            {selectedStadium ? selectedStadium.name : '경기장을 선택하세요'}
+            {selectedStadium
+              ? selectedStadium.venueName
+              : '경기장을 선택하세요'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -155,7 +137,6 @@ export default function MatchInfoScreen() {
       <View style={style.section}>
         <Text style={style.label}>경기 일정</Text>
 
-        {/* 날짜 선택 */}
         <TouchableOpacity
           style={style.input}
           onPress={() => setShowDatePicker(true)}
@@ -163,7 +144,6 @@ export default function MatchInfoScreen() {
           <Text>{date.toLocaleDateString()}</Text>
         </TouchableOpacity>
 
-        {/* 시작 시간 */}
         <TouchableOpacity
           style={style.input}
           onPress={() => setShowTimeStartPicker(true)}
@@ -177,7 +157,6 @@ export default function MatchInfoScreen() {
           </Text>
         </TouchableOpacity>
 
-        {/* 종료 시간 */}
         <TouchableOpacity
           style={style.input}
           onPress={() => setShowTimeEndPicker(true)}
@@ -192,7 +171,7 @@ export default function MatchInfoScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* 실력 수준 선택 */}
+      {/* 실력 수준 */}
       <SkillLevelSelector
         onChange={(min, max) => {
           setSkillMin(min);
@@ -211,7 +190,7 @@ export default function MatchInfoScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* 추가 설명 입력 */}
+      {/* 추가 설명 */}
       <Message value={message} onChange={setMessage} />
 
       {/* 하단 바 */}
@@ -238,18 +217,27 @@ export default function MatchInfoScreen() {
               value={stadiumQuery}
               onChangeText={setStadiumQuery}
             />
-            <FlatList
-              data={filteredStadiums}
-              keyExtractor={item => item.id}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={style.stadiumItem}
-                  onPress={() => onSelectStadium(item)}
-                >
-                  <Text>{item.name}</Text>
-                </TouchableOpacity>
-              )}
-            />
+            {isLoading ? (
+              <Text>불러오는 중...</Text>
+            ) : error ? (
+              <Text>에러 발생: {error.message}</Text>
+            ) : (
+              <FlatList
+                data={filteredStadiums}
+                keyExtractor={item => String(item.venueId)} // ✅ venueId 사용
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={style.stadiumItem}
+                    onPress={() => onSelectStadium(item)}
+                  >
+                    <Text>{item.venueName}</Text>
+                    <Text style={{ color: '#555', fontSize: 12 }}>
+                      {item.address}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              />
+            )}
             <TouchableOpacity
               onPress={() => setStadiumModalVisible(false)}
               style={style.closeButton}
@@ -260,7 +248,7 @@ export default function MatchInfoScreen() {
         </View>
       </Modal>
 
-      {/* Date Picker */}
+      {/* Date/Time Pickers */}
       {showDatePicker && (
         <DateTimePicker
           value={date}
@@ -272,8 +260,6 @@ export default function MatchInfoScreen() {
           }}
         />
       )}
-
-      {/* 시작 시간 Picker */}
       {showTimeStartPicker && (
         <DateTimePicker
           value={timeStart}
@@ -285,8 +271,6 @@ export default function MatchInfoScreen() {
           }}
         />
       )}
-
-      {/* 종료 시간 Picker */}
       {showTimeEndPicker && (
         <DateTimePicker
           value={timeEnd}

@@ -51,3 +51,7 @@ export const MATCH_CREATE_API = {
 export const MATCH_WAITING_API = {
   GET_WAITING_LIST: '/api/matches/waiting',
 };
+
+export const VENUE_API = {
+  GET_VENUES: '/api/venues',
+};
