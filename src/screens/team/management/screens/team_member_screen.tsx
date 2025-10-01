@@ -13,6 +13,7 @@ import type { TeamMember, TeamMemberRole } from '@/src/types/team';
 import { getRoleDisplayName } from '@/src/utils/team';
 
 import MemberInfoCard from '../components/cards/member_info_card';
+import MemberDetailModal from '../components/modals/member_detail_modal';
 import RoleChangeModal from '../components/modals/role_change_modal';
 import MemberListSection from '../components/sections/member_list_section';
 import { styles } from '../styles/team_member_style';
@@ -25,6 +26,7 @@ export default function MemberManagementScreen({
   teamId,
 }: MemberManagementScreenProps) {
   const [showRoleModal, setShowRoleModal] = useState(false);
+  const [showMemberDetailModal, setShowMemberDetailModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
   const numericTeamId = teamId ? Number(teamId) : 0;
@@ -83,6 +85,11 @@ export default function MemberManagementScreen({
       </View>
     );
   }
+
+  const handleMemberPress = (member: TeamMember) => {
+    setSelectedMember(member);
+    setShowMemberDetailModal(true);
+  };
 
   const handleRoleChange = (member: TeamMember) => {
     if (member.role === 'LEADER') {
@@ -196,11 +203,19 @@ export default function MemberManagementScreen({
           <MemberInfoCard />
           <MemberListSection
             teamMembers={teamMembers.content}
+            onMemberPress={handleMemberPress}
             onRoleChange={handleRoleChange}
             onRemoveMember={handleRemoveMember}
           />
         </View>
       </ScrollView>
+
+      <MemberDetailModal
+        visible={showMemberDetailModal}
+        teamId={numericTeamId}
+        userId={selectedMember?.userId || 0}
+        onClose={() => setShowMemberDetailModal(false)}
+      />
 
       <RoleChangeModal
         visible={showRoleModal}

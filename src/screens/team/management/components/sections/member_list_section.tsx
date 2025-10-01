@@ -10,12 +10,14 @@ import { styles } from '../../styles/team_member_style';
 
 interface MemberListSectionProps {
   teamMembers: TeamMember[];
+  onMemberPress: (member: TeamMember) => void;
   onRoleChange: (member: TeamMember) => void;
   onRemoveMember: (member: TeamMember) => void;
 }
 
 export default memo(function MemberListSection({
   teamMembers,
+  onMemberPress,
   onRoleChange,
   onRemoveMember,
 }: MemberListSectionProps) {
@@ -41,7 +43,12 @@ export default memo(function MemberListSection({
 
       <View style={styles.memberList}>
         {teamMembers.map(member => (
-          <View key={member.id} style={styles.memberCard}>
+          <TouchableOpacity
+            key={member.id}
+            style={styles.memberCard}
+            onPress={() => onMemberPress(member)}
+            activeOpacity={0.7}
+          >
             <View style={styles.memberInfo}>
               <View style={styles.memberAvatar}>
                 <Ionicons name="person" size={20} color={theme.colors.white} />
@@ -101,7 +108,7 @@ export default memo(function MemberListSection({
                 </TouchableOpacity>
               </View>
             )}
-          </View>
+          </TouchableOpacity>
         ))}
 
         {teamMembers.length === 0 && (

@@ -21,6 +21,8 @@ import type {
   VerifyEmailRequest,
   UpdateProfileRequest,
   TeamMemberRole,
+  SkillLevel,
+  TeamType,
 } from '@/src/types';
 
 export const queries = {
@@ -71,6 +73,12 @@ export const queries = {
       ['teamMembers', teamId, page, size] as const,
     fn: (teamId: string | number, page: number = 0, size: number = 10) =>
       api.teamMemberApi.getTeamMembers(teamId, page, size),
+  },
+  teamMember: {
+    key: (teamId: string | number, userId: string | number) =>
+      ['teamMember', teamId, userId] as const,
+    fn: (teamId: string | number, userId: string | number) =>
+      api.teamMemberApi.getTeamMember(teamId, userId),
   },
   teamJoinRequests: {
     key: (teamId: string | number) => ['teamJoinRequests', teamId] as const,
@@ -181,6 +189,17 @@ export function useTeamMembers(
     queryKey: queries.teamMembers.key(teamId, page, size),
     queryFn: () => queries.teamMembers.fn(teamId, page, size),
     enabled: !!teamId,
+  });
+}
+
+export function useTeamMember(
+  teamId: string | number,
+  userId: string | number
+) {
+  return useQuery({
+    queryKey: queries.teamMember.key(teamId, userId),
+    queryFn: () => queries.teamMember.fn(teamId, userId),
+    enabled: !!teamId && !!userId,
   });
 }
 
@@ -383,6 +402,46 @@ export function useUpdateMemberRoleMutation() {
     },
     onError: (error: unknown) => {
       console.error('멤버 역할 수정 실패:', error);
+    },
+  });
+}
+
+export function useUpdateTeamMutation() {
+  return useMutation({
+    mutationFn: ({
+      teamId,
+      data,
+    }: {
+      teamId: string | number;
+      data: {
+        name: string;
+        description: string;
+        university: string;
+        skillLevel: SkillLevel;
+        teamType: TeamType;
+      };
+    }) => api.teamEditApi.updateTeam(teamId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queries.team.key(variables.teamId),
+      });
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 정보 수정 실패:', error);
+    },
+  });
+}
+
+export function useDeleteTeamMutation() {
+  return useMutation({
+    mutationFn: (teamId: string | number) =>
+      api.teamDeleteApi.deleteTeam(teamId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 삭제 실패:', error);
     },
   });
 }

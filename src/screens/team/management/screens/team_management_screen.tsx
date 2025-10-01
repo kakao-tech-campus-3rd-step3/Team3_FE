@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, ScrollView, RefreshControl } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { useTeam, useTeamMembers, useUserProfile } from '@/src/hooks/queries';
+import type { TeamMember } from '@/src/types/team';
 
 import TeamInfoCard from '../components/cards/team_info_card';
+import MemberDetailModal from '../components/modals/member_detail_modal';
 import TeamMembersSection from '../components/sections/team_members_section';
 import EmptyState from '../components/states/empty_state';
 import LoadingState from '../components/states/loading_state';
@@ -17,6 +19,8 @@ interface TeamManagementScreenProps {
 export default function TeamManagementScreen({
   teamId,
 }: TeamManagementScreenProps) {
+  const [showMemberDetailModal, setShowMemberDetailModal] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const { data: userProfile } = useUserProfile();
 
   const numericTeamId = teamId ? Number(teamId) : 0;
@@ -91,6 +95,11 @@ export default function TeamManagementScreen({
     );
   }
 
+  const handleMemberPress = (member: TeamMember) => {
+    setSelectedMember(member);
+    setShowMemberDetailModal(true);
+  };
+
   return (
     <View style={styles.container}>
       <CustomHeader title="팀 정보" />
@@ -112,9 +121,17 @@ export default function TeamManagementScreen({
           <TeamMembersSection
             teamMembers={teamMembers}
             membersLoading={membersLoading}
+            onMemberPress={handleMemberPress}
           />
         </View>
       </ScrollView>
+
+      <MemberDetailModal
+        visible={showMemberDetailModal}
+        teamId={numericTeamId}
+        userId={selectedMember?.userId || 0}
+        onClose={() => setShowMemberDetailModal(false)}
+      />
     </View>
   );
 }

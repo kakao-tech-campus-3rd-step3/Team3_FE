@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -10,7 +11,7 @@ import {
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
-import { useTeam } from '@/src/hooks/queries';
+import { useTeam, useUpdateTeamMutation } from '@/src/hooks/queries';
 import { colors } from '@/src/theme';
 import {
   DEFAULT_SKILL_LEVEL,
@@ -39,6 +40,7 @@ export default function TeamEditScreen({ teamId }: TeamEditScreenProps) {
 
   const numericTeamId = teamId ? Number(teamId) : 0;
   const { data: team, isLoading, error, refetch } = useTeam(numericTeamId);
+  const updateTeamMutation = useUpdateTeamMutation();
 
   useEffect(() => {
     if (team) {
@@ -124,12 +126,47 @@ export default function TeamEditScreen({ teamId }: TeamEditScreenProps) {
       return;
     }
 
+    if (!team) {
+      Alert.alert('오류', '팀 정보를 불러올 수 없습니다.');
+      return;
+    }
+
     Alert.alert('팀 정보 수정', '팀 정보를 수정하시겠습니까?', [
       { text: '취소', style: 'cancel' },
       {
         text: '수정',
         onPress: () => {
-          Alert.alert('알림', '팀 정보 수정 기능은 아직 구현 중입니다.');
+          updateTeamMutation.mutate(
+            {
+              teamId: numericTeamId,
+              data: {
+                name: formData.name.trim(),
+                description: formData.description.trim(),
+                university: team.university,
+                skillLevel: formData.skillLevel,
+                teamType: formData.teamType,
+              },
+            },
+            {
+              onSuccess: () => {
+                Alert.alert('성공', '팀 정보가 성공적으로 수정되었습니다.', [
+                  {
+                    text: '확인',
+                    onPress: () => {
+                      router.push(`/team/management/${teamId}`);
+                    },
+                  },
+                ]);
+              },
+              onError: error => {
+                console.error('팀 수정 실패:', error);
+                Alert.alert(
+                  '오류',
+                  '팀 정보 수정에 실패했습니다. 다시 시도해주세요.'
+                );
+              },
+            }
+          );
         },
       },
     ]);
