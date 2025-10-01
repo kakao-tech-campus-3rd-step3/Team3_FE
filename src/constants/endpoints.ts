@@ -45,3 +45,20 @@ export const TEAM_MATCH_API = {
   GET_TEAM_RECENT_MATCHES: (teamId: string | number) =>
     `/api/teams/${teamId}/matches`,
 };
+
+export const MATCH_CREATE_API = {
+  CREATE: '/api/matches',
+};
+
+export const MATCH_WAITING_API = {
+  GET_WAITING_LIST: '/api/matches/waiting',
+};
+
+export const VENUE_API = {
+  GET_VENUES: '/api/venues',
+};
+
+export const MATCH_REQUEST_API = {
+  MATCH_REQUEST: (waitingId: string | number) =>
+    `/api/matches/${waitingId}/request`,
+};

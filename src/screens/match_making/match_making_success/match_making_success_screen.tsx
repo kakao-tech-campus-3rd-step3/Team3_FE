@@ -13,13 +13,30 @@ type Stadium = {
 
 export default function MatchMakingSuccessScreen() {
   const router = useRouter();
-  const { stadium, date } = useLocalSearchParams<{
+  const {
+    stadium,
+    date,
+    timeStart,
+    timeEnd,
+    skillLevelMin,
+    skillLevelMax,
+    message,
+    universityOnly,
+  } = useLocalSearchParams<{
     stadium: string;
     date: string;
+    timeStart: string;
+    timeEnd: string;
+    skillLevelMin: string;
+    skillLevelMax: string;
+    message: string;
+    universityOnly: string;
   }>();
 
   const parsedStadium: Stadium | null = stadium ? JSON.parse(stadium) : null;
   const parsedDate: Date | null = date ? new Date(date) : null;
+  const parsedTimeStart: Date | null = timeStart ? new Date(timeStart) : null;
+  const parsedTimeEnd: Date | null = timeEnd ? new Date(timeEnd) : null;
 
   return (
     <View style={style.container}>
@@ -34,15 +51,40 @@ export default function MatchMakingSuccessScreen() {
           {parsedStadium && (
             <Text style={style.infoText}>📍 장소: {parsedStadium.name}</Text>
           )}
+
           {parsedDate && (
             <Text style={style.infoText}>
-              🗓 일정: {parsedDate.toLocaleDateString()}{' '}
-              {parsedDate.toLocaleTimeString([], {
+              🗓 날짜: {parsedDate.toLocaleDateString()}
+            </Text>
+          )}
+
+          {parsedTimeStart && parsedTimeEnd && (
+            <Text style={style.infoText}>
+              ⏰ 시간:{' '}
+              {parsedTimeStart.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}{' '}
+              ~{' '}
+              {parsedTimeEnd.toLocaleTimeString([], {
                 hour: '2-digit',
                 minute: '2-digit',
               })}
             </Text>
           )}
+
+          <Text style={style.infoText}>
+            💪 실력 수준: {skillLevelMin} ~ {skillLevelMax}
+          </Text>
+
+          {message ? (
+            <Text style={style.infoText}>💬 메시지: {message}</Text>
+          ) : null}
+
+          <Text style={style.infoText}>
+            🎓 동일 대학 상대 여부:{' '}
+            {universityOnly === 'true' ? '예' : '아니오'}
+          </Text>
         </View>
       </View>
 
