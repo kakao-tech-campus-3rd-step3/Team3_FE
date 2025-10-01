@@ -9,7 +9,7 @@ export interface UserProfile {
   studentYear: string;
   bio: string;
   createdAt: string;
-  teamId: number;
+  teamId: number | null;
 }
 
 export interface ReviewStatsType {
