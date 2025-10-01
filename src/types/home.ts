@@ -1,32 +1,27 @@
+export interface RecommendedMatch {
+  id: number;
+  teamName: string;
+  university: string;
+  skillLevel: string;
+  matchDate: string;
+  location: string;
+}
+
+export interface RecommendedMatchListData {
+  matches: RecommendedMatch[];
+  totalCount: number;
+}
+
 export interface HomeData {
-  user: {
-    name: string;
-    teamLevel?: string;
-    preferredPositions?: string[];
-    teamId?: number | null;
-  };
+  userName: string;
+  teamName?: string;
+  upcomingMatches: number;
+  pendingRequests: number;
   todayMatch: {
     hasMatch: boolean;
     matchInfo?: {
       time: string;
       location: string;
-      type: 'team_match' | 'substitute_match';
-      opponent?: string;
-      teamName?: string;
     };
   };
-}
-
-export interface RecommendedMatch {
-  id: number;
-  location: string;
-  time: string;
-  currentPlayers: number;
-  totalPlayers: number;
-  level: string;
-  popularity: string;
-}
-
-export interface RecommendedMatchListData {
-  recommendedMatches: RecommendedMatch[];
 }

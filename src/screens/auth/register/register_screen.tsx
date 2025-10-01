@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useAuth } from '@/src/contexts/auth_context';
 import { useRegisterMutation } from '@/src/hooks/queries';
 import { useRegisterForm } from '@/src/hooks/useRegisterForm';
 import { useStep } from '@/src/hooks/useStep';
@@ -16,31 +15,30 @@ type Step = 1 | 2 | 3;
 export default function RegisterScreen() {
   const registerMutation = useRegisterMutation();
   const { step, handlePrev, handleNext } = useStep<Step>(1, 3);
-  const { formData, updateForm } = useRegisterForm();
-  const { login } = useAuth();
+  const { formData, updateForm, getRegisterData } = useRegisterForm();
 
-  // const handleSubmit = async () => {
-  //   if (
-  //     !formData.password ||
-  //     !formData.confirmPassword ||
-  //     formData.password !== formData.confirmPassword ||
-  //     !formData.termsAgreed ||
-  //     !formData.privacyAgreed
-  //   ) {
-  //     Alert.alert('입력 오류', '모든 항목을 올바르게 입력해주세요.');
-  //     return;
-  //   }
+  const handleSubmit = async () => {
+    if (
+      !formData.password ||
+      !formData.confirmPassword ||
+      formData.password !== formData.confirmPassword ||
+      !formData.termsAgreed ||
+      !formData.privacyAgreed
+    ) {
+      Alert.alert('입력 오류', '모든 항목을 올바르게 입력해주세요.');
+      return;
+    }
 
-  //   try {
-  //     const result = await registerMutation.mutateAsync(getRegisterData());
-  //     if (!result?.accessToken) {
-  //       throw new Error('회원가입 실패');
-  //     }
-  //     Alert.alert('성공', '회원가입이 완료되었습니다.');
-  //   } catch (error) {
-  //     Alert.alert('회원가입 실패', '다시 시도해주세요.');
-  //   }
-  // };
+    try {
+      const result = await registerMutation.mutateAsync(getRegisterData());
+      if (!result?.accessToken) {
+        throw new Error('회원가입 실패');
+      }
+      Alert.alert('성공', '회원가입이 완료되었습니다.');
+    } catch {
+      Alert.alert('회원가입 실패', '다시 시도해주세요.');
+    }
+  };
 
   const renderStep = () => {
     switch (step) {
@@ -66,7 +64,7 @@ export default function RegisterScreen() {
           <AccountSetup
             data={formData}
             onChange={updateForm}
-            onSubmit={() => login('temp-register-token', 'temp-user-id')} //{handleSubmit}
+            onSubmit={handleSubmit}
             isLoading={registerMutation.isPending}
             handlePrev={handlePrev}
           />

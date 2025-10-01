@@ -13,6 +13,9 @@ export const ROUTES = {
   TEAM_JOIN_UNIVERSITY: '/team/join-university',
   TEAM_JOIN_LIST: '/team/join-list',
 
+  MATCH_MAKING: '/match_making/match_info',
+  MATCH_APPLICATION: '/match_application',
+
   TOURNAMENT: '/tournament',
 } as const;
 

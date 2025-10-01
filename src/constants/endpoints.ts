@@ -1,5 +1,5 @@
 export const AUTH_API = {
-  LOGIN: '/auth/login',
+  LOGIN: '/api/auth/login',
   LOGOUT: '/auth/logout',
   REGISTER: '/api/auth/register',
   VERIFY_EMAIL: '/api/auth/verify-email',
@@ -7,12 +7,9 @@ export const AUTH_API = {
 };
 
 export const PROFILE_API = {
-  GET_PROFILE: (userId: string) => `/api/profiles/${userId}`,
+  GET_PROFILE: '/api/profiles/me',
   UPDATE_PROFILE: '/api/profiles/me',
-};
-
-export const HOME_API = {
-  GET_HOME: '/home',
+  DELETE_PROFILE: '/api/profiles/me',
 };
 
 export const RECOMMENDED_MATCH_API = {
@@ -20,30 +17,48 @@ export const RECOMMENDED_MATCH_API = {
 };
 
 export const TEAM_API = {
-  CREATE: '/teams',
-  DETAIL: (teamId: string | number) => `/teams/${teamId}`,
-  UPDATE: (teamId: string | number) => `/teams/${teamId}`,
-  DELETE: (teamId: string | number) => `/teams/${teamId}`,
-  GET_UNIVERSITY_LIST: '/universities',
-  GET_TEAMS_BY_UNIVERSITY: '/teams',
-  JOIN_TEAM: '/teams/join',
+  CREATE: '/api/teams',
+  DETAIL: (teamId: string | number) => `/api/teams/${teamId}`,
+  UPDATE: (teamId: string | number) => `/api/teams/${teamId}`,
+  DELETE: (teamId: string | number) => `/api/teams/${teamId}`,
+  GET_UNIVERSITY_LIST: '/api/universities',
+  GET_TEAMS_BY_UNIVERSITY: '/api/teams',
+  JOIN_TEAM: '/api/teams/join',
   GET_JOIN_REQUESTS: (teamId: string | number) =>
-    `/teams/${teamId}/joinRequests`,
+    `/api/teams/${teamId}/joinRequests`,
+  GET_JOIN_WAITING_LIST: (teamId: string | number) =>
+    `/api/teams/${teamId}/join-waiting`,
 };
 
 export const TEAM_MEMBER_API = {
-  GET_MEMBERS: (teamId: string | number) => `/teamMembers?teamId=${teamId}`,
+  GET_MEMBERS: (teamId: string | number, page: number = 0, size: number = 10) =>
+    `/api/teams/${teamId}/users?page=${page}&size=${size}`,
+  GET_MEMBER: (teamId: string | number, userId: string | number) =>
+    `/api/teams/${teamId}/users/${userId}`,
   UPDATE_ROLE: (teamId: string | number, userId: string | number) =>
     `/api/teams/${teamId}/users/${userId}`,
   REMOVE_MEMBER: (teamId: string | number, userId: string | number) =>
     `/api/teams/${teamId}/users/${userId}`,
 };
 
-export const TEAM_REVIEW_API = {
-  GET_REVIEWS: (teamId: string | number) => `/teamReviews?teamId=${teamId}`,
-};
-
 export const TEAM_MATCH_API = {
   GET_TEAM_RECENT_MATCHES: (teamId: string | number) =>
-    `/teamMatches?teamId=${teamId}`,
+    `/api/teams/${teamId}/matches`,
+};
+
+export const MATCH_CREATE_API = {
+  CREATE: '/api/matches',
+};
+
+export const MATCH_WAITING_API = {
+  GET_WAITING_LIST: '/api/matches/waiting',
+};
+
+export const VENUE_API = {
+  GET_VENUES: '/api/venues',
+};
+
+export const MATCH_REQUEST_API = {
+  MATCH_REQUEST: (waitingId: string | number) =>
+    `/api/matches/${waitingId}/request`,
 };

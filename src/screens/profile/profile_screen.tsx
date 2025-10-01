@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react';
 import { ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -10,27 +9,26 @@ import { useUserProfile } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 
 import ProfileHeader from './components/profileHeader';
-import MannerCard from './components/reputationTab/manner_card';
-import ReviewCard from './components/reputationTab/review_card';
 import SettingCard from './components/settingTab/setting_card';
-import { defaultSettingsItems } from './components/settingTab/setting_items';
-import TabBar from './components/TabBar';
+import { getDefaultSettingsItems } from './components/settingTab/setting_items';
 import styles from './profile_style';
 
 function ProfileScreen() {
-  const [activeTab, setActiveTab] = useState<'reputation' | 'settings'>(
-    'reputation'
-  );
   const insets = useSafeAreaInsets();
-  const { userId } = useAuth();
+  const { token, logout } = useAuth();
 
-  const { data: userInfo, isLoading, error, refetch } = useUserProfile(userId!);
+  const { data: userInfo, isLoading, error, refetch } = useUserProfile();
 
   const displayUser = userInfo;
-  const handleChangeTab = useCallback(
-    (t: 'reputation' | 'settings') => setActiveTab(t),
-    []
-  );
+  const settingsItems = getDefaultSettingsItems(logout);
+
+  if (!token) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>로그인이 필요합니다.</Text>
+      </View>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -66,20 +64,8 @@ function ProfileScreen() {
           <Card style={styles.profileCard}>
             <ProfileHeader user={displayUser} />
           </Card>
-          <TabBar active={activeTab} onChange={handleChangeTab} />
 
-          {activeTab === 'reputation' ? (
-            <>
-              <MannerCard
-                mannerScore={displayUser.mannerScore}
-                totalReviews={displayUser.totalReviews}
-                noShowCount={displayUser.noShowCount}
-              />
-              <ReviewCard reviews={displayUser.recentReviews} />
-            </>
-          ) : (
-            <SettingCard items={defaultSettingsItems} />
-          )}
+          <SettingCard items={settingsItems} />
 
           <View style={styles.bottomSpacer} />
         </View>

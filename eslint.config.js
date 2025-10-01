@@ -40,38 +40,4 @@ module.exports = defineConfig([
       },
     },
   },
-  {
-    rules: {
-      'import/order': [
-        'error',
-        {
-          groups: [
-            'builtin',
-            'external',
-            'internal',
-            'parent',
-            'sibling',
-            'index',
-          ],
-          'newlines-between': 'always',
-          alphabetize: {
-            order: 'asc',
-            caseInsensitive: true,
-          },
-        },
-      ],
-      'import/no-duplicates': 'error',
-    },
-    settings: {
-      'import/resolver': {
-        alias: {
-          map: [
-            ['@/src', './src'],
-            ['@', './src'],
-          ],
-          extensions: ['.ts', '.tsx', '.js', '.jsx'],
-        },
-      },
-    },
-  },
 ]);

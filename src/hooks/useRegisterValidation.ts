@@ -2,10 +2,19 @@ import { useState } from 'react';
 
 import type { RegisterFormData } from './useRegisterForm';
 
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const UNIVERSITY_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.ac\.kr$/;
+const KAKAO_TALK_ID_REGEX = /^[a-zA-Z0-9._-]+$/;
+const STUDENT_YEAR_REGEX = /^\d{2}$/;
+const VERIFICATION_CODE_REGEX = /^\d{6}$/;
+
 export interface ValidationRule {
   required?: boolean;
   minLength?: number;
+  maxLength?: number;
   pattern?: RegExp;
+  label?: string;
+  patternMessage?: string;
   custom?: (
     value: string,
     allValues?: Partial<RegisterFormData>
@@ -22,16 +31,22 @@ const runValidation = (
   rule: ValidationRule,
   allValues?: Partial<RegisterFormData>
 ): string | null => {
+  const label = rule.label || getFieldLabel(field);
+
   if (rule.required && !value.trim()) {
-    return `${getFieldLabel(field)}을(를) 입력해주세요`;
+    return `${label}을(를) 입력해주세요`;
   }
 
   if (rule.minLength && value.trim().length < rule.minLength) {
-    return `${getFieldLabel(field)}은(는) ${rule.minLength}자 이상 입력해주세요`;
+    return `${label}은(는) ${rule.minLength}자 이상 입력해주세요`;
+  }
+
+  if (rule.maxLength && value.trim().length > rule.maxLength) {
+    return `${label}은(는) ${rule.maxLength}자 이하로 입력해주세요`;
   }
 
   if (rule.pattern && !rule.pattern.test(value)) {
-    return getPatternErrorMessage(field);
+    return rule.patternMessage || getPatternErrorMessage(field);
   }
 
   if (rule.custom) {
@@ -107,26 +122,30 @@ export const useRegisterValidation = (rules: ValidationRules) => {
 const getFieldLabel = (field: string): string => {
   const labels: Record<string, string> = {
     name: '이름',
-    kakaoId: '카카오 아이디',
+    kakaoTalkId: '카카오톡 아이디',
+    skillLevel: '실력',
+    position: '포지션',
     department: '학과',
-    studentYear: '학번',
+    studentYear: '입학년도',
     university: '대학교',
     email: '이메일',
     universityEmail: '학교 이메일',
     verificationCode: '인증번호',
     password: '비밀번호',
     confirmPassword: '비밀번호 확인',
+    bio: '자기소개',
   };
   return labels[field] || field;
 };
 
 const getPatternErrorMessage = (field: string): string => {
   const messages: Record<string, string> = {
-    studentYear: '학번은 2자리 숫자로 입력해주세요',
+    studentYear: '입학년도는 2자리 숫자로 입력해주세요 (예: 25)',
     verificationCode: '인증번호는 6자리 숫자로 입력해주세요',
     email: '올바른 이메일 형식을 입력해주세요',
-    universityEmail: '올바른 이메일 형식을 입력해주세요',
+    universityEmail: '학교 이메일은 *.ac.kr 도메인으로 입력해주세요',
     password: '비밀번호는 특수문자를 포함한 8자 이상으로 입력해주세요',
+    kakaoTalkId: '카카오톡 아이디는 영문, 숫자, ., _, - 만 사용 가능합니다',
   };
   return messages[field] || '올바른 형식으로 입력해주세요';
 };
@@ -135,42 +154,63 @@ export const profileValidationRules: ValidationRules = {
   name: {
     required: true,
     minLength: 2,
+    label: '이름',
   },
-  kakaoId: {
+  kakaoTalkId: {
     required: true,
-    minLength: 3,
-  },
-  department: {
-    required: true,
+    minLength: 4,
+    maxLength: 20,
+    pattern: KAKAO_TALK_ID_REGEX,
+    label: '카카오톡 아이디',
+    patternMessage:
+      '카카오톡 아이디는 영문, 숫자, 특수문자(-, _, .)를 포함하여 4~20자이어야 합니다',
   },
   studentYear: {
     required: true,
-    pattern: /^\d{2}$/,
+    pattern: STUDENT_YEAR_REGEX,
+    label: '입학년도',
+    patternMessage: '입학년도는 2자리 숫자로 입력해주세요 (예: 25)',
+  },
+  department: {
+    required: true,
+    minLength: 2,
+    label: '학과',
+  },
+  bio: {
+    maxLength: 500,
+    label: '자기소개',
   },
 };
 
 export const emailValidationRules: ValidationRules = {
   university: {
     required: true,
+    label: '대학교',
   },
   universityEmail: {
     required: true,
-    pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    pattern: UNIVERSITY_EMAIL_REGEX,
+    label: '학교 이메일',
+    patternMessage: '학교 이메일은 *.ac.kr 도메인으로 입력해주세요',
   },
   verificationCode: {
     required: true,
-    pattern: /^\d{6}$/,
+    pattern: VERIFICATION_CODE_REGEX,
+    label: '인증번호',
+    patternMessage: '인증번호는 6자리 숫자로 입력해주세요',
   },
 };
 
 export const accountValidationRules: ValidationRules = {
   email: {
     required: true,
-    pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    pattern: EMAIL_REGEX,
+    label: '이메일',
+    patternMessage: '올바른 이메일 형식을 입력해주세요',
   },
   password: {
     required: true,
-    minLength: 8,
+    label: '비밀번호',
     custom: (value: string) => {
       if (!value) return null;
 
@@ -204,6 +244,7 @@ export const accountValidationRules: ValidationRules = {
   },
   confirmPassword: {
     required: true,
+    label: '비밀번호 확인',
     custom: (value: string, allValues?: Partial<RegisterFormData>) => {
       if (value && allValues?.password && value !== allValues.password) {
         return '비밀번호가 일치하지 않습니다';

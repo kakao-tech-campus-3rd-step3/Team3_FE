@@ -1,12 +1,14 @@
 import { router } from 'expo-router';
-import { Linking } from 'react-native';
+import { Alert, Linking } from 'react-native';
 
 import { EXTERNAL_LINKS } from '@/src/constants/external_links';
 import { ROUTES } from '@/src/constants/routes';
 import { theme } from '@/src/theme';
 import type { SettingItem } from '@/src/types';
 
-export const defaultSettingsItems: SettingItem[] = [
+export const getDefaultSettingsItems = (
+  logout: () => Promise<void>
+): SettingItem[] => [
   {
     key: 'edit-profile',
     label: '개인정보 수정',
@@ -50,7 +52,19 @@ export const defaultSettingsItems: SettingItem[] = [
     key: 'logout',
     label: '로그아웃',
     color: theme.colors.error,
-    onPress: () => {},
+    onPress: () => {
+      Alert.alert('로그아웃', '정말 로그아웃하시겠습니까?', [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '로그아웃',
+          style: 'destructive',
+          onPress: logout,
+        },
+      ]);
+    },
     showChevron: false,
   },
 ];

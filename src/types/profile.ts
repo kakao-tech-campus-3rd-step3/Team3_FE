@@ -1,24 +1,15 @@
 export interface UserProfile {
-  id: string;
   name: string;
+  skillLevel: string;
   email: string;
-  university?: string;
-  major?: string;
-  studentId?: string;
-  joinDate: string;
-  level: string;
-  teamId?: number | null;
-
-  totalMatches: number;
-  noShowCount: number;
-  mannerScore: number;
-  totalReviews: number;
+  kakaoTalkId: string;
+  position: string;
+  university: string;
+  department: string;
+  studentYear: string;
   bio: string;
-  phoneNumber: string;
-
-  recentReviews: ReviewStatsType[];
-
-  stats: MatchStats;
+  createdAt: string;
+  teamId: number;
 }
 
 export interface ReviewStatsType {

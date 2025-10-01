@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { getTeamManagementUrl } from '@/src/constants/routes';
+import { useCreateTeamMutation } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import {
   TeamType,
@@ -72,14 +74,25 @@ export default function TeamCreationScreen() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const createTeamMutation = useCreateTeamMutation();
+
   const handleSubmit = async () => {
     if (validateForm()) {
-      Alert.alert('팀 생성 완료', '팀이 성공적으로 생성되었습니다!', [
-        {
-          text: '확인',
-          onPress: () => router.push('/'),
-        },
-      ]);
+      try {
+        const response = await createTeamMutation.mutateAsync(formData);
+
+        Alert.alert('팀 생성 완료', response.message, [
+          {
+            text: '확인',
+            onPress: () => {
+              router.replace(getTeamManagementUrl(response.teamId));
+            },
+          },
+        ]);
+      } catch (error) {
+        console.error('팀 생성 실패:', error);
+        Alert.alert('오류', '팀 생성에 실패했습니다.');
+      }
     }
   };
 
