@@ -44,7 +44,7 @@ export interface RecentMatchResponse {
 }
 
 export interface MatchWaitingListRequestDto {
-  teamId: number;
+  teamId: number; // 로그인한 사용자의 팀 ID (백엔드에서 필수)
   selectDate: string; // yyyy-MM-dd
   startTime?: string; // HH:mm:ss (없으면 필터 미적용)
 }
@@ -52,6 +52,9 @@ export interface MatchWaitingListRequestDto {
 export interface MatchWaitingResponseDto {
   waitingId: number;
   teamId: number;
+  teamName: {
+    name: string;
+  };
   preferredDate: string;
   preferredTimeStart: string;
   preferredTimeEnd: string;
@@ -83,7 +86,6 @@ export interface MatchCreateResponseDto {
   expiresAt: string;
 }
 export interface MatchRequestRequestDto {
-  requestTeamId: number;
   requestMessage: string;
 }
 
