@@ -58,7 +58,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.serviceSection}>
-          <EnvelopeSection />
+          <EnvelopeSection teamId={userProfile?.teamId || null} />
           <BenefitsSection teamId={userProfile?.teamId || null} />
         </View>
       </ScrollView>
