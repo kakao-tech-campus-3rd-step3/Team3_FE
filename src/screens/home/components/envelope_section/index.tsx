@@ -20,7 +20,7 @@ export default memo(function EnvelopeSection() {
                 style={{ width: 20, height: 20 }}
               />
             </View>
-            <Text style={styles.envelopeTitle}>매치 신청하기</Text>
+            <Text style={styles.envelopeTitle}>매치 생성하기</Text>
 
             <Ionicons
               name="chevron-forward"
