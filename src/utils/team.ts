@@ -16,6 +16,10 @@ import type {
   TeamJoinRequest,
   ApiTeamJoinRequestPageResponse,
   TeamJoinRequestPageResponse,
+  ApiUserJoinWaitingItem,
+  UserJoinWaitingItem,
+  ApiUserJoinWaitingPageResponse,
+  UserJoinWaitingPageResponse,
 } from '@/src/types/team';
 
 export const TEAM_TYPE_MAPPING: Record<string, TeamType> = {
@@ -153,6 +157,58 @@ export const getJoinRequestStatusDisplayName = (
   status: TeamJoinRequest['status']
 ): string => {
   const statusMapping: Record<TeamJoinRequest['status'], string> = {
+    PENDING: '대기중',
+    APPROVED: '승인',
+    REJECTED: '거절',
+    CANCELED: '취소',
+  };
+  return statusMapping[status] || '대기중';
+};
+
+// 사용자별 가입 신청 목록 조회 관련 변환 함수들
+export const USER_JOIN_WAITING_STATUS_MAPPING: Record<
+  string,
+  UserJoinWaitingItem['status']
+> = {
+  대기중: 'PENDING',
+  승인: 'APPROVED',
+  거절: 'REJECTED',
+  취소: 'CANCELED',
+};
+
+export const getUserJoinWaitingStatusInEnglish = (
+  koreanStatus: string
+): UserJoinWaitingItem['status'] => {
+  return USER_JOIN_WAITING_STATUS_MAPPING[koreanStatus] || 'PENDING';
+};
+
+export const transformUserJoinWaitingItem = (
+  apiItem: ApiUserJoinWaitingItem
+): UserJoinWaitingItem => {
+  return {
+    id: apiItem.id,
+    teamId: apiItem.teamId,
+    applicantId: apiItem.applicantId,
+    status: getUserJoinWaitingStatusInEnglish(apiItem.status),
+    decisionReason: apiItem.decisionReason,
+    decidedBy: apiItem.decidedBy,
+    decidedAt: apiItem.decidedAt,
+  };
+};
+
+export const transformUserJoinWaitingPageResponse = (
+  apiResponse: ApiUserJoinWaitingPageResponse
+): UserJoinWaitingPageResponse => {
+  return {
+    ...apiResponse,
+    content: apiResponse.content.map(transformUserJoinWaitingItem),
+  };
+};
+
+export const getUserJoinWaitingStatusDisplayName = (
+  status: UserJoinWaitingItem['status']
+): string => {
+  const statusMapping: Record<UserJoinWaitingItem['status'], string> = {
     PENDING: '대기중',
     APPROVED: '승인',
     REJECTED: '거절',
