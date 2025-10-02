@@ -47,7 +47,7 @@ export default memo(function EnvelopeSection({ teamId }: EnvelopeSectionProps) {
     if (!checkTeamMembership()) return;
     router.push({
       pathname: ROUTES.MATCH_APPLICATION,
-      params: { teamId: teamId.toString() },
+      params: teamId ? { teamId: teamId.toString() } : undefined,
     });
   };
 
