@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { memo, useState, useCallback } from 'react';
 import { TouchableOpacity, Text, View, Modal } from 'react-native';
 
+import { useUserProfile } from '@/src/hooks/queries';
 import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
 import { colors } from '@/src/theme';
 
@@ -13,6 +14,7 @@ import JoinWaitingList from '../join_waiting_list';
 export default memo(function Buttons() {
   const router = useRouter();
   const [showJoinWaitingList, setShowJoinWaitingList] = useState(false);
+  const { data: userProfile } = useUserProfile();
 
   // 사용자의 팀 가입 신청 목록을 확인하여 신청이 있는지 체크
   const { data: joinWaitingData, refetch } = useMyJoinWaitingList(0, 1);
@@ -51,7 +53,12 @@ export default memo(function Buttons() {
 
       <TouchableOpacity
         style={styles.createButton}
-        onPress={() => router.push('/team/creation')}
+        onPress={() =>
+          router.push({
+            pathname: '/team/creation',
+            params: { university: userProfile?.university || '' },
+          })
+        }
       >
         <Ionicons
           name="add-circle-outline"
