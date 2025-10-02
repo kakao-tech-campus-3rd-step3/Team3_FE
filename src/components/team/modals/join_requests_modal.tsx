@@ -1,6 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+  Alert,
+} from 'react-native';
 
 import { colors } from '@/src/theme';
 import type { TeamJoinRequest } from '@/src/types/team';

@@ -13,6 +13,7 @@ import {
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { useTeamsByUniversityInfinite } from '@/src/hooks/queries';
+import { useTeamJoinRequest } from '@/src/hooks/useTeamJoinRequest';
 import { theme } from '@/src/theme';
 import type { TeamListItem } from '@/src/types';
 import { SkillLevel, TeamType } from '@/src/types/team';
@@ -41,6 +42,9 @@ export default function UniversityTeamListScreen() {
   });
   const slideAnim = useState(new Animated.Value(0))[0];
   const joinModalAnim = useState(new Animated.Value(0))[0];
+
+  const { joinWaiting, isJoining, joinError, joinSuccess, resetJoinState } =
+    useTeamJoinRequest();
 
   const {
     data,
@@ -122,27 +126,40 @@ export default function UniversityTeamListScreen() {
 
   const handleConfirmJoin = async () => {
     if (selectedTeam) {
-      Animated.timing(joinModalAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => {
-        setShowJoinModal(false);
-        setSelectedTeam(null);
+      try {
+        await joinWaiting({
+          teamId: selectedTeam.id,
+          data: {},
+        });
 
-        Alert.alert(
-          '팀 가입 신청완료',
-          `${selectedTeam.name}에 성공적으로 신청되었습니다!`,
-          [
-            {
-              text: '확인',
-              onPress: () => {
-                router.push('/(tabs)');
+        Animated.timing(joinModalAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start(() => {
+          setShowJoinModal(false);
+          setSelectedTeam(null);
+
+          Alert.alert(
+            '팀 가입 신청완료',
+            `${selectedTeam.name}에 성공적으로 신청되었습니다!`,
+            [
+              {
+                text: '확인',
+                onPress: () => {
+                  router.push('/(tabs)');
+                },
               },
-            },
-          ]
+            ]
+          );
+        });
+      } catch (error) {
+        Alert.alert(
+          '신청 실패',
+          '팀 가입 신청에 실패했습니다. 다시 시도해주세요.',
+          [{ text: '확인' }]
         );
-      });
+      }
     }
   };
 
@@ -249,6 +266,7 @@ export default function UniversityTeamListScreen() {
           visible={showJoinModal}
           teamName={selectedTeam.name}
           teamType={selectedTeam.teamType}
+          teamId={selectedTeam.id}
           onConfirm={handleConfirmJoin}
           onCancel={handleCancelJoin}
           slideAnim={joinModalAnim}

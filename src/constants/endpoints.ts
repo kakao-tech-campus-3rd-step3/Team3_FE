@@ -28,6 +28,16 @@ export const TEAM_API = {
     `/api/teams/${teamId}/joinRequests`,
   GET_JOIN_WAITING_LIST: (teamId: string | number) =>
     `/api/teams/${teamId}/join-waiting`,
+  JOIN_WAITING: (teamId: string | number) =>
+    `/api/teams/${teamId}/join-waiting`,
+  APPROVE_JOIN_REQUEST: (teamId: string | number, requestId: string | number) =>
+    `/api/teams/${teamId}/join-waiting/${requestId}/approve`,
+  REJECT_JOIN_REQUEST: (teamId: string | number, requestId: string | number) =>
+    `/api/teams/${teamId}/join-waiting/${requestId}/reject`,
+  CANCEL_JOIN_REQUEST: (
+    teamId: string | number,
+    joinWaitingId: string | number
+  ) => `/api/teams/${teamId}/join-waiting/${joinWaitingId}/cancel`,
 };
 
 export const TEAM_MEMBER_API = {
@@ -42,8 +52,7 @@ export const TEAM_MEMBER_API = {
 };
 
 export const TEAM_MATCH_API = {
-  GET_TEAM_RECENT_MATCHES: (teamId: string | number) =>
-    `/api/teams/${teamId}/matches`,
+  GET_TEAM_RECENT_MATCHES: () => `/api/teams/me/matches`,
   GET_TEAM_MATCH_REQUESTS: (teamId: string | number) =>
     `/api/matches/receive/${teamId}/pending`,
   UPDATE_MATCH_REQUEST: (teamId: string | number, requestId: string | number) =>
@@ -69,4 +78,12 @@ export const MATCH_REQUEST_API = {
     `/api/matches/requests/${requestId}/accept`,
   REJECT_REQUEST: (requestId: string | number) =>
     `/api/matches/requests/${requestId}/reject`,
+};
+
+export const USER_JOIN_WAITING_API = {
+  GET_MY_JOIN_WAITING: (
+    page: number = 0,
+    size: number = 10,
+    sort: string = 'createdAt,desc'
+  ) => `/api/users/me/join-waiting?page=${page}&size=${size}&sort=${sort}`,
 };

@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
+import { teamJoinRequestApi } from '@/src/api/team';
 import JoinRequestsModal from '@/src/components/team/modals/join_requests_modal';
 import MatchRequestsModal, {
   type MatchRequest,
@@ -15,6 +16,7 @@ import {
   useTeamMembers,
   useUserProfile,
   useDeleteTeamMutation,
+  useTeam,
 } from '@/src/hooks/queries';
 import { colors } from '@/src/theme';
 
@@ -35,10 +37,12 @@ export default function TeamSettingsScreen({
   const matchRequestsLoading = false;
   const matchRequestsError = null;
   const matchRequests: MatchRequest[] = [];
+  const { data: team, refetch: refetchTeam } = useTeam(numericTeamId);
   const {
     data: teamMembersData,
     isLoading: membersLoading,
     error: membersError,
+    refetch: refetchMembers,
   } = useTeamMembers(numericTeamId);
   const {
     data: joinRequestsData,
@@ -136,12 +140,41 @@ export default function TeamSettingsScreen({
 
   const joinRequests = joinRequestsData.content;
 
-  const handleJoinRequest = (
+  const handleJoinRequest = async (
     requestId: number,
     status: 'approved' | 'rejected'
   ) => {
     const action = status === 'approved' ? '승인' : '거절';
-    Alert.alert('알림', `가입 요청 ${action} 기능은 아직 구현 중입니다.`);
+
+    Alert.alert(`가입 ${action}`, `이 사용자의 가입을 ${action}하시겠습니까?`, [
+      { text: '취소', style: 'cancel' },
+      {
+        text: action,
+        style: status === 'rejected' ? 'destructive' : 'default',
+        onPress: async () => {
+          try {
+            if (status === 'approved') {
+              await teamJoinRequestApi.approveJoinRequest(teamId, requestId, {
+                role: '일반멤버',
+              });
+            } else {
+              await teamJoinRequestApi.rejectJoinRequest(teamId, requestId, {
+                reason: '가입 거절',
+              });
+            }
+
+            Alert.alert('성공', `가입을 ${action}했습니다.`);
+            refetch(); // 가입 신청 목록 새로고침
+            if (status === 'approved') {
+              refetchMembers(); // 팀 멤버 목록 새로고침
+              refetchTeam(); // 팀 정보 새로고침 (멤버 수 업데이트)
+            }
+          } catch (error) {
+            Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
+          }
+        },
+      },
+    ]);
   };
 
   const handleMatchRequest = (
@@ -154,7 +187,7 @@ export default function TeamSettingsScreen({
   const handleDeleteTeam = () => {
     Alert.alert(
       '팀 삭제',
-      '정말로 팀을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+      '정말로 팀을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.\n\n팀 가입 대기 목록이나 다른 연관 데이터가 있으면 먼저 정리해주세요.',
       [
         { text: '취소', style: 'cancel' },
         {
@@ -174,10 +207,28 @@ export default function TeamSettingsScreen({
               },
               onError: error => {
                 console.error('팀 삭제 실패:', error);
-                Alert.alert(
-                  '오류',
-                  '팀 삭제에 실패했습니다. 다시 시도해주세요.'
-                );
+                let errorMessage = '팀 삭제에 실패했습니다. 다시 시도해주세요.';
+
+                if (error && typeof error === 'object' && 'status' in error) {
+                  const apiError = error as {
+                    status: number;
+                    message?: string;
+                    data?: any;
+                  };
+
+                  if (apiError.status === 500) {
+                    errorMessage =
+                      '팀 삭제 중 데이터베이스 오류가 발생했습니다. 팀 가입 대기 목록이나 다른 연관 데이터를 먼저 정리해주세요.';
+                  } else if (apiError.status === 404) {
+                    errorMessage = '팀을 찾을 수 없습니다.';
+                  } else if (apiError.status === 403) {
+                    errorMessage = '팀 삭제 권한이 없습니다.';
+                  } else if (apiError.message) {
+                    errorMessage = apiError.message;
+                  }
+                }
+
+                Alert.alert('오류', errorMessage);
               },
             });
           },

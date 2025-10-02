@@ -90,10 +90,8 @@ export const queries = {
     fn: (teamId: string | number) => api.teamMatchApi.getTeamMatches(teamId),
   },
   teamRecentMatches: {
-    key: (teamId: string | number, status?: string) =>
-      ['teamRecentMatches', teamId, status] as const,
-    fn: (teamId: string | number, status?: string) =>
-      api.teamMatchApi.getTeamRecentMatches(teamId, status),
+    key: (status?: string) => ['teamRecentMatches', status] as const,
+    fn: (status?: string) => api.teamMatchApi.getTeamRecentMatches(status),
   },
   teamJoinWaitingList: {
     key: (
@@ -219,11 +217,11 @@ export function useTeamMatches(teamId: string | number) {
   });
 }
 
-export function useTeamRecentMatches(teamId: string | number, status?: string) {
+export function useTeamRecentMatches(status?: string) {
   return useQuery({
-    queryKey: queries.teamRecentMatches.key(teamId, status),
-    queryFn: () => queries.teamRecentMatches.fn(teamId, status),
-    enabled: !!teamId,
+    queryKey: queries.teamRecentMatches.key(status),
+    queryFn: () => queries.teamRecentMatches.fn(status),
+    enabled: true,
   });
 }
 

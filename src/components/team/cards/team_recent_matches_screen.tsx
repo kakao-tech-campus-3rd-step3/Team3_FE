@@ -27,7 +27,7 @@ export default memo(function TeamRecentMatchesScreen({
     isLoading,
     error,
     refetch,
-  } = useTeamRecentMatches(teamId, 'FINISHED');
+  } = useTeamRecentMatches('FINISHED');
   const { data: team } = useTeam(teamId);
 
   if (!teamId || teamId === null || teamId === undefined) {

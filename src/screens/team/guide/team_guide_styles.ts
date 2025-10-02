@@ -192,4 +192,22 @@ export const styles = StyleSheet.create({
     color: theme.colors.blue[500],
     marginLeft: theme.spacing.spacing2,
   },
+  notificationBadge: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: theme.colors.red[500],
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: theme.colors.white,
+  },
+  notificationText: {
+    fontSize: 12,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.text.white,
+  },
 });
