@@ -276,4 +276,11 @@ export const styles = StyleSheet.create({
     color: theme.colors.blue[500],
     fontWeight: theme.typography.fontWeight.medium,
   },
+  readOnlyField: {
+    backgroundColor: theme.colors.gray[50],
+    borderColor: theme.colors.gray[200],
+  },
+  readOnlyText: {
+    color: theme.colors.text.sub,
+  },
 });
