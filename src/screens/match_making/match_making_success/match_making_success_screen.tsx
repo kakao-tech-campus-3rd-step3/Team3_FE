@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, BackHandler } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 
@@ -37,6 +37,20 @@ export default function MatchMakingSuccessScreen() {
   const parsedDate: Date | null = date ? new Date(date) : null;
   const parsedTimeStart: Date | null = timeStart ? new Date(timeStart) : null;
   const parsedTimeEnd: Date | null = timeEnd ? new Date(timeEnd) : null;
+
+  // 뒤로가기 버튼 완전히 비활성화
+  useEffect(() => {
+    const backAction = () => {
+      return true; // 뒤로가기 동작 완전히 차단
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <View style={style.container}>

@@ -1,45 +1,85 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 import { theme } from '@/src/theme';
 
+const { width: screenWidth } = Dimensions.get('window');
+const isTablet = screenWidth >= 768;
+
 export const style = StyleSheet.create({
   section: {
-    marginBottom: theme.spacing.spacing6,
+    // 카드 내부에서 사용되므로 패딩 제거
   },
   label: {
-    fontSize: theme.typography.fontSize.font3,
-    fontWeight: theme.typography.fontWeight.semibold,
-    marginBottom: theme.spacing.spacing2,
+    fontSize: theme.typography.fontSize.font4,
+    fontWeight: theme.typography.fontWeight.bold,
+    marginBottom: theme.spacing.spacing3,
     color: theme.colors.gray[900],
+    textAlign: 'center',
+    paddingTop: theme.spacing.spacing4, // 상단 여백 추가
   },
   selectedText: {
-    fontSize: theme.typography.fontSize.font3,
-    marginBottom: theme.spacing.spacing3,
-    color: theme.colors.gray[700],
+    fontSize: theme.typography.fontSize.font5,
+    marginBottom: theme.spacing.spacing6,
+    color: theme.colors.blue[600],
+    fontWeight: theme.typography.fontWeight.bold,
+    textAlign: 'center',
+    backgroundColor: theme.colors.blue[50],
+    paddingVertical: theme.spacing.spacing3,
+    paddingHorizontal: theme.spacing.spacing4,
+    borderRadius: theme.spacing.spacing4,
+    borderWidth: 2,
+    borderColor: theme.colors.blue[200],
   },
   sliderContainer: {
-    alignSelf: 'center',
+    padding: theme.spacing.spacing4,
   },
-  selectedTrack: {
-    backgroundColor: theme.colors.blue[600],
+  // 드롭다운 기반 레벨 선택 스타일
+  dropdownContainer: {
+    marginVertical: theme.spacing.spacing5,
+    paddingHorizontal: theme.spacing.spacing4,
   },
-  unselectedTrack: {
-    backgroundColor: theme.colors.gray[300],
-  },
-  marker: {
-    backgroundColor: theme.colors.blue[600],
-    height: theme.spacing.spacing6,
-    width: theme.spacing.spacing6,
-    borderRadius: theme.spacing.spacing3,
-  },
-  levelLabels: {
+  dropdownRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: theme.spacing.spacing2,
-    paddingHorizontal: theme.spacing.spacing2,
+    gap: theme.spacing.spacing4,
   },
-  levelLabel: {
-    fontSize: theme.typography.fontSize.font2,
+  dropdownItem: {
+    flex: 1,
+  },
+  dropdownLabel: {
+    fontSize: isTablet
+      ? theme.typography.fontSize.font4
+      : theme.typography.fontSize.font3,
+    fontWeight: theme.typography.fontWeight.semibold,
+    color: theme.colors.gray[700],
+    marginBottom: theme.spacing.spacing2,
+  },
+  dropdown: {
+    height: isTablet ? 50 : 45,
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.spacing.spacing3,
+    borderWidth: 1,
+    borderColor: theme.colors.gray[300],
+    paddingHorizontal: theme.spacing.spacing3,
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  dropdownPlaceholder: {
+    fontSize: isTablet
+      ? theme.typography.fontSize.font4
+      : theme.typography.fontSize.font3,
     color: theme.colors.gray[500],
+  },
+  dropdownSelectedText: {
+    fontSize: isTablet
+      ? theme.typography.fontSize.font4
+      : theme.typography.fontSize.font3,
+    color: theme.colors.gray[800],
+    fontWeight: theme.typography.fontWeight.medium,
   },
 });
