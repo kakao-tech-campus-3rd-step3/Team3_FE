@@ -16,6 +16,7 @@ interface JoinConfirmationModalProps {
   visible: boolean;
   teamName: string;
   teamType: string;
+  teamId: number;
   onConfirm: () => void;
   onCancel: () => void;
   slideAnim: Animated.Value;
@@ -27,6 +28,7 @@ export default function JoinConfirmationModal({
   visible,
   teamName,
   teamType,
+  teamId,
   onConfirm,
   onCancel,
   slideAnim,
