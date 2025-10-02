@@ -6,7 +6,6 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.gray[50],
-    padding: 16,
   },
   filterContainer: {
     marginBottom: 20,
