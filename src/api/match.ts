@@ -17,13 +17,13 @@ import {
 export const teamMatchApi = {
   getTeamMatches: (teamId: string | number) => {
     return apiClient.get<{ [key: string]: Match[] }>(
-      TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES(teamId)
+      TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES()
     );
   },
-  getTeamRecentMatches: (teamId: string | number, status?: string) => {
+  getTeamRecentMatches: (status?: string) => {
     const url = status
-      ? `${TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES(teamId)}?status=${status}`
-      : TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES(teamId);
+      ? `${TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES()}?status=${status}`
+      : TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES();
     return apiClient.get<RecentMatchResponse[]>(url);
   },
   getTeamMatchRequests: (teamId: string | number) => {
