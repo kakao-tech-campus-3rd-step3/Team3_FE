@@ -18,6 +18,17 @@ export const authApi = {
   register: (registerData: RegisterRequest) =>
     apiClient.post<RegisterResponse>(AUTH_API.REGISTER, registerData),
 
+  logout: () =>
+    apiClient.post(
+      AUTH_API.LOGOUT,
+      {},
+      {
+        headers: {
+          Cookie: 'refreshToken=placeholder', // 실제로는 백엔드에서 쿠키를 설정해야 함
+        },
+      }
+    ),
+
   verifyEmail: (verifyEmailCode: VerifyEmailRequest) =>
     apiClient.post<VerifyEmailResponse>(AUTH_API.VERIFY_EMAIL, verifyEmailCode),
 
