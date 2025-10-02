@@ -26,29 +26,19 @@ export const teamMatchApi = {
       : TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES();
     return apiClient.get<RecentMatchResponse[]>(url);
   },
-  getTeamMatchRequests: (teamId: string | number) => {
+  getTeamMatchRequests: () => {
     return apiClient.get<{
       content: MatchRequestResponseDto[];
-      empty: boolean;
+      pageable: any;
+      totalElements: number;
+      totalPages: number;
       first: boolean;
       last: boolean;
+      size: number;
       number: number;
       numberOfElements: number;
-      pageable: {
-        offset: number;
-        pageNumber: number;
-        pageSize: number;
-        paged: boolean;
-        sort: any;
-        unpaged: boolean;
-      };
-      size: number;
-      sort: {
-        empty: boolean;
-        sorted: boolean;
-        unsorted: boolean;
-      };
-    }>(TEAM_MATCH_API.GET_TEAM_MATCH_REQUESTS(teamId));
+      empty: boolean;
+    }>(TEAM_MATCH_API.GET_TEAM_MATCH_REQUESTS());
   },
   updateMatchRequest: (
     teamId: string | number,
@@ -56,7 +46,7 @@ export const teamMatchApi = {
     status: 'APPROVED' | 'REJECTED',
     reason?: string
   ) => {
-    return apiClient.put<MatchRequestResponseDto>(
+    return apiClient.patch<MatchRequestResponseDto>(
       TEAM_MATCH_API.UPDATE_MATCH_REQUEST(teamId, requestId),
       { status, reason }
     );

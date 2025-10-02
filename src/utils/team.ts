@@ -154,14 +154,16 @@ export const transformTeamJoinRequestPageResponse = (
 };
 
 export const getJoinRequestStatusDisplayName = (
-  status: TeamJoinRequest['status']
+  status: TeamJoinRequest['status'] | 'ACCEPTED'
 ): string => {
-  const statusMapping: Record<TeamJoinRequest['status'], string> = {
-    PENDING: '대기중',
-    APPROVED: '승인',
-    REJECTED: '거절',
-    CANCELED: '취소',
-  };
+  const statusMapping: Record<TeamJoinRequest['status'] | 'ACCEPTED', string> =
+    {
+      PENDING: '대기중',
+      APPROVED: '승인',
+      REJECTED: '거절',
+      CANCELED: '취소',
+      ACCEPTED: '수락',
+    };
   return statusMapping[status] || '대기중';
 };
 

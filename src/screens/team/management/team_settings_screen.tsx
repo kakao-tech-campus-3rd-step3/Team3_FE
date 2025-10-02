@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
+import { acceptMatchRequestApi, rejectMatchRequestApi } from '@/src/api/match';
 import { teamJoinRequestApi } from '@/src/api/team';
 import JoinRequestsModal from '@/src/components/team/modals/join_requests_modal';
 import MatchRequestsModal, {
@@ -17,6 +18,7 @@ import {
   useUserProfile,
   useDeleteTeamMutation,
   useTeam,
+  useTeamMatchRequests,
 } from '@/src/hooks/queries';
 import { colors } from '@/src/theme';
 
@@ -34,9 +36,14 @@ export default function TeamSettingsScreen({
   const deleteTeamMutation = useDeleteTeamMutation();
 
   const numericTeamId = teamId ? Number(teamId) : 0;
-  const matchRequestsLoading = false;
-  const matchRequestsError = null;
-  const matchRequests: MatchRequest[] = [];
+  const {
+    data: matchRequestsData,
+    isLoading: matchRequestsLoading,
+    error: matchRequestsError,
+    refetch: refetchMatchRequests,
+  } = useTeamMatchRequests();
+
+  const matchRequests: MatchRequest[] = matchRequestsData || [];
   const { data: team, refetch: refetchTeam } = useTeam(numericTeamId);
   const {
     data: teamMembersData,
@@ -177,11 +184,33 @@ export default function TeamSettingsScreen({
     ]);
   };
 
-  const handleMatchRequest = (
+  const handleMatchRequest = async (
     requestId: number,
     status: 'approved' | 'rejected'
   ) => {
-    Alert.alert('알림', '매치 요청 기능이 임시로 비활성화되었습니다.');
+    const action = status === 'approved' ? '수락' : '거절';
+
+    Alert.alert(`매치 ${action}`, `이 매치 요청을 ${action}하시겠습니까?`, [
+      { text: '취소', style: 'cancel' },
+      {
+        text: action,
+        style: status === 'rejected' ? 'destructive' : 'default',
+        onPress: async () => {
+          try {
+            if (status === 'approved') {
+              await acceptMatchRequestApi(requestId);
+            } else {
+              await rejectMatchRequestApi(requestId);
+            }
+
+            Alert.alert('성공', `매치 요청을 ${action}했습니다.`);
+            refetchMatchRequests(); // 매치 요청 목록 새로고침
+          } catch (error) {
+            Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
+          }
+        },
+      },
+    ]);
   };
 
   const handleDeleteTeam = () => {

@@ -92,20 +92,27 @@ export type MatchRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 export interface MatchRequestResponseDto {
   requestId: number;
   requestTeamId: number;
+  requestTeamName: {
+    name: string;
+  };
   targetTeamId: number;
+  targetTeamName: {
+    name: string;
+  };
   requestMessage: string;
-  status: MatchRequestStatus; // 명세 예시는 PENDING
-  waitingId?: number;
-  decisionReason?: string;
-  decidedBy?: number;
-  decidedAt?: string;
-  createdAt: string;
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELED';
 }
 
 export interface MatchConfirmedResponseDto {
   matchId: number;
   team1Id: number;
+  team1Name: {
+    name: string;
+  };
   team2Id: number;
+  team2Name: {
+    name: string;
+  };
   matchDate: string;
   matchTime: string;
   venueId: number;

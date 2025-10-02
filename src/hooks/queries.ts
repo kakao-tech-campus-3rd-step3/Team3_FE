@@ -108,6 +108,13 @@ export const queries = {
     ) =>
       api.teamJoinRequestApi.getTeamJoinWaitingList(teamId, status, page, size),
   },
+  teamMatchRequests: {
+    key: ['teamMatchRequests'] as const,
+    fn: async () => {
+      const response = await api.teamMatchApi.getTeamMatchRequests();
+      return response.content; // content 배열만 반환
+    },
+  },
 } as const;
 
 export function useUserProfile() {
@@ -116,6 +123,16 @@ export function useUserProfile() {
   return useQuery({
     queryKey: queries.userProfile.key,
     queryFn: queries.userProfile.fn,
+    enabled: !!token,
+  });
+}
+
+export function useTeamMatchRequests() {
+  const { token } = useAuth();
+
+  return useQuery({
+    queryKey: queries.teamMatchRequests.key,
+    queryFn: queries.teamMatchRequests.fn,
     enabled: !!token,
   });
 }

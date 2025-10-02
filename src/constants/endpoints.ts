@@ -1,6 +1,8 @@
 export const AUTH_API = {
   LOGIN: '/api/auth/login',
-  LOGOUT: '/auth/logout',
+  LOGOUT: '/api/auth/logout',
+  LOGOUT_ALL: '/api/auth/logout-all',
+  REFRESH: '/api/auth/refresh',
   REGISTER: '/api/auth/register',
   VERIFY_EMAIL: '/api/auth/verify-email',
   SEND_VERIFICATION: '/api/auth/send-verification',
@@ -53,8 +55,7 @@ export const TEAM_MEMBER_API = {
 
 export const TEAM_MATCH_API = {
   GET_TEAM_RECENT_MATCHES: () => `/api/teams/me/matches`,
-  GET_TEAM_MATCH_REQUESTS: (teamId: string | number) =>
-    `/api/matches/receive/${teamId}/pending`,
+  GET_TEAM_MATCH_REQUESTS: () => `/api/matches/receive/me/pending`,
   UPDATE_MATCH_REQUEST: (teamId: string | number, requestId: string | number) =>
     `/api/teams/${teamId}/match-requests/${requestId}`,
 };
