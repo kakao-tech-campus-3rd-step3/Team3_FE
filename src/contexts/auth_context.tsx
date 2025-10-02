@@ -40,8 +40,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      // 백엔드에 로그아웃 요청
-      await authApi.logout();
+      // 백엔드에 모든 기기 로그아웃 요청 (refreshToken 쿠키 불필요)
+      await authApi.logoutAll();
     } catch (error) {
       // 로그아웃 API 실패해도 클라이언트에서는 로그아웃 처리
       console.warn('로그아웃 API 호출 실패:', error);

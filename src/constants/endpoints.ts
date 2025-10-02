@@ -1,6 +1,8 @@
 export const AUTH_API = {
   LOGIN: '/api/auth/login',
   LOGOUT: '/api/auth/logout',
+  LOGOUT_ALL: '/api/auth/logout-all',
+  REFRESH: '/api/auth/refresh',
   REGISTER: '/api/auth/register',
   VERIFY_EMAIL: '/api/auth/verify-email',
   SEND_VERIFICATION: '/api/auth/send-verification',

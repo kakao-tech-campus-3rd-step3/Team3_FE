@@ -5,6 +5,7 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   accessToken: string;
+  refreshToken: string; // 백엔드에서 쿠키로 설정되지만 응답에도 포함
 }
 
 export interface RegisterRequest {
@@ -23,6 +24,7 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
   accessToken: string;
+  refreshToken: string; // 백엔드에서 쿠키로 설정되지만 응답에도 포함
 }
 
 export interface SendVerificationResponse {

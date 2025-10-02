@@ -74,8 +74,16 @@ class ApiClient {
     return this.request<T>(endpoint);
   }
 
-  async post<T>(endpoint: string, body: unknown): Promise<T> {
-    return this.request<T>(endpoint, { method: 'POST', data: body });
+  async post<T>(
+    endpoint: string,
+    body: unknown,
+    options?: AxiosRequestConfig
+  ): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'POST',
+      data: body,
+      ...options,
+    });
   }
 
   async put<T>(endpoint: string, body: unknown): Promise<T> {

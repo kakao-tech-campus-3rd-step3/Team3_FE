@@ -20,6 +20,10 @@ export const authApi = {
 
   logout: () => apiClient.post(AUTH_API.LOGOUT, {}),
 
+  logoutAll: () => apiClient.post(AUTH_API.LOGOUT_ALL, {}),
+
+  refreshToken: () => apiClient.post<LoginResponse>(AUTH_API.REFRESH, {}),
+
   verifyEmail: (verifyEmailCode: VerifyEmailRequest) =>
     apiClient.post<VerifyEmailResponse>(AUTH_API.VERIFY_EMAIL, verifyEmailCode),
 
