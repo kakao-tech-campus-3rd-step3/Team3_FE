@@ -3,12 +3,14 @@ import { useRouter } from 'expo-router';
 import { memo } from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
 
+import { useUserProfile } from '@/src/hooks/queries';
 import { colors } from '@/src/theme';
 
 import { styles } from '../buttons_styles';
 
 export default memo(function Buttons() {
   const router = useRouter();
+  const { data: userProfile } = useUserProfile();
 
   return (
     <View style={styles.buttonContainer}>
@@ -22,7 +24,12 @@ export default memo(function Buttons() {
 
       <TouchableOpacity
         style={styles.createButton}
-        onPress={() => router.push('/team/creation')}
+        onPress={() =>
+          router.push({
+            pathname: '/team/creation',
+            params: { university: userProfile?.university || '' },
+          })
+        }
       >
         <Ionicons
           name="add-circle-outline"

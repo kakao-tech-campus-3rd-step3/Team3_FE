@@ -1,15 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Modal,
-  FlatList,
-} from 'react-native';
+import React from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 
-import { UNIVERSITIES } from '@/src/constants/universities';
 import { colors } from '@/src/theme';
 import { TeamType, TEAM_TYPES } from '@/src/types/team';
 
@@ -42,19 +34,12 @@ export default function TeamBasicInfo({
   onBack,
   errors,
 }: TeamBasicInfoProps) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
   const isValid =
     teamName.trim().length > 0 &&
     teamName.length <= 100 &&
     university.trim().length > 0 &&
     university.length <= 100 &&
     teamType.length > 0;
-
-  const handleUniversitySelect = (selectedUniversity: string) => {
-    onUniversityChange(selectedUniversity);
-    setIsDropdownOpen(false);
-  };
 
   return (
     <View style={styles.stepContainer}>
@@ -80,23 +65,24 @@ export default function TeamBasicInfo({
 
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>대학교 *</Text>
-          <TouchableOpacity
+          <View
             style={[
               styles.dropdownButton,
+              styles.readOnlyField,
               errors.university && styles.textInputError,
             ]}
-            onPress={() => setIsDropdownOpen(true)}
           >
             <Text
               style={[
                 styles.dropdownButtonText,
+                styles.readOnlyText,
                 !university && styles.placeholderText,
               ]}
             >
-              {university || '대학교를 선택해주세요'}
+              {university || '대학교 정보를 불러오는 중...'}
             </Text>
-            <Ionicons name="chevron-down" size={20} color={colors.gray[600]} />
-          </TouchableOpacity>
+            <Ionicons name="lock-closed" size={20} color={colors.gray[400]} />
+          </View>
           {errors.university && (
             <Text style={styles.errorText}>{errors.university}</Text>
           )}
@@ -141,59 +127,6 @@ export default function TeamBasicInfo({
           <Ionicons name="arrow-forward" size={20} color={colors.white} />
         </TouchableOpacity>
       </View>
-
-      <Modal
-        visible={isDropdownOpen}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setIsDropdownOpen(false)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setIsDropdownOpen(false)}
-        >
-          <View style={styles.dropdownModal}>
-            <View style={styles.dropdownHeader}>
-              <Text style={styles.dropdownTitle}>대학교 선택</Text>
-              <TouchableOpacity onPress={() => setIsDropdownOpen(false)}>
-                <Ionicons name="close" size={24} color={colors.gray[600]} />
-              </TouchableOpacity>
-            </View>
-            <FlatList
-              data={UNIVERSITIES}
-              keyExtractor={item => item.id.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[
-                    styles.dropdownItem,
-                    university === item.name && styles.dropdownItemSelected,
-                  ]}
-                  onPress={() => handleUniversitySelect(item.name)}
-                >
-                  <Text
-                    style={[
-                      styles.dropdownItemText,
-                      university === item.name &&
-                        styles.dropdownItemTextSelected,
-                    ]}
-                  >
-                    {item.name}
-                  </Text>
-                  {university === item.name && (
-                    <Ionicons
-                      name="checkmark"
-                      size={20}
-                      color={colors.blue[500]}
-                    />
-                  )}
-                </TouchableOpacity>
-              )}
-              showsVerticalScrollIndicator={false}
-            />
-          </View>
-        </TouchableOpacity>
-      </Modal>
     </View>
   );
 }
