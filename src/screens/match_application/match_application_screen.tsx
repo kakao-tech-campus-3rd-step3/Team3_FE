@@ -15,14 +15,20 @@ import type {
 import MatchCard from './component/match_card';
 import { styles } from './match_application_style';
 
-export default function MatchApplicationScreen() {
+interface MatchApplicationScreenProps {
+  teamId?: number;
+}
+
+export default function MatchApplicationScreen({
+  teamId,
+}: MatchApplicationScreenProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
 
   const { data: userProfile, refetch } = useUserProfile();
 
   const params: MatchWaitingListRequestDto = {
-    teamId: userProfile?.teamId ?? 0,
+    teamId: teamId ?? userProfile?.teamId ?? 0,
     selectDate: selectedDate
       ? selectedDate.toISOString().split('T')[0]
       : new Date().toISOString().split('T')[0],
@@ -33,11 +39,9 @@ export default function MatchApplicationScreen() {
 
   const { data, isLoading, error } = useMatchWaitingList(params);
 
-  // ✅ 매치 요청 훅
   const { mutate: requestMatch, isPending } = useMatchRequest();
 
   const handlePressRequest = async (waitingId: number) => {
-    // userProfile을 먼저 새로고침
     await refetch();
 
     const rawTeamId = userProfile?.teamId;
@@ -47,7 +51,6 @@ export default function MatchApplicationScreen() {
       return;
     }
 
-    // teamId를 number로 변환
     const numericTeamId = Number(rawTeamId);
 
     if (isNaN(numericTeamId) || numericTeamId <= 0) {
@@ -55,9 +58,7 @@ export default function MatchApplicationScreen() {
       return;
     }
 
-    // 메시지는 단순히 내 팀/내 유저 기준으로 생성
     const payload: MatchRequestRequestDto = {
-      requestTeamId: numericTeamId,
       requestMessage: `${userProfile.name}(${numericTeamId}) 팀이 매치 요청`,
     };
 
@@ -132,7 +133,7 @@ export default function MatchApplicationScreen() {
         renderItem={({ item }) => (
           <MatchCard
             match={item}
-            onPressRequest={() => handlePressRequest(item.waitingId)} // ✅ waitingId만 넘김
+            onPressRequest={() => handlePressRequest(item.waitingId)}
             disabled={isPending}
           />
         )}
