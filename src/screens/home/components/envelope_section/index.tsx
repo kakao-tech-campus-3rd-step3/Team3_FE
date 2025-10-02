@@ -8,7 +8,11 @@ import { theme } from '@/src/theme';
 
 import styles from '../../home_style';
 
-export default memo(function EnvelopeSection() {
+interface EnvelopeSectionProps {
+  teamId?: number | null;
+}
+
+export default memo(function EnvelopeSection({ teamId }: EnvelopeSectionProps) {
   return (
     <>
       <View style={styles.envelopeSection}>
@@ -32,7 +36,18 @@ export default memo(function EnvelopeSection() {
       </View>
 
       <View style={styles.envelopeSection}>
-        <TouchableOpacity onPress={() => router.push(ROUTES.MATCH_APPLICATION)}>
+        <TouchableOpacity
+          onPress={() => {
+            if (teamId) {
+              router.push({
+                pathname: ROUTES.MATCH_APPLICATION,
+                params: { teamId: teamId.toString() },
+              });
+            } else {
+              router.push(ROUTES.MATCH_APPLICATION);
+            }
+          }}
+        >
           <View style={styles.envelopeHeader}>
             <View style={styles.envelopeIcon}>
               <Image
