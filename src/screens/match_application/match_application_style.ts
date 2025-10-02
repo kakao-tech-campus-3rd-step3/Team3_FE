@@ -28,7 +28,6 @@ export const styles = StyleSheet.create({
     color: colors.gray[500],
     textAlign: 'center',
   },
-  // ✅ DateFilter 버튼 스타일
   dateButton: {
     backgroundColor: colors.blue[500],
     paddingVertical: 12,
