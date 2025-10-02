@@ -9,7 +9,7 @@ import { styles } from './join_requests_modal_styles';
 
 export interface RequestItem {
   id: number;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACCEPTED' | 'CANCELED';
   applicantId?: number;
   teamId?: number;
   matchId?: number;

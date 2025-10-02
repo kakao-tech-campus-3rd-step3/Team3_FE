@@ -8,16 +8,17 @@ import RequestManagementModal, {
 } from './request_management_modal';
 
 export interface MatchRequest {
-  id: number;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  requesterId: number;
-  teamId: number;
-  matchId?: number;
-  message?: string;
-  decisionReason?: string;
-  decidedBy?: number;
-  decidedAt?: string;
-  createdAt: string;
+  requestId: number;
+  requestTeamId: number;
+  requestTeamName: {
+    name: string;
+  };
+  targetTeamId: number;
+  targetTeamName: {
+    name: string;
+  };
+  requestMessage: string;
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELED';
 }
 
 interface MatchRequestsModalProps {
@@ -35,153 +36,117 @@ export default function MatchRequestsModal({
 }: MatchRequestsModalProps) {
   // MatchRequest를 RequestItem으로 변환
   const requests: RequestItem[] = matchRequests.map(request => ({
-    id: request.id,
+    id: request.requestId,
     status: request.status,
-    applicantId: request.requesterId,
-    teamId: request.teamId,
-    matchId: request.matchId,
-    message: request.message,
-    decisionReason: request.decisionReason,
-    decidedBy: request.decidedBy,
-    decidedAt: request.decidedAt,
-    createdAt: request.createdAt,
+    applicantId: request.requestTeamId,
+    teamId: request.targetTeamId,
+    matchId: undefined,
+    message: request.requestMessage,
+    decisionReason: undefined,
+    decidedBy: undefined,
+    decidedAt: undefined,
+    createdAt: new Date().toISOString(),
   }));
 
   // 매치 요청 전용 상세 정보 렌더링
-  const renderMatchRequestDetails = (request: RequestItem) => (
-    <View style={{ marginBottom: 12 }}>
-      {request.matchId && (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 6,
-          }}
-        >
-          <Text
-            style={{ fontSize: 14, color: colors.gray[600], fontWeight: '500' }}
-          >
-            매치 ID:
-          </Text>
-          <Text
+  const renderMatchRequestDetails = (request: RequestItem) => {
+    const matchRequest = matchRequests.find(mr => mr.requestId === request.id);
+
+    return (
+      <View style={{ marginBottom: 12 }}>
+        {matchRequest && (
+          <>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 6,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: colors.gray[600],
+                  fontWeight: '500',
+                }}
+              >
+                요청 팀:
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: colors.gray[900],
+                  flex: 1,
+                  textAlign: 'right',
+                }}
+              >
+                {matchRequest.requestTeamName.name}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 6,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: colors.gray[600],
+                  fontWeight: '500',
+                }}
+              >
+                대상 팀:
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: colors.gray[900],
+                  flex: 1,
+                  textAlign: 'right',
+                }}
+              >
+                {matchRequest.targetTeamName.name}
+              </Text>
+            </View>
+          </>
+        )}
+        {request.message && (
+          <View
             style={{
-              fontSize: 14,
-              color: colors.gray[900],
-              flex: 1,
-              textAlign: 'right',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 6,
             }}
           >
-            {request.matchId}
-          </Text>
-        </View>
-      )}
-      {request.message && (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 6,
-          }}
-        >
-          <Text
-            style={{ fontSize: 14, color: colors.gray[600], fontWeight: '500' }}
-          >
-            메시지:
-          </Text>
-          <Text
-            style={{
-              fontSize: 14,
-              color: colors.gray[900],
-              flex: 1,
-              textAlign: 'right',
-            }}
-          >
-            {request.message}
-          </Text>
-        </View>
-      )}
-      {request.decisionReason && (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 6,
-          }}
-        >
-          <Text
-            style={{ fontSize: 14, color: colors.gray[600], fontWeight: '500' }}
-          >
-            결정 사유:
-          </Text>
-          <Text
-            style={{
-              fontSize: 14,
-              color: colors.gray[900],
-              flex: 1,
-              textAlign: 'right',
-            }}
-          >
-            {request.decisionReason}
-          </Text>
-        </View>
-      )}
-      {request.decidedBy && (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 6,
-          }}
-        >
-          <Text
-            style={{ fontSize: 14, color: colors.gray[600], fontWeight: '500' }}
-          >
-            결정자:
-          </Text>
-          <Text
-            style={{
-              fontSize: 14,
-              color: colors.gray[900],
-              flex: 1,
-              textAlign: 'right',
-            }}
-          >
-            {request.decidedBy}
-          </Text>
-        </View>
-      )}
-      {request.decidedAt && (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 6,
-          }}
-        >
-          <Text
-            style={{ fontSize: 14, color: colors.gray[600], fontWeight: '500' }}
-          >
-            결정일:
-          </Text>
-          <Text
-            style={{
-              fontSize: 14,
-              color: colors.gray[900],
-              flex: 1,
-              textAlign: 'right',
-            }}
-          >
-            {new Date(request.decidedAt).toLocaleDateString('ko-KR')}
-          </Text>
-        </View>
-      )}
-    </View>
-  );
+            <Text
+              style={{
+                fontSize: 14,
+                color: colors.gray[600],
+                fontWeight: '500',
+              }}
+            >
+              메시지:
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                color: colors.gray[900],
+                flex: 1,
+                textAlign: 'right',
+              }}
+            >
+              {request.message}
+            </Text>
+          </View>
+        )}
+      </View>
+    );
+  };
 
   return (
     <RequestManagementModal
