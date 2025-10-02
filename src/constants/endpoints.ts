@@ -79,6 +79,8 @@ export const MATCH_REQUEST_API = {
     `/api/matches/requests/${requestId}/accept`,
   REJECT_REQUEST: (requestId: string | number) =>
     `/api/matches/requests/${requestId}/reject`,
+  CANCEL_REQUEST: (requestId: string | number) =>
+    `/api/matches/requests/${requestId}`,
 };
 
 export const USER_JOIN_WAITING_API = {
