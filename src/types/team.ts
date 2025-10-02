@@ -261,3 +261,83 @@ export interface TeamJoinRequestPageResponse {
   sort: Sort;
   empty: boolean;
 }
+
+// 팀 가입 신청 관련 타입
+export interface JoinWaitingRequest {
+  message?: string;
+}
+
+export interface JoinWaitingResponse {
+  id: number;
+  teamId: number;
+  applicantId: number;
+  status: string;
+  decisionReason: string | null;
+  decidedBy: number | null;
+  decidedAt: string | null;
+}
+
+// 팀 가입 승인 요청 타입
+export interface JoinWaitingApproveRequest {
+  role: '회장' | '부회장' | '일반멤버';
+  decisionReason?: string;
+}
+
+// 팀 가입 거절 요청 타입
+export interface JoinWaitingRejectRequest {
+  reason: string;
+}
+
+// 팀 가입 취소 요청 타입
+export interface JoinWaitingCancelRequest {
+  decisionReason?: string;
+}
+
+// 사용자별 가입 신청 목록 조회 관련 타입
+export interface ApiUserJoinWaitingItem {
+  id: number;
+  teamId: number;
+  applicantId: number;
+  status: string; // "대기중" | "승인" | "거절" | "취소"
+  decisionReason: string | null;
+  decidedBy: number | null;
+  decidedAt: string | null;
+}
+
+export interface UserJoinWaitingItem {
+  id: number;
+  teamId: number;
+  applicantId: number;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
+  decisionReason: string | null;
+  decidedBy: number | null;
+  decidedAt: string | null;
+}
+
+export interface ApiUserJoinWaitingPageResponse {
+  content: ApiUserJoinWaitingItem[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  size: number;
+  number: number;
+  numberOfElements: number;
+  sort: Sort;
+  empty: boolean;
+}
+
+export interface UserJoinWaitingPageResponse {
+  content: UserJoinWaitingItem[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  size: number;
+  number: number;
+  numberOfElements: number;
+  sort: Sort;
+  empty: boolean;
+}
