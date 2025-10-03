@@ -34,6 +34,11 @@ class ApiClient {
     endpoint: string,
     options: AxiosRequestConfig = {}
   ): Promise<T> {
+    if (!this.token && this.isAuthRequiredEndpoint(endpoint)) {
+      this.onTokenExpired?.();
+      throw new ApiError('Authentication required', 401);
+    }
+
     try {
       const response: AxiosResponse<T> = await axios({
         ...options,
@@ -68,6 +73,17 @@ class ApiClient {
       }
       throw error;
     }
+  }
+
+  private isAuthRequiredEndpoint(endpoint: string): boolean {
+    const authRequiredEndpoints = [
+      '/api/profiles',
+      '/api/teams',
+      '/api/matches',
+      '/recommendedMatch',
+    ];
+
+    return authRequiredEndpoints.some(path => endpoint.includes(path));
   }
 
   async get<T>(endpoint: string): Promise<T> {
