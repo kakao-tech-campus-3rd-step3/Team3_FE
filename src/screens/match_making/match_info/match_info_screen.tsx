@@ -41,8 +41,17 @@ export default function MatchInfoScreen() {
   const [date, setDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const [timeStart, setTimeStart] = useState<Date>(new Date());
-  const [timeEnd, setTimeEnd] = useState<Date>(new Date());
+  const [timeStart, setTimeStart] = useState<Date>(() => {
+    const now = new Date();
+    now.setMinutes(0, 0, 0);
+    return now;
+  });
+  const [timeEnd, setTimeEnd] = useState<Date>(() => {
+    const now = new Date();
+    now.setMinutes(0, 0, 0);
+    now.setHours(now.getHours() + 2);
+    return now;
+  });
   const [showTimeStartPicker, setShowTimeStartPicker] = useState(false);
   const [showTimeEndPicker, setShowTimeEndPicker] = useState(false);
 
@@ -74,7 +83,6 @@ export default function MatchInfoScreen() {
       return;
     }
 
-    // userProfile을 먼저 새로고침
     await refetch();
 
     const rawTeamId = userProfile?.teamId;
@@ -84,7 +92,6 @@ export default function MatchInfoScreen() {
       return;
     }
 
-    // teamId를 number로 변환
     const numericTeamId = Number(rawTeamId);
 
     if (isNaN(numericTeamId) || numericTeamId <= 0) {
@@ -97,7 +104,7 @@ export default function MatchInfoScreen() {
       preferredDate: fmtDate(date),
       preferredTimeStart: fmtTime(timeStart),
       preferredTimeEnd: fmtTime(timeEnd),
-      preferredVenueId: selectedStadium.venueId || 1, // 기본값 설정
+      preferredVenueId: selectedStadium.venueId || 1,
       skillLevelMin: skillMin,
       skillLevelMax: skillMax,
       universityOnly,
@@ -126,7 +133,6 @@ export default function MatchInfoScreen() {
         contentContainerStyle={style.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* 장소 선택 카드 */}
         <View style={style.card}>
           <View style={style.cardHeader}>
             <Text style={style.cardTitle}>📍 경기 장소</Text>
@@ -144,7 +150,6 @@ export default function MatchInfoScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* 일정 선택 카드 */}
         <View style={style.card}>
           <View style={style.cardHeader}>
             <Text style={style.cardTitle}>📅 경기 일정</Text>
@@ -198,7 +203,6 @@ export default function MatchInfoScreen() {
           </View>
         </View>
 
-        {/* 실력 수준 카드 */}
         <View style={style.card}>
           <SkillLevelSelector
             onChange={(min, max) => {
@@ -208,7 +212,6 @@ export default function MatchInfoScreen() {
           />
         </View>
 
-        {/* 옵션 카드 */}
         <View style={style.card}>
           <View style={style.cardHeader}>
             <Text style={style.cardTitle}>⚙️ 매치 옵션</Text>
@@ -234,16 +237,13 @@ export default function MatchInfoScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* 메시지 카드 */}
         <View style={style.card}>
           <Message value={message} onChange={setMessage} />
         </View>
 
-        {/* 하단 여백 */}
         <View style={style.bottomSpacing} />
       </ScrollView>
 
-      {/* 하단 고정 버튼 */}
       <View style={style.fixedBottomBar}>
         <TouchableOpacity
           style={[style.submitButton, isPending && style.submitButtonDisabled]}
@@ -256,7 +256,6 @@ export default function MatchInfoScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* 경기장 선택 모달 */}
       <Modal visible={stadiumModalVisible} transparent animationType="slide">
         <TouchableOpacity
           style={style.modalWrap}
@@ -283,7 +282,7 @@ export default function MatchInfoScreen() {
             ) : (
               <FlatList
                 data={filteredStadiums}
-                keyExtractor={item => String(item.venueId)} // ✅ venueId 사용
+                keyExtractor={item => String(item.venueId)}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     style={style.stadiumItem}
@@ -307,7 +306,6 @@ export default function MatchInfoScreen() {
         </TouchableOpacity>
       </Modal>
 
-      {/* Date/Time Pickers */}
       <ModalDatePicker
         visible={showDatePicker}
         value={date}
@@ -319,7 +317,14 @@ export default function MatchInfoScreen() {
       <ModalTimePicker
         visible={showTimeStartPicker}
         value={timeStart}
-        onTimeChange={setTimeStart}
+        onTimeChange={newTimeStart => {
+          setTimeStart(newTimeStart);
+          if (newTimeStart >= timeEnd) {
+            const newTimeEnd = new Date(newTimeStart);
+            newTimeEnd.setHours(newTimeEnd.getHours() + 2);
+            setTimeEnd(newTimeEnd);
+          }
+        }}
         onClose={() => setShowTimeStartPicker(false)}
         title="시작 시간 선택"
       />
@@ -327,12 +332,20 @@ export default function MatchInfoScreen() {
       <ModalTimePicker
         visible={showTimeEndPicker}
         value={timeEnd}
-        onTimeChange={setTimeEnd}
+        onTimeChange={newTimeEnd => {
+          if (newTimeEnd <= timeStart) {
+            const newTimeStart = new Date(newTimeEnd);
+            newTimeStart.setHours(newTimeStart.getHours() - 2);
+            setTimeStart(newTimeStart);
+            setTimeEnd(newTimeEnd);
+          } else {
+            setTimeEnd(newTimeEnd);
+          }
+        }}
         onClose={() => setShowTimeEndPicker(false)}
         title="종료 시간 선택"
       />
 
-      {/* 매치 등록 성공 모달 */}
       <Modal visible={successModalVisible} transparent animationType="fade">
         <TouchableOpacity
           style={style.successModalOverlay}
