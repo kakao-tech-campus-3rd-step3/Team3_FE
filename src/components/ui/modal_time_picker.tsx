@@ -1,4 +1,3 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useState, useEffect } from 'react';
 import {
   Modal,
@@ -7,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ScrollView,
 } from 'react-native';
 
 import { theme } from '@/src/theme';
@@ -26,27 +26,30 @@ export const ModalTimePicker: React.FC<ModalTimePickerProps> = ({
   onClose,
   title = '시간 선택',
 }) => {
-  const [internalTime, setInternalTime] = useState(value);
+  const [selectedHour, setSelectedHour] = useState<number>(value.getHours());
+  const [selectedMinute, setSelectedMinute] = useState<number>(
+    value.getMinutes()
+  );
 
   useEffect(() => {
     if (visible) {
-      setInternalTime(value);
+      setSelectedHour(value.getHours());
+      setSelectedMinute(value.getMinutes());
     }
   }, [visible, value]);
 
-  const handleTimeChange = (event: any, selectedTime?: Date) => {
-    if (selectedTime) {
-      setInternalTime(selectedTime);
-    }
-  };
-
   const handleConfirm = () => {
-    onTimeChange(internalTime);
+    const confirmed = new Date(value);
+    confirmed.setHours(selectedHour);
+    confirmed.setMinutes(selectedMinute);
+    confirmed.setSeconds(0);
+    onTimeChange(confirmed);
     onClose();
   };
 
   const handleCancel = () => {
-    setInternalTime(value);
+    setSelectedHour(value.getHours());
+    setSelectedMinute(value.getMinutes());
     onClose();
   };
 
@@ -78,30 +81,83 @@ export const ModalTimePicker: React.FC<ModalTimePickerProps> = ({
           </View>
 
           <View style={styles.pickerContainer}>
-            <DateTimePicker
-              value={internalTime}
-              mode="time"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={handleTimeChange}
-              style={styles.picker}
-              locale="ko-KR"
-              textColor={theme.colors.text.main}
-            />
+            <View style={styles.pickerRow}>
+              <View style={styles.timeColumn}>
+                <Text style={styles.timeLabel}>시</Text>
+                <View style={styles.timePickerContainer}>
+                  <ScrollColumn
+                    range={{ start: 0, end: 23 }}
+                    selectedValue={selectedHour}
+                    onSelect={setSelectedHour}
+                  />
+                </View>
+              </View>
+              <View style={styles.timeColumnSpacer} />
+              <View style={styles.timeColumn}>
+                <Text style={styles.timeLabel}>분</Text>
+                <View style={styles.timePickerContainer}>
+                  <ScrollColumn
+                    range={{ start: 0, end: 59 }}
+                    selectedValue={selectedMinute}
+                    onSelect={setSelectedMinute}
+                  />
+                </View>
+              </View>
+            </View>
           </View>
 
-          {Platform.OS === 'ios' && (
-            <View style={styles.footer}>
-              <TouchableOpacity
-                onPress={handleConfirm}
-                style={styles.confirmButton}
-              >
-                <Text style={styles.confirmButtonText}>확인</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          <View style={styles.footer}>
+            <TouchableOpacity
+              onPress={handleConfirm}
+              style={styles.confirmButton}
+            >
+              <Text style={styles.confirmButtonText}>확인</Text>
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
       </TouchableOpacity>
     </Modal>
+  );
+};
+
+interface ScrollColumnProps {
+  range: { start: number; end: number };
+  selectedValue: number;
+  onSelect: (value: number) => void;
+}
+
+const ScrollColumn: React.FC<ScrollColumnProps> = ({
+  range,
+  selectedValue,
+  onSelect,
+}) => {
+  const values = Array.from(
+    { length: range.end - range.start + 1 },
+    (_, idx) => range.start + idx
+  );
+
+  return (
+    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      {values.map(value => {
+        const isSelected = value === selectedValue;
+        return (
+          <TouchableOpacity
+            key={value}
+            onPress={() => onSelect(value)}
+            style={[styles.scrollItem, isSelected && styles.scrollItemSelected]}
+          >
+            <Text
+              style={[
+                styles.scrollItemText,
+                isSelected && styles.scrollItemTextSelected,
+              ]}
+            >
+              {String(value).padStart(2, '0')}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
+    </ScrollView>
   );
 };
 
@@ -145,6 +201,47 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: Platform.OS === 'ios' ? 200 : 'auto',
+  },
+  pickerRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  timeColumn: {
+    flex: 1,
+    marginRight: 8,
+  },
+  timeColumnSpacer: {
+    width: 12,
+  },
+  timeLabel: {
+    color: theme.colors.text.sub,
+    marginBottom: 8,
+  },
+  timePickerContainer: {
+    borderWidth: 1,
+    borderColor: theme.colors.border.light,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  scrollView: {
+    maxHeight: 200,
+  },
+  scrollItem: {
+    paddingVertical: 12,
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  scrollItemSelected: {
+    backgroundColor: theme.colors.blue[50],
+  },
+  scrollItemText: {
+    color: theme.colors.text.main,
+    fontWeight: theme.typography.fontWeight.regular,
+    fontSize: theme.typography.fontSize.font4,
+  },
+  scrollItemTextSelected: {
+    color: theme.colors.blue[600],
+    fontWeight: theme.typography.fontWeight.semibold,
   },
   footer: {
     paddingHorizontal: theme.spacing.spacing5,
