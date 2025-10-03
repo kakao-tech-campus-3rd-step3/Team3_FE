@@ -17,7 +17,9 @@ export default function MatchCard({
   return (
     <View style={{ padding: 16, borderBottomWidth: 1, borderColor: '#ddd' }}>
       <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8 }}>
-        {match?.teamName?.name || '팀명 없음'}
+        {typeof match?.teamName === 'object'
+          ? match?.teamName?.name
+          : match?.teamName || '팀명 없음'}
       </Text>
 
       <Text style={{ marginBottom: 4 }}>📅 날짜: {match?.preferredDate}</Text>
