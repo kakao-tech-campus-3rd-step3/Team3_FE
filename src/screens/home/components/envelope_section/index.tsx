@@ -20,16 +20,8 @@ export default memo(function EnvelopeSection({ teamId }: EnvelopeSectionProps) {
         '매치에 참여하려면 먼저 팀에 가입해야 합니다.',
         [
           {
-            text: '취소',
-            style: 'cancel',
-          },
-          {
-            text: '팀 만들기',
-            onPress: () => router.push(ROUTES.TEAM_CREATION),
-          },
-          {
-            text: '팀 참여하기',
-            onPress: () => router.push(ROUTES.TEAM_GUIDE),
+            text: '확인',
+            style: 'default',
           },
         ]
       );

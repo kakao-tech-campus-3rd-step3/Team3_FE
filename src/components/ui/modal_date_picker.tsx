@@ -1,5 +1,5 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   Platform,
@@ -26,16 +26,27 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
   onClose,
   title = '날짜 선택',
 }) => {
-  const handleDateChange = (event: any, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
-      onClose();
+  const [internalDate, setInternalDate] = useState(value);
+
+  useEffect(() => {
+    if (visible) {
+      setInternalDate(value);
     }
+  }, [visible, value]);
+
+  const handleDateChange = (event: any, selectedDate?: Date) => {
     if (selectedDate) {
-      onDateChange(selectedDate);
+      setInternalDate(selectedDate);
     }
   };
 
   const handleConfirm = () => {
+    onDateChange(internalDate);
+    onClose();
+  };
+
+  const handleCancel = () => {
+    setInternalDate(value);
     onClose();
   };
 
@@ -44,12 +55,12 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
       visible={visible}
       transparent
       animationType="slide"
-      onRequestClose={onClose}
+      onRequestClose={() => {}}
     >
       <TouchableOpacity
         style={styles.overlay}
         activeOpacity={1}
-        onPress={onClose}
+        onPress={handleCancel}
       >
         <TouchableOpacity
           style={styles.modalContainer}
@@ -58,14 +69,17 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
         >
           <View style={styles.header}>
             <Text style={styles.title}>{title}</Text>
-            <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
+            <TouchableOpacity
+              onPress={handleCancel}
+              style={styles.cancelButton}
+            >
               <Text style={styles.cancelButtonText}>취소</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.pickerContainer}>
             <DateTimePicker
-              value={value}
+              value={internalDate}
               mode="date"
               display={Platform.OS === 'ios' ? 'spinner' : 'default'}
               onChange={handleDateChange}

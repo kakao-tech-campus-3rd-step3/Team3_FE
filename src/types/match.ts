@@ -30,7 +30,6 @@ export interface Match {
   updatedAt: string;
 }
 
-// API 명세서에 맞는 새로운 타입 정의
 export interface RecentMatchResponse {
   matchId: number;
   team1Name: string;
@@ -44,17 +43,15 @@ export interface RecentMatchResponse {
 }
 
 export interface MatchWaitingListRequestDto {
-  teamId: number; // 로그인한 사용자의 팀 ID (백엔드에서 필수)
-  selectDate: string; // yyyy-MM-dd
-  startTime?: string; // HH:mm:ss (없으면 필터 미적용)
+  selectDate: string;
+  startTime: string;
+  teamId?: number;
 }
 
 export interface MatchWaitingResponseDto {
   waitingId: number;
   teamId: number;
-  teamName: {
-    name: string;
-  };
+  teamName: string | { name: string };
   preferredDate: string;
   preferredTimeStart: string;
   preferredTimeEnd: string;
@@ -69,11 +66,11 @@ export interface MatchWaitingResponseDto {
 
 export interface MatchCreateRequestDto {
   teamId: number;
-  preferredDate: string; // "YYYY-MM-DD"
-  preferredTimeStart: string; // "HH:mm:ss"
-  preferredTimeEnd: string; // "HH:mm:ss"
+  preferredDate: string;
+  preferredTimeStart: string;
+  preferredTimeEnd: string;
   preferredVenueId: number;
-  skillLevelMin: string; // "AMATEUR" | "PRO" 등
+  skillLevelMin: string;
   skillLevelMax: string;
   universityOnly: boolean;
   message: string;
@@ -82,7 +79,7 @@ export interface MatchCreateRequestDto {
 export interface MatchCreateResponseDto {
   waitingId: number;
   teamId: number;
-  status: string; // e.g. "WAITING"
+  status: string;
   expiresAt: string;
 }
 export interface MatchRequestRequestDto {

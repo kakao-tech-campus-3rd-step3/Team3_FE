@@ -89,14 +89,12 @@ export async function rejectMatchRequestApi(
   return apiClient.patch<MatchRequestResponseDto>(url);
 }
 
-// 매치 대기 목록 조회 API (GET 방식, Query 파라미터)
 export async function getMatchWaitingList(
   params: MatchWaitingListRequestDto
 ): Promise<MatchWaitingResponseDto[]> {
   const queryParams = new URLSearchParams();
-  queryParams.append('teamId', params.teamId.toString());
   queryParams.append('selectDate', params.selectDate);
-  // 백엔드에서 startTime이 필수이므로 기본값 제공
+
   queryParams.append('startTime', params.startTime || '00:00:00');
 
   const url = `${MATCH_WAITING_API.GET_WAITING_LIST}?${queryParams.toString()}`;
@@ -113,11 +111,16 @@ export async function getMatchWaitingList(
     sort: any;
   }
 
-  const response = await apiClient.get<PageResponse>(url);
-  return response.content || [];
+  try {
+    const response = await apiClient.get<PageResponse>(url);
+
+    return response.content || [];
+  } catch (error) {
+    console.error('API 에러:', error);
+    throw error;
+  }
 }
 
-// 매치 요청 취소 API
 export async function cancelMatchRequestApi(
   requestId: number | string
 ): Promise<MatchRequestResponseDto> {

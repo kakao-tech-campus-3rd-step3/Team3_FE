@@ -1,5 +1,5 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   Platform,
@@ -26,16 +26,27 @@ export const ModalTimePicker: React.FC<ModalTimePickerProps> = ({
   onClose,
   title = '시간 선택',
 }) => {
-  const handleTimeChange = (event: any, selectedTime?: Date) => {
-    if (Platform.OS === 'android') {
-      onClose();
+  const [internalTime, setInternalTime] = useState(value);
+
+  useEffect(() => {
+    if (visible) {
+      setInternalTime(value);
     }
+  }, [visible, value]);
+
+  const handleTimeChange = (event: any, selectedTime?: Date) => {
     if (selectedTime) {
-      onTimeChange(selectedTime);
+      setInternalTime(selectedTime);
     }
   };
 
   const handleConfirm = () => {
+    onTimeChange(internalTime);
+    onClose();
+  };
+
+  const handleCancel = () => {
+    setInternalTime(value);
     onClose();
   };
 
@@ -44,12 +55,12 @@ export const ModalTimePicker: React.FC<ModalTimePickerProps> = ({
       visible={visible}
       transparent
       animationType="slide"
-      onRequestClose={onClose}
+      onRequestClose={() => {}}
     >
       <TouchableOpacity
         style={styles.overlay}
         activeOpacity={1}
-        onPress={onClose}
+        onPress={handleCancel}
       >
         <TouchableOpacity
           style={styles.modalContainer}
@@ -58,14 +69,17 @@ export const ModalTimePicker: React.FC<ModalTimePickerProps> = ({
         >
           <View style={styles.header}>
             <Text style={styles.title}>{title}</Text>
-            <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
+            <TouchableOpacity
+              onPress={handleCancel}
+              style={styles.cancelButton}
+            >
               <Text style={styles.cancelButtonText}>취소</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.pickerContainer}>
             <DateTimePicker
-              value={value}
+              value={internalTime}
               mode="time"
               display={Platform.OS === 'ios' ? 'spinner' : 'default'}
               onChange={handleTimeChange}
