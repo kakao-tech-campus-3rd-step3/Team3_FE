@@ -4,8 +4,10 @@ import {
   keepPreviousData,
   useInfiniteQuery,
 } from '@tanstack/react-query';
+import { router } from 'expo-router';
 
 import * as api from '@/src/api';
+import { ROUTES } from '@/src/constants/routes';
 import { useAuth } from '@/src/contexts/auth_context';
 import { queryClient } from '@/src/lib/query_client';
 import type {
@@ -451,6 +453,21 @@ export function useDeleteTeamMutation() {
     },
     onError: (error: unknown) => {
       console.error('팀 삭제 실패:', error);
+    },
+  });
+}
+
+export function useTeamExitMutation() {
+  return useMutation({
+    mutationFn: (teamId: string | number) => api.teamExitApi.exitTeam(teamId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      router.replace(ROUTES.TEAM_GUIDE);
+    },
+    onError: (error: unknown) => {
+      console.error('팀 나가기 실패:', error);
     },
   });
 }
