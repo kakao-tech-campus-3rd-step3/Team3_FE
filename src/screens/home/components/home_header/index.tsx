@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View, Alert } from 'react-native';
 
 import { useAuth } from '@/src/contexts/auth_context';
 import { theme } from '@/src/theme';
@@ -11,11 +11,23 @@ export default memo(function HomeHeader() {
   const { logout } = useAuth();
 
   const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('로그아웃 중 오류 발생:', error);
-    }
+    Alert.alert('로그아웃', '정말 로그아웃하시겠습니까?', [
+      {
+        text: '취소',
+        style: 'cancel',
+      },
+      {
+        text: '로그아웃',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await logout();
+          } catch (error) {
+            console.error('로그아웃 중 오류 발생:', error);
+          }
+        },
+      },
+    ]);
   };
 
   return (
