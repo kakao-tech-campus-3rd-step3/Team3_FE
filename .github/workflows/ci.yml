@@ -5,7 +5,7 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
-    types: [closed]
+    types: [opened, synchronize, reopened]
 
 jobs:
   # 코드 품질 검사만 GitHub Actions에서 처리
@@ -53,8 +53,8 @@ jobs:
     needs: quality-check
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
+      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')) ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && (github.event.pull_request.base.ref == 'main' || github.event.pull_request.base.ref == 'develop'))
 
     steps:
       - name: 코드 체크아웃
@@ -75,11 +75,17 @@ jobs:
       - name: EAS Build 실행
         run: |
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            # iOS 추가 시: eas build --platform all --profile production --non-interactive
+            # 메인 브랜치: 프로덕션 빌드
             eas build --platform android --profile production --non-interactive
-          else
-            # iOS 추가 시: eas build --platform all --profile preview --non-interactive
+            echo "🚀 프로덕션 빌드 완료 (main 브랜치)"
+          elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            # 개발 브랜치: 프리뷰 빌드
             eas build --platform android --profile preview --non-interactive
+            echo "🔧 개발 빌드 완료 (develop 브랜치)"
+          else
+            # PR 머지: 프리뷰 빌드
+            eas build --platform android --profile preview --non-interactive
+            echo "📝 풀 리퀘스트 빌드 완료"
           fi
 
       - name: 빌드 후 작업 실행

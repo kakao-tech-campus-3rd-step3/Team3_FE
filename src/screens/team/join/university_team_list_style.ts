@@ -56,14 +56,14 @@ export const styles = StyleSheet.create({
   teamHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: theme.spacing.spacing3,
   },
   teamName: {
     fontSize: theme.typography.fontSize.font5,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.main,
-    flex: 1,
+    marginBottom: theme.spacing.spacing1,
   },
   teamTypeBadge: {
     backgroundColor: theme.colors.blue[50],
@@ -86,19 +86,23 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: theme.spacing.spacing4,
+    paddingHorizontal: theme.spacing.spacing1,
   },
   infoItem: {
+    flex: 1,
     alignItems: 'center',
+    paddingVertical: theme.spacing.spacing2,
   },
   infoLabel: {
     fontSize: theme.typography.fontSize.font2,
     color: theme.colors.text.light,
     marginBottom: theme.spacing.spacing1,
+    fontWeight: theme.typography.fontWeight.medium,
   },
   infoValue: {
     fontSize: theme.typography.fontSize.font3,
     color: theme.colors.text.main,
-    fontWeight: theme.typography.fontWeight.medium,
+    fontWeight: theme.typography.fontWeight.semibold,
   },
   joinButton: {
     backgroundColor: theme.colors.blue[500],
@@ -346,5 +350,14 @@ export const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.font4,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.white,
+  },
+  teamTitleSection: {
+    flex: 1,
+    marginRight: theme.spacing.spacing3,
+  },
+  universityName: {
+    fontSize: theme.typography.fontSize.font3,
+    color: theme.colors.text.sub,
+    fontWeight: theme.typography.fontWeight.medium,
   },
 });

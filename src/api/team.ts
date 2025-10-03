@@ -1,25 +1,56 @@
 import {
   TEAM_API,
   TEAM_MEMBER_API,
-  TEAM_REVIEW_API,
+  USER_JOIN_WAITING_API,
 } from '@/src/constants/endpoints';
 import { apiClient } from '@/src/lib/api_client';
-import type { TeamReview } from '@/src/types/review';
 import type {
   CreateTeamRequest,
   CreateTeamResponse,
   TeamDetailResponse,
+  ApiTeamDetailResponse,
   JoinTeamResponse,
-  TeamListItem,
+  TeamListPageResponse,
+  ApiTeamListPageResponse,
   TeamMember,
+  ApiTeamMember,
+  TeamMemberPageResponse,
+  ApiTeamMemberPageResponse,
   TeamMemberRole,
   SkillLevel,
   TeamType,
   JoinRequest,
+  TeamJoinRequestPageResponse,
+  ApiTeamJoinRequestPageResponse,
+  JoinWaitingRequest,
+  JoinWaitingResponse,
+  JoinWaitingApproveRequest,
+  JoinWaitingRejectRequest,
+  JoinWaitingCancelRequest,
+  ApiUserJoinWaitingPageResponse,
+  UserJoinWaitingPageResponse,
+  ApiUserJoinWaitingItem,
+  UserJoinWaitingItem,
 } from '@/src/types/team';
+import {
+  transformTeamListPageResponse,
+  transformTeamDetailResponse,
+  transformTeamMemberPageResponse,
+  transformTeamMemberItem,
+  transformTeamJoinRequestPageResponse,
+  transformUserJoinWaitingPageResponse,
+  getTeamTypeInEnglish,
+  getSkillLevelInEnglish,
+} from '@/src/utils/team';
 
-export const createTeam = (data: CreateTeamRequest) =>
-  apiClient.post<CreateTeamResponse>(TEAM_API.CREATE, data);
+export const createTeam = (data: CreateTeamRequest) => {
+  const apiData = {
+    ...data,
+    teamType: getTeamTypeInEnglish(data.teamType),
+    skillLevel: getSkillLevelInEnglish(data.skillLevel),
+  };
+  return apiClient.post<CreateTeamResponse>(TEAM_API.CREATE, apiData);
+};
 
 export const universityListApi = {
   getUniversities: () =>
@@ -27,43 +58,74 @@ export const universityListApi = {
 };
 
 export const teamListApi = {
-  getTeamsByUniversity: (university: string) =>
-    apiClient.get<TeamListItem[]>(
-      `${TEAM_API.GET_TEAMS_BY_UNIVERSITY}?university=${encodeURIComponent(university)}`
-    ),
+  getTeamsByUniversity: async (
+    university: string,
+    page: number = 0,
+    size: number = 10
+  ): Promise<TeamListPageResponse> => {
+    const params = new URLSearchParams({
+      university: university,
+      page: page.toString(),
+      size: size.toString(),
+    });
+    const apiResponse = await apiClient.get<ApiTeamListPageResponse>(
+      `${TEAM_API.GET_TEAMS_BY_UNIVERSITY}?${params.toString()}`
+    );
+    return transformTeamListPageResponse(apiResponse);
+  },
 };
 
 export const myTeamApi = {
-  getTeamById: (teamId: string | number) =>
-    apiClient.get<TeamDetailResponse>(TEAM_API.DETAIL(teamId)),
+  getTeamById: async (teamId: string | number): Promise<TeamDetailResponse> => {
+    const apiResponse = await apiClient.get<ApiTeamDetailResponse>(
+      TEAM_API.DETAIL(teamId)
+    );
+    return transformTeamDetailResponse(apiResponse);
+  },
 };
 
 export const teamMemberApi = {
-  getTeamMembers: (teamId: string | number): Promise<TeamMember[]> => {
-    return apiClient.get<TeamMember[]>(TEAM_MEMBER_API.GET_MEMBERS(teamId));
+  getTeamMembers: async (
+    teamId: string | number,
+    page: number = 0,
+    size: number = 10
+  ): Promise<TeamMemberPageResponse> => {
+    const apiResponse = await apiClient.get<ApiTeamMemberPageResponse>(
+      TEAM_MEMBER_API.GET_MEMBERS(teamId, page, size)
+    );
+    return transformTeamMemberPageResponse(apiResponse);
+  },
+
+  getTeamMember: async (
+    teamId: string | number,
+    userId: string | number
+  ): Promise<TeamMember> => {
+    const apiResponse = await apiClient.get<ApiTeamMember>(
+      TEAM_MEMBER_API.GET_MEMBER(teamId, userId)
+    );
+    return transformTeamMemberItem(apiResponse);
   },
 
   updateMemberRole: (
-    memberId: number,
+    teamId: string | number,
+    userId: string | number,
     role: TeamMemberRole
   ): Promise<TeamMember> => {
-    return apiClient.put<TeamMember>(TEAM_MEMBER_API.UPDATE_ROLE(memberId), {
-      role,
-    });
+    return apiClient.put<TeamMember>(
+      TEAM_MEMBER_API.UPDATE_ROLE(teamId, userId),
+      {
+        role,
+      }
+    );
   },
 
   removeMember: (
-    memberId: number
+    teamId: string | number,
+    userId: string | number
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient.delete<{ success: boolean; message: string }>(
-      TEAM_MEMBER_API.REMOVE_MEMBER(memberId)
+      TEAM_MEMBER_API.REMOVE_MEMBER(teamId, userId)
     );
-  },
-};
-
-export const teamReviewApi = {
-  getTeamReviews: (teamId: string | number) => {
-    return apiClient.get<TeamReview[]>(TEAM_REVIEW_API.GET_REVIEWS(teamId));
   },
 };
 
@@ -72,24 +134,174 @@ export const joinTeamApi = {
     apiClient.post<JoinTeamResponse>(TEAM_API.JOIN_TEAM, { teamId }),
 };
 
+export const teamExitApi = {
+  exitTeam: (teamId: string | number): Promise<void> => {
+    return apiClient.delete<void>(TEAM_API.EXIT_TEAM(teamId));
+  },
+};
+
 export const teamEditApi = {
-  updateTeam: (
+  updateTeam: async (
     teamId: string | number,
     data: {
       name: string;
       description: string;
+      university: string;
       skillLevel: SkillLevel;
       teamType: TeamType;
     }
   ): Promise<TeamDetailResponse> => {
-    return apiClient.put<TeamDetailResponse>(TEAM_API.UPDATE(teamId), data);
+    const apiData = {
+      name: data.name,
+      description: data.description,
+      university: data.university,
+      skillLevel: getSkillLevelInEnglish(data.skillLevel),
+      teamType: getTeamTypeInEnglish(data.teamType),
+    };
+    const apiResponse = await apiClient.put<ApiTeamDetailResponse>(
+      TEAM_API.UPDATE(teamId),
+      apiData
+    );
+    return transformTeamDetailResponse(apiResponse);
   },
 };
 
 export const teamJoinRequestApi = {
   getTeamJoinRequests: (teamId: string | number) => {
-    return apiClient.get<JoinRequest[]>('/joinRequests');
+    return apiClient.get<JoinRequest[]>(TEAM_API.GET_JOIN_REQUESTS(teamId));
+  },
+
+  getTeamJoinWaitingList: async (
+    teamId: string | number,
+    status: string = 'PENDING',
+    page: number = 0,
+    size: number = 10,
+    sort: string = 'createdAt,desc'
+  ): Promise<TeamJoinRequestPageResponse> => {
+    const params = new URLSearchParams({
+      status,
+      page: page.toString(),
+      size: size.toString(),
+      sort,
+    });
+    const apiResponse = await apiClient.get<ApiTeamJoinRequestPageResponse>(
+      `${TEAM_API.GET_JOIN_WAITING_LIST(teamId)}?${params.toString()}`
+    );
+
+    return transformTeamJoinRequestPageResponse(apiResponse);
+  },
+
+  joinWaiting: (teamId: string | number, data: JoinWaitingRequest) => {
+    return apiClient.post<JoinWaitingResponse>(
+      TEAM_API.JOIN_WAITING(teamId),
+      data
+    );
+  },
+
+  approveJoinRequest: (
+    teamId: string | number,
+    requestId: string | number,
+    data: JoinWaitingApproveRequest
+  ) => {
+    return apiClient.post<JoinWaitingResponse>(
+      TEAM_API.APPROVE_JOIN_REQUEST(teamId, requestId),
+      data
+    );
+  },
+
+  rejectJoinRequest: (
+    teamId: string | number,
+    requestId: string | number,
+    data: JoinWaitingRejectRequest
+  ) => {
+    return apiClient.post<JoinWaitingResponse>(
+      TEAM_API.REJECT_JOIN_REQUEST(teamId, requestId),
+      data
+    );
+  },
+
+  cancelJoinRequest: (
+    teamId: string | number,
+    joinWaitingId: string | number,
+    data: JoinWaitingCancelRequest
+  ) => {
+    return apiClient.post<JoinWaitingResponse>(
+      TEAM_API.CANCEL_JOIN_REQUEST(teamId, joinWaitingId),
+      data
+    );
   },
 };
-export const deleteTeam = (teamId: string | number) =>
-  apiClient.delete(TEAM_API.DELETE(teamId));
+export const teamDeleteApi = {
+  deleteTeam: (
+    teamId: string | number
+  ): Promise<{ success: boolean; message: string }> => {
+    return apiClient.delete<{ success: boolean; message: string }>(
+      TEAM_API.DELETE(teamId)
+    );
+  },
+
+  // 팀과 관련된 매치 데이터 확인
+  getTeamMatches: async (teamId: string | number) => {
+    try {
+      console.log(`팀 ${teamId} 관련 매치 데이터 확인 시작`);
+
+      // 매치 요청 데이터 확인
+      let matchRequests = null;
+      try {
+        matchRequests = await apiClient.get('/api/matches/receive/me/pending');
+        console.log(`팀 매치 요청 확인:`, matchRequests);
+      } catch (error) {
+        console.log(`매치 요청 조회 실패:`, error);
+      }
+
+      // 최근 매치 데이터 확인
+      let recentMatches = null;
+      try {
+        recentMatches = await apiClient.get('/api/teams/me/matches');
+        console.log(`팀 최근 매치 확인:`, recentMatches);
+      } catch (error) {
+        console.log(`최근 매치 조회 실패:`, error);
+      }
+
+      // 매치 생성 대기 목록 확인
+      let matchWaiting = null;
+      try {
+        matchWaiting = await apiClient.get(
+          `/api/matches/waiting?teamId=${teamId}`
+        );
+        console.log(`매치 대기 목록 확인:`, matchWaiting);
+      } catch (error) {
+        console.log(`매치 대기 목록 조회 실패:`, error);
+      }
+
+      const result = {
+        matchRequests,
+        recentMatches,
+        matchWaiting,
+      };
+
+      console.log(`팀 ${teamId} 매치 관련 데이터 결과:`, result);
+      return result;
+    } catch (error) {
+      console.log(`팀 ${teamId} 매치 데이터 조회 실패:`, error);
+      return {
+        matchRequests: null,
+        recentMatches: null,
+        matchWaiting: null,
+      };
+    }
+  },
+};
+
+export const userJoinWaitingApi = {
+  getMyJoinWaitingList: async (
+    page: number = 0,
+    size: number = 10,
+    sort: string = 'createdAt,desc'
+  ): Promise<UserJoinWaitingPageResponse> => {
+    const apiResponse = await apiClient.get<ApiUserJoinWaitingPageResponse>(
+      USER_JOIN_WAITING_API.GET_MY_JOIN_WAITING(page, size, sort)
+    );
+    return transformUserJoinWaitingPageResponse(apiResponse);
+  },
+};

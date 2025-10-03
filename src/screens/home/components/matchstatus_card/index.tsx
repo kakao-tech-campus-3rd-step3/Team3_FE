@@ -32,7 +32,7 @@ export default memo(function MatchStatusCard({
             <Text style={styles.noMatchTitle}>
               오늘 예정되어 있는 경기가 없습니다
             </Text>
-            <Text style={styles.noMatchSubtitle}>매치를 신청해보세요!</Text>
+            <Text style={styles.noMatchSubtitle}>매치를 생성해보세요!</Text>
           </View>
         </View>
       )}

@@ -8,11 +8,8 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
-  Keyboard,
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { theme } from '@/src/theme';
@@ -21,11 +18,18 @@ interface ForgotPasswordScreenProps {
   onBackToLogin: () => void;
 }
 
-function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
-  const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+type ForgotPasswordStep = 'email' | 'verification' | 'newPassword';
 
-  const handleSubmit = async () => {
+function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
+  const [currentStep, setCurrentStep] = useState<ForgotPasswordStep>('email');
+  const [email, setEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [, setTempToken] = useState('');
+
+  const handleEmailSubmit = async () => {
     if (!email.trim()) {
       Alert.alert('오류', '이메일을 입력해주세요.');
       return;
@@ -33,76 +37,260 @@ function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
 
     setIsLoading(true);
     try {
+      // TODO: API 호출 - 이메일로 인증코드 발송
+      // const response = await sendVerificationCode(email);
       Alert.alert(
-        '이메일 발송 완료',
-        '비밀번호 재설정 링크가 이메일로 발송되었습니다.',
-        [{ text: '확인', onPress: onBackToLogin }]
+        '인증코드 발송 완료',
+        '입력하신 이메일로 인증코드를 발송했습니다.',
+        [{ text: '확인', onPress: () => setCurrentStep('verification') }]
       );
     } catch {
-      Alert.alert('오류', '이메일 발송에 실패했습니다.');
+      Alert.alert('오류', '인증코드 발송에 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleVerificationSubmit = async () => {
+    if (!verificationCode.trim()) {
+      Alert.alert('오류', '인증코드를 입력해주세요.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // TODO: API 호출 - 이메일과 인증코드 검증
+      // const response = await verifyCode(email, verificationCode);
+      // setTempToken(response.tempToken);
+      setTempToken('temp_token_placeholder'); // 임시 토큰
+      setCurrentStep('newPassword');
+    } catch {
+      Alert.alert('오류', '인증코드가 올바르지 않습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePasswordSubmit = async () => {
+    if (!newPassword.trim()) {
+      Alert.alert('오류', '새 비밀번호를 입력해주세요.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      Alert.alert('오류', '비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      Alert.alert('오류', '비밀번호는 8자 이상이어야 합니다.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // TODO: API 호출 - 새 비밀번호 설정
+      // await resetPassword(tempToken, newPassword);
+      Alert.alert(
+        '비밀번호 변경 완료',
+        '비밀번호가 성공적으로 변경되었습니다.',
+        [{ text: '확인', onPress: () => router.push('/(auth)/login') }]
+      );
+    } catch {
+      Alert.alert('오류', '비밀번호 변경에 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const renderEmailStep = () => (
+    <>
+      <View style={styles.header}>
+        <Text style={styles.title}>비밀번호 찾기</Text>
+        <Text style={styles.subtitle}>
+          가입하신 이메일 주소를 입력해주세요.{'\n'}
+          인증코드를 보내드립니다.
+        </Text>
+      </View>
+
+      <View style={styles.formContainer}>
+        <View style={styles.inputGroup}>
+          <Ionicons
+            name="mail-outline"
+            size={20}
+            color={theme.colors.brand.main}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="이메일을 입력하세요"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+        </View>
+
+        <TouchableOpacity
+          style={[
+            styles.submitButton,
+            isLoading && styles.submitButtonDisabled,
+          ]}
+          onPress={handleEmailSubmit}
+          disabled={isLoading}
+        >
+          <Text style={styles.submitButtonText}>
+            {isLoading ? '발송 중...' : '인증코드 발송'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+
+  const renderVerificationStep = () => (
+    <>
+      <View style={styles.header}>
+        <Text style={styles.title}>인증코드 입력</Text>
+        <Text style={styles.subtitle}>
+          {email}로 발송된{'\n'}
+          인증코드를 입력해주세요.
+        </Text>
+      </View>
+
+      <View style={styles.formContainer}>
+        <View style={styles.inputGroup}>
+          <Ionicons
+            name="key-outline"
+            size={20}
+            color={theme.colors.brand.main}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="인증코드를 입력하세요"
+            value={verificationCode}
+            onChangeText={setVerificationCode}
+            keyboardType="number-pad"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+        </View>
+
+        <TouchableOpacity
+          style={[
+            styles.submitButton,
+            isLoading && styles.submitButtonDisabled,
+          ]}
+          onPress={handleVerificationSubmit}
+          disabled={isLoading}
+        >
+          <Text style={styles.submitButtonText}>
+            {isLoading ? '확인 중...' : '인증코드 확인'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.backSection}>
+        <TouchableOpacity onPress={() => setCurrentStep('email')}>
+          <Text style={styles.backText}>이메일 다시 입력</Text>
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+
+  const renderNewPasswordStep = () => (
+    <>
+      <View style={styles.header}>
+        <Text style={styles.title}>새 비밀번호 설정</Text>
+        <Text style={styles.subtitle}>
+          새로운 비밀번호를 입력해주세요.{'\n'}
+          비밀번호는 8자 이상이어야 합니다.
+        </Text>
+      </View>
+
+      <View style={styles.formContainer}>
+        <View style={styles.inputGroup}>
+          <Ionicons
+            name="lock-closed-outline"
+            size={20}
+            color={theme.colors.brand.main}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="새 비밀번호를 입력하세요"
+            value={newPassword}
+            onChangeText={setNewPassword}
+            secureTextEntry
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+        </View>
+
+        <View
+          style={[styles.inputGroup, { marginBottom: theme.spacing.spacing8 }]}
+        >
+          <Ionicons
+            name="lock-closed-outline"
+            size={20}
+            color={theme.colors.brand.main}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="비밀번호를 다시 입력하세요"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+        </View>
+
+        <TouchableOpacity
+          style={[
+            styles.submitButton,
+            isLoading && styles.submitButtonDisabled,
+          ]}
+          onPress={handlePasswordSubmit}
+          disabled={isLoading}
+        >
+          <Text style={styles.submitButtonText}>
+            {isLoading ? '변경 중...' : '비밀번호 변경'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.backSection}>
+        <TouchableOpacity onPress={() => setCurrentStep('verification')}>
+          <Text style={styles.backText}>인증코드 다시 입력</Text>
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.keyboardAvoidingView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.content}
+        extraScrollHeight={20}
+        enableOnAndroid={true}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.content}>
-            <View style={styles.header}>
-              <Text style={styles.title}>비밀번호 찾기</Text>
-              <Text style={styles.subtitle}>
-                가입하신 이메일 주소를 입력해주세요.{'\n'}
-                비밀번호 재설정 링크를 보내드립니다.
-              </Text>
-            </View>
+        {currentStep === 'email' && renderEmailStep()}
+        {currentStep === 'verification' && renderVerificationStep()}
+        {currentStep === 'newPassword' && renderNewPasswordStep()}
 
-            <View style={styles.formContainer}>
-              <View style={styles.inputGroup}>
-                <Ionicons
-                  name="mail-outline"
-                  size={20}
-                  color={theme.colors.brand.main}
-                  style={styles.inputIcon}
-                />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="이메일을 입력하세요"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-              </View>
-
-              <TouchableOpacity
-                style={[
-                  styles.submitButton,
-                  isLoading && styles.submitButtonDisabled,
-                ]}
-                onPress={handleSubmit}
-                disabled={isLoading}
-              >
-                <Text style={styles.submitButtonText}>
-                  {isLoading ? '발송 중...' : '비밀번호 재설정 링크 발송'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.backSection}>
-              <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
-                <Text style={styles.backText}>로그인으로 돌아가기</Text>
-              </TouchableOpacity>
-            </View>
+        {currentStep === 'email' && (
+          <View style={styles.backSection}>
+            <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+              <Text style={styles.backText}>로그인으로 돌아가기</Text>
+            </TouchableOpacity>
           </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+        )}
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -114,13 +302,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background.main,
   },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
   content: {
-    flex: 1,
+    flexGrow: 1,
     paddingHorizontal: theme.spacing.spacing8,
     justifyContent: 'center',
+    paddingTop: theme.spacing.spacing10,
+    paddingBottom: theme.spacing.spacing10,
   },
   header: {
     alignItems: 'center',
@@ -167,10 +354,6 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     textAlignVertical: 'center',
     includeFontPadding: false,
-    lineHeight: theme.typography.text.body.lineHeight,
-    height: theme.spacing.spacing6,
-    paddingTop: 0,
-    paddingBottom: 0,
   },
   submitButton: {
     backgroundColor: theme.colors.success,

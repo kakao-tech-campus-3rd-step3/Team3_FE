@@ -34,6 +34,11 @@ class ApiClient {
     endpoint: string,
     options: AxiosRequestConfig = {}
   ): Promise<T> {
+    if (!this.token && this.isAuthRequiredEndpoint(endpoint)) {
+      this.onTokenExpired?.();
+      throw new ApiError('Authentication required', 401);
+    }
+
     try {
       const response: AxiosResponse<T> = await axios({
         ...options,
@@ -70,16 +75,39 @@ class ApiClient {
     }
   }
 
+  private isAuthRequiredEndpoint(endpoint: string): boolean {
+    const authRequiredEndpoints = [
+      '/api/profiles',
+      '/api/teams',
+      '/api/matches',
+      '/recommendedMatch',
+    ];
+
+    return authRequiredEndpoints.some(path => endpoint.includes(path));
+  }
+
   async get<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint);
   }
 
-  async post<T>(endpoint: string, body: unknown): Promise<T> {
-    return this.request<T>(endpoint, { method: 'POST', data: body });
+  async post<T>(
+    endpoint: string,
+    body: unknown,
+    options?: AxiosRequestConfig
+  ): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'POST',
+      data: body,
+      ...options,
+    });
   }
 
   async put<T>(endpoint: string, body: unknown): Promise<T> {
     return this.request<T>(endpoint, { method: 'PUT', data: body });
+  }
+
+  async patch<T>(endpoint: string, body?: unknown): Promise<T> {
+    return this.request<T>(endpoint, { method: 'PATCH', data: body });
   }
 
   async delete<T>(endpoint: string): Promise<T> {

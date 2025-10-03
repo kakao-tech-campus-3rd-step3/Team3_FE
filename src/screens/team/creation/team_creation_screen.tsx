@@ -9,7 +9,9 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
+import TeamDetails from '@/src/components/team/steps/team_details';
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { useCreateTeamMutation } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import {
   TeamType,
@@ -19,7 +21,6 @@ import {
 } from '@/src/types/team';
 
 import TeamBasicInfo from './components/steps/team_basic_info';
-import TeamDetails from './components/steps/team_details';
 import { styles } from './team_creation_style';
 
 interface TeamFormData {
@@ -30,12 +31,18 @@ interface TeamFormData {
   description: string;
 }
 
-export default function TeamCreationScreen() {
+interface TeamCreationScreenProps {
+  initialUniversity?: string;
+}
+
+export default function TeamCreationScreen({
+  initialUniversity,
+}: TeamCreationScreenProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<TeamFormData>({
     name: '',
-    university: '',
+    university: initialUniversity || '',
     teamType: DEFAULT_TEAM_TYPE,
     skillLevel: DEFAULT_SKILL_LEVEL,
     description: '',
@@ -72,14 +79,25 @@ export default function TeamCreationScreen() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const createTeamMutation = useCreateTeamMutation();
+
   const handleSubmit = async () => {
     if (validateForm()) {
-      Alert.alert('팀 생성 완료', '팀이 성공적으로 생성되었습니다!', [
-        {
-          text: '확인',
-          onPress: () => router.push('/'),
-        },
-      ]);
+      try {
+        const response = await createTeamMutation.mutateAsync(formData);
+
+        Alert.alert('팀 생성 완료', response.message, [
+          {
+            text: '확인',
+            onPress: () => {
+              router.replace('/');
+            },
+          },
+        ]);
+      } catch (error) {
+        console.error('팀 생성 실패:', error);
+        Alert.alert('오류', '팀 생성에 실패했습니다.');
+      }
     }
   };
 
@@ -110,9 +128,7 @@ export default function TeamCreationScreen() {
             university={formData.university}
             teamType={formData.teamType}
             onTeamNameChange={name => updateFormData('name', name)}
-            onUniversityChange={university =>
-              updateFormData('university', university)
-            }
+            onUniversityChange={() => {}} // 대학교는 수정 불가
             onTeamTypeChange={type => updateFormData('teamType', type)}
             {...stepProps}
             errors={{
@@ -127,8 +143,10 @@ export default function TeamCreationScreen() {
           <TeamDetails
             skillLevel={formData.skillLevel}
             description={formData.description}
-            onSkillLevelChange={level => updateFormData('skillLevel', level)}
-            onDescriptionChange={description =>
+            onSkillLevelChange={(level: SkillLevel) =>
+              updateFormData('skillLevel', level)
+            }
+            onDescriptionChange={(description: string) =>
               updateFormData('description', description)
             }
             onSubmit={handleSubmit}

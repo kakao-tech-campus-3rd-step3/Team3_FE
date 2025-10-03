@@ -16,18 +16,30 @@ interface TeamInfoItem {
 }
 
 export default function TeamCard({ team, onJoin }: TeamCardProps) {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+    });
+  };
+
   const teamInfoItems: TeamInfoItem[] = useMemo(
     () => [
       { label: '실력', value: team.skillLevel },
       { label: '멤버', value: `${team.memberCount}명` },
-      { label: '회장', value: team.captainName },
+      { label: '생성일', value: formatDate(team.createdAt) },
     ],
-    [team.skillLevel, team.memberCount, team.captainName]
+    [team.skillLevel, team.memberCount, team.createdAt]
   );
+
   return (
     <TouchableOpacity style={styles.teamCard} onPress={() => onJoin(team.id)}>
       <View style={styles.teamHeader}>
-        <Text style={styles.teamName}>{team.name}</Text>
+        <View style={styles.teamTitleSection}>
+          <Text style={styles.teamName}>{team.name}</Text>
+          <Text style={styles.universityName}>{team.university}</Text>
+        </View>
         <View style={styles.teamTypeBadge}>
           <Text style={styles.teamTypeText}>{team.teamType}</Text>
         </View>

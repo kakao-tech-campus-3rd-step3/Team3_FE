@@ -4,7 +4,8 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  authToken: string;
+  accessToken: string;
+  refreshToken: string; // 백엔드에서 쿠키로 설정되지만 응답에도 포함
 }
 
 export interface RegisterRequest {
@@ -13,7 +14,7 @@ export interface RegisterRequest {
   email: string;
   universityEmail: string;
   password: string;
-  kakaoId: string;
+  kakaoTalkId: string;
   position: string;
   university: string;
   department: string;
@@ -23,6 +24,7 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
   accessToken: string;
+  refreshToken: string; // 백엔드에서 쿠키로 설정되지만 응답에도 포함
 }
 
 export interface SendVerificationResponse {

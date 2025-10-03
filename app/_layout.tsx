@@ -26,7 +26,8 @@ function AppContent() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="team" />
         <Stack.Screen name="profile" />
-        <Stack.Screen name="mercenary" />
+        <Stack.Screen name="match_making/match_info" />
+        <Stack.Screen name="match_application/index" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

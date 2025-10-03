@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -16,10 +16,6 @@ import {
 import { Dropdown } from '@/src/components/dropdown';
 import { UI_CONSTANTS } from '@/src/constants/ui';
 import { UNIVERSITIES } from '@/src/constants/universities';
-import {
-  useVerifyEmailMutation,
-  useSendVerificationMutation,
-} from '@/src/hooks/queries';
 import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 import {
   useRegisterValidation,
@@ -36,60 +32,30 @@ interface Props {
   handleNext: () => void;
 }
 export function EmailVerification({ data, onChange, handleNext }: Props) {
-  const [isVerificationSent, setIsVerificationSent] = useState(false);
-  const [verificationCode, setVerificationCode] = useState<string>('');
-  const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
   const { errors, validateField } = useRegisterValidation(emailValidationRules);
-  const verifyEmailMutation = useVerifyEmailMutation();
-  const sendVerificationMutation = useSendVerificationMutation();
-  const verificationInputRef = useRef<TextInput>(null);
+
+  const isNextButtonDisabled =
+    !data.university || !data.universityEmail || !!errors.universityEmail;
 
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
     onChange(field, value);
-    validateField(field, value, data);
+    const updatedData = { ...data, [field]: value };
+    validateField(field, value, updatedData);
   };
 
-  const handleVerificationCodeChange = (value: string) => {
-    setVerificationCode(value);
-    validateField('verificationCode', value, data);
-  };
-
-  const handleSendVerification = async () => {
+  const handleNextStep = () => {
     if (!data.university || !data.universityEmail) {
       Alert.alert('입력 오류', '대학교명과 이메일을 입력해주세요.');
       return;
     }
-
-    // try {
-    // await sendVerificationMutation.mutateAsync(data.universityEmail);
-    setIsVerificationSent(true);
-    Alert.alert('전송 완료', '인증번호가 이메일로 전송되었습니다.', [
-      {
-        text: '확인',
-        onPress: () => {
-          setTimeout(() => {
-            verificationInputRef.current?.focus();
-          }, 100);
-        },
-      },
-    ]);
-    // } catch {
-    //   Alert.alert('오류', '인증번호 전송에 실패했습니다.');
-    // }
-  };
-  const handleVerify = async () => {
-    // try {
-    //   await verifyEmailMutation.mutateAsync({
-    //     universityEmail: data.universityEmail,
-    //     code: verificationCode,
-    //   });
-    setIsEmailVerified(true);
-    Alert.alert('성공', '이메일 인증이 완료되었습니다.', [
-      { text: '확인', onPress: () => handleNext() },
-    ]);
-    // } catch {
-    //   Alert.alert('오류', '인증번호가 올바르지 않습니다.');
-    // }
+    if (errors.universityEmail) {
+      Alert.alert(
+        '입력 오류',
+        '대학교 이메일은 *.ac.kr 도메인으로 입력해주세요.'
+      );
+      return;
+    }
+    handleNext();
   };
   return (
     <KeyboardAvoidingView
@@ -132,104 +98,25 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
             {errors.universityEmail && (
               <Text style={styles.errorText}>{errors.universityEmail}</Text>
             )}
-            <TouchableOpacity
-              style={[
-                styles.verifyButton,
-                { marginTop: theme.spacing.spacing3 },
-                isVerificationSent && styles.verifyButtonCompleted,
-                (!data.university ||
-                  !data.universityEmail ||
-                  sendVerificationMutation.isPending ||
-                  isVerificationSent) &&
-                  styles.verifyButtonDisabled,
-              ]}
-              onPress={handleSendVerification}
-              disabled={
-                !data.university ||
-                !data.universityEmail ||
-                sendVerificationMutation.isPending ||
-                isVerificationSent
-              }
-            >
-              <Text
-                style={[
-                  styles.verifyButtonText,
-                  (!data.university ||
-                    !data.universityEmail ||
-                    sendVerificationMutation.isPending ||
-                    isVerificationSent) &&
-                    styles.verifyButtonTextDisabled,
-                ]}
-              >
-                {sendVerificationMutation.isPending
-                  ? '전송 중...'
-                  : isVerificationSent
-                    ? '전송 완료'
-                    : '인증번호 전송'}
-              </Text>
-            </TouchableOpacity>
           </View>
-          {isVerificationSent && (
-            <View style={styles.inputGroup}>
-              <View style={styles.verificationHeader}>
-                <Text style={styles.label}>인증번호</Text>
-                <TouchableOpacity
-                  style={styles.resendButton}
-                  onPress={handleSendVerification}
-                  disabled={sendVerificationMutation.isPending}
-                >
-                  <Text style={styles.resendButtonText}>인증번호 재발송</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.verificationRow}>
-                <TextInput
-                  ref={verificationInputRef}
-                  style={[
-                    styles.verificationInput,
-                    verificationCode && styles.inputFilled,
-                    errors.verificationCode && styles.inputError,
-                  ]}
-                  placeholder="인증번호를 입력하세요"
-                  value={verificationCode}
-                  onChangeText={handleVerificationCodeChange}
-                  keyboardType="number-pad"
-                  maxLength={6}
-                />
-                <TouchableOpacity
-                  style={[
-                    styles.verifyButton,
-                    (verificationCode.length !== 6 ||
-                      verifyEmailMutation.isPending) &&
-                      styles.verifyButtonDisabled,
-                  ]}
-                  onPress={handleVerify}
-                  disabled={
-                    verificationCode.length !== 6 ||
-                    verifyEmailMutation.isPending
-                  }
-                >
-                  <Text
-                    style={[
-                      styles.verifyButtonText,
-                      (verificationCode.length !== 6 ||
-                        verifyEmailMutation.isPending) &&
-                        styles.verifyButtonTextDisabled,
-                    ]}
-                  >
-                    인증 확인
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              {errors.verificationCode && (
-                <Text style={styles.errorText}>{errors.verificationCode}</Text>
-              )}
-            </View>
-          )}
-          {isEmailVerified && (
-            <Text style={styles.successText}>
-              ✓ 이메일 인증이 완료되었습니다
+
+          <TouchableOpacity
+            style={[
+              styles.nextButton,
+              isNextButtonDisabled && styles.nextButtonDisabled,
+            ]}
+            onPress={handleNextStep}
+            disabled={isNextButtonDisabled}
+          >
+            <Text
+              style={[
+                styles.nextButtonText,
+                isNextButtonDisabled && styles.nextButtonTextDisabled,
+              ]}
+            >
+              다음
             </Text>
-          )}
+          </TouchableOpacity>
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -272,63 +159,23 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.font3,
     marginTop: theme.spacing.spacing2,
   },
-  verifyButton: {
+  nextButton: {
     backgroundColor: theme.colors.brand.main,
-    paddingVertical: theme.spacing.spacing3,
-    paddingHorizontal: theme.spacing.spacing4,
+    paddingVertical: theme.spacing.spacing4,
+    paddingHorizontal: theme.spacing.spacing6,
     borderRadius: 8,
     alignItems: 'center',
+    marginTop: theme.spacing.spacing6,
   },
-  verifyButtonCompleted: {
-    backgroundColor: theme.colors.gray[400],
-  },
-  verifyButtonDisabled: {
+  nextButtonDisabled: {
     backgroundColor: theme.colors.gray[300],
   },
-  verifyButtonText: {
+  nextButtonText: {
     color: theme.colors.white,
     fontSize: theme.typography.fontSize.font4,
     fontWeight: theme.typography.fontWeight.medium,
   },
-  verifyButtonTextDisabled: {
+  nextButtonTextDisabled: {
     color: theme.colors.gray[500],
-  },
-  successText: {
-    color: theme.colors.text.main,
-    fontSize: theme.typography.fontSize.font3,
-    fontWeight: theme.typography.fontWeight.medium,
-    textAlign: 'center',
-    marginTop: theme.spacing.spacing4,
-  },
-  verificationHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: theme.spacing.spacing2,
-  },
-  resendButton: {
-    paddingVertical: theme.spacing.spacing1,
-    paddingHorizontal: theme.spacing.spacing2,
-  },
-  resendButtonText: {
-    fontSize: theme.typography.fontSize.font3,
-    color: theme.colors.brand.main,
-    fontWeight: theme.typography.fontWeight.medium,
-  },
-  verificationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.spacing2,
-  },
-  verificationInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: theme.colors.border.input,
-    borderRadius: 8,
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    backgroundColor: theme.colors.background.input,
   },
 });

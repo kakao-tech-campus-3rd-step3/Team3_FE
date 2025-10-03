@@ -1,8 +1,11 @@
 import React, { createContext, useContext, useEffect } from 'react';
+import { View, ActivityIndicator } from 'react-native';
 
+import { authApi } from '@/src/api/auth';
 import { useStorageState } from '@/src/hooks/useStorageState';
 import { apiClient } from '@/src/lib/api_client';
 import { queryClient } from '@/src/lib/query_client';
+import { theme } from '@/src/theme';
 
 interface AuthContextType {
   token: string | null;
@@ -36,13 +39,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
-    setToken(null);
-    queryClient.clear();
+    try {
+      // 백엔드에 모든 기기 로그아웃 요청 (refreshToken 쿠키 불필요)
+      await authApi.logoutAll();
+    } catch (error) {
+      // 로그아웃 API 실패해도 클라이언트에서는 로그아웃 처리
+      console.warn('로그아웃 API 호출 실패:', error);
+    } finally {
+      // 항상 클라이언트 상태 정리
+      setToken(null);
+      queryClient.clear();
+    }
   };
 
-  // 로딩 중일 때 스플래시 같은 화면을 보여줄 수 있음
   if (isLoading) {
-    return <></>; // TODO: 여기서 SplashScreen 컴포넌트 렌더링 가능
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={theme.colors.grass[500]} />
+      </View>
+    );
   }
 
   return (

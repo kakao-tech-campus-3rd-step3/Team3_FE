@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 
+import { Dropdown } from '@/src/components/dropdown';
 import { UserProfile, UpdateProfileRequest } from '@/src/types/profile';
 
 import { styles } from './ProfileFormStyle';
@@ -16,13 +17,53 @@ export function ProfileForm({
   onSave,
   isLoading,
 }: ProfileFormProps) {
+  const convertSkillLevelToKorean = (level: string) => {
+    switch (level) {
+      case 'AMATEUR':
+        return '아마추어';
+      case 'SEMI_PRO':
+        return '세미프로';
+      case 'PRO':
+        return '프로';
+      default:
+        return level;
+    }
+  };
+
+  const convertPositionToKorean = (position: string) => {
+    switch (position) {
+      case 'GK':
+        return '골키퍼';
+      case 'DF':
+        return '수비수';
+      case 'MF':
+        return '미드필더';
+      case 'FW':
+        return '공격수';
+      default:
+        return position;
+    }
+  };
+
+  const convertKoreanToPosition = (korean: string) => {
+    switch (korean) {
+      case '골키퍼':
+        return '골키퍼';
+      case '수비수':
+        return '수비수';
+      case '미드필더':
+        return '미드필더';
+      case '공격수':
+        return '공격수';
+      default:
+        return korean;
+    }
+  };
+
   const [formData, setFormData] = useState({
     name: initialData.name || '',
-    phoneNumber: initialData.phoneNumber || '',
-    university: initialData.university || '',
-    department: initialData.major || '',
-    studentId: initialData.studentId || '',
-    level: initialData.level || '아마추어',
+    skillLevel: convertSkillLevelToKorean(initialData.skillLevel || 'AMATEUR'),
+    position: convertPositionToKorean(initialData.position || ''),
     bio: initialData.bio || '',
   });
 
@@ -31,20 +72,16 @@ export function ProfileForm({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = '이름을 입력해주세요.';
+    if (formData.skillLevel && formData.skillLevel.length > 4) {
+      newErrors.skillLevel = '실력은 4자 이하여야 합니다.';
     }
 
-    if (!formData.university.trim()) {
-      newErrors.university = '대학교를 입력해주세요.';
+    if (formData.position && formData.position.length > 10) {
+      newErrors.position = '포지션은 10자 이하여야 합니다.';
     }
 
-    if (!formData.department.trim()) {
-      newErrors.department = '학과를 입력해주세요.';
-    }
-
-    if (!formData.studentId.trim()) {
-      newErrors.studentId = '학번을 입력해주세요.';
+    if (formData.bio && formData.bio.length > 500) {
+      newErrors.bio = '자기소개는 500자 이하여야 합니다.';
     }
 
     setErrors(newErrors);
@@ -53,7 +90,13 @@ export function ProfileForm({
 
   const handleSave = () => {
     if (validateForm()) {
-      onSave(formData);
+      const dataToSave = {
+        name: initialData.name, // 원본 이름 유지
+        skillLevel: formData.skillLevel,
+        position: convertKoreanToPosition(formData.position),
+        bio: formData.bio,
+      };
+      onSave(dataToSave);
     }
   };
 
@@ -66,90 +109,35 @@ export function ProfileForm({
 
   return (
     <View style={styles.formContainer}>
-      <Text style={styles.sectionTitle}>기본 정보</Text>
+      <Text style={styles.sectionTitle}>프로필 수정</Text>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.label}>이름 *</Text>
+        <Text style={styles.label}>이름</Text>
         <TextInput
-          style={[styles.input, errors.name && styles.inputError]}
+          style={[styles.input, styles.inputDisabled]}
           value={formData.name}
-          onChangeText={value => updateField('name', value)}
-          placeholder="이름을 입력하세요"
-        />
-        {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
-      </View>
-
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>전화번호</Text>
-        <TextInput
-          style={styles.input}
-          value={formData.phoneNumber}
-          onChangeText={value => updateField('phoneNumber', value)}
-          placeholder="전화번호를 입력하세요"
-          keyboardType="phone-pad"
+          editable={false}
+          placeholder="이름"
         />
       </View>
 
-      <View style={styles.sectionDivider} />
-
-      <Text style={styles.sectionTitle}>대학 정보</Text>
-
       <View style={styles.inputGroup}>
-        <Text style={styles.label}>대학교 *</Text>
-        <TextInput
-          style={[styles.input, errors.university && styles.inputError]}
-          value={formData.university}
-          onChangeText={value => updateField('university', value)}
-          placeholder="대학교를 입력하세요"
-        />
-        {errors.university && (
-          <Text style={styles.errorText}>{errors.university}</Text>
-        )}
-      </View>
-
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>학과 *</Text>
-        <TextInput
-          style={[styles.input, errors.department && styles.inputError]}
-          value={formData.department}
-          onChangeText={value => updateField('department', value)}
-          placeholder="학과를 입력하세요"
-        />
-        {errors.department && (
-          <Text style={styles.errorText}>{errors.department}</Text>
-        )}
-      </View>
-
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>학번 *</Text>
-        <TextInput
-          style={[styles.input, errors.studentId && styles.inputError]}
-          value={formData.studentId}
-          onChangeText={value => updateField('studentId', value)}
-          placeholder="학번을 입력하세요 (예: 20)"
-          keyboardType="numeric"
-        />
-        {errors.studentId && (
-          <Text style={styles.errorText}>{errors.studentId}</Text>
-        )}
-      </View>
-
-      <View style={styles.inputGroup}>
-        <Text style={styles.label}>등급</Text>
+        <Text style={styles.label}>실력</Text>
         <View style={styles.levelContainer}>
           {['아마추어', '세미프로', '프로'].map(level => (
             <TouchableOpacity
               key={level}
               style={[
                 styles.levelOption,
-                formData.level === level && styles.levelOptionSelected,
+                formData.skillLevel === level && styles.levelOptionSelected,
               ]}
-              onPress={() => updateField('level', level)}
+              onPress={() => updateField('skillLevel', level)}
             >
               <Text
                 style={[
                   styles.levelOptionText,
-                  formData.level === level && styles.levelOptionTextSelected,
+                  formData.skillLevel === level &&
+                    styles.levelOptionTextSelected,
                 ]}
               >
                 {level}
@@ -157,16 +145,32 @@ export function ProfileForm({
             </TouchableOpacity>
           ))}
         </View>
+        {errors.skillLevel && (
+          <Text style={styles.errorText}>{errors.skillLevel}</Text>
+        )}
       </View>
 
-      <View style={styles.sectionDivider} />
-
-      <Text style={styles.sectionTitle}>자기소개</Text>
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>포지션</Text>
+        <Dropdown
+          items={['골키퍼', '수비수', '미드필더', '공격수'] as const}
+          value={formData.position || null}
+          onChange={value => updateField('position', value)}
+          placeholder="포지션을 선택하세요"
+        />
+        {errors.position && (
+          <Text style={styles.errorText}>{errors.position}</Text>
+        )}
+      </View>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.label}>소개글</Text>
+        <Text style={styles.label}>자기소개</Text>
         <TextInput
-          style={[styles.input, styles.textArea]}
+          style={[
+            styles.input,
+            styles.textArea,
+            errors.bio && styles.inputError,
+          ]}
           value={formData.bio}
           onChangeText={value => updateField('bio', value)}
           placeholder="자기소개를 입력하세요"
@@ -174,6 +178,7 @@ export function ProfileForm({
           numberOfLines={4}
           textAlignVertical="top"
         />
+        {errors.bio && <Text style={styles.errorText}>{errors.bio}</Text>}
       </View>
 
       <TouchableOpacity

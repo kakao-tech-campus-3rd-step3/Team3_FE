@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
-  Alert,
   Text,
   TouchableOpacity,
   Keyboard,
@@ -10,10 +9,6 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { useAuth } from '@/src/contexts/auth_context';
-import { useLoginMutation } from '@/src/hooks/queries';
-import type { LoginRequest } from '@/src/types';
 
 import LoginForm from '../components/login/login_form';
 
@@ -24,34 +19,6 @@ interface LoginScreenProps {
 }
 
 function LoginScreen({ onSwitchToRegister }: LoginScreenProps) {
-  const loginMutation = useLoginMutation();
-  const { login } = useAuth();
-  const [passwordError, setPasswordError] = useState<string>('');
-
-  const handleSubmit = async (credentials: LoginRequest) => {
-    setPasswordError('');
-    try {
-      await loginMutation.mutateAsync(credentials);
-    } catch (error: unknown) {
-      const errorMessage = (error as Error).message || '로그인에 실패했습니다.';
-
-      if (
-        errorMessage.includes('비밀번호') ||
-        errorMessage.includes('password') ||
-        errorMessage.includes('인증') ||
-        errorMessage.includes('credentials')
-      ) {
-        setPasswordError('비밀번호가 올바르지 않습니다.');
-      } else {
-        Alert.alert('로그인 실패', errorMessage);
-      }
-    }
-  };
-
-  const handlePasswordChange = () => {
-    setPasswordError('');
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -61,25 +28,13 @@ function LoginScreen({ onSwitchToRegister }: LoginScreenProps) {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.content}>
-            <TouchableOpacity
-              style={styles.tempButton}
-              onPress={() => login('temp-token')}
-            >
-              <Text style={styles.tempButtonText}>임시 로그인</Text>
-            </TouchableOpacity>
-
             <View style={styles.header}>
               <Text style={styles.logoText}>ShootDoori</Text>
               <Text style={styles.tagline}>대학교 축구 연결 서비스</Text>
             </View>
 
             <View style={styles.formContainer}>
-              <LoginForm
-                onSubmit={handleSubmit}
-                isLoading={loginMutation.isPending}
-                passwordError={passwordError}
-                onPasswordChange={handlePasswordChange}
-              />
+              <LoginForm />
             </View>
 
             <View style={styles.signupSection}>

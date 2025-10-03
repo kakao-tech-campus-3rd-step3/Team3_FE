@@ -1,5 +1,7 @@
 export const ROUTES = {
   HOME: '/',
+  LOGIN: '/(auth)/login',
+  REGISTER: '/(auth)/register',
   PROFILE: '/profile',
 
   EDIT_PROFILE: '/profile/edit',
@@ -13,13 +15,16 @@ export const ROUTES = {
   TEAM_JOIN_UNIVERSITY: '/team/join-university',
   TEAM_JOIN_LIST: '/team/join-list',
 
-  MERCENARY: '/mercenary',
+  MATCH_MAKING: '/match_making/match_info',
+  MATCH_APPLICATION: '/match_application',
 
   TOURNAMENT: '/tournament',
 } as const;
 
 export type RouteKey = keyof typeof ROUTES;
 
+export const getTeamManagementUrl = (teamId: string | number) =>
+  `/team/management/${teamId}`;
 export const getTeamManagementSettingsUrl = (teamId: string) =>
   `/team/management/${teamId}/settings`;
 export const getTeamManagementRecentMatchesUrl = (teamId: string) =>

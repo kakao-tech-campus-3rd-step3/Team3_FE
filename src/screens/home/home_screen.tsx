@@ -1,9 +1,10 @@
-import { ScrollView, View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useEffect, useRef } from 'react';
+import { ScrollView, View, ActivityIndicator, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useUserProfile, useLogout } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
-import { HomeData } from '@/src/types/home';
-import { UserProfile } from '@/src/types/profile';
 
 import BenefitsSection from './components/benefit_section';
 import EnvelopeSection from './components/envelope_section';
@@ -12,60 +13,72 @@ import HomeHeader from './components/home_header';
 import RecommendedMatchCard from './components/recommended_match_card';
 import styles from './home_style';
 
-// 임시 데이터
-const mockHomeData: HomeData = {
-  user: {
-    name: '김축구',
-    teamLevel: '아마추어',
-    preferredPositions: ['공격수', '미드필더'],
-    teamId: 1,
-  },
-  todayMatch: {
-    hasMatch: true,
-    matchInfo: {
-      time: '오후 2시',
-      location: '강원대학교 운동장',
-      type: 'team_match',
-      opponent: '춘천교대',
-      teamName: '강원대학교 축구팀',
-    },
-  },
-};
-
-const mockUserInfo: UserProfile = {
-  id: '1',
-  name: '김축구',
-  email: 'kim@example.com',
-  university: '강원대학교',
-  major: '컴퓨터공학과',
-  studentId: '2020123456',
-  joinDate: '2024-01-01',
-  level: '아마추어',
-  totalMatches: 15,
-  noShowCount: 0,
-  mannerScore: 4.8,
-  totalReviews: 12,
-  bio: '열정적인 축구를 사랑하는 학생입니다!',
-  phoneNumber: '010-1234-5678',
-  recentReviews: [
-    { type: 'good_play', count: 8, label: '실력 좋음' },
-    { type: 'good_manner', count: 6, label: '매너 좋음' },
-    { type: 'team_player', count: 5, label: '팀워크 좋음' },
-    { type: 'punctual', count: 4, label: '시간 준수' },
-    { type: 'bad_manner', count: 0, label: '매너 나쁨' },
-  ],
-  stats: {
-    wins: 8,
-    draws: 3,
-    losses: 4,
-    goals: 12,
-    assists: 7,
-    favoritePosition: '공격수',
-  },
-};
-
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const { data: userProfile, isLoading, refetch, error } = useUserProfile();
+  const logoutMutation = useLogout();
+  const alertShownRef = useRef(false);
+
+  const handleLogoutAndRedirect = useCallback(async () => {
+    try {
+      await logoutMutation.mutateAsync();
+    } catch (error) {
+      console.error('로그아웃 처리 중 오류:', error);
+    }
+  }, [logoutMutation]);
+
+  const handleErrorAlert = useCallback(() => {
+    if (alertShownRef.current) {
+      return;
+    }
+
+    alertShownRef.current = true;
+
+    Alert.alert(
+      '인증 오류',
+      '로그인이 필요합니다. 다시 로그인해주세요.',
+      [
+        {
+          text: '로그인 하기',
+          onPress: () => {
+            alertShownRef.current = false; // Alert 해제 후 재호출 가능하도록
+            handleLogoutAndRedirect();
+          },
+        },
+      ],
+      {
+        cancelable: false,
+        onDismiss: () => {
+          alertShownRef.current = false; // Alert가 닫힐 때 상태 리셋
+        },
+      }
+    );
+  }, [handleLogoutAndRedirect]);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+
+  useEffect(() => {
+    if (error) {
+      handleErrorAlert();
+    }
+  }, [error, handleErrorAlert]);
+
+  if (isLoading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: 'center', alignItems: 'center' },
+        ]}
+      >
+        <ActivityIndicator size="large" color={theme.colors.grass[500]} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -80,20 +93,17 @@ export default function HomeScreen() {
           { paddingBottom: insets.bottom + theme.spacing.spacing10 },
         ]}
       >
-        {/* 메인 환영 섹션 */}
         <View style={styles.mainSection}>
-          <GreetingSection homeData={mockHomeData} userInfo={mockUserInfo} />
+          <GreetingSection />
         </View>
 
-        {/* 추천 매치 섹션 */}
         <View style={styles.matchSection}>
           <RecommendedMatchCard />
         </View>
 
-        {/* 서비스 카드 섹션 */}
         <View style={styles.serviceSection}>
-          <EnvelopeSection />
-          <BenefitsSection homeData={mockHomeData} />
+          <EnvelopeSection teamId={userProfile?.teamId || null} />
+          <BenefitsSection teamId={userProfile?.teamId || null} />
         </View>
       </ScrollView>
     </View>
