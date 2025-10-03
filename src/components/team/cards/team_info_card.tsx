@@ -13,11 +13,15 @@ import type { TeamDetailResponse } from '@/src/types/team';
 interface TeamInfoCardProps {
   team: TeamDetailResponse;
   canManageTeam: boolean;
+  onExitTeam?: () => void;
+  isTeamLeader?: boolean;
 }
 
 export default memo(function TeamInfoCard({
   team,
   canManageTeam,
+  onExitTeam,
+  isTeamLeader = false,
 }: TeamInfoCardProps) {
   const handleTeamManagement = () => {
     router.push(getTeamManagementSettingsUrl(team.id.toString()));
@@ -35,14 +39,30 @@ export default memo(function TeamInfoCard({
             <Text style={styles.teamTitle}>{team.name}</Text>
             <Text style={styles.teamSubtitle}>{team.university}</Text>
           </View>
-          {canManageTeam && (
-            <TouchableOpacity
-              style={styles.settingsButton}
-              onPress={handleTeamManagement}
-            >
-              <Ionicons name="settings-outline" size={20} color="white" />
-            </TouchableOpacity>
-          )}
+          <View style={styles.headerButtonsContainer}>
+            {/* 팀장이 아닌 경우에만 팀 탈퇴 버튼 표시 */}
+            {onExitTeam && !isTeamLeader && (
+              <TouchableOpacity
+                style={styles.headerExitButton}
+                onPress={onExitTeam}
+              >
+                <Ionicons
+                  name="exit-outline"
+                  size={16}
+                  color={colors.orange[600]}
+                />
+                <Text style={styles.headerExitButtonText}>팀 나가기</Text>
+              </TouchableOpacity>
+            )}
+            {canManageTeam && (
+              <TouchableOpacity
+                style={styles.settingsButton}
+                onPress={handleTeamManagement}
+              >
+                <Ionicons name="settings-outline" size={20} color="white" />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </View>
 
@@ -145,9 +165,15 @@ const styles = StyleSheet.create({
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   teamTitleContainer: {
     flex: 1,
+  },
+  headerButtonsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   teamTitle: {
     fontSize: 24,
@@ -158,6 +184,20 @@ const styles = StyleSheet.create({
   teamSubtitle: {
     fontSize: 16,
     color: 'rgba(255, 255, 255, 0.8)',
+    fontWeight: '500',
+  },
+  headerExitButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  headerExitButtonText: {
+    color: colors.orange[500],
+    fontSize: 11,
     fontWeight: '500',
   },
   settingsButton: {
@@ -221,7 +261,7 @@ const styles = StyleSheet.create({
   recentMatchesButton: {
     backgroundColor: colors.blue[500],
     borderRadius: 16,
-    marginTop: 16,
+    marginTop: 0,
     shadowColor: colors.blue[300],
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,

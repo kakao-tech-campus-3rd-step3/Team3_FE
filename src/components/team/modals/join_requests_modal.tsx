@@ -63,10 +63,8 @@ export default function JoinRequestsModal({
                   <View style={styles.requestHeader}>
                     <View style={styles.applicantInfo}>
                       <Text style={styles.applicantName}>
-                        신청자 ID: {request.applicantId}
-                      </Text>
-                      <Text style={styles.applicantEmail}>
-                        신청 ID: {request.id}
+                        {request.applicantName ||
+                          `사용자 ${request.applicantId}`}
                       </Text>
                     </View>
                     <View style={styles.requestStatus}>
@@ -98,12 +96,6 @@ export default function JoinRequestsModal({
                   </View>
 
                   <View style={styles.requestDetails}>
-                    <View style={styles.requestDetailRow}>
-                      <Text style={styles.requestDetailLabel}>팀 ID:</Text>
-                      <Text style={styles.requestDetailValue}>
-                        {request.teamId}
-                      </Text>
-                    </View>
                     {request.decisionReason && (
                       <View style={styles.requestDetailRow}>
                         <Text style={styles.requestDetailLabel}>

@@ -12,6 +12,7 @@ import {
   useTeamMembers,
   useRemoveMemberMutation,
   useUpdateMemberRoleMutation,
+  useUserProfile,
 } from '@/src/hooks/queries';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
 import { getRoleDisplayName } from '@/src/utils/team';
@@ -30,6 +31,7 @@ export default function MemberManagementScreen({
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
   const numericTeamId = teamId ? Number(teamId) : 0;
+  const { data: userProfile } = useUserProfile();
   const {
     data: teamMembers,
     isLoading,
@@ -145,13 +147,46 @@ export default function MemberManagementScreen({
   };
 
   const handleRemoveMember = (member: TeamMember) => {
+    // 현재 사용자의 팀 멤버 정보 찾기
+    const teamMembersData = teamMembers?.content || [];
+    const currentUserMember = teamMembersData.find(
+      m => m.name === userProfile?.name
+    );
+
+    if (!currentUserMember) {
+      Alert.alert('오류', '현재 사용자 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    // 권한 체크: LEADER와 VICE_LEADER만 강퇴 권한 있음
+    if (
+      currentUserMember.role !== 'LEADER' &&
+      currentUserMember.role !== 'VICE_LEADER'
+    ) {
+      Alert.alert('권한 없음', '팀장과 부팀장만 팀원을 강퇴할 수 있습니다.');
+      return;
+    }
+
+    // 회장은 누구도 강퇴할 수 없음
     if (member.role === 'LEADER') {
       Alert.alert('알림', '회장은 강퇴할 수 없습니다.');
       return;
     }
 
+    // 권한 규칙 체크
+    if (currentUserMember.role === 'VICE_LEADER') {
+      // 부회장은 일반 멤버만 추방 가능
+      if (member.role !== 'MEMBER') {
+        Alert.alert('권한 없음', '부회장은 일반 멤버만 강퇴할 수 있습니다.');
+        return;
+      }
+    }
+
     if (!numericTeamId || !member.userId) {
-      Alert.alert('오류', '팀 정보 또는 사용자 정보가 올바르지 않습니다.');
+      Alert.alert(
+        '오류',
+        '팀 정보 또는 사용자 정보가 올바르지 않을 수 없습니다.'
+      );
       return;
     }
 
@@ -176,10 +211,29 @@ export default function MemberManagementScreen({
                 },
                 onError: error => {
                   console.error('팀원 강퇴 실패:', error);
-                  Alert.alert(
-                    '오류',
-                    '팀원 강퇴에 실패했습니다. 다시 시도해주세요.'
-                  );
+
+                  // 에러 메시지 파싱
+                  let errorMessage =
+                    '팀원 강퇴에 실패했습니다. 다시 시도해주세요.';
+
+                  if (error && typeof error === 'object' && 'status' in error) {
+                    const apiError = error as {
+                      status: number;
+                      message?: string;
+                      data?: any;
+                    };
+
+                    if (apiError.status === 403) {
+                      errorMessage =
+                        '팀원 강퇴 권한이 없습니다. 회장과 부회장만 강퇴할 수 있습니다.';
+                    } else if (apiError.status === 404) {
+                      errorMessage = '팀원을 찾을 수 없습니다.';
+                    } else if (apiError.message) {
+                      errorMessage = apiError.message;
+                    }
+                  }
+
+                  Alert.alert('오류', errorMessage);
                 },
               }
             );
@@ -203,6 +257,9 @@ export default function MemberManagementScreen({
           <MemberInfoCard />
           <MemberListSection
             teamMembers={teamMembers.content}
+            currentUserMember={teamMembers.content.find(
+              m => m.name === userProfile?.name
+            )}
             onMemberPress={handleMemberPress}
             onRoleChange={handleRoleChange}
             onRemoveMember={handleRemoveMember}

@@ -134,6 +134,12 @@ export const joinTeamApi = {
     apiClient.post<JoinTeamResponse>(TEAM_API.JOIN_TEAM, { teamId }),
 };
 
+export const teamExitApi = {
+  exitTeam: (teamId: string | number): Promise<void> => {
+    return apiClient.delete<void>(TEAM_API.EXIT_TEAM(teamId));
+  },
+};
+
 export const teamEditApi = {
   updateTeam: async (
     teamId: string | number,
@@ -181,6 +187,7 @@ export const teamJoinRequestApi = {
     const apiResponse = await apiClient.get<ApiTeamJoinRequestPageResponse>(
       `${TEAM_API.GET_JOIN_WAITING_LIST(teamId)}?${params.toString()}`
     );
+
     return transformTeamJoinRequestPageResponse(apiResponse);
   },
 
@@ -234,7 +241,6 @@ export const teamDeleteApi = {
   },
 };
 
-// 사용자별 가입 신청 목록 조회 API
 export const userJoinWaitingApi = {
   getMyJoinWaitingList: async (
     page: number = 0,

@@ -27,8 +27,8 @@ export interface ApiTeamDetailResponse {
   name: string;
   description: string;
   university: string;
-  skillLevel: string; // API에서는 string으로 받음 (AMATEUR, SEMI_PRO, PRO)
-  teamType: string; // API에서는 string으로 받음 (CENTRAL_CLUB, DEPARTMENT_CLUB, OTHER)
+  skillLevel: string;
+  teamType: string;
   memberCount: number;
   createdAt: string;
 }
@@ -49,8 +49,8 @@ export interface ApiTeamListItem {
   name: string;
   description: string;
   university: string;
-  skillLevel: string; // API에서는 string으로 받음 (AMATEUR, SEMI_PRO, PRO)
-  teamType: string; // API에서는 string으로 받음 (CENTRAL_CLUB, DEPARTMENT_CLUB, OTHER)
+  skillLevel: string;
+  teamType: string;
   memberCount: number;
   captainName: string;
   captainId: number;
@@ -70,7 +70,6 @@ export interface TeamListItem {
   createdAt: string;
 }
 
-// Spring Data Page 포맷 응답 타입
 export interface Pageable {
   pageNumber: number;
   pageSize: number;
@@ -216,9 +215,10 @@ export interface JoinRequest {
 
 export interface ApiTeamJoinRequest {
   id: number;
+  applicantName: string;
   teamId: number;
   applicantId: number;
-  status: string; // "대기중" | "승인" | "거절" | "취소"
+  status: string;
   decisionReason: string | null;
   decidedBy: number | null;
   decidedAt: string | null;
@@ -226,6 +226,7 @@ export interface ApiTeamJoinRequest {
 
 export interface TeamJoinRequest {
   id: number;
+  applicantName: string;
   teamId: number;
   applicantId: number;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
@@ -262,7 +263,6 @@ export interface TeamJoinRequestPageResponse {
   empty: boolean;
 }
 
-// 팀 가입 신청 관련 타입
 export interface JoinWaitingRequest {
   message?: string;
 }
@@ -277,28 +277,24 @@ export interface JoinWaitingResponse {
   decidedAt: string | null;
 }
 
-// 팀 가입 승인 요청 타입
 export interface JoinWaitingApproveRequest {
   role: '회장' | '부회장' | '일반멤버';
   decisionReason?: string;
 }
 
-// 팀 가입 거절 요청 타입
 export interface JoinWaitingRejectRequest {
   reason: string;
 }
 
-// 팀 가입 취소 요청 타입
 export interface JoinWaitingCancelRequest {
   decisionReason?: string;
 }
 
-// 사용자별 가입 신청 목록 조회 관련 타입
 export interface ApiUserJoinWaitingItem {
   id: number;
   teamId: number;
   applicantId: number;
-  status: string; // "대기중" | "승인" | "거절" | "취소"
+  status: string;
   decisionReason: string | null;
   decidedBy: number | null;
   decidedAt: string | null;

@@ -26,6 +26,7 @@ export const TEAM_API = {
   GET_UNIVERSITY_LIST: '/api/universities',
   GET_TEAMS_BY_UNIVERSITY: '/api/teams',
   JOIN_TEAM: '/api/teams/join',
+  EXIT_TEAM: (teamId: string | number) => `/api/teams/${teamId}/users/me`,
   GET_JOIN_REQUESTS: (teamId: string | number) =>
     `/api/teams/${teamId}/joinRequests`,
   GET_JOIN_WAITING_LIST: (teamId: string | number) =>
