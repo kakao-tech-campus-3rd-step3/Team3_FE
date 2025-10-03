@@ -122,6 +122,10 @@ export const JOIN_REQUEST_STATUS_MAPPING: Record<
   승인: 'APPROVED',
   거절: 'REJECTED',
   취소: 'CANCELED',
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELED: 'CANCELED',
 };
 
 export const getJoinRequestStatusInEnglish = (
@@ -135,6 +139,7 @@ export const transformTeamJoinRequestItem = (
 ): TeamJoinRequest => {
   return {
     id: apiItem.id,
+    applicantName: apiItem.applicantName,
     teamId: apiItem.teamId,
     applicantId: apiItem.applicantId,
     status: getJoinRequestStatusInEnglish(apiItem.status),
@@ -167,7 +172,6 @@ export const getJoinRequestStatusDisplayName = (
   return statusMapping[status] || '대기중';
 };
 
-// 사용자별 가입 신청 목록 조회 관련 변환 함수들
 export const USER_JOIN_WAITING_STATUS_MAPPING: Record<
   string,
   UserJoinWaitingItem['status']
