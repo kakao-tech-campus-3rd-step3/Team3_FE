@@ -10,6 +10,7 @@ import { styles } from './member_list_section_styles';
 
 interface MemberListSectionProps {
   teamMembers: TeamMember[];
+  currentUserMember?: TeamMember | null;
   onMemberPress: (member: TeamMember) => void;
   onRoleChange: (member: TeamMember) => void;
   onRemoveMember: (member: TeamMember) => void;
@@ -17,6 +18,7 @@ interface MemberListSectionProps {
 
 export default memo(function MemberListSection({
   teamMembers,
+  currentUserMember,
   onMemberPress,
   onRoleChange,
   onRemoveMember,
@@ -78,36 +80,40 @@ export default memo(function MemberListSection({
               </View>
             </View>
 
-            {member.role !== 'LEADER' && (
-              <View style={styles.memberActions}>
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  onPress={() => onRoleChange(member)}
-                >
-                  <Ionicons
-                    name="swap-horizontal-outline"
-                    size={18}
-                    color={theme.colors.blue[600]}
-                  />
-                  <Text style={styles.actionButtonText}>역할변경</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.removeButton]}
-                  onPress={() => onRemoveMember(member)}
-                >
-                  <Ionicons
-                    name="trash-outline"
-                    size={18}
-                    color={theme.colors.red[600]}
-                  />
-                  <Text
-                    style={[styles.actionButtonText, styles.removeButtonText]}
+            {member.role !== 'LEADER' &&
+              currentUserMember &&
+              (currentUserMember.role === 'LEADER' ||
+                (currentUserMember.role === 'VICE_LEADER' &&
+                  member.role === 'MEMBER')) && (
+                <View style={styles.memberActions}>
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() => onRoleChange(member)}
                   >
-                    강퇴
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
+                    <Ionicons
+                      name="swap-horizontal-outline"
+                      size={18}
+                      color={theme.colors.blue[600]}
+                    />
+                    <Text style={styles.actionButtonText}>역할변경</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.actionButton, styles.removeButton]}
+                    onPress={() => onRemoveMember(member)}
+                  >
+                    <Ionicons
+                      name="trash-outline"
+                      size={18}
+                      color={theme.colors.red[600]}
+                    />
+                    <Text
+                      style={[styles.actionButtonText, styles.removeButtonText]}
+                    >
+                      강퇴
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
           </TouchableOpacity>
         ))}
 
