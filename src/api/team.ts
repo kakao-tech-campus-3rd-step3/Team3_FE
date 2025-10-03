@@ -239,6 +239,58 @@ export const teamDeleteApi = {
       TEAM_API.DELETE(teamId)
     );
   },
+
+  // 팀과 관련된 매치 데이터 확인
+  getTeamMatches: async (teamId: string | number) => {
+    try {
+      console.log(`팀 ${teamId} 관련 매치 데이터 확인 시작`);
+
+      // 매치 요청 데이터 확인
+      let matchRequests = null;
+      try {
+        matchRequests = await apiClient.get('/api/matches/receive/me/pending');
+        console.log(`팀 매치 요청 확인:`, matchRequests);
+      } catch (error) {
+        console.log(`매치 요청 조회 실패:`, error);
+      }
+
+      // 최근 매치 데이터 확인
+      let recentMatches = null;
+      try {
+        recentMatches = await apiClient.get('/api/teams/me/matches');
+        console.log(`팀 최근 매치 확인:`, recentMatches);
+      } catch (error) {
+        console.log(`최근 매치 조회 실패:`, error);
+      }
+
+      // 매치 생성 대기 목록 확인
+      let matchWaiting = null;
+      try {
+        matchWaiting = await apiClient.get(
+          `/api/matches/waiting?teamId=${teamId}`
+        );
+        console.log(`매치 대기 목록 확인:`, matchWaiting);
+      } catch (error) {
+        console.log(`매치 대기 목록 조회 실패:`, error);
+      }
+
+      const result = {
+        matchRequests,
+        recentMatches,
+        matchWaiting,
+      };
+
+      console.log(`팀 ${teamId} 매치 관련 데이터 결과:`, result);
+      return result;
+    } catch (error) {
+      console.log(`팀 ${teamId} 매치 데이터 조회 실패:`, error);
+      return {
+        matchRequests: null,
+        recentMatches: null,
+        matchWaiting: null,
+      };
+    }
+  },
 };
 
 export const userJoinWaitingApi = {

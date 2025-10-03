@@ -159,7 +159,7 @@ export default function JoinWaitingList({ onClose }: JoinWaitingListProps) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>내 팀 가입 신청</Text>
+        <Text style={styles.title}>나의 팀 가입 신청</Text>
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
           <Ionicons name="close" size={24} color={colors.gray[600]} />
         </TouchableOpacity>
