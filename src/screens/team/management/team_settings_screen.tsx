@@ -108,34 +108,7 @@ export default function TeamSettingsScreen({
     );
   }
 
-  if (!canManageTeam) {
-    return (
-      <View style={styles.container}>
-        <CustomHeader title="팀 관리" />
-        <View style={styles.loadingContainer}>
-          <Text
-            style={{
-              textAlign: 'center',
-              color: colors.red[500],
-              fontSize: 16,
-              marginBottom: 8,
-            }}
-          >
-            접근 권한이 없습니다
-          </Text>
-          <Text
-            style={{
-              textAlign: 'center',
-              color: colors.gray[600],
-              fontSize: 14,
-            }}
-          >
-            팀 관리 기능은 회장과 부회장만 사용할 수 있습니다.
-          </Text>
-        </View>
-      </View>
-    );
-  }
+  // 권한 충분하지 않은 경우에도 일반 멤버는 팀 탈퇴 기능만 사용 가능하도록 허용
 
   if (!joinRequestsData) {
     return (
@@ -216,7 +189,7 @@ export default function TeamSettingsScreen({
   const handleDeleteTeam = () => {
     Alert.alert(
       '팀 삭제',
-      '정말로 팀을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.\n\n팀 가입 대기 목록이나 다른 연관 데이터가 있으면 먼저 정리해주세요.',
+      '정말로 팀을 삭제하시겠습니까?\n\n⚠️ 이 작업은 되돌릴 수 없습니다.\n\n팀 삭제 전에 확인사항:\n• 팀 가입 대기 목록 정리\n• 진행 중인 매치 요청 처리\n• 다른 팀원들의 팀 탈퇴\n\n이 모든 작업이 완료된 후 삭제가 가능합니다.',
       [
         { text: '취소', style: 'cancel' },
         {
@@ -247,7 +220,7 @@ export default function TeamSettingsScreen({
 
                   if (apiError.status === 500) {
                     errorMessage =
-                      '팀 삭제 중 데이터베이스 오류가 발생했습니다. 팀 가입 대기 목록이나 다른 연관 데이터를 먼저 정리해주세요.';
+                      '팀 삭제 중 데이터베이스 오류가 발생했습니다.\n\n다음 데이터들이 남아있어 팀을 삭제할 수 없습니다:\n• 팀 가입 대기 목록\n• 진행 중인 매치 요청\n• 팀 관련 업무 데이터\n\n팀에서 먼저 이러한 데이터들을 정리해주세요.';
                   } else if (apiError.status === 404) {
                     errorMessage = '팀을 찾을 수 없습니다.';
                   } else if (apiError.status === 403) {
