@@ -1,10 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   Modal,
   Alert,
@@ -36,8 +35,7 @@ export default function CancelModal({
   onOuterModalClose,
 }: CancelModalProps) {
   const router = useRouter();
-  const [reason, setReason] = useState('');
-  const { cancelJoinRequest, isCanceling, cancelError } = useTeamJoinRequest();
+  const { cancelJoinRequest, isCanceling } = useTeamJoinRequest();
 
   const handleCancel = () => {
     if (!joinWaitingItem) return;
@@ -58,13 +56,10 @@ export default function CancelModal({
               {
                 teamId: joinWaitingItem.teamId,
                 joinWaitingId: joinWaitingItem.id,
-                data: {
-                  decisionReason: reason.trim() || undefined,
-                },
+                data: {},
               },
               {
                 onSuccess: () => {
-                  setReason('');
                   onSuccess();
                   onClose();
                   Alert.alert('취소 완료', '팀 가입 신청이 취소되었습니다.', [
@@ -92,7 +87,6 @@ export default function CancelModal({
   };
 
   const handleClose = () => {
-    setReason('');
     onClose();
   };
 
@@ -147,36 +141,6 @@ export default function CancelModal({
             <View style={styles.teamInfoContent}>
               <Text style={styles.teamIdLabel}>팀 ID</Text>
               <Text style={styles.teamIdValue}>{joinWaitingItem.teamId}</Text>
-            </View>
-          </View>
-
-          <View style={styles.reasonSection}>
-            <View style={styles.reasonHeader}>
-              <Ionicons
-                name="chatbubble-outline"
-                size={20}
-                color={colors.gray[600]}
-              />
-              <Text style={styles.reasonLabel}>취소 사유 (선택사항)</Text>
-            </View>
-            <Text style={styles.reasonSubtext}>
-              취소 사유를 남기시면 팀 관리자에게 전달됩니다.
-            </Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.reasonInput}
-                value={reason}
-                onChangeText={setReason}
-                placeholder="예: 개인 사정으로 인한 취소"
-                placeholderTextColor={colors.gray[400]}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-                maxLength={200}
-              />
-              <View style={styles.inputFooter}>
-                <Text style={styles.characterCount}>{reason.length}/200</Text>
-              </View>
             </View>
           </View>
         </ScrollView>

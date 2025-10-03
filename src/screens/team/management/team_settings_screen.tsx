@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
+import * as api from '@/src/api';
 import { acceptMatchRequestApi, rejectMatchRequestApi } from '@/src/api/match';
 import { teamJoinRequestApi } from '@/src/api/team';
 import JoinRequestsModal from '@/src/components/team/modals/join_requests_modal';
@@ -186,16 +187,48 @@ export default function TeamSettingsScreen({
     ]);
   };
 
-  const handleDeleteTeam = () => {
+  const handleDeleteTeam = async () => {
+    // 팀과 관련된 매치 데이터 확인
+    console.log(`=== 팀 ${numericTeamId} 삭제 전 매치 데이터 확인 ===`);
+    try {
+      const matchData: any =
+        await api.teamDeleteApi.getTeamMatches(numericTeamId);
+      console.log('매치 관련 데이터:', matchData);
+
+      // 매치 데이터가 있는지 확인하고 로그 출력
+      if (
+        matchData.matchRequests &&
+        matchData.matchRequests.content &&
+        matchData.matchRequests.content.length > 0
+      ) {
+        console.log(
+          `대기 중인 매치 요청 ${matchData.matchRequests.content.length}개 발견`
+        );
+      }
+
+      if (matchData.recentMatches && matchData.recentMatches.length > 0) {
+        console.log(
+          `완료된 매치 기록 ${matchData.recentMatches.length}개 발견`
+        );
+      }
+
+      if (matchData.matchWaiting && matchData.matchWaiting.length > 0) {
+        console.log(`매치 생성 대기 ${matchData.matchWaiting.length}개 발견`);
+      }
+    } catch (error) {
+      console.log('매치 데이터 조회 중 오류:', error);
+    }
+
     Alert.alert(
       '팀 삭제',
-      '정말로 팀을 삭제하시겠습니까?\n\n⚠️ 이 작업은 되돌릴 수 없습니다.\n\n팀 삭제 전에 확인사항:\n• 팀 가입 대기 목록 정리\n• 진행 중인 매치 요청 처리\n• 다른 팀원들의 팀 탈퇴\n\n이 모든 작업이 완료된 후 삭제가 가능합니다.',
+      '정말로 팀을 삭제하시겠습니까?\n\n⚠️ 이 작업은 되돌릴 수 없습니다.\n\n💡 매치를 생성했다면 팀 삭제가 막힐 수 있습니다.\n백엔드에서 cascade 삭제가 구현되어야 합니다.',
       [
         { text: '취소', style: 'cancel' },
         {
           text: '삭제',
           style: 'destructive',
           onPress: () => {
+            console.log(`=== 팀 ${numericTeamId} 삭제 요청 시작 ===`);
             deleteTeamMutation.mutate(numericTeamId, {
               onSuccess: () => {
                 Alert.alert('성공', '팀이 성공적으로 삭제되었습니다.', [
