@@ -13,7 +13,7 @@ export default {
     splash: {
       image: './assets/images/splash.png',
       resizeMode: 'contain',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#2D5016',
     },
     ios: {
       supportsTablet: true,
@@ -25,7 +25,7 @@ export default {
     android: {
       package: 'com.cheogo.shootdoori',
       adaptiveIcon: {
-        foregroundImage: './assets/images/splash.png',
+        foregroundImage: './assets/images/logo.png',
         backgroundColor: '#ffffff',
       },
       edgeToEdgeEnabled: true,
