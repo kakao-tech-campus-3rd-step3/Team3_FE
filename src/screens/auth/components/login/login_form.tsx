@@ -22,7 +22,9 @@ function LoginForm() {
   const [passwordError, setPasswordError] = useState<string>('');
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      return;
+    }
 
     setPasswordError('');
     try {

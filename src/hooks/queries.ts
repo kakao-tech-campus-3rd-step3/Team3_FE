@@ -114,7 +114,7 @@ export const queries = {
     key: ['teamMatchRequests'] as const,
     fn: async () => {
       const response = await api.teamMatchApi.getTeamMatchRequests();
-      return response.content; // content 배열만 반환
+      return response.content;
     },
   },
 } as const;
@@ -295,8 +295,12 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: logout,
-    onSuccess: () => {
-      queryClient.clear();
+    onSuccess: async () => {
+      await queryClient.clear();
+      router.replace('/(auth)/login');
+    },
+    onError: (error: unknown) => {
+      console.error('로그아웃 실패:', error);
     },
   });
 }
@@ -306,10 +310,13 @@ export function useLoginMutation() {
 
   return useMutation({
     mutationFn: queries.login.fn,
-    onSuccess: (data: LoginResponse) => {
-      login(data.accessToken);
-      queryClient.invalidateQueries({ queryKey: queries.login.key });
-      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+    onSuccess: async (data: LoginResponse) => {
+      await login(data.accessToken);
+      await queryClient.clear();
+      router.replace('/(tabs)');
+    },
+    onError: (error: unknown) => {
+      console.error('로그인 실패:', error);
     },
   });
 }
@@ -319,10 +326,10 @@ export function useRegisterMutation() {
 
   return useMutation({
     mutationFn: queries.register.fn,
-    onSuccess: (data: RegisterResponse) => {
-      login(data.accessToken);
-      queryClient.invalidateQueries({ queryKey: queries.login.key });
-      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+    onSuccess: async (data: RegisterResponse) => {
+      await login(data.accessToken);
+      await queryClient.clear();
+      router.replace('/(tabs)');
     },
     onError: (error: unknown) => {
       console.error('회원가입 실패:', error);

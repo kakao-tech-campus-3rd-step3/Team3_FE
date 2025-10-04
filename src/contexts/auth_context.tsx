@@ -24,29 +24,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    apiClient.setToken(token);
-  }, [token]);
-
-  useEffect(() => {
     apiClient.setOnTokenExpired(() => {
       setToken(null);
       queryClient.clear();
     });
-  }, [setToken]);
+  }, [setToken, token]);
 
   const login = async (newToken: string) => {
+    apiClient.setToken(newToken);
     setToken(newToken);
   };
 
   const logout = async () => {
     try {
-      // 백엔드에 모든 기기 로그아웃 요청 (refreshToken 쿠키 불필요)
       await authApi.logoutAll();
     } catch (error) {
-      // 로그아웃 API 실패해도 클라이언트에서는 로그아웃 처리
       console.warn('로그아웃 API 호출 실패:', error);
     } finally {
-      // 항상 클라이언트 상태 정리
       setToken(null);
       queryClient.clear();
     }
