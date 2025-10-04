@@ -38,12 +38,6 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
   }, [visible, value]);
 
   const handleConfirm = () => {
-    console.log('ModalDatePicker handleConfirm 호출됨');
-    console.log('선택된 값들:');
-    console.log('selectedMonth (0-11):', selectedMonth);
-    console.log('selectedDay (1-31):', selectedDay);
-    console.log('currentYear:', currentYear);
-
     const confirmed = new Date(
       currentYear,
       selectedMonth,
@@ -52,10 +46,6 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
       0,
       0
     );
-    console.log('생성된 Date 객체:', confirmed, 12, 0, 0);
-    console.log('Date.getMonth() (0-11):', confirmed.getMonth());
-    console.log('Date.getDate() (1-31):', confirmed.getDate());
-    console.log('Date.getFullYear():', confirmed.getFullYear());
 
     onDateChange(confirmed);
     onClose();
