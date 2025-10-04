@@ -292,7 +292,9 @@ export interface JoinWaitingCancelRequest {
 
 export interface ApiUserJoinWaitingItem {
   id: number;
+  applicantName: string;
   teamId: number;
+  teamName: string;
   applicantId: number;
   status: string;
   decisionReason: string | null;
@@ -302,7 +304,9 @@ export interface ApiUserJoinWaitingItem {
 
 export interface UserJoinWaitingItem {
   id: number;
+  applicantName: string;
   teamId: number;
+  teamName: string;
   applicantId: number;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
   decisionReason: string | null;

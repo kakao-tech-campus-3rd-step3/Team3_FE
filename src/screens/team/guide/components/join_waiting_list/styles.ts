@@ -30,16 +30,16 @@ export const styles = StyleSheet.create({
   joinWaitingItem: {
     backgroundColor: colors.white,
     borderRadius: 12,
-    padding: 16,
+    padding: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: colors.gray[200],
-    shadowColor: colors.gray[900],
+    borderColor: colors.blue[200],
+    shadowColor: colors.blue[500],
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
     width: '100%',
@@ -48,12 +48,31 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 6,
   },
-  teamIdText: {
+  teamNameText: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.blue[600],
+    flex: 1,
+    marginRight: 12,
+  },
+  teamDetails: {
+    marginBottom: 8,
+    paddingVertical: 6,
+    borderTopWidth: 2,
+    borderTopColor: colors.blue[200],
+    paddingTop: 8,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  detailText: {
     fontSize: 16,
-    fontWeight: '500',
-    color: colors.text.main,
+    color: colors.text.sub,
+    marginLeft: 8,
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -64,16 +83,6 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     color: colors.text.main,
-  },
-  decisionReason: {
-    fontSize: 14,
-    color: colors.text.sub,
-    marginBottom: 4,
-  },
-  decidedAt: {
-    fontSize: 12,
-    color: colors.text.light,
-    marginBottom: 8,
   },
   viewTeamButton: {
     backgroundColor: colors.blue[500],
@@ -91,7 +100,7 @@ export const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 16,
+    marginTop: 8,
     width: '100%',
   },
   cancelButton: {

@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 
 import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
@@ -63,21 +62,22 @@ export default function JoinWaitingList({ onClose }: JoinWaitingListProps) {
     return (
       <View style={styles.joinWaitingItem}>
         <View style={styles.itemHeader}>
-          <Text style={styles.teamIdText}>팀 ID: {item.teamId}</Text>
+          <Text style={styles.teamNameText}>팀명: {item.teamName}</Text>
           <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
             <Text style={styles.statusText}>{statusText}</Text>
           </View>
         </View>
 
-        {item.decisionReason && (
-          <Text style={styles.decisionReason}>사유: {item.decisionReason}</Text>
-        )}
-
-        {item.decidedAt && (
-          <Text style={styles.decidedAt}>
-            처리일: {new Date(item.decidedAt).toLocaleDateString('ko-KR')}
-          </Text>
-        )}
+        <View style={styles.teamDetails}>
+          <View style={styles.detailRow}>
+            <Ionicons
+              name="person-outline"
+              size={16}
+              color={colors.green[500]}
+            />
+            <Text style={styles.detailText}>신청자: {item.applicantName}</Text>
+          </View>
+        </View>
 
         {item.status === 'APPROVED' && (
           <View style={styles.buttonContainer}>

@@ -139,8 +139,8 @@ export default function CancelModal({
               <Text style={styles.teamInfoTitle}>신청한 팀</Text>
             </View>
             <View style={styles.teamInfoContent}>
-              <Text style={styles.teamIdLabel}>팀 ID</Text>
-              <Text style={styles.teamIdValue}>{joinWaitingItem.teamId}</Text>
+              <Text style={styles.teamIdLabel}>팀명</Text>
+              <Text style={styles.teamIdValue}>{joinWaitingItem.teamName}</Text>
             </View>
           </View>
         </ScrollView>
