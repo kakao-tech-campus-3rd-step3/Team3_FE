@@ -114,18 +114,13 @@ export const queries = {
     key: ['teamMatchRequests'] as const,
     fn: async () => {
       const response = await api.teamMatchApi.getTeamMatchRequests();
-      return response.content; // content 배열만 반환
+      return response.content;
     },
   },
 } as const;
 
 export function useUserProfile() {
   const { token } = useAuth();
-
-  console.log('👤 useUserProfile: 쿼리 실행', {
-    hasToken: !!token,
-    token: token ? '토큰 있음' : '토큰 없음',
-  });
 
   return useQuery({
     queryKey: queries.userProfile.key,
@@ -301,16 +296,11 @@ export function useLogout() {
   return useMutation({
     mutationFn: logout,
     onSuccess: async () => {
-      console.log('🚪 useLogout: 로그아웃 성공!');
-      console.log('🧹 useLogout: 캐시 정리 중...');
-      await queryClient.clear(); // 비동기 캐시 정리 확실히
-      console.log('✅ useLogout: 캐시 정리 완료');
-      console.log('🔙 useLogout: 로그인 화면으로 이동 중...');
-      router.replace('/(auth)/login'); // 명시적으로 로그인 화면으로
-      console.log('✅ useLogout: 로그인 화면 이동 완료');
+      await queryClient.clear();
+      router.replace('/(auth)/login');
     },
     onError: (error: unknown) => {
-      console.error('❌ useLogout: 로그아웃 실패', error);
+      console.error('로그아웃 실패:', error);
     },
   });
 }
@@ -321,23 +311,12 @@ export function useLoginMutation() {
   return useMutation({
     mutationFn: queries.login.fn,
     onSuccess: async (data: LoginResponse) => {
-      console.log('🎉 useLoginMutation: 로그인 성공!', {
-        hasAccessToken: !!data.accessToken,
-        accessToken: data.accessToken ? '토큰 있음' : '토큰 없음',
-      });
-
-      console.log('🔐 useLoginMutation: AuthContext login 호출 중...');
       await login(data.accessToken);
-
-      console.log('🧹 useLoginMutation: 다른 사용자 데이터 정리 중...');
       await queryClient.clear();
-
-      console.log('🏠 useLoginMutation: 홈으로 이동 중...');
       router.replace('/(tabs)');
-      console.log('✅ useLoginMutation: 홈 이동 완료');
     },
     onError: (error: unknown) => {
-      console.error('❌ useLoginMutation: 로그인 실패', error);
+      console.error('로그인 실패:', error);
     },
   });
 }
@@ -348,23 +327,12 @@ export function useRegisterMutation() {
   return useMutation({
     mutationFn: queries.register.fn,
     onSuccess: async (data: RegisterResponse) => {
-      console.log('🎉 useRegisterMutation: 회원가입 성공!', {
-        hasAccessToken: !!data.accessToken,
-        accessToken: data.accessToken ? '토큰 있음' : '토큰 없음',
-      });
-
-      console.log('🔐 useRegisterMutation: AuthContext login 호출 중...');
       await login(data.accessToken);
-
-      console.log('🧹 useRegisterMutation: 다른 사용자 데이터 정리 중...');
       await queryClient.clear();
-
-      console.log('🏠 useRegisterMutation: 홈으로 이동 중...');
       router.replace('/(tabs)');
-      console.log('✅ useRegisterMutation: 홈 이동 완료');
     },
     onError: (error: unknown) => {
-      console.error('❌ useRegisterMutation: 회원가입 실패', error);
+      console.error('회원가입 실패:', error);
     },
   });
 }

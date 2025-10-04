@@ -9,21 +9,13 @@ import { theme } from '@/src/theme';
 export default function TabLayout() {
   const { isAuthenticated, isLoading } = useAuth();
 
-  console.log('🏠 TabLayout: 렌더링', { isAuthenticated, isLoading });
-
-  // 로딩 중일 때는 아무것도 렌더링하지 않음
   if (isLoading) {
-    console.log('⏳ TabLayout: 로딩 중');
     return null;
   }
 
-  // 로그인되지 않은 상태라면 로그인 화면으로 리다이렉트
   if (!isAuthenticated) {
-    console.log('❌ TabLayout: 인증 안됨, 로그인으로 리다이렉트');
     return <Redirect href="/(auth)/login" />;
   }
-
-  console.log('✅ TabLayout: 인증됨, 탭 스택 렌더링');
 
   return (
     <Tabs
