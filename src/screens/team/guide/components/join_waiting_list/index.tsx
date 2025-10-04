@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 
 import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
