@@ -34,9 +34,11 @@ export default function TabLayout() {
           },
           default: {
             backgroundColor: theme.colors.background.main,
-            height: theme.spacing.spacing15,
+            height: 100,
             borderTopWidth: 1,
             borderTopColor: theme.colors.gray[400],
+            paddingTop: 8,
+            paddingBottom: 8,
           },
         }),
       }}
