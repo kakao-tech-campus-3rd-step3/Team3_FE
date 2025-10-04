@@ -22,12 +22,21 @@ function LoginForm() {
   const [passwordError, setPasswordError] = useState<string>('');
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+    console.log('📝 LoginForm: 로그인 시도', { email: formData.email });
+
+    if (!validateForm()) {
+      console.log('❌ LoginForm: 폼 검증 실패');
+      return;
+    }
 
     setPasswordError('');
     try {
+      console.log('🚀 LoginForm: 로그인 뮤테이션 실행 중...');
       await loginMutation.mutateAsync(formData);
+      console.log('✅ LoginForm: 로그인 뮤테이션 성공');
+      // 로그인 성공 후 네비게이션은 useLoginMutation에서 처리
     } catch (error: unknown) {
+      console.log('❌ LoginForm: 로그인 뮤테이션 실패', error);
       const errorMessage = (error as Error).message || '로그인에 실패했습니다.';
 
       if (

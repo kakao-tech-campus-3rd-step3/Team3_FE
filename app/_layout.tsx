@@ -7,27 +7,44 @@ import ErrorBoundary from 'react-native-error-boundary';
 import 'react-native-reanimated';
 
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
-import { AuthProvider } from '@/src/contexts/auth_context';
+import { AuthProvider, useAuth } from '@/src/contexts/auth_context';
 import { queryClient } from '@/src/lib/query_client';
 
 function AppContent() {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+  const { isAuthenticated, isLoading } = useAuth();
 
-  if (!loaded) {
+  console.log('📱 AppContent: 렌더링', {
+    loaded,
+    isAuthenticated,
+    isLoading,
+    route: isAuthenticated ? '인증된 사용자 스택' : '인증 스택',
+  });
+
+  if (!loaded || isLoading) {
+    console.log('⏳ AppContent: 로딩 중이므로 null 반환', {
+      loaded,
+      isLoading,
+    });
     return null;
   }
 
   return (
     <ThemeProvider value={DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="team" />
-        <Stack.Screen name="profile" />
-        <Stack.Screen name="match_making/match_info" />
-        <Stack.Screen name="match_application/index" />
+        {isAuthenticated ? (
+          <>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="team" />
+            <Stack.Screen name="profile" />
+            <Stack.Screen name="match_making/match_info" />
+            <Stack.Screen name="match_application/index" />
+          </>
+        ) : (
+          <Stack.Screen name="(auth)" />
+        )}
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

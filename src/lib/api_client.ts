@@ -34,7 +34,14 @@ class ApiClient {
     endpoint: string,
     options: AxiosRequestConfig = {}
   ): Promise<T> {
+    console.log('🌐 ApiClient: API 요청 시작', {
+      endpoint,
+      method: options.method || 'GET',
+      hasToken: !!this.token,
+    });
+
     if (!this.token && this.isAuthRequiredEndpoint(endpoint)) {
+      console.log('❌ ApiClient: 토큰 없음, 인증 필요', { endpoint });
       this.onTokenExpired?.();
       throw new ApiError('Authentication required', 401);
     }
@@ -51,10 +58,23 @@ class ApiClient {
         },
       });
 
+      console.log('✅ ApiClient: API 요청 성공', {
+        endpoint,
+        status: response.status,
+      });
       return response.data;
     } catch (error: unknown) {
       if (isAxiosError(error) && error.response) {
+        console.log('❌ ApiClient: API 요청 실패', {
+          endpoint,
+          status: error.response.status,
+          statusText: error.response.statusText,
+        });
+
         if (error.response.status === 401 && this.onTokenExpired) {
+          console.log('🚨 ApiClient: 401 에러 발생, 토큰 만료 처리', {
+            endpoint,
+          });
           this.onTokenExpired();
         }
 

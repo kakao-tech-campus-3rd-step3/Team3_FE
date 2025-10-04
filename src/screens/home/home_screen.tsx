@@ -19,6 +19,12 @@ export default function HomeScreen() {
   const logoutMutation = useLogout();
   const alertShownRef = useRef(false);
 
+  console.log('🏠 HomeScreen: 렌더링', {
+    hasUserProfile: !!userProfile,
+    isLoading,
+    hasError: !!error,
+  });
+
   const handleLogoutAndRedirect = useCallback(async () => {
     try {
       await logoutMutation.mutateAsync();
