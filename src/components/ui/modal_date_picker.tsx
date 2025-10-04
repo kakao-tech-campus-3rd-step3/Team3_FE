@@ -1,12 +1,11 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useState, useEffect } from 'react';
 import {
   Modal,
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  ScrollView,
 } from 'react-native';
 
 import { theme } from '@/src/theme';
@@ -26,29 +25,67 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
   onClose,
   title = '날짜 선택',
 }) => {
-  const [internalDate, setInternalDate] = useState(value);
+  console.log('ModalDatePicker 렌더링됨, visible:', visible);
+  const currentYear = new Date().getFullYear();
+  const [selectedMonth, setSelectedMonth] = useState<number>(value.getMonth());
+  const [selectedDay, setSelectedDay] = useState<number>(value.getDate());
 
   useEffect(() => {
     if (visible) {
-      setInternalDate(value);
+      setSelectedMonth(value.getMonth());
+      setSelectedDay(value.getDate());
     }
   }, [visible, value]);
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
-    if (selectedDate) {
-      setInternalDate(selectedDate);
-    }
-  };
-
   const handleConfirm = () => {
-    onDateChange(internalDate);
+    console.log('ModalDatePicker handleConfirm 호출됨');
+    console.log('선택된 값들:');
+    console.log('selectedMonth (0-11):', selectedMonth);
+    console.log('selectedDay (1-31):', selectedDay);
+    console.log('currentYear:', currentYear);
+
+    const confirmed = new Date(
+      currentYear,
+      selectedMonth,
+      selectedDay,
+      12,
+      0,
+      0
+    );
+    console.log('생성된 Date 객체:', confirmed, 12, 0, 0);
+    console.log('Date.getMonth() (0-11):', confirmed.getMonth());
+    console.log('Date.getDate() (1-31):', confirmed.getDate());
+    console.log('Date.getFullYear():', confirmed.getFullYear());
+
+    onDateChange(confirmed);
     onClose();
   };
 
   const handleCancel = () => {
-    setInternalDate(value);
+    setSelectedMonth(value.getMonth());
+    setSelectedDay(value.getDate());
     onClose();
   };
+
+  // 해당 월의 일수 계산
+  const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month, 0).getDate();
+  };
+
+  // 월 범위 (0-11) - JavaScript Date 객체와 일치
+  const months = Array.from({ length: 12 }, (_, i) => i);
+
+  // 일 범위 (해당 월의 일수에 따라 동적)
+  const daysInSelectedMonth = getDaysInMonth(currentYear, selectedMonth);
+  const days = Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1);
+
+  // 월이 변경될 때 일이 유효하지 않으면 조정
+  useEffect(() => {
+    const daysInNewMonth = getDaysInMonth(currentYear, selectedMonth);
+    if (selectedDay > daysInNewMonth) {
+      setSelectedDay(daysInNewMonth);
+    }
+  }, [selectedMonth, selectedDay]);
 
   return (
     <Modal
@@ -78,34 +115,86 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
           </View>
 
           <View style={styles.pickerContainer}>
-            <DateTimePicker
-              value={internalDate}
-              mode="date"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={handleDateChange}
-              style={styles.picker}
-              locale="ko-KR"
-              textColor={theme.colors.text.main}
-            />
+            <View style={styles.pickerRow}>
+              <View style={styles.dateColumn}>
+                <Text style={styles.dateLabel}>월</Text>
+                <View style={styles.datePickerContainer}>
+                  <ScrollColumn
+                    values={months}
+                    selectedValue={selectedMonth}
+                    onSelect={setSelectedMonth}
+                    displayValue={value => value + 1} // 0-11을 1-12로 표시
+                  />
+                </View>
+              </View>
+              <View style={styles.dateColumnSpacer} />
+              <View style={styles.dateColumn}>
+                <Text style={styles.dateLabel}>일</Text>
+                <View style={styles.datePickerContainer}>
+                  <ScrollColumn
+                    values={days}
+                    selectedValue={selectedDay}
+                    onSelect={setSelectedDay}
+                  />
+                </View>
+              </View>
+            </View>
           </View>
 
-          {Platform.OS === 'ios' && (
-            <View style={styles.footer}>
-              <TouchableOpacity
-                onPress={handleConfirm}
-                style={styles.confirmButton}
-              >
-                <Text style={styles.confirmButtonText}>확인</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          <View style={styles.footer}>
+            <TouchableOpacity
+              onPress={handleConfirm}
+              style={styles.confirmButton}
+            >
+              <Text style={styles.confirmButtonText}>확인</Text>
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
       </TouchableOpacity>
     </Modal>
   );
 };
 
+interface ScrollColumnProps {
+  values: number[];
+  selectedValue: number;
+  onSelect: (value: number) => void;
+  displayValue?: (value: number) => number; // 표시용 변환 함수
+}
+
+const ScrollColumn: React.FC<ScrollColumnProps> = ({
+  values,
+  selectedValue,
+  onSelect,
+  displayValue = value => value, // 기본값: 그대로 표시
+}) => {
+  return (
+    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      {values.map(value => {
+        const isSelected = value === selectedValue;
+        return (
+          <TouchableOpacity
+            key={value}
+            onPress={() => onSelect(value)}
+            style={[styles.scrollItem, isSelected && styles.scrollItemSelected]}
+          >
+            <Text
+              style={[
+                styles.scrollItemText,
+                isSelected && styles.scrollItemTextSelected,
+              ]}
+            >
+              {displayValue(value)}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
+    </ScrollView>
+  );
+};
+
 const styles = StyleSheet.create({
+  // Modal Layout
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -117,6 +206,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: theme.spacing.spacing4,
     paddingBottom: theme.spacing.spacing6,
   },
+
+  // Header Styles
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -139,13 +230,58 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.font4,
     color: theme.colors.text.sub,
   },
+
+  // Picker Styles
   pickerContainer: {
     paddingHorizontal: theme.spacing.spacing5,
     paddingVertical: theme.spacing.spacing4,
   },
-  picker: {
-    height: Platform.OS === 'ios' ? 200 : 'auto',
+  pickerRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
   },
+  dateColumn: {
+    flex: 1,
+    marginRight: 8,
+  },
+  dateColumnSpacer: {
+    width: 8,
+  },
+  dateLabel: {
+    color: theme.colors.text.sub,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  datePickerContainer: {
+    borderWidth: 1,
+    borderColor: theme.colors.border.light,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+
+  // ScrollView Styles
+  scrollView: {
+    maxHeight: 200,
+  },
+  scrollItem: {
+    paddingVertical: 12,
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  scrollItemSelected: {
+    backgroundColor: theme.colors.blue[50],
+  },
+  scrollItemText: {
+    color: theme.colors.text.main,
+    fontWeight: theme.typography.fontWeight.regular,
+    fontSize: theme.typography.fontSize.font4,
+  },
+  scrollItemTextSelected: {
+    color: theme.colors.blue[600],
+    fontWeight: theme.typography.fontWeight.semibold,
+  },
+
+  // Footer Styles
   footer: {
     paddingHorizontal: theme.spacing.spacing5,
     paddingTop: theme.spacing.spacing4,
