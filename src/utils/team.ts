@@ -193,7 +193,9 @@ export const transformUserJoinWaitingItem = (
 ): UserJoinWaitingItem => {
   return {
     id: apiItem.id,
+    applicantName: apiItem.applicantName,
     teamId: apiItem.teamId,
+    teamName: apiItem.teamName,
     applicantId: apiItem.applicantId,
     status: getUserJoinWaitingStatusInEnglish(apiItem.status),
     decisionReason: apiItem.decisionReason,
