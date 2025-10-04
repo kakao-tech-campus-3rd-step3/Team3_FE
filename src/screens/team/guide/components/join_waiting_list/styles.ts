@@ -173,7 +173,6 @@ export const styles = StyleSheet.create({
     padding: 16,
     alignItems: 'center',
   },
-  // 취소 모달 스타일
   modalContainer: {
     flex: 1,
     backgroundColor: colors.background.main,

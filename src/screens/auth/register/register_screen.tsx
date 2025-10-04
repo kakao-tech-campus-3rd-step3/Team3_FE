@@ -39,7 +39,6 @@ export default function RegisterScreen() {
       const errorMessage =
         (error as Error).message || '회원가입에 실패했습니다.';
 
-      // 백엔드에서 보낸 구체적인 에러 메시지 표시
       if (errorMessage.includes('아이디의 형식이 올바르지 않습니다')) {
         Alert.alert(
           '입력 오류',

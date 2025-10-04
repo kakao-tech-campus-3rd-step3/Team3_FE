@@ -109,8 +109,6 @@ export default function TeamSettingsScreen({
     );
   }
 
-  // 권한 충분하지 않은 경우에도 일반 멤버는 팀 탈퇴 기능만 사용 가능하도록 허용
-
   if (!joinRequestsData) {
     return (
       <View style={styles.loadingContainer}>
@@ -145,10 +143,10 @@ export default function TeamSettingsScreen({
             }
 
             Alert.alert('성공', `가입을 ${action}했습니다.`);
-            refetch(); // 가입 신청 목록 새로고침
+            refetch();
             if (status === 'approved') {
-              refetchMembers(); // 팀 멤버 목록 새로고침
-              refetchTeam(); // 팀 정보 새로고침 (멤버 수 업데이트)
+              refetchMembers();
+              refetchTeam();
             }
           } catch (error) {
             Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
@@ -188,35 +186,27 @@ export default function TeamSettingsScreen({
   };
 
   const handleDeleteTeam = async () => {
-    // 팀과 관련된 매치 데이터 확인
-    console.log(`=== 팀 ${numericTeamId} 삭제 전 매치 데이터 확인 ===`);
     try {
       const matchData: any =
         await api.teamDeleteApi.getTeamMatches(numericTeamId);
-      console.log('매치 관련 데이터:', matchData);
 
-      // 매치 데이터가 있는지 확인하고 로그 출력
       if (
         matchData.matchRequests &&
         matchData.matchRequests.content &&
         matchData.matchRequests.content.length > 0
       ) {
-        console.log(
-          `대기 중인 매치 요청 ${matchData.matchRequests.content.length}개 발견`
-        );
+        // 대기 중인 매치 요청이 있는 경우
       }
 
       if (matchData.recentMatches && matchData.recentMatches.length > 0) {
-        console.log(
-          `완료된 매치 기록 ${matchData.recentMatches.length}개 발견`
-        );
+        // 완료된 매치 기록이 있는 경우
       }
 
       if (matchData.matchWaiting && matchData.matchWaiting.length > 0) {
-        console.log(`매치 생성 대기 ${matchData.matchWaiting.length}개 발견`);
+        // 매치 생성 대기가 있는 경우
       }
-    } catch (error) {
-      console.log('매치 데이터 조회 중 오류:', error);
+    } catch {
+      // 매치 데이터 조회 중 오류 발생
     }
 
     Alert.alert(
@@ -228,7 +218,6 @@ export default function TeamSettingsScreen({
           text: '삭제',
           style: 'destructive',
           onPress: () => {
-            console.log(`=== 팀 ${numericTeamId} 삭제 요청 시작 ===`);
             deleteTeamMutation.mutate(numericTeamId, {
               onSuccess: () => {
                 Alert.alert('성공', '팀이 성공적으로 삭제되었습니다.', [

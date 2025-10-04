@@ -25,7 +25,6 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
   onClose,
   title = '날짜 선택',
 }) => {
-  console.log('ModalDatePicker 렌더링됨, visible:', visible);
   const currentYear = new Date().getFullYear();
   const [selectedMonth, setSelectedMonth] = useState<number>(value.getMonth());
   const [selectedDay, setSelectedDay] = useState<number>(value.getDate());
