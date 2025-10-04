@@ -72,8 +72,10 @@ export default function MatchInfoScreen() {
   };
 
   const pad2 = (n: number) => String(n).padStart(2, '0');
-  const fmtDate = (d: Date) =>
-    `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  const fmtDate = (d: Date) => {
+    const result = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+    return result;
+  };
   const fmtTime = (d: Date) =>
     `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
 
@@ -158,7 +160,9 @@ export default function MatchInfoScreen() {
           <View style={style.dateTimeContainer}>
             <TouchableOpacity
               style={style.dateTimeButton}
-              onPress={() => setShowDatePicker(true)}
+              onPress={() => {
+                setShowDatePicker(true);
+              }}
             >
               <Text style={style.dateTimeLabel}>날짜</Text>
               <Text style={style.dateTimeValue}>
@@ -309,7 +313,9 @@ export default function MatchInfoScreen() {
       <ModalDatePicker
         visible={showDatePicker}
         value={date}
-        onDateChange={setDate}
+        onDateChange={newDate => {
+          setDate(newDate);
+        }}
         onClose={() => setShowDatePicker(false)}
         title="경기 날짜 선택"
       />

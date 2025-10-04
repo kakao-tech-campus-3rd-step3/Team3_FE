@@ -35,8 +35,23 @@ export default function RegisterScreen() {
         throw new Error('회원가입 실패');
       }
       Alert.alert('성공', '회원가입이 완료되었습니다.');
-    } catch {
-      Alert.alert('회원가입 실패', '다시 시도해주세요.');
+    } catch (error: unknown) {
+      const errorMessage =
+        (error as Error).message || '회원가입에 실패했습니다.';
+
+      if (errorMessage.includes('아이디의 형식이 올바르지 않습니다')) {
+        Alert.alert(
+          '입력 오류',
+          '카카오톡 아이디 형식을 확인해주세요.\n영문, 숫자, 특수문자(-, _, .)를 포함하여 4~20자이어야 합니다.'
+        );
+      } else if (errorMessage.includes('이미 존재하는')) {
+        Alert.alert(
+          '입력 오류',
+          '이미 사용 중인 정보입니다. 다른 정보를 입력해주세요.'
+        );
+      } else {
+        Alert.alert('회원가입 실패', errorMessage);
+      }
     }
   };
 

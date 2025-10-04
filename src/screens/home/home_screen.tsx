@@ -41,7 +41,7 @@ export default function HomeScreen() {
         {
           text: '로그인 하기',
           onPress: () => {
-            alertShownRef.current = false; // Alert 해제 후 재호출 가능하도록
+            alertShownRef.current = false;
             handleLogoutAndRedirect();
           },
         },
@@ -49,7 +49,7 @@ export default function HomeScreen() {
       {
         cancelable: false,
         onDismiss: () => {
-          alertShownRef.current = false; // Alert가 닫힐 때 상태 리셋
+          alertShownRef.current = false;
         },
       }
     );

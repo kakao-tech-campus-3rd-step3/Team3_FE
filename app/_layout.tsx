@@ -7,15 +7,16 @@ import ErrorBoundary from 'react-native-error-boundary';
 import 'react-native-reanimated';
 
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
-import { AuthProvider } from '@/src/contexts/auth_context';
+import { AuthProvider, useAuth } from '@/src/contexts/auth_context';
 import { queryClient } from '@/src/lib/query_client';
 
 function AppContent() {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+  const { isLoading } = useAuth();
 
-  if (!loaded) {
+  if (!loaded || isLoading) {
     return null;
   }
 

@@ -114,7 +114,7 @@ export const queries = {
     key: ['teamMatchRequests'] as const,
     fn: async () => {
       const response = await api.teamMatchApi.getTeamMatchRequests();
-      return response.content; // content 배열만 반환
+      return response.content;
     },
   },
 } as const;
@@ -266,7 +266,7 @@ export function useCreateTeamMutation() {
     mutationFn: (teamData: CreateTeamRequest): Promise<CreateTeamResponse> =>
       api.createTeam(teamData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('팀 생성 실패:', error);
@@ -279,13 +279,13 @@ export function useJoinTeamMutation() {
     mutationFn: (teamId: number): Promise<JoinTeamResponse> =>
       api.joinTeamApi.joinTeam(teamId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('팀 참여 실패:', error);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
   });
 }
@@ -295,8 +295,12 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: logout,
-    onSuccess: () => {
-      queryClient.clear();
+    onSuccess: async () => {
+      await queryClient.clear();
+      router.replace('/(auth)/login');
+    },
+    onError: (error: unknown) => {
+      console.error('로그아웃 실패:', error);
     },
   });
 }
@@ -306,11 +310,13 @@ export function useLoginMutation() {
 
   return useMutation({
     mutationFn: queries.login.fn,
-    onSuccess: (data: LoginResponse) => {
-      login(data.accessToken);
-
-      queryClient.invalidateQueries({ queryKey: queries.login.key });
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+    onSuccess: async (data: LoginResponse) => {
+      await login(data.accessToken);
+      await queryClient.clear();
+      router.replace('/(tabs)');
+    },
+    onError: (error: unknown) => {
+      console.error('로그인 실패:', error);
     },
   });
 }
@@ -320,13 +326,10 @@ export function useRegisterMutation() {
 
   return useMutation({
     mutationFn: queries.register.fn,
-    onSuccess: (data: RegisterResponse) => {
-      login(data.accessToken);
-
-      queryClient.invalidateQueries({ queryKey: queries.login.key });
-      queryClient.invalidateQueries({
-        queryKey: [{ queryKey: queries.user.key }],
-      });
+    onSuccess: async (data: RegisterResponse) => {
+      await login(data.accessToken);
+      await queryClient.clear();
+      router.replace('/(tabs)');
     },
     onError: (error: unknown) => {
       console.error('회원가입 실패:', error);
@@ -359,7 +362,7 @@ export function useUpdateProfileMutation() {
     mutationFn: (data: UpdateProfileRequest) =>
       api.profileApi.updateProfile(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('프로필 수정 실패:', error);
@@ -371,7 +374,7 @@ export function useDeleteProfileMutation() {
   return useMutation({
     mutationFn: () => api.profileApi.deleteProfile(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('계정 탈퇴 실패:', error);
@@ -436,7 +439,7 @@ export function useUpdateTeamMutation() {
       queryClient.invalidateQueries({
         queryKey: queries.team.key(variables.teamId),
       });
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('팀 정보 수정 실패:', error);
@@ -449,7 +452,7 @@ export function useDeleteTeamMutation() {
     mutationFn: (teamId: string | number) =>
       api.teamDeleteApi.deleteTeam(teamId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('팀 삭제 실패:', error);
@@ -463,7 +466,7 @@ export function useTeamExitMutation() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['team'] });
       queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
       router.replace(ROUTES.TEAM_GUIDE);
     },
     onError: (error: unknown) => {

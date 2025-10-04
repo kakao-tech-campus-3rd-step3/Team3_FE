@@ -16,11 +16,9 @@ export default memo(function Buttons() {
   const [showJoinWaitingList, setShowJoinWaitingList] = useState(false);
   const { data: userProfile } = useUserProfile();
 
-  // 사용자의 팀 가입 신청 목록을 확인하여 신청이 있는지 체크
   const { data: joinWaitingData, refetch } = useMyJoinWaitingList(0, 1);
   const hasJoinWaiting = joinWaitingData && !joinWaitingData.empty;
 
-  // 화면이 포커스될 때마다 데이터 새로고침
   useFocusEffect(
     useCallback(() => {
       refetch();

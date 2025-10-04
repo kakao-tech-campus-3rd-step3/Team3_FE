@@ -4,7 +4,7 @@ import type { RegisterFormData } from './useRegisterForm';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const UNIVERSITY_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.ac\.kr$/;
-const KAKAO_TALK_ID_REGEX = /^[a-zA-Z0-9._-]+$/;
+const KAKAO_TALK_ID_REGEX = /^[a-zA-Z0-9._-]{4,20}$/;
 const STUDENT_YEAR_REGEX = /^\d{2}$/;
 const VERIFICATION_CODE_REGEX = /^\d{6}$/;
 
@@ -145,7 +145,8 @@ const getPatternErrorMessage = (field: string): string => {
     email: '올바른 이메일 형식을 입력해주세요',
     universityEmail: '학교 이메일은 *.ac.kr 도메인으로 입력해주세요',
     password: '비밀번호는 특수문자를 포함한 8자 이상으로 입력해주세요',
-    kakaoTalkId: '카카오톡 아이디는 영문, 숫자, ., _, - 만 사용 가능합니다',
+    kakaoTalkId:
+      '카카오톡 아이디는 영문, 숫자, 특수문자(-, _, .)를 포함하여 4~20자이어야 합니다',
   };
   return messages[field] || '올바른 형식으로 입력해주세요';
 };
@@ -158,8 +159,6 @@ export const profileValidationRules: ValidationRules = {
   },
   kakaoTalkId: {
     required: true,
-    minLength: 4,
-    maxLength: 20,
     pattern: KAKAO_TALK_ID_REGEX,
     label: '카카오톡 아이디',
     patternMessage:
