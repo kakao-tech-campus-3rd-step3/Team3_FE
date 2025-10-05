@@ -48,6 +48,11 @@ export default memo(function EnvelopeSection({ teamId }: EnvelopeSectionProps) {
     router.push(ROUTES.CHECK_CREATED_MATCHES);
   };
 
+  const handleCheckAppliedMatches = () => {
+    if (!checkTeamMembership()) return;
+    router.push(ROUTES.CHECK_APPLIED_MATCHES);
+  };
+
   return (
     <>
       <View style={styles.envelopeSection}>
@@ -100,6 +105,26 @@ export default memo(function EnvelopeSection({ teamId }: EnvelopeSectionProps) {
               />
             </View>
             <Text style={styles.envelopeTitle}>생성한 매치 보기</Text>
+
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={theme.colors.text.sub}
+            />
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.envelopeSection}>
+        <TouchableOpacity onPress={handleCheckAppliedMatches}>
+          <View style={styles.envelopeHeader}>
+            <View style={styles.envelopeIcon}>
+              <Image
+                source={require('@/assets/images/apply.png')}
+                style={{ width: 20, height: 20 }}
+              />
+            </View>
+            <Text style={styles.envelopeTitle}>신청한 매치 보기</Text>
 
             <Ionicons
               name="chevron-forward"

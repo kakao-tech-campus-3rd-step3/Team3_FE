@@ -1,4 +1,3 @@
-// src/hooks/useCreateMatch.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { createMatch } from '@/src/api/match';
