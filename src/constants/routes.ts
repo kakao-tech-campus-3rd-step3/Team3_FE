@@ -17,6 +17,7 @@ export const ROUTES = {
 
   MATCH_MAKING: '/match_making/match_info',
   MATCH_APPLICATION: '/match_application',
+  CHECK_CREATED_MATCHES: '/check_created_matches',
 
   TOURNAMENT: '/tournament',
 } as const;

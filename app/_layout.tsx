@@ -29,6 +29,7 @@ function AppContent() {
         <Stack.Screen name="profile" />
         <Stack.Screen name="match_making/match_info" />
         <Stack.Screen name="match_application/index" />
+        <Stack.Screen name="check_created_matches/index" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
