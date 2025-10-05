@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 import { colors, spacing, typography } from '@/src/theme';
 
@@ -80,7 +80,9 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: spacing.spacing4,
+    paddingHorizontal: spacing.spacing4,
+    paddingVertical:
+      Platform.OS === 'android' ? spacing.spacing6 : spacing.spacing4,
     borderBottomWidth: 1,
     borderBottomColor: colors.gray[200],
   },
@@ -204,6 +206,7 @@ export const styles = StyleSheet.create({
     color: colors.white,
     fontSize: typography.fontSize.font3,
     fontWeight: typography.fontWeight.semibold,
+    flexShrink: 1,
   },
   rejectButton: {
     flex: 1,
@@ -219,6 +222,7 @@ export const styles = StyleSheet.create({
     color: colors.white,
     fontSize: typography.fontSize.font3,
     fontWeight: typography.fontWeight.semibold,
+    flexShrink: 1,
   },
   requestDate: {
     fontSize: typography.fontSize.font2,

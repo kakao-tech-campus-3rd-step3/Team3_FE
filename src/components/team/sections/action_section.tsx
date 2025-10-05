@@ -15,11 +15,23 @@ export default function ActionSection({ onSave }: ActionSectionProps) {
         style={styles.cancelButton}
         onPress={() => router.back()}
       >
-        <Text style={styles.cancelButtonText}>취소</Text>
+        <Text
+          style={styles.cancelButtonText}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          취소
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.saveButton} onPress={onSave}>
-        <Text style={styles.saveButtonText}>수정 완료</Text>
+        <Text
+          style={styles.saveButtonText}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          수정 완료
+        </Text>
       </TouchableOpacity>
     </View>
   );

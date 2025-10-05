@@ -1,7 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { memo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 
 import {
   getTeamManagementSettingsUrl,
@@ -23,6 +29,41 @@ export default memo(function TeamInfoCard({
   onExitTeam,
   isTeamLeader = false,
 }: TeamInfoCardProps) {
+  const { width } = useWindowDimensions();
+
+  // 화면 크기에 비례한 동적 스타일 생성
+  const dynamicStyles = StyleSheet.create({
+    statCard: {
+      flex: 1,
+      alignItems: 'center',
+      backgroundColor: colors.gray[50],
+      borderRadius: Math.max(12, width * 0.04), // 화면 너비의 4% 또는 최소 12
+      padding: Math.max(8, width * 0.03), // 화면 너비의 3% 또는 최소 8
+      marginHorizontal: Math.max(2, width * 0.01), // 화면 너비의 1% 또는 최소 2
+    },
+    statIconContainer: {
+      width: Math.max(36, width * 0.12), // 화면 너비의 12% 또는 최소 36
+      height: Math.max(36, width * 0.12),
+      borderRadius: Math.max(18, width * 0.06),
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: Math.max(6, width * 0.02), // 화면 너비의 2% 또는 최소 6
+    },
+    statValue: {
+      fontSize: Math.max(10, width * 0.032), // 화면 너비의 3.2% 또는 최소 10
+      fontWeight: 'bold',
+      color: colors.gray[900],
+      marginBottom: Math.max(2, width * 0.005), // 화면 너비의 0.5% 또는 최소 2
+      textAlign: 'center',
+    },
+    statLabel: {
+      fontSize: Math.max(9, width * 0.03), // 화면 너비의 3% 또는 최소 9
+      color: colors.gray[500],
+      fontWeight: '500',
+      textAlign: 'center',
+    },
+  });
+
   const handleTeamManagement = () => {
     router.push(getTeamManagementSettingsUrl(team.id.toString()));
   };
@@ -51,7 +92,13 @@ export default memo(function TeamInfoCard({
                   size={16}
                   color={colors.orange[600]}
                 />
-                <Text style={styles.headerExitButtonText}>팀 나가기</Text>
+                <Text
+                  style={styles.headerExitButtonText}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  팀 나가기
+                </Text>
               </TouchableOpacity>
             )}
             {canManageTeam && (
@@ -73,10 +120,10 @@ export default memo(function TeamInfoCard({
         </View>
 
         <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
+          <View style={dynamicStyles.statCard}>
             <View
               style={[
-                styles.statIconContainer,
+                dynamicStyles.statIconContainer,
                 { backgroundColor: colors.blue[50] },
               ]}
             >
@@ -86,14 +133,20 @@ export default memo(function TeamInfoCard({
                 color={colors.blue[700]}
               />
             </View>
-            <Text style={styles.statValue}>{team.memberCount}</Text>
-            <Text style={styles.statLabel}>멤버</Text>
+            <Text
+              style={dynamicStyles.statValue}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {team.memberCount}
+            </Text>
+            <Text style={dynamicStyles.statLabel}>멤버</Text>
           </View>
 
-          <View style={styles.statCard}>
+          <View style={dynamicStyles.statCard}>
             <View
               style={[
-                styles.statIconContainer,
+                dynamicStyles.statIconContainer,
                 { backgroundColor: colors.orange[50] },
               ]}
             >
@@ -103,14 +156,20 @@ export default memo(function TeamInfoCard({
                 color={colors.orange[700]}
               />
             </View>
-            <Text style={styles.statValue}>{team.skillLevel}</Text>
-            <Text style={styles.statLabel}>실력</Text>
+            <Text
+              style={dynamicStyles.statValue}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {team.skillLevel}
+            </Text>
+            <Text style={dynamicStyles.statLabel}>실력</Text>
           </View>
 
-          <View style={styles.statCard}>
+          <View style={dynamicStyles.statCard}>
             <View
               style={[
-                styles.statIconContainer,
+                dynamicStyles.statIconContainer,
                 { backgroundColor: colors.purple[50] },
               ]}
             >
@@ -120,11 +179,15 @@ export default memo(function TeamInfoCard({
                 color={colors.purple[700]}
               />
             </View>
-            <Text style={styles.statValue}>
+            <Text
+              style={dynamicStyles.statValue}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
               {new Date(team.createdAt).getFullYear()}.
               {String(new Date(team.createdAt).getMonth() + 1).padStart(2, '0')}
             </Text>
-            <Text style={styles.statLabel}>생성</Text>
+            <Text style={dynamicStyles.statLabel}>생성</Text>
           </View>
         </View>
 
@@ -134,7 +197,13 @@ export default memo(function TeamInfoCard({
         >
           <View style={styles.recentMatchesButtonContent}>
             <Ionicons name="football-outline" size={20} color="white" />
-            <Text style={styles.recentMatchesButtonText}>최근 경기 보기</Text>
+            <Text
+              style={styles.recentMatchesButtonText}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              최근 경기 보기
+            </Text>
             <Ionicons name="chevron-forward" size={16} color="white" />
           </View>
         </TouchableOpacity>
@@ -199,6 +268,7 @@ const styles = StyleSheet.create({
     color: colors.orange[500],
     fontSize: 11,
     fontWeight: '500',
+    flexShrink: 1,
   },
   settingsButton: {
     width: 40,
@@ -230,33 +300,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 20,
   },
-  statCard: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: colors.gray[50],
-    borderRadius: 16,
-    padding: 16,
-    marginHorizontal: 4,
-  },
-  statIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  statValue: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: colors.gray[900],
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: colors.gray[500],
-    fontWeight: '500',
-  },
 
   recentMatchesButton: {
     backgroundColor: colors.blue[500],
@@ -283,5 +326,6 @@ const styles = StyleSheet.create({
     color: 'white',
     flex: 1,
     textAlign: 'center',
+    flexShrink: 1,
   },
 });
