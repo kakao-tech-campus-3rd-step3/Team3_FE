@@ -127,3 +127,24 @@ export async function cancelMatchRequestApi(
   const url = MATCH_REQUEST_API.CANCEL_REQUEST(requestId);
   return apiClient.delete<MatchRequestResponseDto>(url);
 }
+
+export async function getMyCreatedMatches(): Promise<
+  MatchWaitingResponseDto[]
+> {
+  try {
+    const response = await apiClient.get<{
+      content: MatchWaitingResponseDto[];
+      empty: boolean;
+      totalElements: number;
+      totalPages: number;
+      first: boolean;
+      last: boolean;
+    }>('/api/matches/waiting/me');
+
+    // content 배열만 리턴
+    return response.content || [];
+  } catch (error) {
+    console.error('❌ getMyCreatedMatches API 에러:', error);
+    throw error;
+  }
+}
