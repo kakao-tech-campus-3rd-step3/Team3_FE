@@ -6,12 +6,14 @@ import {
   ScrollView,
   RefreshControl,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { useUserProfile } from '@/src/hooks/queries';
+import { useCancelMatchRequest } from '@/src/hooks/useCancelMatchRequest';
 import { useMyAppliedMatches } from '@/src/hooks/useMyAppliedMatches';
-import { checkAppliedMatchesStyles } from '@/src/screens/check_applied_matches/check_applied_matches_style'; // ✅ 추가
+import { checkAppliedMatchesStyles } from '@/src/screens/check_applied_matches/check_applied_matches_style';
 import AppliedMatchCard from '@/src/screens/check_applied_matches/components/applied_match_card';
 import { styles } from '@/src/screens/match_application/match_application_style';
 
@@ -27,6 +29,8 @@ export default function CheckAppliedMatchesScreen() {
     refetch: refetchMatches,
   } = useMyAppliedMatches();
 
+  const { mutate: cancelRequest, isPending } = useCancelMatchRequest();
+
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([refetchProfile(), refetchMatches()]);
@@ -35,12 +39,37 @@ export default function CheckAppliedMatchesScreen() {
   }, [refetchProfile, refetchMatches]);
 
   const handleSelect = (id: number) => {
-    setSelectedMatchId(prev => (prev === id ? null : id)); // 선택 토글
+    setSelectedMatchId(prev => (prev === id ? null : id));
   };
 
+  // ✅ 취소 버튼 클릭 핸들러
   const handleCancel = () => {
-    console.log('🧨 취소 버튼 클릭 - requestId:', selectedMatchId);
-    // 이후 useCancelRequest 훅 연결 예정
+    if (!selectedMatchId) return;
+
+    Alert.alert(
+      '매치 요청 취소',
+      '이 매치 요청을 정말 취소하시겠습니까?',
+      [
+        { text: '아니요', style: 'cancel' },
+        {
+          text: '예',
+          style: 'destructive',
+          onPress: () => {
+            cancelRequest(selectedMatchId, {
+              onSuccess: () => {
+                Alert.alert('✅ 성공', '매치 요청이 취소되었습니다.');
+                refetchMatches();
+                setSelectedMatchId(null);
+              },
+              onError: () => {
+                Alert.alert('❌ 실패', '요청 취소 중 오류가 발생했습니다.');
+              },
+            });
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const renderMatchCard = ({ item }: { item: any }) => (
@@ -57,7 +86,7 @@ export default function CheckAppliedMatchesScreen() {
 
       <ScrollView
         style={[styles.scrollContainer, { flex: 1 }]}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]} // 버튼 영역 확보
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -93,15 +122,15 @@ export default function CheckAppliedMatchesScreen() {
         )}
       </ScrollView>
 
-      {/* ✅ 선택된 매치 있을 때만 하단 버튼 표시 */}
       {selectedMatchId && (
         <View style={checkAppliedMatchesStyles.footer}>
           <TouchableOpacity
             style={checkAppliedMatchesStyles.cancelButton}
             onPress={handleCancel}
+            disabled={isPending}
           >
             <Text style={checkAppliedMatchesStyles.cancelText}>
-              매치 요청 취소하기
+              {isPending ? '취소 중...' : '매치 요청 취소하기'}
             </Text>
           </TouchableOpacity>
         </View>

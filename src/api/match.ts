@@ -178,3 +178,16 @@ export async function getMyAppliedMatches(): Promise<
     throw error;
   }
 }
+
+export async function cancelMatchRequestById(
+  requestId: number | string
+): Promise<MatchRequestResponseDto> {
+  try {
+    const url = `${MATCH_REQUEST_API.CANCEL_REQUEST(requestId)}`;
+    const response = await apiClient.delete<MatchRequestResponseDto>(url);
+    return response;
+  } catch (error) {
+    console.error('❌ cancelMatchRequestById API 에러:', error);
+    throw error;
+  }
+}
