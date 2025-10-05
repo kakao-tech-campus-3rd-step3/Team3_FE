@@ -15,6 +15,8 @@ import {
   RecentMatchResponse,
   MatchWaitingResponseDto,
   MatchWaitingListRequestDto,
+  MatchWaitingCancelResponseDto,
+  MatchWaitingHistoryResponseDto,
 } from '@/src/types/match';
 
 export const teamMatchApi = {
@@ -126,4 +128,66 @@ export async function cancelMatchRequestApi(
 ): Promise<MatchRequestResponseDto> {
   const url = MATCH_REQUEST_API.CANCEL_REQUEST(requestId);
   return apiClient.delete<MatchRequestResponseDto>(url);
+}
+
+export async function getMyCreatedMatches(): Promise<
+  MatchWaitingResponseDto[]
+> {
+  try {
+    const response = await apiClient.get<{
+      content: MatchWaitingResponseDto[];
+      empty: boolean;
+      totalElements: number;
+      totalPages: number;
+      first: boolean;
+      last: boolean;
+    }>('/api/matches/waiting/me');
+
+    // content 배열만 리턴
+    return response.content || [];
+  } catch (error) {
+    console.error('❌ getMyCreatedMatches API 에러:', error);
+    throw error;
+  }
+}
+
+export async function cancelCreatedMatchApi(
+  waitingId: number | string
+): Promise<MatchWaitingCancelResponseDto> {
+  const url = MATCH_WAITING_API.CANCEL_WAITING(waitingId);
+  return apiClient.patch<MatchWaitingCancelResponseDto>(url);
+}
+
+export async function getMyAppliedMatches(): Promise<
+  MatchWaitingHistoryResponseDto[]
+> {
+  try {
+    const response = await apiClient.get<{
+      content: MatchWaitingHistoryResponseDto[];
+      empty: boolean;
+      totalElements: number;
+      totalPages: number;
+      first: boolean;
+      last: boolean;
+    }>(MATCH_REQUEST_API.GET_MY_APPLIED_MATCHES);
+
+    // content 배열만 리턴
+    return response.content || [];
+  } catch (error) {
+    console.error('❌ getMyAppliedMatches API 에러:', error);
+    throw error;
+  }
+}
+
+export async function cancelMatchRequestById(
+  requestId: number | string
+): Promise<MatchRequestResponseDto> {
+  try {
+    const url = `${MATCH_REQUEST_API.CANCEL_REQUEST(requestId)}`;
+    const response = await apiClient.delete<MatchRequestResponseDto>(url);
+    return response;
+  } catch (error) {
+    console.error('❌ cancelMatchRequestById API 에러:', error);
+    throw error;
+  }
 }
