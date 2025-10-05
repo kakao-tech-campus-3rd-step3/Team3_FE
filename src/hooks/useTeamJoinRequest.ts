@@ -18,15 +18,12 @@ export const useTeamJoinRequest = () => {
       data: JoinWaitingRequest;
     }) => teamJoinRequestApi.joinWaiting(teamId, data),
     onSuccess: (data, variables) => {
-      // 사용자별 가입 신청 목록 쿼리 무효화
       queryClient.invalidateQueries({
         queryKey: ['myJoinWaitingList'],
       });
-      // 팀 가입 대기 목록 쿼리 무효화
       queryClient.invalidateQueries({
         queryKey: ['teamJoinWaitingList', variables.teamId],
       });
-      // 팀 상세 정보 쿼리 무효화
       queryClient.invalidateQueries({
         queryKey: ['teamDetail', variables.teamId],
       });
@@ -44,11 +41,9 @@ export const useTeamJoinRequest = () => {
       data: JoinWaitingCancelRequest;
     }) => teamJoinRequestApi.cancelJoinRequest(teamId, joinWaitingId, data),
     onSuccess: (data, variables) => {
-      // 사용자별 가입 신청 목록 쿼리 무효화
       queryClient.invalidateQueries({
         queryKey: ['myJoinWaitingList'],
       });
-      // 팀 가입 대기 목록 쿼리 무효화
       queryClient.invalidateQueries({
         queryKey: ['teamJoinWaitingList', variables.teamId],
       });
@@ -69,7 +64,6 @@ export const useTeamJoinRequest = () => {
   };
 };
 
-// 사용자별 가입 신청 목록 조회 훅
 export const useMyJoinWaitingList = (
   page: number = 0,
   size: number = 10,
