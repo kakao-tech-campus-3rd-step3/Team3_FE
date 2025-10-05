@@ -73,23 +73,14 @@ export default function MatchInfoScreen() {
 
   const pad2 = (n: number) => String(n).padStart(2, '0');
   const fmtDate = (d: Date) => {
-    console.log('fmtDate 호출됨, 입력 Date:', d);
-    console.log('d.getMonth():', d.getMonth());
-    console.log('d.getDate():', d.getDate());
-    console.log('d.getFullYear():', d.getFullYear());
     const result = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
-    console.log('fmtDate 결과:', result);
+
     return result;
   };
   const fmtTime = (d: Date) =>
     `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
 
   const onSubmit = async () => {
-    console.log('onSubmit 함수 호출됨');
-    console.log('현재 date 상태:', date);
-    console.log('date.toISOString():', date.toISOString());
-    console.log('fmtDate(date):', fmtDate(date));
-
     if (!selectedStadium) {
       Alert.alert('안내', '경기장을 선택해주세요.');
       return;
@@ -122,11 +113,6 @@ export default function MatchInfoScreen() {
       universityOnly,
       message,
     };
-
-    console.log('매치 생성 요청 데이터:');
-    console.log('선택된 날짜 객체:', date);
-    console.log('포맷된 날짜:', fmtDate(date));
-    console.log('전체 payload:', payload);
 
     createMatch(payload, {
       onSuccess: data => {
@@ -176,7 +162,6 @@ export default function MatchInfoScreen() {
             <TouchableOpacity
               style={style.dateTimeButton}
               onPress={() => {
-                console.log('날짜 선택 버튼 클릭됨');
                 setShowDatePicker(true);
               }}
             >
@@ -330,10 +315,6 @@ export default function MatchInfoScreen() {
         visible={showDatePicker}
         value={date}
         onDateChange={newDate => {
-          console.log('ModalDatePicker에서 날짜 변경됨:', newDate);
-          console.log('새로운 날짜의 getDate():', newDate.getDate());
-          console.log('새로운 날짜의 getMonth():', newDate.getMonth());
-          console.log('새로운 날짜의 getFullYear():', newDate.getFullYear());
           setDate(newDate);
         }}
         onClose={() => setShowDatePicker(false)}

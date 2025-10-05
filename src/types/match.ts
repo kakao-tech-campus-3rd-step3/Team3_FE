@@ -125,3 +125,14 @@ export interface MatchWaitingCancelResponseDto {
   status: 'WAITING' | 'MATCHED' | 'REJECTED' | 'CANCELLED';
   expiresAt: string;
 }
+
+export interface MatchWaitingHistoryResponseDto {
+  requestId: number;
+  requestTeamId: number;
+  requestTeamName: string | { name: string };
+  targetTeamId: number;
+  targetTeamName: string | { name: string };
+  requestMessage: string;
+  requestAt: string;
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
+}

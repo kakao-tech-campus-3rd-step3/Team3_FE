@@ -85,6 +85,7 @@ export const MATCH_REQUEST_API = {
     `/api/matches/requests/${requestId}/reject`,
   CANCEL_REQUEST: (requestId: string | number) =>
     `/api/matches/requests/${requestId}`,
+  GET_MY_APPLIED_MATCHES: '/api/matches/requests/me',
 };
 
 export const USER_JOIN_WAITING_API = {

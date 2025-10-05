@@ -16,6 +16,7 @@ import {
   MatchWaitingResponseDto,
   MatchWaitingListRequestDto,
   MatchWaitingCancelResponseDto,
+  MatchWaitingHistoryResponseDto,
 } from '@/src/types/match';
 
 export const teamMatchApi = {
@@ -155,4 +156,25 @@ export async function cancelCreatedMatchApi(
 ): Promise<MatchWaitingCancelResponseDto> {
   const url = MATCH_WAITING_API.CANCEL_WAITING(waitingId);
   return apiClient.patch<MatchWaitingCancelResponseDto>(url);
+}
+
+export async function getMyAppliedMatches(): Promise<
+  MatchWaitingHistoryResponseDto[]
+> {
+  try {
+    const response = await apiClient.get<{
+      content: MatchWaitingHistoryResponseDto[];
+      empty: boolean;
+      totalElements: number;
+      totalPages: number;
+      first: boolean;
+      last: boolean;
+    }>(MATCH_REQUEST_API.GET_MY_APPLIED_MATCHES);
+
+    // content 배열만 리턴
+    return response.content || [];
+  } catch (error) {
+    console.error('❌ getMyAppliedMatches API 에러:', error);
+    throw error;
+  }
 }
