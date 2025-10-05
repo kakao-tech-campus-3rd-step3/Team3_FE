@@ -15,6 +15,7 @@ import {
   RecentMatchResponse,
   MatchWaitingResponseDto,
   MatchWaitingListRequestDto,
+  MatchWaitingCancelResponseDto,
 } from '@/src/types/match';
 
 export const teamMatchApi = {
@@ -147,4 +148,11 @@ export async function getMyCreatedMatches(): Promise<
     console.error('❌ getMyCreatedMatches API 에러:', error);
     throw error;
   }
+}
+
+export async function cancelCreatedMatchApi(
+  waitingId: number | string
+): Promise<MatchWaitingCancelResponseDto> {
+  const url = MATCH_WAITING_API.CANCEL_WAITING(waitingId);
+  return apiClient.patch<MatchWaitingCancelResponseDto>(url);
 }

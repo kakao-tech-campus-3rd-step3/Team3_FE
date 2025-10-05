@@ -68,6 +68,8 @@ export const MATCH_CREATE_API = {
 export const MATCH_WAITING_API = {
   GET_WAITING_LIST: '/api/matches/waiting',
   GET_MY_CREATED_MATCHES: '/api/matches/waiting/me',
+  CANCEL_WAITING: (waitingId: string | number) =>
+    `/api/matches/waiting/${waitingId}/cancel`,
 };
 
 export const VENUE_API = {

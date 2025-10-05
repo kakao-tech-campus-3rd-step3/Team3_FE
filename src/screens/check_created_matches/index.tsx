@@ -1,8 +1,16 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, ScrollView, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  ScrollView,
+  RefreshControl,
+  Alert,
+} from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { useUserProfile } from '@/src/hooks/queries';
+import { useCancelMatch } from '@/src/hooks/useCancelMatch';
 import { useMyCreatedMatches } from '@/src/hooks/useMyCreatedMatches';
 import MatchCard from '@/src/screens/match_application/components/match_card';
 import { styles } from '@/src/screens/match_application/match_application_style';
@@ -18,6 +26,36 @@ export default function CheckCreatedMatchesScreen() {
     refetch: refetchMatches,
   } = useMyCreatedMatches();
 
+  // ✅ 취소 API 훅
+  const { mutate: cancelMatch, isPending } = useCancelMatch();
+
+  // ✅ 매치 취소 함수
+  const handleCancelMatch = (waitingId: number) => {
+    Alert.alert(
+      '매치 취소',
+      '이 매치를 취소하시겠습니까?',
+      [
+        { text: '아니요', style: 'cancel' },
+        {
+          text: '예',
+          style: 'destructive',
+          onPress: () => {
+            cancelMatch(waitingId, {
+              onSuccess: () => {
+                Alert.alert('성공', '매치가 취소되었습니다.');
+                refetchMatches();
+              },
+              onError: () => {
+                Alert.alert('오류', '매치 취소 중 문제가 발생했습니다.');
+              },
+            });
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([refetchProfile(), refetchMatches()]);
@@ -25,7 +63,13 @@ export default function CheckCreatedMatchesScreen() {
   }, [refetchProfile, refetchMatches]);
 
   const renderMatchCard = ({ item }: { item: any }) => (
-    <MatchCard match={item} showStatus={true} isCancellable={true} />
+    <MatchCard
+      match={item}
+      showStatus={true}
+      isCancellable={true}
+      onPressRequest={() => handleCancelMatch(item.waitingId)} // ✅ 취소 API 연결
+      disabled={isPending}
+    />
   );
 
   return (

@@ -88,7 +88,7 @@ export default function MatchCard({
           color: theme.colors.yellow[700],
           label: '대기 중',
         };
-      case 'REJECTED':
+      case 'CANCELED':
         return {
           bg: theme.colors.red[50],
           border: theme.colors.red[200],
@@ -212,23 +212,25 @@ export default function MatchCard({
       </View>
 
       <View style={styles.matchFooter}>
-        <TouchableOpacity
-          onPress={onPressRequest}
-          disabled={disabled}
-          style={[
-            styles.requestButton,
-            disabled && styles.requestButtonDisabled,
-            isCancellable && { backgroundColor: theme.colors.red[600] }, // ✅ 빨간색 적용
-          ]}
-        >
-          <Text style={styles.requestButtonText}>
-            {disabled
-              ? '요청 중...'
-              : isCancellable
-                ? '취소하기' // ✅ 텍스트 변경
-                : '신청하기'}
-          </Text>
-        </TouchableOpacity>
+        {!['CANCELED'].includes(match?.status?.toUpperCase?.() || '') && (
+          <TouchableOpacity
+            onPress={onPressRequest}
+            disabled={disabled}
+            style={[
+              styles.requestButton,
+              disabled && styles.requestButtonDisabled,
+              isCancellable && { backgroundColor: theme.colors.red[600] }, // ✅ 빨간색 적용
+            ]}
+          >
+            <Text style={styles.requestButtonText}>
+              {disabled
+                ? '요청 중...'
+                : isCancellable
+                  ? '취소하기'
+                  : '신청하기'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

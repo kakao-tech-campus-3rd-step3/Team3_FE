@@ -117,3 +117,11 @@ export interface MatchConfirmedResponseDto {
   venueId: number;
   status: string;
 }
+
+export interface MatchWaitingCancelResponseDto {
+  waitingId: number;
+  teamId: number;
+  teamName: string;
+  status: 'WAITING' | 'MATCHED' | 'REJECTED' | 'CANCELLED';
+  expiresAt: string;
+}
