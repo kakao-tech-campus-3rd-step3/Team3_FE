@@ -1,14 +1,20 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { theme } from '@/src/theme';
 import type { MatchWaitingHistoryResponseDto } from '@/src/types/match';
 
 interface AppliedMatchCardProps {
   match: MatchWaitingHistoryResponseDto;
+  onSelect?: (id: number) => void;
+  isSelected?: boolean;
 }
 
-export default function AppliedMatchCard({ match }: AppliedMatchCardProps) {
+export default function AppliedMatchCard({
+  match,
+  onSelect,
+  isSelected = false,
+}: AppliedMatchCardProps) {
   const getName = (nameField: string | { name: string }) => {
     if (!nameField) return '알 수 없음';
     if (typeof nameField === 'object') return nameField.name;
@@ -35,7 +41,14 @@ export default function AppliedMatchCard({ match }: AppliedMatchCardProps) {
   };
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => onSelect?.(match.requestId)}
+      style={[
+        styles.card,
+        isSelected && { borderColor: theme.colors.blue[500], borderWidth: 2 },
+      ]}
+    >
       <View style={styles.header}>
         <Text style={styles.teamTitle}>{`${requestTeam} → ${targetTeam}`}</Text>
         <View
@@ -73,7 +86,7 @@ export default function AppliedMatchCard({ match }: AppliedMatchCardProps) {
           <Text style={styles.message}>{match.requestMessage}</Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
