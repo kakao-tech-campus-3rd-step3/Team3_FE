@@ -90,7 +90,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: insets.bottom + theme.spacing.spacing10 },
+          { paddingBottom: insets.bottom + theme.spacing.spacing1 },
         ]}
       >
         <View style={styles.mainSection}>

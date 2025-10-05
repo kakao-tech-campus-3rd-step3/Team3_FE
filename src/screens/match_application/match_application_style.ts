@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
+    backgroundColor: theme.colors.gray[50],
   },
   scrollContent: {
     padding: theme.spacing.spacing4,

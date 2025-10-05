@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
+    backgroundColor: colors.gray[50],
   },
   loadingContainer: {
     flex: 1,
@@ -49,6 +50,7 @@ export const styles = StyleSheet.create({
     color: colors.white,
     fontSize: typography.fontSize.font4,
     fontWeight: typography.fontWeight.semibold,
+    flexShrink: 1,
   },
   secondaryButton: {
     backgroundColor: colors.white,
@@ -66,6 +68,7 @@ export const styles = StyleSheet.create({
     color: colors.gray[700],
     fontSize: typography.fontSize.font4,
     fontWeight: typography.fontWeight.semibold,
+    flexShrink: 1,
   },
   badgeText: {
     color: colors.red[500],

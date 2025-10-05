@@ -8,13 +8,10 @@ import {
   Alert,
   TouchableWithoutFeedback,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { Dropdown } from '@/src/components/dropdown';
-import { UI_CONSTANTS } from '@/src/constants/ui';
 import { UNIVERSITIES } from '@/src/constants/universities';
 import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 import {
@@ -58,74 +55,65 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
     handleNext();
   };
   return (
-    <KeyboardAvoidingView
-      style={styles.keyboardAvoidingView}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={UI_CONSTANTS.KEYBOARD_VERTICAL_OFFSET}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          automaticallyAdjustKeyboardInsets={true}
-        >
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>대학교명</Text>
-            <Dropdown
-              items={UNIVERSITIES.map(uni => uni.name)}
-              value={data.university}
-              onChange={item => onChange('university', item)}
-              placeholder="대학교를 선택하세요"
-            />
-          </View>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>대학교 이메일</Text>
-            <TextInput
-              style={[
-                styles.input,
-                data.universityEmail && styles.inputFilled,
-                errors.universityEmail && styles.inputError,
-              ]}
-              placeholder="대학교 이메일을 입력하세요"
-              value={data.universityEmail}
-              onChangeText={text => handleFieldChange('universityEmail', text)}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            {errors.universityEmail && (
-              <Text style={styles.errorText}>{errors.universityEmail}</Text>
-            )}
-          </View>
-
-          <TouchableOpacity
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAwareScrollView
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid={true}
+      >
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>대학교명</Text>
+          <Dropdown
+            items={UNIVERSITIES.map(uni => uni.name)}
+            value={data.university}
+            onChange={item => onChange('university', item)}
+            placeholder="대학교를 선택하세요"
+          />
+        </View>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>대학교 이메일</Text>
+          <TextInput
             style={[
-              styles.nextButton,
-              isNextButtonDisabled && styles.nextButtonDisabled,
+              styles.input,
+              data.universityEmail && styles.inputFilled,
+              errors.universityEmail && styles.inputError,
             ]}
-            onPress={handleNextStep}
-            disabled={isNextButtonDisabled}
+            placeholder="대학교 이메일을 입력하세요"
+            value={data.universityEmail}
+            onChangeText={text => handleFieldChange('universityEmail', text)}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          {errors.universityEmail && (
+            <Text style={styles.errorText}>{errors.universityEmail}</Text>
+          )}
+        </View>
+
+        <TouchableOpacity
+          style={[
+            styles.nextButton,
+            isNextButtonDisabled && styles.nextButtonDisabled,
+          ]}
+          onPress={handleNextStep}
+          disabled={isNextButtonDisabled}
+        >
+          <Text
+            style={[
+              styles.nextButtonText,
+              isNextButtonDisabled && styles.nextButtonTextDisabled,
+            ]}
           >
-            <Text
-              style={[
-                styles.nextButtonText,
-                isNextButtonDisabled && styles.nextButtonTextDisabled,
-              ]}
-            >
-              다음
-            </Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+            다음
+          </Text>
+        </TouchableOpacity>
+      </KeyboardAwareScrollView>
+    </TouchableWithoutFeedback>
   );
 }
 const styles = StyleSheet.create({
-  keyboardAvoidingView: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     backgroundColor: theme.colors.background.main,
@@ -133,7 +121,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: theme.spacing.spacing2,
     paddingBottom: theme.spacing.spacing20,
-    minHeight: '100%',
   },
   inputGroup: { marginBottom: theme.spacing.spacing6 },
   label: {

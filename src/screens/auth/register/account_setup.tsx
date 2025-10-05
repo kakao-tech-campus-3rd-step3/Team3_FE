@@ -8,15 +8,13 @@ import {
   Linking,
   TouchableWithoutFeedback,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
+  useWindowDimensions,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { Dropdown } from '@/src/components/dropdown';
 import { EMAIL_DOMAINS } from '@/src/constants/email_domains';
 import { EXTERNAL_LINKS } from '@/src/constants/external_links';
-import { UI_CONSTANTS } from '@/src/constants/ui';
 import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 import {
   useRegisterValidation,
@@ -65,7 +63,6 @@ export function AccountSetup({
 
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
     onChange(field, value);
-    // 업데이트된 데이터로 검증
     const updatedData = { ...data, [field]: value };
     validateField(field, value, updatedData);
 
@@ -75,7 +72,6 @@ export function AccountSetup({
   };
 
   const isValid = useMemo(() => {
-    // 현재 단계(계정 설정)의 필드만 검증
     const emailValid =
       data.email &&
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(data.email);
@@ -95,184 +91,167 @@ export function AccountSetup({
   }, [data, errors]);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.keyboardAvoidingView}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={UI_CONSTANTS.KEYBOARD_VERTICAL_OFFSET}
-    >
+    <View style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            automaticallyAdjustKeyboardInsets={true}
-          >
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>이메일</Text>
-              <View style={styles.emailContainer}>
-                <TextInput
-                  style={[
-                    styles.emailInput,
-                    (focusedField === 'emailId' || emailId) &&
-                      styles.inputFilled,
-                    errors.email && styles.inputError,
-                  ]}
-                  placeholder="아이디"
-                  value={emailId}
-                  onChangeText={handleEmailIdChange}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  onFocus={() => setFocusedField('emailId')}
-                  onBlur={() => setFocusedField(null)}
+        <KeyboardAwareScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          enableOnAndroid={true}
+        >
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>이메일</Text>
+            <View style={styles.emailContainer}>
+              <TextInput
+                style={[
+                  styles.emailInput,
+                  (focusedField === 'emailId' || emailId) && styles.inputFilled,
+                  errors.email && styles.inputError,
+                ]}
+                placeholder="아이디"
+                value={emailId}
+                onChangeText={handleEmailIdChange}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                onFocus={() => setFocusedField('emailId')}
+                onBlur={() => setFocusedField(null)}
+              />
+              <Text style={styles.atSymbol}>@</Text>
+              <View style={styles.domainDropdown}>
+                <Dropdown
+                  items={EMAIL_DOMAINS}
+                  value={emailDomain}
+                  onChange={handleEmailDomainChange}
+                  placeholder="도메인"
                 />
-                <Text style={styles.atSymbol}>@</Text>
-                <View style={styles.domainDropdown}>
-                  <Dropdown
-                    items={EMAIL_DOMAINS}
-                    value={emailDomain}
-                    onChange={handleEmailDomainChange}
-                    placeholder="도메인"
-                  />
-                </View>
               </View>
-              {errors.email && (
-                <Text style={styles.errorText}>{errors.email}</Text>
-              )}
             </View>
+            {errors.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
+          </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>비밀번호</Text>
-              <TextInput
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>비밀번호</Text>
+            <TextInput
+              style={[
+                styles.input,
+                (focusedField === 'password' || data.password) &&
+                  styles.inputFilled,
+                errors.password && styles.inputError,
+              ]}
+              placeholder="비밀번호를 입력하세요"
+              secureTextEntry
+              value={data.password}
+              onChangeText={text => handleFieldChange('password', text)}
+              onFocus={() => setFocusedField('password')}
+              onBlur={() => setFocusedField(null)}
+            />
+            {errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>비밀번호 확인</Text>
+            <TextInput
+              style={[
+                styles.input,
+                (focusedField === 'confirmPassword' || data.confirmPassword) &&
+                  styles.inputFilled,
+                errors.confirmPassword && styles.inputError,
+              ]}
+              placeholder="비밀번호 확인"
+              secureTextEntry
+              value={data.confirmPassword}
+              onChangeText={text => handleFieldChange('confirmPassword', text)}
+              onFocus={() => setFocusedField('confirmPassword')}
+              onBlur={() => setFocusedField(null)}
+            />
+            {errors.confirmPassword && (
+              <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+            )}
+          </View>
+
+          <View style={styles.agreementContainer}>
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={() => onChange('termsAgreed', !data.termsAgreed)}
+            >
+              <View
                 style={[
-                  styles.input,
-                  (focusedField === 'password' || data.password) &&
-                    styles.inputFilled,
-                  errors.password && styles.inputError,
+                  styles.checkbox,
+                  data.termsAgreed && styles.checkboxChecked,
                 ]}
-                placeholder="비밀번호를 입력하세요"
-                secureTextEntry
-                value={data.password}
-                onChangeText={text => handleFieldChange('password', text)}
-                onFocus={() => setFocusedField('password')}
-                onBlur={() => setFocusedField(null)}
-              />
-              {errors.password && (
-                <Text style={styles.errorText}>{errors.password}</Text>
-              )}
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>비밀번호 확인</Text>
-              <TextInput
-                style={[
-                  styles.input,
-                  (focusedField === 'confirmPassword' ||
-                    data.confirmPassword) &&
-                    styles.inputFilled,
-                  errors.confirmPassword && styles.inputError,
-                ]}
-                placeholder="비밀번호 확인"
-                secureTextEntry
-                value={data.confirmPassword}
-                onChangeText={text =>
-                  handleFieldChange('confirmPassword', text)
-                }
-                onFocus={() => setFocusedField('confirmPassword')}
-                onBlur={() => setFocusedField(null)}
-              />
-              {errors.confirmPassword && (
-                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-              )}
-            </View>
-
-            <View style={styles.agreementContainer}>
-              <TouchableOpacity
-                style={styles.checkboxContainer}
-                onPress={() => onChange('termsAgreed', !data.termsAgreed)}
               >
-                <View
-                  style={[
-                    styles.checkbox,
-                    data.termsAgreed && styles.checkboxChecked,
-                  ]}
+                {data.termsAgreed && <Text style={styles.checkmark}>✓</Text>}
+              </View>
+              <View style={styles.checkboxTextContainer}>
+                <Text style={styles.checkboxText}>
+                  서비스 이용약관에 동의합니다
+                </Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    Linking.openURL(EXTERNAL_LINKS.TERMS_OF_SERVICE)
+                  }
                 >
-                  {data.termsAgreed && <Text style={styles.checkmark}>✓</Text>}
-                </View>
-                <View style={styles.checkboxTextContainer}>
-                  <Text style={styles.checkboxText}>
-                    서비스 이용약관에 동의합니다
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Linking.openURL(EXTERNAL_LINKS.TERMS_OF_SERVICE)
-                    }
-                  >
-                    <Text style={styles.linkText}>약관 보기</Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.checkboxContainer}
-                onPress={() => onChange('privacyAgreed', !data.privacyAgreed)}
-              >
-                <View
-                  style={[
-                    styles.checkbox,
-                    data.privacyAgreed && styles.checkboxChecked,
-                  ]}
-                >
-                  {data.privacyAgreed && (
-                    <Text style={styles.checkmark}>✓</Text>
-                  )}
-                </View>
-                <View style={styles.checkboxTextContainer}>
-                  <Text style={styles.checkboxText}>
-                    개인정보 처리방침에 동의합니다
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Linking.openURL(EXTERNAL_LINKS.PRIVACY_POLICY)
-                    }
-                  >
-                    <Text style={styles.linkText}>정책 보기</Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.prevButton} onPress={handlePrev}>
-              <Text style={styles.prevButtonText}>이전</Text>
+                  <Text style={styles.linkText}>약관 보기</Text>
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[
-                styles.submitButton,
-                (!isValid || isLoading) && styles.submitButtonDisabled,
-              ]}
-              onPress={onSubmit}
-              disabled={!isValid || isLoading}
+              style={styles.checkboxContainer}
+              onPress={() => onChange('privacyAgreed', !data.privacyAgreed)}
             >
-              <Text style={styles.submitButtonText}>
-                {isLoading ? '처리 중...' : '회원가입 완료'}
-              </Text>
+              <View
+                style={[
+                  styles.checkbox,
+                  data.privacyAgreed && styles.checkboxChecked,
+                ]}
+              >
+                {data.privacyAgreed && <Text style={styles.checkmark}>✓</Text>}
+              </View>
+              <View style={styles.checkboxTextContainer}>
+                <Text style={styles.checkboxText}>
+                  개인정보 처리방침에 동의합니다
+                </Text>
+                <TouchableOpacity
+                  onPress={() => Linking.openURL(EXTERNAL_LINKS.PRIVACY_POLICY)}
+                >
+                  <Text style={styles.linkText}>정책 보기</Text>
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAwareScrollView>
       </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.prevButton} onPress={handlePrev}>
+          <Text style={styles.prevButtonText}>이전</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.submitButton,
+            (!isValid || isLoading) && styles.submitButtonDisabled,
+          ]}
+          onPress={onSubmit}
+          disabled={!isValid || isLoading}
+        >
+          <Text style={styles.submitButtonText}>
+            {isLoading ? '처리 중...' : '회원가입 완료'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  keyboardAvoidingView: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     backgroundColor: theme.colors.background.main,

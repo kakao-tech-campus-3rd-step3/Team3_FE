@@ -116,12 +116,12 @@ export const styles = StyleSheet.create({
   nextButton: {
     backgroundColor: theme.colors.blue[500],
     borderRadius: theme.spacing.spacing3,
-    paddingVertical: theme.spacing.spacing4,
-    paddingHorizontal: theme.spacing.spacing6,
+    paddingVertical: theme.spacing.spacing3,
+    paddingHorizontal: theme.spacing.spacing5,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: theme.spacing.spacing15,
+    minWidth: theme.spacing.spacing13,
   },
   nextButtonDisabled: {
     backgroundColor: theme.colors.gray[200],

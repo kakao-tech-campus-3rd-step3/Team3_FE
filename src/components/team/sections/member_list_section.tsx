@@ -95,7 +95,13 @@ export default memo(function MemberListSection({
                       size={18}
                       color={theme.colors.blue[600]}
                     />
-                    <Text style={styles.actionButtonText}>역할변경</Text>
+                    <Text
+                      style={styles.actionButtonText}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      역할변경
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.actionButton, styles.removeButton]}
@@ -108,6 +114,8 @@ export default memo(function MemberListSection({
                     />
                     <Text
                       style={[styles.actionButtonText, styles.removeButtonText]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
                     >
                       강퇴
                     </Text>

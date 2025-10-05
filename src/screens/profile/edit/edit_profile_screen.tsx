@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import React from 'react';
-import { ScrollView, Text, View, Alert } from 'react-native';
+import { Text, View, Alert } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Card } from '@/src/components/card/card';
@@ -9,7 +10,7 @@ import { theme } from '@/src/theme';
 import { UpdateProfileRequest } from '@/src/types/profile';
 
 import { styles } from './edit_profile_style';
-import { ProfileForm } from './ProfileForm';
+import { ProfileForm } from './profile_form';
 
 export default function EditProfileScreen() {
   const insets = useSafeAreaInsets();
@@ -25,7 +26,6 @@ export default function EditProfileScreen() {
         bio: formData.bio?.trim() || '',
       };
 
-      // 필수 필드 검증
       if (!cleanData.name || !cleanData.name.trim()) {
         Alert.alert('오류', '이름을 입력해주세요.');
         return;
@@ -54,12 +54,14 @@ export default function EditProfileScreen() {
   }
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
       style={styles.scrollContainer}
       contentContainerStyle={{
         paddingBottom: insets.bottom + theme.spacing.spacing7,
       }}
       showsVerticalScrollIndicator={false}
+      enableOnAndroid={true}
+      keyboardShouldPersistTaps="handled"
     >
       <View style={styles.container}>
         <Card style={styles.formCard}>
@@ -70,6 +72,6 @@ export default function EditProfileScreen() {
           />
         </Card>
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
