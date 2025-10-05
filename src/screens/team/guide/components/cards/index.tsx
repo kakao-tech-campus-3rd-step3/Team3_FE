@@ -1,5 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { View, TouchableOpacity, Text, Animated } from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  Animated,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 
 import { colors } from '@/src/theme';
 
@@ -21,9 +28,80 @@ const cards = [
 ];
 
 export default function Cards() {
+  const { width } = useWindowDimensions();
   const card1Anim = useRef(new Animated.Value(0)).current;
   const card2Anim = useRef(new Animated.Value(0)).current;
   const card3Anim = useRef(new Animated.Value(0)).current;
+
+  // 화면 크기에 비례한 동적 스타일 생성
+  const dynamicStyles = StyleSheet.create({
+    card: {
+      backgroundColor: colors.white,
+      borderRadius: Math.max(16, width * 0.04),
+      padding: Math.max(16, width * 0.04),
+      shadowColor: colors.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+      position: 'absolute',
+    },
+    cardFirst: {
+      width: 280,
+      height: 70,
+      zIndex: 3,
+      transform: [{ rotate: '-3deg' }, { scale: 1 }],
+      left: 20,
+      top: 20,
+    },
+    cardSecond: {
+      width: 260,
+      height: 70,
+      zIndex: 2,
+      transform: [{ rotate: '3deg' }, { scale: 0.95 }],
+      left: 30,
+      top: 80,
+      opacity: 0.9,
+      shadowColor: colors.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    cardThird: {
+      width: 240,
+      height: 70,
+      zIndex: 1,
+      transform: [{ rotate: '-2deg' }, { scale: 0.9 }],
+      left: 40,
+      top: 140,
+      opacity: 0.8,
+      shadowColor: colors.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    cardText: {
+      fontSize: Math.max(12, width * 0.035),
+      fontWeight: '600',
+      color: colors.text.main,
+      flex: 1,
+      lineHeight: Math.max(16, width * 0.045),
+      textAlign: 'left',
+    },
+    cardButton: {
+      width: Math.max(12, width * 0.035),
+      height: Math.max(12, width * 0.035),
+      borderRadius: Math.max(6, width * 0.017),
+      marginLeft: Math.max(12, width * 0.03),
+      shadowColor: colors.black,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.2,
+      shadowRadius: 1,
+      elevation: 3,
+    },
+  });
 
   useEffect(() => {
     Animated.stagger(400, [
@@ -52,8 +130,8 @@ export default function Cards() {
     <View style={styles.cardsContainer}>
       <Animated.View
         style={[
-          styles.card,
-          styles.cardFirst,
+          dynamicStyles.card,
+          dynamicStyles.cardFirst,
           {
             opacity: card1Anim,
             transform: [{ scale: card1Anim }, { rotate: '-3deg' }],
@@ -69,10 +147,16 @@ export default function Cards() {
           }}
           activeOpacity={0.8}
         >
-          <Text style={styles.cardText}>{cards[0].text}</Text>
+          <Text
+            style={dynamicStyles.cardText}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {cards[0].text}
+          </Text>
           <View
             style={[
-              styles.cardButton,
+              dynamicStyles.cardButton,
               { backgroundColor: cards[0].buttonColor },
             ]}
           />
@@ -81,8 +165,8 @@ export default function Cards() {
 
       <Animated.View
         style={[
-          styles.card,
-          styles.cardSecond,
+          dynamicStyles.card,
+          dynamicStyles.cardSecond,
           {
             opacity: card2Anim,
             transform: [{ scale: card2Anim }, { rotate: '3deg' }],
@@ -98,10 +182,16 @@ export default function Cards() {
           }}
           activeOpacity={0.8}
         >
-          <Text style={styles.cardText}>{cards[1].text}</Text>
+          <Text
+            style={dynamicStyles.cardText}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {cards[1].text}
+          </Text>
           <View
             style={[
-              styles.cardButton,
+              dynamicStyles.cardButton,
               { backgroundColor: cards[1].buttonColor },
             ]}
           />
@@ -110,8 +200,8 @@ export default function Cards() {
 
       <Animated.View
         style={[
-          styles.card,
-          styles.cardThird,
+          dynamicStyles.card,
+          dynamicStyles.cardThird,
           {
             opacity: card3Anim,
             transform: [{ scale: card3Anim }, { rotate: '-2deg' }],
@@ -127,10 +217,16 @@ export default function Cards() {
           }}
           activeOpacity={0.8}
         >
-          <Text style={styles.cardText}>{cards[2].text}</Text>
+          <Text
+            style={dynamicStyles.cardText}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {cards[2].text}
+          </Text>
           <View
             style={[
-              styles.cardButton,
+              dynamicStyles.cardButton,
               { backgroundColor: cards[2].buttonColor },
             ]}
           />
