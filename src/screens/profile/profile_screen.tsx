@@ -55,7 +55,7 @@ function ProfileScreen() {
       <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={{
-          paddingBottom: insets.bottom + theme.spacing.spacing7,
+          paddingBottom: insets.bottom,
         }}
         showsVerticalScrollIndicator={false}
       >

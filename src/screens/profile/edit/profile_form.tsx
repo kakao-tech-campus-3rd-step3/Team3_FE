@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useWindowDimensions,
+} from 'react-native';
 
 import { Dropdown } from '@/src/components/dropdown';
 import { UserProfile, UpdateProfileRequest } from '@/src/types/profile';
 
-import { styles } from './ProfileFormStyle';
+import { styles } from './profile_form_style';
 
 interface ProfileFormProps {
   initialData: UserProfile;
@@ -17,6 +23,11 @@ export function ProfileForm({
   onSave,
   isLoading,
 }: ProfileFormProps) {
+  const { width } = useWindowDimensions();
+
+  const getDynamicFontSize = (baseSize: number) => {
+    return Math.max(baseSize, width * 0.035);
+  };
   const convertSkillLevelToKorean = (level: string) => {
     switch (level) {
       case 'AMATEUR':
@@ -138,7 +149,10 @@ export function ProfileForm({
                   styles.levelOptionText,
                   formData.skillLevel === level &&
                     styles.levelOptionTextSelected,
+                  { fontSize: getDynamicFontSize(12) },
                 ]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
               >
                 {level}
               </Text>
