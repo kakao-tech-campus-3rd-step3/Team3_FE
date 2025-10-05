@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   View,
@@ -9,6 +10,7 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { ROUTES } from '@/src/constants/routes';
 import { useUserProfile } from '@/src/hooks/queries';
 import { useMatchRequest } from '@/src/hooks/useMatchRequest';
 import { useMatchWaitingList } from '@/src/hooks/useMatchWaitingList';
@@ -31,6 +33,8 @@ export default function MatchApplicationScreen({
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+
+  const router = useRouter();
 
   const { data: userProfile, error: profileError, refetch } = useUserProfile();
 
@@ -85,7 +89,13 @@ export default function MatchApplicationScreen({
           Alert.alert(
             '신청 완료',
             `매치 요청이 전송되었습니다.\n상태: ${res.status}`,
-            [{ text: '확인', style: 'default' }]
+            [
+              {
+                text: '확인',
+                style: 'default',
+                onPress: () => router.push(ROUTES.HOME),
+              },
+            ]
           );
         },
         onError: () => {
