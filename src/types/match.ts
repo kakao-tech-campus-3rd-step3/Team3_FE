@@ -60,7 +60,7 @@ export interface MatchWaitingResponseDto {
   skillLevelMax: 'AMATEUR' | 'SEMI_PRO' | 'PRO';
   universityOnly: boolean;
   message: string;
-  status: 'WAITING' | 'MATCHED' | 'CANCELLED';
+  status: 'WAITING' | 'MATCHED' | 'CANCELLED' | 'COMPLETED';
   expiresAt: string;
 }
 
@@ -116,4 +116,23 @@ export interface MatchConfirmedResponseDto {
   matchTime: string;
   venueId: number;
   status: string;
+}
+
+export interface MatchWaitingCancelResponseDto {
+  waitingId: number;
+  teamId: number;
+  teamName: string;
+  status: 'WAITING' | 'MATCHED' | 'REJECTED' | 'CANCELLED';
+  expiresAt: string;
+}
+
+export interface MatchWaitingHistoryResponseDto {
+  requestId: number;
+  requestTeamId: number;
+  requestTeamName: string | { name: string };
+  targetTeamId: number;
+  targetTeamName: string | { name: string };
+  requestMessage: string;
+  requestAt: string;
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
 }

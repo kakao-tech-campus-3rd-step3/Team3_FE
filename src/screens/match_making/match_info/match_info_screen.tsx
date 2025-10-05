@@ -74,6 +74,7 @@ export default function MatchInfoScreen() {
   const pad2 = (n: number) => String(n).padStart(2, '0');
   const fmtDate = (d: Date) => {
     const result = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+
     return result;
   };
   const fmtTime = (d: Date) =>
