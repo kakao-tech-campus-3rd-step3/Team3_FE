@@ -449,13 +449,15 @@ export function useUpdateTeamMutation() {
 
 export function useDeleteTeamMutation() {
   return useMutation({
-    mutationFn: (teamId: string | number) =>
-      api.teamDeleteApi.deleteTeam(teamId),
+    mutationFn: (teamId: string | number) => {
+      return api.teamDeleteApi.deleteTeam(teamId);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
     },
     onError: (error: unknown) => {
-      console.error('팀 삭제 실패:', error);
+      console.error('[팀 삭제 Mutation] API 실패:', error);
     },
   });
 }
@@ -471,6 +473,29 @@ export function useTeamExitMutation() {
     },
     onError: (error: unknown) => {
       console.error('팀 나가기 실패:', error);
+    },
+  });
+}
+
+export function useDelegateLeadershipMutation() {
+  return useMutation({
+    mutationFn: ({
+      teamId,
+      memberId,
+    }: {
+      teamId: string | number;
+      memberId: string | number;
+    }) => api.teamMemberApi.delegateLeadership(teamId, memberId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['teamMembers', variables.teamId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.team.key(variables.teamId),
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('리더십 위임 실패:', error);
     },
   });
 }
