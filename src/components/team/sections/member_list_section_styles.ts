@@ -205,6 +205,15 @@ export const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
     flexShrink: 1,
   },
+  delegateButton: {
+    backgroundColor: colors.yellow[50],
+    borderColor: colors.yellow[300],
+  },
+  delegateButtonText: {
+    color: colors.yellow[600],
+    fontWeight: typography.fontWeight.semibold,
+    flexShrink: 1,
+  },
 
   emptyState: {
     alignItems: 'center',
