@@ -29,8 +29,6 @@ import type {
   JoinWaitingCancelRequest,
   ApiUserJoinWaitingPageResponse,
   UserJoinWaitingPageResponse,
-  ApiUserJoinWaitingItem,
-  UserJoinWaitingItem,
 } from '@/src/types/team';
 import {
   transformTeamListPageResponse,
@@ -41,6 +39,7 @@ import {
   transformUserJoinWaitingPageResponse,
   getTeamTypeInEnglish,
   getSkillLevelInEnglish,
+  getRoleInKorean,
 } from '@/src/utils/team';
 
 export const createTeam = (data: CreateTeamRequest) => {
@@ -114,7 +113,7 @@ export const teamMemberApi = {
     return apiClient.put<TeamMember>(
       TEAM_MEMBER_API.UPDATE_ROLE(teamId, userId),
       {
-        role,
+        role: getRoleInKorean(role),
       }
     );
   },
@@ -125,6 +124,16 @@ export const teamMemberApi = {
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient.delete<{ success: boolean; message: string }>(
       TEAM_MEMBER_API.REMOVE_MEMBER(teamId, userId)
+    );
+  },
+
+  delegateLeadership: (
+    teamId: string | number,
+    memberId: string | number
+  ): Promise<TeamMember> => {
+    return apiClient.post<TeamMember>(
+      TEAM_MEMBER_API.DELEGATE_LEADERSHIP(teamId, memberId),
+      {}
     );
   },
 };
@@ -245,15 +254,15 @@ export const teamDeleteApi = {
       let matchRequests = null;
       try {
         matchRequests = await apiClient.get('/api/matches/receive/me/pending');
-      } catch {
-        // 매치 요청 조회 실패
+      } catch (error) {
+        console.log('[팀 삭제 API] 매치 요청 조회 실패:', error);
       }
 
       let recentMatches = null;
       try {
         recentMatches = await apiClient.get('/api/teams/me/matches');
-      } catch {
-        // 최근 매치 조회 실패
+      } catch (error) {
+        console.log('[팀 삭제 API] 최근 매치 조회 실패:', error);
       }
 
       let matchWaiting = null;
@@ -261,8 +270,8 @@ export const teamDeleteApi = {
         matchWaiting = await apiClient.get(
           `/api/matches/waiting?teamId=${teamId}`
         );
-      } catch {
-        // 매치 대기 목록 조회 실패
+      } catch (error) {
+        console.log('[팀 삭제 API] 매치 대기 목록 조회 실패:', error);
       }
 
       const result = {

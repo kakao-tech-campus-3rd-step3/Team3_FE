@@ -43,8 +43,7 @@ export default function UniversityTeamListScreen() {
   const slideAnim = useState(new Animated.Value(0))[0];
   const joinModalAnim = useState(new Animated.Value(0))[0];
 
-  const { joinWaiting, isJoining, joinError, joinSuccess, resetJoinState } =
-    useTeamJoinRequest();
+  const { joinWaiting } = useTeamJoinRequest();
 
   const {
     data,
@@ -153,7 +152,7 @@ export default function UniversityTeamListScreen() {
             ]
           );
         });
-      } catch (error) {
+      } catch {
         Alert.alert(
           '신청 실패',
           '팀 가입 신청에 실패했습니다. 다시 시도해주세요.',
@@ -198,7 +197,7 @@ export default function UniversityTeamListScreen() {
 
   if (loading && !data) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={theme.colors.blue[500]} />
       </View>
     );

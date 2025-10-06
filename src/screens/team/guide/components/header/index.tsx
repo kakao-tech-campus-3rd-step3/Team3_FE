@@ -10,9 +10,13 @@ import { styles } from '../../team_guide_styles';
 export default memo(function Header() {
   const router = useRouter();
 
+  const handleBackPress = () => {
+    router.replace('/(tabs)');
+  };
+
   return (
     <>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+      <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
         <Ionicons name="chevron-back" size={24} color={colors.text.white} />
       </TouchableOpacity>
 

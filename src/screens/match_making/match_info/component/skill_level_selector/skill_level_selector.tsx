@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { View, Text } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 
-import { theme } from '@/src/theme';
-
 import { style } from './skill_level_selector_style';
-
-const { width: screenWidth } = Dimensions.get('window');
-const isTablet = screenWidth >= 768;
 
 // 실력 레벨 정의
 const LEVELS = [

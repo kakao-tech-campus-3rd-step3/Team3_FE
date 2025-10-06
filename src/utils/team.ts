@@ -109,9 +109,18 @@ export const getRoleDisplayName = (role: TeamMemberRole): string => {
   const roleMapping: Record<TeamMemberRole, string> = {
     LEADER: '회장',
     VICE_LEADER: '부회장',
-    MEMBER: '팀원',
+    MEMBER: '일반멤버',
   };
-  return roleMapping[role] || '팀원';
+  return roleMapping[role] || '일반멤버';
+};
+
+export const getRoleInKorean = (role: TeamMemberRole): string => {
+  const roleMapping: Record<TeamMemberRole, string> = {
+    LEADER: '회장',
+    VICE_LEADER: '부회장',
+    MEMBER: '일반멤버',
+  };
+  return roleMapping[role] || '일반멤버';
 };
 
 export const JOIN_REQUEST_STATUS_MAPPING: Record<

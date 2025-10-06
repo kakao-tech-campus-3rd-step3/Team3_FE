@@ -146,7 +146,7 @@ export async function getMyCreatedMatches(): Promise<
     // content 배열만 리턴
     return response.content || [];
   } catch (error) {
-    console.error('❌ getMyCreatedMatches API 에러:', error);
+    console.error('getMyCreatedMatches API 에러:', error);
     throw error;
   }
 }
@@ -171,10 +171,9 @@ export async function getMyAppliedMatches(): Promise<
       last: boolean;
     }>(MATCH_REQUEST_API.GET_MY_APPLIED_MATCHES);
 
-    // content 배열만 리턴
     return response.content || [];
   } catch (error) {
-    console.error('❌ getMyAppliedMatches API 에러:', error);
+    console.error('getMyAppliedMatches API 에러:', error);
     throw error;
   }
 }
@@ -187,7 +186,7 @@ export async function cancelMatchRequestById(
     const response = await apiClient.delete<MatchRequestResponseDto>(url);
     return response;
   } catch (error) {
-    console.error('❌ cancelMatchRequestById API 에러:', error);
+    console.error('cancelMatchRequestById API 에러:', error);
     throw error;
   }
 }

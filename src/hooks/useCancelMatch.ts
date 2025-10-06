@@ -16,6 +16,8 @@ export const useCancelMatch = () => {
       queryClient.invalidateQueries({
         queryKey: ['my-created-matches'], // ✅ v5 호환 문법
       });
+      // 사용자 프로필도 갱신 (팀 정보가 변경될 수 있음)
+      queryClient.invalidateQueries({ queryKey: ['user', 'profile'] });
     },
   });
 };
