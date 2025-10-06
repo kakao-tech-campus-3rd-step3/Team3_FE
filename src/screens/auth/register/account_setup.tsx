@@ -8,7 +8,6 @@ import {
   Linking,
   TouchableWithoutFeedback,
   Keyboard,
-  useWindowDimensions,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
