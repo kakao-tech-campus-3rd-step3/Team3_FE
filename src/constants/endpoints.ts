@@ -52,6 +52,8 @@ export const TEAM_MEMBER_API = {
     `/api/teams/${teamId}/users/${userId}`,
   REMOVE_MEMBER: (teamId: string | number, userId: string | number) =>
     `/api/teams/${teamId}/users/${userId}`,
+  DELEGATE_LEADERSHIP: (teamId: string | number, memberId: string | number) =>
+    `/api/teams/${teamId}/members/${memberId}/delegate-leadership`,
 };
 
 export const TEAM_MATCH_API = {
