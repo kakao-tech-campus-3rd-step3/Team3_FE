@@ -29,8 +29,6 @@ import type {
   JoinWaitingCancelRequest,
   ApiUserJoinWaitingPageResponse,
   UserJoinWaitingPageResponse,
-  ApiUserJoinWaitingItem,
-  UserJoinWaitingItem,
 } from '@/src/types/team';
 import {
   transformTeamListPageResponse,
