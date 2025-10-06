@@ -74,7 +74,7 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
     if (selectedDay > daysInNewMonth) {
       setSelectedDay(daysInNewMonth);
     }
-  }, [selectedMonth, selectedDay]);
+  }, [selectedMonth, selectedDay, currentYear]);
 
   return (
     <Modal
