@@ -8,6 +8,7 @@ import {
   Alert,
   TouchableWithoutFeedback,
   Keyboard,
+  useWindowDimensions,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -29,7 +30,45 @@ interface Props {
   handleNext: () => void;
 }
 export function EmailVerification({ data, onChange, handleNext }: Props) {
+  const { width } = useWindowDimensions();
   const { errors, validateField } = useRegisterValidation(emailValidationRules);
+
+  const dynamicStyles = StyleSheet.create({
+    label: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: theme.colors.text.main,
+      marginBottom: Math.max(8, width * 0.02),
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.colors.border.input,
+      borderRadius: Math.max(8, width * 0.02),
+      paddingHorizontal: Math.max(16, width * 0.04),
+      paddingVertical: Math.max(12, width * 0.03),
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.main,
+      backgroundColor: theme.colors.background.input,
+    },
+    errorText: {
+      color: theme.colors.red[500],
+      fontSize: Math.max(12, width * 0.035),
+      marginTop: Math.max(8, width * 0.02),
+    },
+    nextButton: {
+      backgroundColor: theme.colors.brand.main,
+      paddingVertical: Math.max(12, width * 0.03),
+      paddingHorizontal: Math.max(20, width * 0.05),
+      borderRadius: Math.max(8, width * 0.02),
+      alignItems: 'center',
+      marginTop: Math.max(20, width * 0.05),
+    },
+    nextButtonText: {
+      color: theme.colors.white,
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+    },
+  });
 
   const isNextButtonDisabled =
     !data.university || !data.universityEmail || !!errors.universityEmail;
@@ -64,7 +103,7 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
         enableOnAndroid={true}
       >
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>대학교명</Text>
+          <Text style={dynamicStyles.label}>대학교명</Text>
           <Dropdown
             items={UNIVERSITIES.map(uni => uni.name)}
             value={data.university}
@@ -73,10 +112,10 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
           />
         </View>
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>대학교 이메일</Text>
+          <Text style={dynamicStyles.label}>대학교 이메일</Text>
           <TextInput
             style={[
-              styles.input,
+              dynamicStyles.input,
               data.universityEmail && styles.inputFilled,
               errors.universityEmail && styles.inputError,
             ]}
@@ -88,13 +127,15 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
             autoCorrect={false}
           />
           {errors.universityEmail && (
-            <Text style={styles.errorText}>{errors.universityEmail}</Text>
+            <Text style={dynamicStyles.errorText}>
+              {errors.universityEmail}
+            </Text>
           )}
         </View>
 
         <TouchableOpacity
           style={[
-            styles.nextButton,
+            dynamicStyles.nextButton,
             isNextButtonDisabled && styles.nextButtonDisabled,
           ]}
           onPress={handleNextStep}
@@ -102,7 +143,7 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
         >
           <Text
             style={[
-              styles.nextButtonText,
+              dynamicStyles.nextButtonText,
               isNextButtonDisabled && styles.nextButtonTextDisabled,
             ]}
           >
