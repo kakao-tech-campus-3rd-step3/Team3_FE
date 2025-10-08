@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { ROUTES } from '@/src/constants/routes';
 import { useEnemyTeam } from '@/src/hooks/useEnemyTeam';
 import { theme } from '@/src/theme';
 
@@ -100,7 +101,7 @@ export default function MatchSetScreen() {
       <View style={styles.bottomBar}>
         <TouchableOpacity
           style={styles.homeButton}
-          onPress={() => router.replace('/(tabs)/home')}
+          onPress={() => router.replace(ROUTES.HOME)}
         >
           <Text style={styles.homeButtonText}>홈으로 돌아가기</Text>
         </TouchableOpacity>
