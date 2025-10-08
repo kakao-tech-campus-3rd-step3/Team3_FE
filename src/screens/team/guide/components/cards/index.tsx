@@ -33,7 +33,6 @@ export default function Cards() {
   const card2Anim = useRef(new Animated.Value(0)).current;
   const card3Anim = useRef(new Animated.Value(0)).current;
 
-  // 화면 크기에 비례한 동적 스타일 생성
   const dynamicStyles = StyleSheet.create({
     card: {
       backgroundColor: colors.white,
@@ -47,20 +46,20 @@ export default function Cards() {
       position: 'absolute',
     },
     cardFirst: {
-      width: 280,
-      height: 70,
+      width: Math.max(240, width * 0.8),
+      height: Math.max(60, width * 0.15),
       zIndex: 3,
       transform: [{ rotate: '-3deg' }, { scale: 1 }],
-      left: 20,
-      top: 20,
+      left: Math.max(20, width * 0.05),
+      top: Math.max(20, width * 0.05),
     },
     cardSecond: {
-      width: 260,
-      height: 70,
+      width: Math.max(240, width * 0.8),
+      height: Math.max(60, width * 0.15),
       zIndex: 2,
       transform: [{ rotate: '3deg' }, { scale: 0.95 }],
-      left: 30,
-      top: 80,
+      left: Math.max(20, width * 0.05),
+      top: Math.max(80, width * 0.2),
       opacity: 0.9,
       shadowColor: colors.black,
       shadowOffset: { width: 0, height: 2 },
@@ -69,12 +68,12 @@ export default function Cards() {
       elevation: 3,
     },
     cardThird: {
-      width: 240,
-      height: 70,
+      width: Math.max(240, width * 0.8),
+      height: Math.max(60, width * 0.15),
       zIndex: 1,
       transform: [{ rotate: '-2deg' }, { scale: 0.9 }],
-      left: 40,
-      top: 140,
+      left: Math.max(20, width * 0.05),
+      top: Math.max(140, width * 0.35),
       opacity: 0.8,
       shadowColor: colors.black,
       shadowOffset: { width: 0, height: 2 },
@@ -150,7 +149,8 @@ export default function Cards() {
           <Text
             style={dynamicStyles.cardText}
             numberOfLines={1}
-            ellipsizeMode="tail"
+            adjustsFontSizeToFit={true}
+            minimumFontScale={0.7}
           >
             {cards[0].text}
           </Text>
@@ -185,7 +185,8 @@ export default function Cards() {
           <Text
             style={dynamicStyles.cardText}
             numberOfLines={1}
-            ellipsizeMode="tail"
+            adjustsFontSizeToFit={true}
+            minimumFontScale={0.7}
           >
             {cards[1].text}
           </Text>
@@ -220,7 +221,8 @@ export default function Cards() {
           <Text
             style={dynamicStyles.cardText}
             numberOfLines={1}
-            ellipsizeMode="tail"
+            adjustsFontSizeToFit={true}
+            minimumFontScale={0.7}
           >
             {cards[2].text}
           </Text>
