@@ -34,7 +34,9 @@ export default function TeamSettingsScreen({
   const [showJoinRequestsModal, setShowJoinRequestsModal] = useState(false);
   const [showMatchRequestsModal, setShowMatchRequestsModal] = useState(false);
   const [matchAccepted, setMatchAccepted] = useState(false);
+  const [acceptedMatchId, setAcceptedMatchId] = useState<number | null>(null);
   const { data: userProfile } = useUserProfile();
+
   const deleteTeamMutation = useDeleteTeamMutation();
 
   const numericTeamId = teamId ? Number(teamId) : 0;
@@ -91,19 +93,23 @@ export default function TeamSettingsScreen({
 
   // 모달 닫힌 후 alert 실행행
   useEffect(() => {
-    if (!showMatchRequestsModal && matchAccepted) {
+    if (!showMatchRequestsModal && matchAccepted && acceptedMatchId) {
       // 모달이 실제로 언마운트된 이후 실행
       requestAnimationFrame(() => {
         Alert.alert('성공', '매치가 성사되었습니다!', [
           {
             text: '확인',
-            onPress: () => router.push(ROUTES.MATCH_SET),
+            onPress: () => {
+              router.push(`${ROUTES.MATCH_SET}?matchId=${acceptedMatchId}`);
+              setMatchAccepted(false);
+              setAcceptedMatchId(null);
+            },
           },
         ]);
         setMatchAccepted(false);
       });
     }
-  }, [showMatchRequestsModal, matchAccepted]);
+  }, [showMatchRequestsModal, matchAccepted, acceptedMatchId]);
 
   if (!teamId || teamId === null || teamId === undefined) {
     return (
@@ -207,11 +213,14 @@ export default function TeamSettingsScreen({
         onPress: async () => {
           try {
             if (status === 'approved') {
-              await acceptMatchRequestApi(requestId);
+              // ✅ 1️⃣ 매치 요청 수락 API 호출 → matchId 반환
+              const response = await acceptMatchRequestApi(requestId);
+              const { matchId } = response;
 
-              // ✅ 모달 닫고 → useEffect가 이후 Alert를 띄움
-              setShowMatchRequestsModal(false);
+              // ✅ 2️⃣ matchId 저장 → 모달 닫힘 트리거
+              setAcceptedMatchId(matchId);
               setMatchAccepted(true);
+              setShowMatchRequestsModal(false);
             } else {
               await rejectMatchRequestApi(requestId);
               Alert.alert('성공', `매치 요청을 ${action}했습니다.`);

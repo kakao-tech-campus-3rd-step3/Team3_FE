@@ -136,3 +136,15 @@ export interface MatchWaitingHistoryResponseDto {
   requestAt: string;
   status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
 }
+
+export interface EnemyTeamResponseDto {
+  teamId: number;
+  teamName: string;
+  captainId: number;
+  captainName: string;
+  universityName: string;
+  teamType: 'CENTRAL_CLUB' | 'DEPARTMENT_CLUB' | 'OTHER';
+  memberCount: number;
+  skillLevel: 'PRO' | 'SEMI_PRO' | 'AMATEUR';
+  description: string;
+}
