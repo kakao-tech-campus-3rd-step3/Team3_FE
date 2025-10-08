@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useCallback,
+} from 'react';
 import { View, ActivityIndicator } from 'react-native';
 
 import { authApi } from '@/src/api/auth';
@@ -33,8 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
   const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 토큰 갱신 함수 (토큰 로테이션 포함)
-  const refreshAccessToken = async () => {
+  const refreshAccessToken = useCallback(async () => {
     if (!refreshToken) {
       setToken(null);
       setRefreshToken(null);
@@ -48,14 +53,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         accessToken,
         refreshToken: newRefreshToken,
         accessTokenExpiresIn,
-      } = response.data;
+      } = response;
 
-      // 토큰 로테이션: 새 토큰들로 업데이트
       setToken(accessToken);
       setRefreshToken(newRefreshToken);
       apiClient.setToken(accessToken);
 
-      // 다음 토큰 갱신을 위한 타이머 설정 (만료 5분 전에 갱신)
       const refreshTime = (accessTokenExpiresIn - 300) * 1000;
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
@@ -63,14 +66,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       refreshTimeoutRef.current = setTimeout(refreshAccessToken, refreshTime);
     } catch (error) {
       console.warn('토큰 갱신 실패:', error);
-      // Refresh Token도 만료된 경우 완전 로그아웃
       setToken(null);
       setRefreshToken(null);
       queryClient.clear();
     }
-  };
+  }, [refreshToken, setToken, setRefreshToken]);
 
-  // 앱 시작 시 자동 로그인 복원
   useEffect(() => {
     const initializeAuth = async () => {
       if (!isLoading && refreshToken && !token) {
@@ -79,15 +80,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     initializeAuth();
-  }, [isLoading, refreshToken, token]);
+  }, [isLoading, refreshToken, token, refreshAccessToken]);
 
   useEffect(() => {
     apiClient.setOnTokenExpired(() => {
       refreshAccessToken();
     });
-  }, [refreshToken]);
+  }, [refreshAccessToken]);
 
-  // 컴포넌트 언마운트 시 타이머 정리
   useEffect(() => {
     return () => {
       if (refreshTimeoutRef.current) {
@@ -127,7 +127,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         refreshTimeoutRef.current = null;
       }
 
-      // 로컬 토큰 삭제
       setToken(null);
       setRefreshToken(null);
       queryClient.clear();

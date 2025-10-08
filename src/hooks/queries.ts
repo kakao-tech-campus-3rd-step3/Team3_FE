@@ -19,18 +19,13 @@ import type {
   RegisterRequest,
   RegisterResponse,
   SendVerificationResponse,
-  VerifyEmailResponse,
   VerifyEmailRequest,
   UpdateProfileRequest,
   TeamMemberRole,
   SkillLevel,
   TeamType,
-  SendPasswordResetCodeRequest,
-  SendPasswordResetCodeResponse,
   VerifyCodeRequest,
-  VerifyCodeResponse,
   ResetPasswordRequest,
-  ResetPasswordResponse,
 } from '@/src/types';
 
 export const queries = {
