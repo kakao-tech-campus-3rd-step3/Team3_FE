@@ -25,6 +25,12 @@ import type {
   TeamMemberRole,
   SkillLevel,
   TeamType,
+  SendPasswordResetCodeRequest,
+  SendPasswordResetCodeResponse,
+  VerifyCodeRequest,
+  VerifyCodeResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
 } from '@/src/types';
 
 export const queries = {
@@ -45,6 +51,18 @@ export const queries = {
     key: ['verifyEmail'] as const,
     fn: (verifyEmailCode: VerifyEmailRequest) =>
       api.authApi.verifyEmail(verifyEmailCode),
+  },
+  sendPasswordResetCode: {
+    key: ['sendPasswordResetCode'] as const,
+    fn: (email: string) => api.passwordResetApi.sendCode(email),
+  },
+  verifyCode: {
+    key: ['verifyCode'] as const,
+    fn: (data: VerifyCodeRequest) => api.passwordResetApi.verifyCode(data),
+  },
+  resetPassword: {
+    key: ['resetPassword'] as const,
+    fn: (data: ResetPasswordRequest) => api.passwordResetApi.confirm(data),
   },
   userProfile: {
     key: ['user', 'profile'] as const,
@@ -311,7 +329,11 @@ export function useLoginMutation() {
   return useMutation({
     mutationFn: queries.login.fn,
     onSuccess: async (data: LoginResponse) => {
-      await login(data.accessToken);
+      await login(
+        data.accessToken,
+        data.refreshToken,
+        data.accessTokenExpiresIn
+      );
       await queryClient.clear();
       router.replace('/(tabs)');
     },
@@ -327,7 +349,11 @@ export function useRegisterMutation() {
   return useMutation({
     mutationFn: queries.register.fn,
     onSuccess: async (data: RegisterResponse) => {
-      await login(data.accessToken);
+      await login(
+        data.accessToken,
+        data.refreshToken,
+        data.accessTokenExpiresIn
+      );
       await queryClient.clear();
       router.replace('/(tabs)');
     },
@@ -347,12 +373,29 @@ export function useSendVerificationMutation() {
   });
 }
 
-export function useVerifyEmailMutation() {
+export function useSendPasswordResetCodeMutation() {
   return useMutation({
-    mutationFn: queries.verifyEmail.fn,
-    onSuccess: (data: VerifyEmailResponse) => {},
+    mutationFn: queries.sendPasswordResetCode.fn,
     onError: (error: unknown) => {
-      console.error('이메일 인증 실패:', error);
+      console.error('인증번호 발송 실패:', error);
+    },
+  });
+}
+
+export function useVerifyCodeMutation() {
+  return useMutation({
+    mutationFn: queries.verifyCode.fn,
+    onError: (error: unknown) => {
+      console.error('인증코드 검증 실패:', error);
+    },
+  });
+}
+
+export function useResetPasswordMutation() {
+  return useMutation({
+    mutationFn: queries.resetPassword.fn,
+    onError: (error: unknown) => {
+      console.error('비밀번호 변경 실패:', error);
     },
   });
 }
