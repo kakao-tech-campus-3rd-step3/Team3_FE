@@ -31,6 +31,7 @@ function AppContent() {
         <Stack.Screen name="match_application/index" />
         <Stack.Screen name="check_created_matches/index" />
         <Stack.Screen name="check_applied_matches/index" />
+        <Stack.Screen name="match_set/index" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

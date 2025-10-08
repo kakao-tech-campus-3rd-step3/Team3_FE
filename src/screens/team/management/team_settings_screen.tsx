@@ -12,6 +12,7 @@ import ManageSection from '@/src/components/team/sections/manage_section';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { LoadingState } from '@/src/components/ui/loading_state';
+import { ROUTES } from '@/src/constants/routes';
 import {
   useTeamJoinWaitingList,
   useTeamMembers,
@@ -32,6 +33,7 @@ export default function TeamSettingsScreen({
 }: TeamSettingsScreenProps) {
   const [showJoinRequestsModal, setShowJoinRequestsModal] = useState(false);
   const [showMatchRequestsModal, setShowMatchRequestsModal] = useState(false);
+  const [matchAccepted, setMatchAccepted] = useState(false);
   const { data: userProfile } = useUserProfile();
   const deleteTeamMutation = useDeleteTeamMutation();
 
@@ -86,6 +88,22 @@ export default function TeamSettingsScreen({
       );
     }
   }, [currentUserMember, canManageTeam, numericTeamId]);
+
+  // 모달 닫힌 후 alert 실행행
+  useEffect(() => {
+    if (!showMatchRequestsModal && matchAccepted) {
+      // 모달이 실제로 언마운트된 이후 실행
+      requestAnimationFrame(() => {
+        Alert.alert('성공', '매치가 성사되었습니다!', [
+          {
+            text: '확인',
+            onPress: () => router.push(ROUTES.MATCH_SET),
+          },
+        ]);
+        setMatchAccepted(false);
+      });
+    }
+  }, [showMatchRequestsModal, matchAccepted]);
 
   if (!teamId || teamId === null || teamId === undefined) {
     return (
@@ -190,12 +208,16 @@ export default function TeamSettingsScreen({
           try {
             if (status === 'approved') {
               await acceptMatchRequestApi(requestId);
+
+              // ✅ 모달 닫고 → useEffect가 이후 Alert를 띄움
+              setShowMatchRequestsModal(false);
+              setMatchAccepted(true);
             } else {
               await rejectMatchRequestApi(requestId);
+              Alert.alert('성공', `매치 요청을 ${action}했습니다.`);
             }
 
-            Alert.alert('성공', `매치 요청을 ${action}했습니다.`);
-            refetchMatchRequests(); // 매치 요청 목록 새로고침
+            refetchMatchRequests();
           } catch {
             Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
           }
