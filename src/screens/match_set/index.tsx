@@ -22,12 +22,6 @@ export default function MatchSetScreen() {
   // ✅ 커스텀 훅 호출 (React Query)
   const { data: enemyTeam, isLoading, error } = useEnemyTeam(matchId);
 
-  // ✅ 디버깅 로그
-  console.log('🟢 [MatchSetScreen Render]');
-  console.log('   matchId:', matchId);
-  console.log('   enemyTeam:', enemyTeam);
-  console.log('   error:', error);
-
   // ✅ 로딩 상태
   if (isLoading) {
     return (
