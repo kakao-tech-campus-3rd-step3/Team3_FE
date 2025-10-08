@@ -8,6 +8,12 @@ export const AUTH_API = {
   SEND_VERIFICATION: '/api/auth/send-verification',
 };
 
+export const PASSWORD_RESET_API = {
+  SEND_CODE: '/api/password-reset/send-code',
+  VERIFY_CODE: '/api/password-reset/verify-code',
+  CONFIRM: '/api/password-reset/confirm',
+};
+
 export const PROFILE_API = {
   GET_PROFILE: '/api/profiles/me',
   UPDATE_PROFILE: '/api/profiles/me',
