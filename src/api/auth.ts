@@ -1,4 +1,4 @@
-import { AUTH_API } from '@/src/constants/endpoints';
+import { AUTH_API, PASSWORD_RESET_API } from '@/src/constants/endpoints';
 import { apiClient } from '@/src/lib/api_client';
 import {
   LoginResponse,
@@ -7,6 +7,9 @@ import {
   SendVerificationResponse,
   VerifyEmailResponse,
   VerifyEmailRequest,
+  TokenRefreshResponse,
+  VerifyCodeRequest,
+  ResetPasswordRequest,
 } from '@/src/types';
 
 export const authApi = {
@@ -22,7 +25,10 @@ export const authApi = {
 
   logoutAll: () => apiClient.post(AUTH_API.LOGOUT_ALL, {}),
 
-  refreshToken: () => apiClient.post<LoginResponse>(AUTH_API.REFRESH, {}),
+  refreshToken: (refreshToken: string) =>
+    apiClient.post<TokenRefreshResponse>(AUTH_API.REFRESH, {
+      refreshToken,
+    }),
 
   verifyEmail: (verifyEmailCode: VerifyEmailRequest) =>
     apiClient.post<VerifyEmailResponse>(AUTH_API.VERIFY_EMAIL, verifyEmailCode),
@@ -31,4 +37,15 @@ export const authApi = {
     apiClient.post<SendVerificationResponse>(AUTH_API.SEND_VERIFICATION, {
       email,
     }),
+};
+
+export const passwordResetApi = {
+  sendCode: (email: string) =>
+    apiClient.post(PASSWORD_RESET_API.SEND_CODE, { email }),
+
+  verifyCode: (data: VerifyCodeRequest) =>
+    apiClient.post(PASSWORD_RESET_API.VERIFY_CODE, data),
+
+  confirm: (data: ResetPasswordRequest) =>
+    apiClient.post(PASSWORD_RESET_API.CONFIRM, data),
 };
