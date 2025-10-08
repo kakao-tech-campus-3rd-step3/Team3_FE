@@ -118,7 +118,7 @@ export async function getMatchWaitingList(
 
     return response.content || [];
   } catch (error) {
-    console.error('API 에러:', error);
+    console.error('🌐 [API] getMatchWaitingList 에러:', error);
     throw error;
   }
 }
@@ -143,7 +143,6 @@ export async function getMyCreatedMatches(): Promise<
       last: boolean;
     }>('/api/matches/waiting/me');
 
-    // content 배열만 리턴
     return response.content || [];
   } catch (error) {
     console.error('getMyCreatedMatches API 에러:', error);
