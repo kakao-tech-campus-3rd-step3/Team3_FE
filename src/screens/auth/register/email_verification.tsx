@@ -8,13 +8,11 @@ import {
   Alert,
   TouchableWithoutFeedback,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
+  useWindowDimensions,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { Dropdown } from '@/src/components/dropdown';
-import { UI_CONSTANTS } from '@/src/constants/ui';
 import { UNIVERSITIES } from '@/src/constants/universities';
 import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 import {
@@ -32,7 +30,45 @@ interface Props {
   handleNext: () => void;
 }
 export function EmailVerification({ data, onChange, handleNext }: Props) {
+  const { width } = useWindowDimensions();
   const { errors, validateField } = useRegisterValidation(emailValidationRules);
+
+  const dynamicStyles = StyleSheet.create({
+    label: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: theme.colors.text.main,
+      marginBottom: Math.max(8, width * 0.02),
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.colors.border.input,
+      borderRadius: Math.max(8, width * 0.02),
+      paddingHorizontal: Math.max(16, width * 0.04),
+      paddingVertical: Math.max(12, width * 0.03),
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.main,
+      backgroundColor: theme.colors.background.input,
+    },
+    errorText: {
+      color: theme.colors.red[500],
+      fontSize: Math.max(12, width * 0.035),
+      marginTop: Math.max(8, width * 0.02),
+    },
+    nextButton: {
+      backgroundColor: theme.colors.brand.main,
+      paddingVertical: Math.max(12, width * 0.03),
+      paddingHorizontal: Math.max(20, width * 0.05),
+      borderRadius: Math.max(8, width * 0.02),
+      alignItems: 'center',
+      marginTop: Math.max(20, width * 0.05),
+    },
+    nextButtonText: {
+      color: theme.colors.white,
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+    },
+  });
 
   const isNextButtonDisabled =
     !data.university || !data.universityEmail || !!errors.universityEmail;
@@ -58,74 +94,67 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
     handleNext();
   };
   return (
-    <KeyboardAvoidingView
-      style={styles.keyboardAvoidingView}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={UI_CONSTANTS.KEYBOARD_VERTICAL_OFFSET}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          automaticallyAdjustKeyboardInsets={true}
-        >
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>대학교명</Text>
-            <Dropdown
-              items={UNIVERSITIES.map(uni => uni.name)}
-              value={data.university}
-              onChange={item => onChange('university', item)}
-              placeholder="대학교를 선택하세요"
-            />
-          </View>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>대학교 이메일</Text>
-            <TextInput
-              style={[
-                styles.input,
-                data.universityEmail && styles.inputFilled,
-                errors.universityEmail && styles.inputError,
-              ]}
-              placeholder="대학교 이메일을 입력하세요"
-              value={data.universityEmail}
-              onChangeText={text => handleFieldChange('universityEmail', text)}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            {errors.universityEmail && (
-              <Text style={styles.errorText}>{errors.universityEmail}</Text>
-            )}
-          </View>
-
-          <TouchableOpacity
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAwareScrollView
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid={true}
+      >
+        <View style={styles.inputGroup}>
+          <Text style={dynamicStyles.label}>대학교명</Text>
+          <Dropdown
+            items={UNIVERSITIES.map(uni => uni.name)}
+            value={data.university}
+            onChange={item => onChange('university', item)}
+            placeholder="대학교를 선택하세요"
+          />
+        </View>
+        <View style={styles.inputGroup}>
+          <Text style={dynamicStyles.label}>대학교 이메일</Text>
+          <TextInput
             style={[
-              styles.nextButton,
-              isNextButtonDisabled && styles.nextButtonDisabled,
+              dynamicStyles.input,
+              data.universityEmail && styles.inputFilled,
+              errors.universityEmail && styles.inputError,
             ]}
-            onPress={handleNextStep}
-            disabled={isNextButtonDisabled}
-          >
-            <Text
-              style={[
-                styles.nextButtonText,
-                isNextButtonDisabled && styles.nextButtonTextDisabled,
-              ]}
-            >
-              다음
+            placeholder="대학교 이메일을 입력하세요"
+            value={data.universityEmail}
+            onChangeText={text => handleFieldChange('universityEmail', text)}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          {errors.universityEmail && (
+            <Text style={dynamicStyles.errorText}>
+              {errors.universityEmail}
             </Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          )}
+        </View>
+
+        <TouchableOpacity
+          style={[
+            dynamicStyles.nextButton,
+            isNextButtonDisabled && styles.nextButtonDisabled,
+          ]}
+          onPress={handleNextStep}
+          disabled={isNextButtonDisabled}
+        >
+          <Text
+            style={[
+              dynamicStyles.nextButtonText,
+              isNextButtonDisabled && styles.nextButtonTextDisabled,
+            ]}
+          >
+            다음
+          </Text>
+        </TouchableOpacity>
+      </KeyboardAwareScrollView>
+    </TouchableWithoutFeedback>
   );
 }
 const styles = StyleSheet.create({
-  keyboardAvoidingView: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     backgroundColor: theme.colors.background.main,
@@ -133,7 +162,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: theme.spacing.spacing2,
     paddingBottom: theme.spacing.spacing20,
-    minHeight: '100%',
   },
   inputGroup: { marginBottom: theme.spacing.spacing6 },
   label: {

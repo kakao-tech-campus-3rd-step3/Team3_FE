@@ -194,6 +194,7 @@ export const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
     color: colors.gray[700],
     marginLeft: spacing.spacing1,
+    flexShrink: 1,
   },
   removeButton: {
     backgroundColor: colors.red[50],
@@ -202,6 +203,16 @@ export const styles = StyleSheet.create({
   removeButtonText: {
     color: colors.red[600],
     fontWeight: typography.fontWeight.semibold,
+    flexShrink: 1,
+  },
+  delegateButton: {
+    backgroundColor: colors.yellow[50],
+    borderColor: colors.yellow[300],
+  },
+  delegateButtonText: {
+    color: colors.yellow[600],
+    fontWeight: typography.fontWeight.semibold,
+    flexShrink: 1,
   },
 
   emptyState: {

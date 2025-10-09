@@ -19,13 +19,14 @@ export default StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: theme.spacing.spacing8,
-    justifyContent: 'center',
-    paddingTop: 0,
+    justifyContent: 'space-between',
+    paddingTop: theme.spacing.spacing8,
+    paddingBottom: theme.spacing.spacing8,
   },
   header: {
     alignItems: 'center',
-    marginBottom: theme.spacing.spacing15,
-    marginTop: -theme.spacing.spacing20,
+    marginBottom: theme.spacing.spacing8,
+    marginTop: theme.spacing.spacing4,
   },
   logoText: {
     fontSize: theme.typography.text.auth.logo.fontSize,
@@ -126,12 +127,9 @@ export default StyleSheet.create({
     marginLeft: theme.spacing.spacing1,
   },
   signupSection: {
-    position: 'absolute',
-    bottom: theme.spacing.spacing10,
-    left: 0,
-    right: 0,
     alignItems: 'center',
     paddingHorizontal: theme.spacing.spacing5,
+    marginTop: theme.spacing.spacing8,
   },
   signupText: {
     color: theme.colors.text.sub,

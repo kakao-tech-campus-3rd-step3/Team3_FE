@@ -2,7 +2,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { memo, useState, useCallback } from 'react';
-import { TouchableOpacity, Text, View, Modal } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  View,
+  Modal,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 
 import { useUserProfile } from '@/src/hooks/queries';
 import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
@@ -15,9 +22,59 @@ export default memo(function Buttons() {
   const router = useRouter();
   const [showJoinWaitingList, setShowJoinWaitingList] = useState(false);
   const { data: userProfile } = useUserProfile();
+  const { width } = useWindowDimensions();
 
   const { data: joinWaitingData, refetch } = useMyJoinWaitingList(0, 1);
   const hasJoinWaiting = joinWaitingData && !joinWaitingData.empty;
+
+  const dynamicStyles = StyleSheet.create({
+    createButton: {
+      backgroundColor: colors.blue[500],
+      borderRadius: Math.max(12, width * 0.03),
+      paddingVertical: Math.max(12, width * 0.035),
+      paddingHorizontal: Math.max(20, width * 0.05),
+      flexDirection: 'row',
+      marginBottom: Math.max(12, width * 0.03),
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: colors.blue[500],
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+      elevation: 4,
+    },
+    createButtonText: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: 'bold',
+      color: colors.text.white,
+      marginLeft: Math.max(8, width * 0.02),
+      textAlign: 'center',
+    },
+    joinButton: {
+      backgroundColor: colors.white,
+      borderWidth: 2,
+      borderColor: colors.blue[500],
+      borderRadius: Math.max(12, width * 0.03),
+      paddingVertical: Math.max(12, width * 0.035),
+      paddingHorizontal: Math.max(20, width * 0.05),
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: colors.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+      elevation: 2,
+      marginBottom: Math.max(8, width * 0.02),
+    },
+    joinButtonText: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: 'bold',
+      color: colors.blue[500],
+      marginLeft: Math.max(8, width * 0.02),
+      textAlign: 'center',
+    },
+  });
 
   useFocusEffect(
     useCallback(() => {
@@ -35,9 +92,17 @@ export default memo(function Buttons() {
 
   return (
     <View style={styles.buttonContainer}>
-      <TouchableOpacity style={styles.joinButton} onPress={handleJoinTeam}>
+      <TouchableOpacity
+        style={dynamicStyles.joinButton}
+        onPress={handleJoinTeam}
+      >
         <Ionicons name="people-outline" size={24} color={colors.blue[500]} />
-        <Text style={styles.joinButtonText}>
+        <Text
+          style={dynamicStyles.joinButtonText}
+          numberOfLines={1}
+          adjustsFontSizeToFit={true}
+          minimumFontScale={0.8}
+        >
           {hasJoinWaiting ? '팀 신청 현황' : '팀 참여하기'}
         </Text>
         {hasJoinWaiting && (
@@ -50,7 +115,7 @@ export default memo(function Buttons() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.createButton}
+        style={dynamicStyles.createButton}
         onPress={() =>
           router.push({
             pathname: '/team/creation',
@@ -63,7 +128,14 @@ export default memo(function Buttons() {
           size={24}
           color={colors.text.white}
         />
-        <Text style={styles.createButtonText}>팀 생성하기</Text>
+        <Text
+          style={dynamicStyles.createButtonText}
+          numberOfLines={1}
+          adjustsFontSizeToFit={true}
+          minimumFontScale={0.8}
+        >
+          팀 생성하기
+        </Text>
       </TouchableOpacity>
 
       <Modal

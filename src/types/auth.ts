@@ -5,7 +5,9 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   accessToken: string;
-  refreshToken: string; // 백엔드에서 쿠키로 설정되지만 응답에도 포함
+  refreshToken: string;
+  accessTokenExpiresIn: number;
+  refreshTokenExpiresIn: number;
 }
 
 export interface RegisterRequest {
@@ -24,7 +26,9 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
   accessToken: string;
-  refreshToken: string; // 백엔드에서 쿠키로 설정되지만 응답에도 포함
+  refreshToken: string;
+  accessTokenExpiresIn: number;
+  refreshTokenExpiresIn: number;
 }
 
 export interface SendVerificationResponse {
@@ -38,4 +42,41 @@ export interface VerifyEmailResponse {
 export interface VerifyEmailRequest {
   universityEmail: string;
   code: string;
+}
+
+export interface TokenRefreshRequest {
+  refreshToken: string;
+}
+
+export interface TokenRefreshResponse {
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpiresIn: number;
+  refreshTokenExpiresIn: number;
+}
+
+export interface SendPasswordResetCodeRequest {
+  email: string;
+}
+
+export interface SendPasswordResetCodeResponse {
+  message: string;
+}
+
+export interface VerifyCodeRequest {
+  email: string;
+  code: string;
+}
+
+export interface VerifyCodeResponse {
+  token: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
 }

@@ -43,7 +43,7 @@ export default StyleSheet.create({
   },
 
   scrollContent: {
-    paddingBottom: theme.spacing.spacing8,
+    paddingBottom: theme.spacing.spacing1,
   },
 
   // 새로운 섹션 스타일들
@@ -57,7 +57,7 @@ export default StyleSheet.create({
   },
   serviceSection: {
     marginHorizontal: theme.spacing.spacing4,
-    marginBottom: theme.spacing.spacing4,
+    marginBottom: 0,
     gap: theme.spacing.spacing4,
   },
 

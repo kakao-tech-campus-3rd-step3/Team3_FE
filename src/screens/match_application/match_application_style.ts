@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
+    backgroundColor: theme.colors.gray[50],
   },
   scrollContent: {
     padding: theme.spacing.spacing4,
@@ -355,5 +356,17 @@ export const styles = StyleSheet.create({
 
   bottomSpacing: {
     height: theme.spacing.spacing6,
+  },
+
+  statusBadge: {
+    paddingHorizontal: theme.spacing.spacing2,
+    paddingVertical: theme.spacing.spacing1,
+    borderRadius: theme.spacing.spacing2,
+    borderWidth: 1,
+    marginLeft: theme.spacing.spacing2,
+  },
+  statusBadgeText: {
+    fontSize: theme.typography.fontSize.font2,
+    fontWeight: theme.typography.fontWeight.semibold,
   },
 });

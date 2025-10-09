@@ -1,8 +1,7 @@
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
-import * as api from '@/src/api';
 import { acceptMatchRequestApi, rejectMatchRequestApi } from '@/src/api/match';
 import { teamJoinRequestApi } from '@/src/api/team';
 import JoinRequestsModal from '@/src/components/team/modals/join_requests_modal';
@@ -45,7 +44,7 @@ export default function TeamSettingsScreen({
   } = useTeamMatchRequests();
 
   const matchRequests: MatchRequest[] = matchRequestsData || [];
-  const { data: team, refetch: refetchTeam } = useTeam(numericTeamId);
+  const { refetch: refetchTeam } = useTeam(numericTeamId);
   const {
     data: teamMembersData,
     isLoading: membersLoading,
@@ -58,6 +57,35 @@ export default function TeamSettingsScreen({
     error,
     refetch,
   } = useTeamJoinWaitingList(teamId, 'PENDING', 0, 10);
+
+  const currentUserName = userProfile?.name;
+  const teamMembers = teamMembersData?.content || [];
+  const currentUserMember = teamMembers.find(
+    member => member.name === currentUserName
+  );
+  const canManageTeam =
+    currentUserMember?.role === 'LEADER' ||
+    currentUserMember?.role === 'VICE_LEADER';
+
+  // 권한 체크: 회장/부회장이 아니면 알림 표시하고 팀 정보로 이동
+  useEffect(() => {
+    if (currentUserMember && !canManageTeam) {
+      Alert.alert(
+        '권한 없음',
+        '팀 설정에 접근할 권한이 없습니다. 회장과 부회장만 접근할 수 있습니다.',
+        [
+          {
+            text: '확인',
+            onPress: () => {
+              // 네비게이션 스택을 완전히 초기화하고 팀 정보 화면으로 이동
+              router.dismissAll();
+              router.replace(`/team/management/${numericTeamId}`);
+            },
+          },
+        ]
+      );
+    }
+  }, [currentUserMember, canManageTeam, numericTeamId]);
 
   if (!teamId || teamId === null || teamId === undefined) {
     return (
@@ -88,15 +116,6 @@ export default function TeamSettingsScreen({
       </View>
     );
   }
-
-  const currentUserName = userProfile?.name;
-  const teamMembers = teamMembersData?.content || [];
-  const currentUserMember = teamMembers.find(
-    member => member.name === currentUserName
-  );
-  const canManageTeam =
-    currentUserMember?.role === 'LEADER' ||
-    currentUserMember?.role === 'VICE_LEADER';
 
   if (isLoading || membersLoading || matchRequestsLoading) {
     return <LoadingState message="팀 정보를 불러오는 중..." />;
@@ -148,7 +167,7 @@ export default function TeamSettingsScreen({
               refetchMembers();
               refetchTeam();
             }
-          } catch (error) {
+          } catch {
             Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
           }
         },
@@ -177,7 +196,7 @@ export default function TeamSettingsScreen({
 
             Alert.alert('성공', `매치 요청을 ${action}했습니다.`);
             refetchMatchRequests(); // 매치 요청 목록 새로고침
-          } catch (error) {
+          } catch {
             Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
           }
         },
@@ -186,32 +205,9 @@ export default function TeamSettingsScreen({
   };
 
   const handleDeleteTeam = async () => {
-    try {
-      const matchData: any =
-        await api.teamDeleteApi.getTeamMatches(numericTeamId);
-
-      if (
-        matchData.matchRequests &&
-        matchData.matchRequests.content &&
-        matchData.matchRequests.content.length > 0
-      ) {
-        // 대기 중인 매치 요청이 있는 경우
-      }
-
-      if (matchData.recentMatches && matchData.recentMatches.length > 0) {
-        // 완료된 매치 기록이 있는 경우
-      }
-
-      if (matchData.matchWaiting && matchData.matchWaiting.length > 0) {
-        // 매치 생성 대기가 있는 경우
-      }
-    } catch {
-      // 매치 데이터 조회 중 오류 발생
-    }
-
     Alert.alert(
       '팀 삭제',
-      '정말로 팀을 삭제하시겠습니까?\n\n⚠️ 이 작업은 되돌릴 수 없습니다.\n\n💡 매치를 생성했다면 팀 삭제가 막힐 수 있습니다.\n백엔드에서 cascade 삭제가 구현되어야 합니다.',
+      '정말로 팀을 삭제하시겠습니까?\n\n 이 작업은 되돌릴 수 없습니다.\n\n 관련된 작업이 있다면 팀 삭제가 제한 될 수 있습니다.',
       [
         { text: '취소', style: 'cancel' },
         {
@@ -224,7 +220,7 @@ export default function TeamSettingsScreen({
                   {
                     text: '확인',
                     onPress: () => {
-                      router.replace('/');
+                      router.replace('/team/guide');
                     },
                   },
                 ]);
@@ -240,13 +236,15 @@ export default function TeamSettingsScreen({
                     data?: any;
                   };
 
-                  if (apiError.status === 500) {
-                    errorMessage =
-                      '팀 삭제 중 데이터베이스 오류가 발생했습니다.\n\n다음 데이터들이 남아있어 팀을 삭제할 수 없습니다:\n• 팀 가입 대기 목록\n• 진행 중인 매치 요청\n• 팀 관련 업무 데이터\n\n팀에서 먼저 이러한 데이터들을 정리해주세요.';
+                  if (apiError.status === 401) {
+                    errorMessage = '인증이 필요합니다. 다시 로그인해주세요.';
+                  } else if (apiError.status === 403) {
+                    errorMessage = '팀장만 팀을 삭제할 수 있습니다.';
                   } else if (apiError.status === 404) {
                     errorMessage = '팀을 찾을 수 없습니다.';
-                  } else if (apiError.status === 403) {
-                    errorMessage = '팀 삭제 권한이 없습니다.';
+                  } else if (apiError.status === 500) {
+                    errorMessage =
+                      '팀 삭제 중 서버 오류가 발생했습니다.\n\n다음 데이터들이 남아있어 팀을 삭제할 수 없습니다:\n• 팀 가입 대기 목록\n• 진행 중인 매치 요청\n• 팀 관련 업무 데이터\n\n팀에서 먼저 이러한 데이터들을 정리해주세요.';
                   } else if (apiError.message) {
                     errorMessage = apiError.message;
                   }

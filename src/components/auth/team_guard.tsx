@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 
 import { ROUTES } from '@/src/constants/routes';
+import { useAuth } from '@/src/contexts/auth_context';
 import { useUserProfile } from '@/src/hooks/queries';
 
 interface TeamGuardProps {
@@ -12,9 +13,15 @@ interface TeamGuardProps {
 
 export function TeamGuard({ children, fallbackMessage }: TeamGuardProps) {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const { data: userProfile, isLoading } = useUserProfile();
 
   useEffect(() => {
+    // 인증되지 않은 사용자는 TeamGuard를 실행하지 않음
+    if (!isAuthenticated) {
+      return;
+    }
+
     if (!isLoading && (!userProfile?.teamId || userProfile.teamId === null)) {
       Alert.alert(
         '팀 참여 필요',
@@ -31,12 +38,23 @@ export function TeamGuard({ children, fallbackMessage }: TeamGuardProps) {
           {
             text: '취소',
             style: 'cancel',
-            onPress: () => router.back(),
+            onPress: () => router.replace('/(tabs)'),
           },
         ]
       );
     }
-  }, [userProfile?.teamId, isLoading, router, fallbackMessage]);
+  }, [
+    userProfile?.teamId,
+    isLoading,
+    router,
+    fallbackMessage,
+    isAuthenticated,
+  ]);
+
+  // 인증되지 않은 사용자는 TeamGuard를 실행하지 않음
+  if (!isAuthenticated) {
+    return <>{children}</>;
+  }
 
   if (isLoading) {
     return (
@@ -93,7 +111,7 @@ export function TeamGuard({ children, fallbackMessage }: TeamGuardProps) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => router.replace('/(tabs)')}
             style={{
               paddingHorizontal: 24,
               paddingVertical: 12,
@@ -102,7 +120,7 @@ export function TeamGuard({ children, fallbackMessage }: TeamGuardProps) {
               borderColor: '#ddd',
             }}
           >
-            <Text style={{ textAlign: 'center' }}>이전 페이지로</Text>
+            <Text style={{ textAlign: 'center' }}>홈으로 이동</Text>
           </TouchableOpacity>
         </View>
       </View>

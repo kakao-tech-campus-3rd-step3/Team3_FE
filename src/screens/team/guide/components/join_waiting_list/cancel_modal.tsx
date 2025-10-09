@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTeamJoinRequest } from '@/src/hooks/useTeamJoinRequest';
 import { colors } from '@/src/theme';
@@ -99,81 +100,85 @@ export default function CancelModal({
       presentationStyle="pageSheet"
       onRequestClose={handleClose}
     >
-      <KeyboardAvoidingView
-        style={styles.modalContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <View style={styles.modalHeader}>
-          <View style={styles.headerContent}>
-            <View style={styles.iconContainer}>
-              <Ionicons
-                name="warning-outline"
-                size={24}
-                color={colors.orange[500]}
-              />
-            </View>
-            <Text style={styles.modalTitle}>팀 가입 신청 취소</Text>
-          </View>
-          <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-            <Ionicons name="close" size={24} color={colors.gray[600]} />
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView
-          style={styles.modalContent}
-          showsVerticalScrollIndicator={false}
+      <SafeAreaView style={styles.modalContainer} edges={['top']}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <View style={styles.warningSection}>
-            <Text style={styles.warningText}>
-              팀 가입 신청을 취소하면 다시 신청해야 합니다.
-            </Text>
-          </View>
-
-          <View style={styles.teamInfoCard}>
-            <View style={styles.teamInfoHeader}>
-              <Ionicons
-                name="people-outline"
-                size={20}
-                color={colors.blue[500]}
-              />
-              <Text style={styles.teamInfoTitle}>신청한 팀</Text>
-            </View>
-            <View style={styles.teamInfoContent}>
-              <Text style={styles.teamIdLabel}>팀명</Text>
-              <Text style={styles.teamIdValue}>{joinWaitingItem.teamName}</Text>
-            </View>
-          </View>
-        </ScrollView>
-
-        <View style={styles.modalButtonContainer}>
-          <TouchableOpacity
-            style={[styles.button, styles.modalCancelButton]}
-            onPress={handleClose}
-            disabled={isCanceling}
-          >
-            <Text style={styles.modalCancelButtonText}>돌아가기</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.confirmButton]}
-            onPress={handleCancel}
-            disabled={isCanceling}
-          >
-            {isCanceling ? (
-              <ActivityIndicator size="small" color={colors.text.white} />
-            ) : (
-              <>
+          <View style={styles.modalHeader}>
+            <View style={styles.headerContent}>
+              <View style={styles.iconContainer}>
                 <Ionicons
-                  name="close-circle-outline"
-                  size={20}
-                  color={colors.text.white}
+                  name="warning-outline"
+                  size={24}
+                  color={colors.orange[500]}
                 />
-                <Text style={styles.confirmButtonText}>신청 취소</Text>
-              </>
-            )}
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
+              </View>
+              <Text style={styles.modalTitle}>팀 가입 신청 취소</Text>
+            </View>
+            <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+              <Ionicons name="close" size={24} color={colors.gray[600]} />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            style={styles.modalContent}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.warningSection}>
+              <Text style={styles.warningText}>
+                팀 가입 신청을 취소하면 다시 신청해야 합니다.
+              </Text>
+            </View>
+
+            <View style={styles.teamInfoCard}>
+              <View style={styles.teamInfoHeader}>
+                <Ionicons
+                  name="people-outline"
+                  size={20}
+                  color={colors.blue[500]}
+                />
+                <Text style={styles.teamInfoTitle}>신청한 팀</Text>
+              </View>
+              <View style={styles.teamInfoContent}>
+                <Text style={styles.teamIdLabel}>팀명</Text>
+                <Text style={styles.teamIdValue}>
+                  {joinWaitingItem.teamName}
+                </Text>
+              </View>
+            </View>
+          </ScrollView>
+
+          <View style={styles.modalButtonContainer}>
+            <TouchableOpacity
+              style={[styles.button, styles.modalCancelButton]}
+              onPress={handleClose}
+              disabled={isCanceling}
+            >
+              <Text style={styles.modalCancelButtonText}>돌아가기</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.button, styles.confirmButton]}
+              onPress={handleCancel}
+              disabled={isCanceling}
+            >
+              {isCanceling ? (
+                <ActivityIndicator size="small" color={colors.text.white} />
+              ) : (
+                <>
+                  <Ionicons
+                    name="close-circle-outline"
+                    size={20}
+                    color={colors.text.white}
+                  />
+                  <Text style={styles.confirmButtonText}>신청 취소</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </Modal>
   );
 }

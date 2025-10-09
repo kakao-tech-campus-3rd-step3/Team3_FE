@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
+    backgroundColor: colors.gray[50],
   },
   contentContainer: {
     padding: spacing.spacing4,
@@ -202,6 +203,7 @@ export const styles = StyleSheet.create({
     fontSize: typography.fontSize.font4,
     fontWeight: typography.fontWeight.semibold,
     color: colors.gray[700],
+    flexShrink: 1,
   },
   saveButton: {
     flex: 1,
@@ -217,5 +219,6 @@ export const styles = StyleSheet.create({
     fontSize: typography.fontSize.font4,
     fontWeight: typography.fontWeight.semibold,
     color: colors.white,
+    flexShrink: 1,
   },
 });

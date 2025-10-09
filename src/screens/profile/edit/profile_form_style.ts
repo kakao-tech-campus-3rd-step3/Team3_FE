@@ -59,7 +59,7 @@ export const styles = StyleSheet.create({
   levelOption: {
     flex: 1,
     paddingVertical: theme.spacing.spacing3,
-    paddingHorizontal: theme.spacing.spacing2,
+    paddingHorizontal: theme.spacing.spacing1,
     borderRadius: theme.spacing.spacing2,
     borderWidth: 1,
     borderColor: theme.colors.gray[300],

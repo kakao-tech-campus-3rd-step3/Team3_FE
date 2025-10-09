@@ -55,7 +55,15 @@ class ApiClient {
     } catch (error: unknown) {
       if (isAxiosError(error) && error.response) {
         if (error.response.status === 401 && this.onTokenExpired) {
-          this.onTokenExpired();
+          const isTeamDeleteRequest =
+            endpoint.includes('/api/teams/') && options.method === 'DELETE';
+          if (!isTeamDeleteRequest) {
+            this.onTokenExpired();
+          } else {
+            console.log(
+              '[API Client] 팀 삭제 요청이므로 토큰 만료 처리 건너뜀'
+            );
+          }
         }
 
         const errorData = error.response.data || {};

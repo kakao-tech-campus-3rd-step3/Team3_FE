@@ -14,8 +14,10 @@
     },
     "preview": {
       "distribution": "internal",
+      "autoIncrement": true,
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "outputDir": "./builds"
       },
       "ios": {
         "buildConfiguration": "Release",

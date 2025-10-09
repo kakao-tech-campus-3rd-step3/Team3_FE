@@ -53,8 +53,8 @@ jobs:
     needs: quality-check
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')) ||
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && (github.event.pull_request.base.ref == 'main' || github.event.pull_request.base.ref == 'develop'))
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
 
     steps:
       - name: 코드 체크아웃
@@ -78,10 +78,6 @@ jobs:
             # 메인 브랜치: 프로덕션 빌드
             eas build --platform android --profile production --non-interactive
             echo "🚀 프로덕션 빌드 완료 (main 브랜치)"
-          elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
-            # 개발 브랜치: 프리뷰 빌드
-            eas build --platform android --profile preview --non-interactive
-            echo "🔧 개발 빌드 완료 (develop 브랜치)"
           else
             # PR 머지: 프리뷰 빌드
             eas build --platform android --profile preview --non-interactive

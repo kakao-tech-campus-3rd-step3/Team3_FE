@@ -1,8 +1,10 @@
 import { useFocusEffect } from '@react-navigation/native';
+import { router } from 'expo-router';
 import { useCallback, useEffect, useRef } from 'react';
 import { ScrollView, View, ActivityIndicator, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ROUTES } from '@/src/constants/routes';
 import { useUserProfile, useLogout } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 
@@ -67,6 +69,16 @@ export default function HomeScreen() {
     }
   }, [error, handleErrorAlert]);
 
+  const handleMatchPress = useCallback(
+    (matchId: number, matchDate?: string) => {
+      const params = matchDate
+        ? `?waitingId=${matchId}&date=${matchDate}`
+        : `?waitingId=${matchId}`;
+      router.push(`${ROUTES.MATCH_APPLICATION}${params}`);
+    },
+    []
+  );
+
   if (isLoading) {
     return (
       <View
@@ -90,7 +102,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: insets.bottom + theme.spacing.spacing10 },
+          { paddingBottom: insets.bottom + theme.spacing.spacing1 },
         ]}
       >
         <View style={styles.mainSection}>
@@ -98,7 +110,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.matchSection}>
-          <RecommendedMatchCard />
+          <RecommendedMatchCard onMatchPress={handleMatchPress} />
         </View>
 
         <View style={styles.serviceSection}>
