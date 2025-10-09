@@ -9,7 +9,10 @@ import {
   VerifyEmailRequest,
   TokenRefreshResponse,
   VerifyCodeRequest,
+  VerifyCodeResponse,
   ResetPasswordRequest,
+  ResetPasswordResponse,
+  SendPasswordResetCodeResponse,
 } from '@/src/types';
 
 export const authApi = {
@@ -41,11 +44,14 @@ export const authApi = {
 
 export const passwordResetApi = {
   sendCode: (email: string) =>
-    apiClient.post(PASSWORD_RESET_API.SEND_CODE, { email }),
+    apiClient.post<SendPasswordResetCodeResponse>(
+      PASSWORD_RESET_API.SEND_CODE,
+      { email }
+    ),
 
   verifyCode: (data: VerifyCodeRequest) =>
-    apiClient.post(PASSWORD_RESET_API.VERIFY_CODE, data),
+    apiClient.post<VerifyCodeResponse>(PASSWORD_RESET_API.VERIFY_CODE, data),
 
   confirm: (data: ResetPasswordRequest) =>
-    apiClient.post(PASSWORD_RESET_API.CONFIRM, data),
+    apiClient.post<ResetPasswordResponse>(PASSWORD_RESET_API.CONFIRM, data),
 };
