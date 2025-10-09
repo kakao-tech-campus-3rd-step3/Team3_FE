@@ -61,7 +61,6 @@ export interface SendPasswordResetCodeRequest {
 
 export interface SendPasswordResetCodeResponse {
   message: string;
-  success: boolean;
 }
 
 export interface VerifyCodeRequest {
@@ -80,5 +79,4 @@ export interface ResetPasswordRequest {
 
 export interface ResetPasswordResponse {
   message: string;
-  success: boolean;
 }
