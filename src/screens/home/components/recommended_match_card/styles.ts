@@ -41,42 +41,94 @@ export const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.medium,
   },
 
-  card: {
+  cardTouchable: {
     width: '100%',
-    maxWidth: 280,
+    maxWidth: 320,
+    alignSelf: 'center',
+  },
+
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: theme.spacing.spacing6,
+    padding: theme.spacing.spacing4,
     minHeight: 120,
-    borderRadius: theme.spacing.spacing5,
-    paddingTop: theme.spacing.spacing5,
-    paddingHorizontal: theme.spacing.spacing5,
-    paddingBottom: theme.spacing.spacing4,
-    borderWidth: 2,
-    borderColor: theme.colors.brand.main,
-    shadowColor: theme.colors.brand.main,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    shadowColor: '#000000',
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 6,
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
-  location: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.brand.main,
-    marginBottom: theme.spacing.spacing1,
-  },
-  time: {
-    fontSize: theme.typography.fontSize.font3,
-    color: theme.colors.brand.main,
-    fontWeight: theme.typography.fontWeight.semibold,
-  },
-  metaRow: {
+  cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginTop: theme.spacing.spacing2,
+    marginBottom: theme.spacing.spacing3,
+  },
+
+  badgeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f3f4f6',
+    paddingHorizontal: theme.spacing.spacing3,
+    paddingVertical: theme.spacing.spacing1,
+    borderRadius: theme.spacing.spacing4,
+  },
+
+  badgeText: {
+    color: '#374151',
+    fontSize: theme.typography.fontSize.font2,
+    fontWeight: theme.typography.fontWeight.bold,
+    marginLeft: theme.spacing.spacing1,
+  },
+
+  cardContent: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.spacing2,
+  },
+
+  iconContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#f3f4f6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: theme.spacing.spacing2,
+  },
+
+  infoText: {
+    fontSize: theme.typography.fontSize.font3,
+    color: theme.colors.text.main,
+    fontWeight: theme.typography.fontWeight.medium,
+    flex: 1,
+  },
+
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: theme.spacing.spacing3,
+    paddingTop: theme.spacing.spacing2,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+
+  footerText: {
+    color: '#374151',
+    fontSize: theme.typography.fontSize.font2,
+    fontWeight: theme.typography.fontWeight.medium,
+    marginRight: theme.spacing.spacing1,
   },
 
   carouselContent: {
@@ -89,17 +141,50 @@ export const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.spacing4,
     minHeight: 160,
   },
+
+  emptyStateCard: {
+    width: '100%',
+    maxWidth: 320,
+    backgroundColor: '#ffffff',
+    borderRadius: theme.spacing.spacing6,
+    padding: theme.spacing.spacing6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    shadowColor: '#000000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+
   emptyStateContent: {
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  emptyStateIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: theme.spacing.spacing4,
+  },
+
   emptyStateTitle: {
     fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.brand.main,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: '#10b981',
     marginBottom: theme.spacing.spacing2,
     textAlign: 'center',
   },
+
   emptyStateSubtitle: {
     fontSize: theme.typography.fontSize.font2,
     color: theme.colors.text.sub,
@@ -107,17 +192,19 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     opacity: 0.8,
   },
+
   emptyStateFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: theme.spacing.spacing1,
     marginTop: theme.spacing.spacing4,
   },
+
   emptyStateDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: theme.colors.gray[300],
-    opacity: 0.6,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#10b981',
+    opacity: 0.3,
   },
 });

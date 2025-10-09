@@ -21,121 +21,102 @@ function SafeMatchPreview({ onMatchPress }: SafeMatchPreviewProps) {
   const renderPreviewCard = (match: RecommendedMatch, index: number) => (
     <TouchableOpacity
       key={`${match.id}-${index}`}
-      activeOpacity={0.85}
+      activeOpacity={0.8}
       onPress={() => onMatchPress?.(match.id, match.matchDate)}
+      style={styles.cardTouchable}
     >
-      <LinearGradient
-        colors={[theme.colors.background.main, theme.colors.grass[50]]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.card}
-      >
-        <View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: theme.spacing.spacing2,
-            }}
-          >
-            <Ionicons
-              name="trophy-outline"
-              size={20}
-              color={theme.colors.brand.main}
-              style={{ marginRight: theme.spacing.spacing2 }}
-            />
-            <Text style={styles.location} numberOfLines={1}>
+      <View style={styles.card}>
+        <View style={styles.cardHeader}>
+          <View style={styles.badgeContainer}>
+            <Ionicons name="star" size={16} color="#f59e0b" />
+            <Text style={styles.badgeText}>추천</Text>
+          </View>
+        </View>
+
+        <View style={styles.cardContent}>
+          <View style={styles.infoRow}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="trophy" size={20} color="#eab308" />
+            </View>
+            <Text style={styles.infoText} numberOfLines={1}>
               {match.skillLevel}
             </Text>
           </View>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: theme.spacing.spacing2,
-            }}
-          >
-            <Ionicons
-              name="calendar-outline"
-              size={18}
-              color={theme.colors.brand.main}
-              style={{ marginRight: theme.spacing.spacing2 }}
-            />
-            <Text style={styles.time}>{match.matchDate}</Text>
+          <View style={styles.infoRow}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="calendar" size={18} color="#06b6d4" />
+            </View>
+            <Text style={styles.infoText}>{match.matchDate}</Text>
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons
-              name="people-outline"
-              size={18}
-              color={theme.colors.brand.main}
-              style={{ marginRight: theme.spacing.spacing2 }}
-            />
-            <Text style={styles.time}>{match.teamName}</Text>
+          <View style={styles.infoRow}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="people" size={18} color="#8b5cf6" />
+            </View>
+            <Text style={styles.infoText}>{match.teamName}</Text>
           </View>
         </View>
 
-        <View style={styles.metaRow}>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={theme.colors.brand.main}
-          />
+        <View style={styles.cardFooter}>
+          <Text style={styles.footerText}>자세히 보기</Text>
+          <Ionicons name="arrow-forward" size={16} color="#374151" />
         </View>
-      </LinearGradient>
+      </View>
     </TouchableOpacity>
   );
 
   const renderNoTeamState = () => (
     <View style={styles.emptyStateContainer}>
-      <View style={styles.emptyStateContent}>
-        <Ionicons
-          name="people-outline"
-          size={48}
-          color={theme.colors.brand.main}
-          style={{ marginBottom: theme.spacing.spacing3 }}
-        />
-        <Text style={styles.emptyStateTitle}>팀 참여가 필요해요</Text>
-        <Text style={styles.emptyStateSubtitle}>
-          추천 매치를 보려면{'\n'}먼저 팀에 가입해주세요!
-        </Text>
-      </View>
-      <View style={styles.emptyStateFooter}>
-        <View style={styles.emptyStateDot} />
-        <View style={styles.emptyStateDot} />
-        <View style={styles.emptyStateDot} />
+      <View style={styles.emptyStateCard}>
+        <View style={styles.emptyStateContent}>
+          <View style={styles.emptyStateIconContainer}>
+            <Ionicons name="people" size={40} color="#8b5cf6" />
+          </View>
+          <Text style={styles.emptyStateTitle}>팀 참여가 필요해요</Text>
+          <Text style={styles.emptyStateSubtitle}>
+            추천 매치를 보려면{'\n'}먼저 팀에 가입해주세요!
+          </Text>
+        </View>
+        <View style={styles.emptyStateFooter}>
+          <View style={styles.emptyStateDot} />
+          <View style={styles.emptyStateDot} />
+          <View style={styles.emptyStateDot} />
+        </View>
       </View>
     </View>
   );
 
   const renderLoadingState = () => (
     <View style={styles.emptyStateContainer}>
-      <View style={styles.emptyStateContent}>
-        <ActivityIndicator size="large" color={theme.colors.grass[500]} />
-        <Text style={styles.emptyStateTitle}>추천 매치를 불러오는 중...</Text>
+      <View style={styles.emptyStateCard}>
+        <View style={styles.emptyStateContent}>
+          <View style={styles.emptyStateIconContainer}>
+            <ActivityIndicator size="large" color="#06b6d4" />
+          </View>
+          <Text style={styles.emptyStateTitle}>추천 매치를 불러오는 중...</Text>
+        </View>
       </View>
     </View>
   );
 
   const renderEmptyState = () => (
     <View style={styles.emptyStateContainer}>
-      <View style={styles.emptyStateContent}>
-        <Ionicons
-          name="football-outline"
-          size={48}
-          color={theme.colors.brand.main}
-          style={{ marginBottom: theme.spacing.spacing3 }}
-        />
-        <Text style={styles.emptyStateTitle}>추천 매치가 없어요</Text>
-        <Text style={styles.emptyStateSubtitle}>
-          3일 이내의 새로운 매치가{'\n'}등록되면 알려드릴게요!
-        </Text>
-      </View>
-      <View style={styles.emptyStateFooter}>
-        <View style={styles.emptyStateDot} />
-        <View style={styles.emptyStateDot} />
-        <View style={styles.emptyStateDot} />
+      <View style={styles.emptyStateCard}>
+        <View style={styles.emptyStateContent}>
+          <View style={styles.emptyStateIconContainer}>
+            <Ionicons name="football" size={40} color="#10b981" />
+          </View>
+          <Text style={styles.emptyStateTitle}>추천 매치가 없어요</Text>
+          <Text style={styles.emptyStateSubtitle}>
+            3일 이내의 새로운 매치가{'\n'}등록되면 알려드릴게요!
+          </Text>
+        </View>
+        <View style={styles.emptyStateFooter}>
+          <View style={styles.emptyStateDot} />
+          <View style={styles.emptyStateDot} />
+          <View style={styles.emptyStateDot} />
+        </View>
       </View>
     </View>
   );
