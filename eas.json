@@ -16,8 +16,7 @@
       "distribution": "internal",
       "autoIncrement": true,
       "android": {
-        "buildType": "apk",
-        "outputDir": "./builds"
+        "buildType": "apk"
       },
       "ios": {
         "buildConfiguration": "Release",
