@@ -26,7 +26,7 @@ export default {
       package: 'com.cheogo.shootdoori',
       versionCode: 6,
       adaptiveIcon: {
-        foregroundImage: './assets/images/logo.png',
+        foregroundImage: './assets/images/icon_logo.png',
         backgroundColor: '#ffffff',
       },
       edgeToEdgeEnabled: true,

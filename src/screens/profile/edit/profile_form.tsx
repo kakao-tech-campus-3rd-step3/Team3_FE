@@ -149,10 +149,11 @@ export function ProfileForm({
                   styles.levelOptionText,
                   formData.skillLevel === level &&
                     styles.levelOptionTextSelected,
-                  { fontSize: getDynamicFontSize(12) },
+                  { fontSize: getDynamicFontSize(10) },
                 ]}
                 numberOfLines={1}
-                ellipsizeMode="tail"
+                adjustsFontSizeToFit={true}
+                minimumFontScale={0.8}
               >
                 {level}
               </Text>

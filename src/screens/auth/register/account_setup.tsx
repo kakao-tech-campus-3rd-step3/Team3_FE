@@ -8,6 +8,7 @@ import {
   Linking,
   TouchableWithoutFeedback,
   Keyboard,
+  useWindowDimensions,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -39,12 +40,76 @@ export function AccountSetup({
   isLoading,
   handlePrev,
 }: Props) {
+  const { width } = useWindowDimensions();
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [emailId, setEmailId] = useState<string>('');
   const [emailDomain, setEmailDomain] = useState<string>('naver.com');
   const { errors, validateField } = useRegisterValidation(
     accountValidationRules
   );
+
+  const dynamicStyles = StyleSheet.create({
+    label: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: theme.colors.text.main,
+      marginBottom: Math.max(8, width * 0.02),
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.colors.border.input,
+      borderRadius: Math.max(8, width * 0.02),
+      paddingHorizontal: Math.max(16, width * 0.04),
+      paddingVertical: Math.max(12, width * 0.03),
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.main,
+      backgroundColor: theme.colors.background.input,
+    },
+    emailInput: {
+      flex: 1.2,
+      borderWidth: 1,
+      borderColor: theme.colors.border.input,
+      borderRadius: Math.max(8, width * 0.02),
+      paddingHorizontal: Math.max(16, width * 0.04),
+      paddingVertical: Math.max(12, width * 0.03),
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.main,
+      backgroundColor: theme.colors.background.input,
+      height: Math.max(48, width * 0.12),
+    },
+    atSymbol: {
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.main,
+      fontWeight: 'bold',
+      paddingHorizontal: Math.max(8, width * 0.02),
+    },
+    errorText: {
+      color: theme.colors.red[500],
+      fontSize: Math.max(12, width * 0.035),
+      marginTop: Math.max(8, width * 0.02),
+    },
+    checkboxText: {
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.main,
+      lineHeight: Math.max(20, width * 0.05),
+    },
+    linkText: {
+      fontSize: Math.max(12, width * 0.035),
+      color: theme.colors.brand.main,
+      marginTop: Math.max(4, width * 0.01),
+      textDecorationLine: 'underline',
+    },
+    prevButtonText: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: theme.colors.text.sub,
+    },
+    submitButtonText: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: theme.colors.white,
+    },
+  });
 
   const handleEmailIdChange = (value: string) => {
     setEmailId(value);
@@ -100,11 +165,11 @@ export function AccountSetup({
           enableOnAndroid={true}
         >
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>이메일</Text>
+            <Text style={dynamicStyles.label}>이메일</Text>
             <View style={styles.emailContainer}>
               <TextInput
                 style={[
-                  styles.emailInput,
+                  dynamicStyles.emailInput,
                   (focusedField === 'emailId' || emailId) && styles.inputFilled,
                   errors.email && styles.inputError,
                 ]}
@@ -117,7 +182,7 @@ export function AccountSetup({
                 onFocus={() => setFocusedField('emailId')}
                 onBlur={() => setFocusedField(null)}
               />
-              <Text style={styles.atSymbol}>@</Text>
+              <Text style={dynamicStyles.atSymbol}>@</Text>
               <View style={styles.domainDropdown}>
                 <Dropdown
                   items={EMAIL_DOMAINS}
@@ -128,15 +193,15 @@ export function AccountSetup({
               </View>
             </View>
             {errors.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
+              <Text style={dynamicStyles.errorText}>{errors.email}</Text>
             )}
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>비밀번호</Text>
+            <Text style={dynamicStyles.label}>비밀번호</Text>
             <TextInput
               style={[
-                styles.input,
+                dynamicStyles.input,
                 (focusedField === 'password' || data.password) &&
                   styles.inputFilled,
                 errors.password && styles.inputError,
@@ -149,15 +214,15 @@ export function AccountSetup({
               onBlur={() => setFocusedField(null)}
             />
             {errors.password && (
-              <Text style={styles.errorText}>{errors.password}</Text>
+              <Text style={dynamicStyles.errorText}>{errors.password}</Text>
             )}
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>비밀번호 확인</Text>
+            <Text style={dynamicStyles.label}>비밀번호 확인</Text>
             <TextInput
               style={[
-                styles.input,
+                dynamicStyles.input,
                 (focusedField === 'confirmPassword' || data.confirmPassword) &&
                   styles.inputFilled,
                 errors.confirmPassword && styles.inputError,
@@ -170,7 +235,9 @@ export function AccountSetup({
               onBlur={() => setFocusedField(null)}
             />
             {errors.confirmPassword && (
-              <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+              <Text style={dynamicStyles.errorText}>
+                {errors.confirmPassword}
+              </Text>
             )}
           </View>
 
@@ -188,7 +255,7 @@ export function AccountSetup({
                 {data.termsAgreed && <Text style={styles.checkmark}>✓</Text>}
               </View>
               <View style={styles.checkboxTextContainer}>
-                <Text style={styles.checkboxText}>
+                <Text style={dynamicStyles.checkboxText}>
                   서비스 이용약관에 동의합니다
                 </Text>
                 <TouchableOpacity
@@ -196,7 +263,7 @@ export function AccountSetup({
                     Linking.openURL(EXTERNAL_LINKS.TERMS_OF_SERVICE)
                   }
                 >
-                  <Text style={styles.linkText}>약관 보기</Text>
+                  <Text style={dynamicStyles.linkText}>약관 보기</Text>
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
@@ -214,13 +281,13 @@ export function AccountSetup({
                 {data.privacyAgreed && <Text style={styles.checkmark}>✓</Text>}
               </View>
               <View style={styles.checkboxTextContainer}>
-                <Text style={styles.checkboxText}>
+                <Text style={dynamicStyles.checkboxText}>
                   개인정보 처리방침에 동의합니다
                 </Text>
                 <TouchableOpacity
                   onPress={() => Linking.openURL(EXTERNAL_LINKS.PRIVACY_POLICY)}
                 >
-                  <Text style={styles.linkText}>정책 보기</Text>
+                  <Text style={dynamicStyles.linkText}>정책 보기</Text>
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
@@ -230,7 +297,7 @@ export function AccountSetup({
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.prevButton} onPress={handlePrev}>
-          <Text style={styles.prevButtonText}>이전</Text>
+          <Text style={dynamicStyles.prevButtonText}>이전</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -241,7 +308,7 @@ export function AccountSetup({
           onPress={onSubmit}
           disabled={!isValid || isLoading}
         >
-          <Text style={styles.submitButtonText}>
+          <Text style={dynamicStyles.submitButtonText}>
             {isLoading ? '처리 중...' : '회원가입 완료'}
           </Text>
         </TouchableOpacity>

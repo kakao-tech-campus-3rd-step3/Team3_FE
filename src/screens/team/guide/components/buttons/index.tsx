@@ -27,7 +27,6 @@ export default memo(function Buttons() {
   const { data: joinWaitingData, refetch } = useMyJoinWaitingList(0, 1);
   const hasJoinWaiting = joinWaitingData && !joinWaitingData.empty;
 
-  // 화면 크기에 비례한 동적 스타일 생성
   const dynamicStyles = StyleSheet.create({
     createButton: {
       backgroundColor: colors.blue[500],
@@ -101,7 +100,8 @@ export default memo(function Buttons() {
         <Text
           style={dynamicStyles.joinButtonText}
           numberOfLines={1}
-          ellipsizeMode="tail"
+          adjustsFontSizeToFit={true}
+          minimumFontScale={0.8}
         >
           {hasJoinWaiting ? '팀 신청 현황' : '팀 참여하기'}
         </Text>
@@ -131,7 +131,8 @@ export default memo(function Buttons() {
         <Text
           style={dynamicStyles.createButtonText}
           numberOfLines={1}
-          ellipsizeMode="tail"
+          adjustsFontSizeToFit={true}
+          minimumFontScale={0.8}
         >
           팀 생성하기
         </Text>

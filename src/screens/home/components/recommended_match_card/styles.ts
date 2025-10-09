@@ -1,4 +1,4 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { theme } from '@/src/theme';
 
@@ -23,161 +23,188 @@ export const styles = StyleSheet.create({
     marginBottom: theme.spacing.spacing4,
   },
   title: {
-    ...theme.typography.text.card.title,
+    fontSize: theme.typography.fontSize.font5,
+    fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.main,
   },
   moreButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: theme.spacing.spacing2,
     paddingVertical: theme.spacing.spacing1,
+    borderRadius: theme.spacing.spacing2,
+    backgroundColor: theme.colors.gray[50],
   },
   moreText: {
     color: theme.colors.text.sub,
     fontSize: theme.typography.fontSize.font2,
-    fontWeight: theme.typography.fontWeight.semibold,
+    fontWeight: theme.typography.fontWeight.medium,
   },
+
+  cardTouchable: {
+    width: '100%',
+    maxWidth: 320,
+    alignSelf: 'center',
+  },
+
   card: {
-    width: 150,
-    height: 120,
-    marginRight: theme.spacing.spacing3,
-    backgroundColor: theme.colors.background.sub,
-    borderRadius: theme.spacing.spacing4,
+    backgroundColor: theme.colors.background.main,
+    borderRadius: theme.spacing.spacing6,
     padding: theme.spacing.spacing4,
-    justifyContent: 'space-between',
+    minHeight: 120,
     borderWidth: 1,
-    borderColor: theme.colors.gray[200],
-    shadowColor: theme.colors.gray[900],
+    borderColor: theme.colors.border.light,
+    shadowColor: theme.colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.spacing3,
+  },
+
+  badgeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.gray[100],
+    paddingHorizontal: theme.spacing.spacing3,
+    paddingVertical: theme.spacing.spacing1,
+    borderRadius: theme.spacing.spacing4,
+  },
+
+  badgeText: {
+    color: theme.colors.gray[700],
+    fontSize: theme.typography.fontSize.font2,
+    fontWeight: theme.typography.fontWeight.bold,
+    marginLeft: theme.spacing.spacing1,
+  },
+
+  cardContent: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.spacing2,
+  },
+
+  iconContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: theme.colors.gray[100],
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: theme.spacing.spacing2,
+  },
+
+  infoText: {
+    fontSize: theme.typography.fontSize.font3,
+    color: theme.colors.text.main,
+    fontWeight: theme.typography.fontWeight.medium,
+    flex: 1,
+  },
+
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: theme.spacing.spacing3,
+    paddingTop: theme.spacing.spacing2,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border.light,
+  },
+
+  footerText: {
+    color: theme.colors.gray[700],
+    fontSize: theme.typography.fontSize.font2,
+    fontWeight: theme.typography.fontWeight.medium,
+    marginRight: theme.spacing.spacing1,
+  },
+
+  carouselContent: {
+    paddingHorizontal: theme.spacing.spacing2,
+  },
+  emptyStateContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: theme.spacing.spacing8,
+    paddingHorizontal: theme.spacing.spacing4,
+    minHeight: 160,
+  },
+
+  emptyStateCard: {
+    width: '100%',
+    maxWidth: 320,
+    backgroundColor: theme.colors.background.main,
+    borderRadius: theme.spacing.spacing6,
+    padding: theme.spacing.spacing6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.border.light,
+    shadowColor: theme.colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
     elevation: 2,
   },
 
-  location: {
-    fontSize: theme.typography.fontSize.font3,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing1,
-  },
-  time: {
-    fontSize: theme.typography.fontSize.font2,
-    color: theme.colors.text.sub,
-    fontWeight: theme.typography.fontWeight.medium,
-  },
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: theme.spacing.spacing2,
-    gap: theme.spacing.spacing2,
-  },
-  smallBadge: {
-    paddingHorizontal: theme.spacing.spacing1,
-    paddingVertical: 2,
-    borderRadius: theme.spacing.spacing1,
-  },
-  smallBadgeText: {
-    fontSize: theme.typography.fontSize.font1,
-    fontWeight: theme.typography.fontWeight.medium,
-  },
-  playerCountSmall: {
-    fontSize: theme.typography.fontSize.font2,
-    color: theme.colors.text.sub,
-    fontWeight: theme.typography.fontWeight.medium,
-  },
-  carouselContent: {
-    paddingHorizontal: theme.spacing.spacing2,
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: theme.colors.background.sub,
-    paddingTop:
-      Platform.OS === 'ios' ? theme.spacing.spacing11 : theme.spacing.spacing5,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    borderBottomWidth: 1,
-    borderColor: theme.colors.gray[200],
-  },
-  modalTitle: {
-    ...theme.typography.text.card.title,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.main,
-  },
-  modalClose: {
-    color: theme.colors.text.sub,
-    fontSize: theme.typography.fontSize.font3,
-    fontWeight: theme.typography.fontWeight.semibold,
-  },
-  flatListContent: {
-    padding: theme.spacing.spacing4,
-  },
-  fullItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: theme.spacing.spacing3,
-    paddingHorizontal: theme.spacing.spacing2,
-    backgroundColor: theme.colors.background.main,
-    borderRadius: theme.spacing.spacing2,
-  },
-  fullItemLeft: {
-    flex: 1,
-    marginRight: theme.spacing.spacing3,
-  },
-  fullItemRight: {
-    alignItems: 'flex-end',
-  },
-  separator: {
-    height: theme.spacing.spacing3,
-  },
-
-  // 빈 상태 스타일
-  emptyStateContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: theme.spacing.spacing6,
-    paddingHorizontal: theme.spacing.spacing4,
-    minHeight: 120,
-  },
   emptyStateContent: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  emptyStateEmoji: {
-    fontSize: 32,
-    marginBottom: theme.spacing.spacing3,
+
+  emptyStateIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: theme.colors.green[50],
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: theme.spacing.spacing4,
   },
+
   emptyStateTitle: {
     fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.brand.main,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.green[600],
     marginBottom: theme.spacing.spacing2,
     textAlign: 'center',
   },
+
   emptyStateSubtitle: {
     fontSize: theme.typography.fontSize.font2,
     color: theme.colors.text.sub,
     textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: 20,
     opacity: 0.8,
   },
+
   emptyStateFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: theme.spacing.spacing1,
     marginTop: theme.spacing.spacing4,
   },
+
   emptyStateDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: theme.colors.gray[300],
-    opacity: 0.5,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: theme.colors.green[500],
+    opacity: 0.3,
   },
 });
