@@ -48,13 +48,13 @@ export const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.background.main,
     borderRadius: theme.spacing.spacing6,
     padding: theme.spacing.spacing4,
     minHeight: 120,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    shadowColor: '#000000',
+    borderColor: theme.colors.border.light,
+    shadowColor: theme.colors.black,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -73,14 +73,14 @@ export const styles = StyleSheet.create({
   badgeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f3f4f6',
+    backgroundColor: theme.colors.gray[100],
     paddingHorizontal: theme.spacing.spacing3,
     paddingVertical: theme.spacing.spacing1,
     borderRadius: theme.spacing.spacing4,
   },
 
   badgeText: {
-    color: '#374151',
+    color: theme.colors.gray[700],
     fontSize: theme.typography.fontSize.font2,
     fontWeight: theme.typography.fontWeight.bold,
     marginLeft: theme.spacing.spacing1,
@@ -101,7 +101,7 @@ export const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: theme.colors.gray[100],
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: theme.spacing.spacing2,
@@ -121,11 +121,11 @@ export const styles = StyleSheet.create({
     marginTop: theme.spacing.spacing3,
     paddingTop: theme.spacing.spacing2,
     borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
+    borderTopColor: theme.colors.border.light,
   },
 
   footerText: {
-    color: '#374151',
+    color: theme.colors.gray[700],
     fontSize: theme.typography.fontSize.font2,
     fontWeight: theme.typography.fontWeight.medium,
     marginRight: theme.spacing.spacing1,
@@ -145,14 +145,14 @@ export const styles = StyleSheet.create({
   emptyStateCard: {
     width: '100%',
     maxWidth: 320,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.background.main,
     borderRadius: theme.spacing.spacing6,
     padding: theme.spacing.spacing6,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    shadowColor: '#000000',
+    borderColor: theme.colors.border.light,
+    shadowColor: theme.colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -171,7 +171,7 @@ export const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    backgroundColor: theme.colors.green[50],
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: theme.spacing.spacing4,
@@ -180,7 +180,7 @@ export const styles = StyleSheet.create({
   emptyStateTitle: {
     fontSize: theme.typography.fontSize.font4,
     fontWeight: theme.typography.fontWeight.bold,
-    color: '#10b981',
+    color: theme.colors.green[600],
     marginBottom: theme.spacing.spacing2,
     textAlign: 'center',
   },
@@ -204,7 +204,7 @@ export const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#10b981',
+    backgroundColor: theme.colors.green[500],
     opacity: 0.3,
   },
 });
