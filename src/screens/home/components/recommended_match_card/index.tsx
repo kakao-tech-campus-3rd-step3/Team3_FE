@@ -71,7 +71,7 @@ function SafeMatchPreview({ onMatchPress }: SafeMatchPreviewProps) {
       <View style={styles.emptyStateCard}>
         <View style={styles.emptyStateContent}>
           <View style={styles.emptyStateIconContainer}>
-            <Ionicons name="people" size={40} color="#8b5cf6" />
+            <Ionicons name="people" size={40} color={theme.colors.gray[400]} />
           </View>
           <Text style={styles.emptyStateTitle}>팀 참여가 필요해요</Text>
           <Text style={styles.emptyStateSubtitle}>
