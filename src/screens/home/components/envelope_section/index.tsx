@@ -14,10 +14,10 @@ interface EnvelopeSectionProps {
 }
 
 export default memo(function EnvelopeSection({ teamId }: EnvelopeSectionProps) {
-  const { isAuthenticated } = useAuth();
+  const { token } = useAuth();
+  const isAuthenticated = !!token;
 
   const checkTeamMembership = () => {
-    // 인증되지 않은 사용자는 팀 참여 필요 알림을 표시하지 않음
     if (!isAuthenticated) {
       return false;
     }
