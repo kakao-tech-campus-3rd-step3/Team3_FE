@@ -7,11 +7,8 @@ import { useAuth } from '@/src/contexts/auth_context';
 import { theme } from '@/src/theme';
 
 export default function TabLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return null;
-  }
+  const { token } = useAuth();
+  const isAuthenticated = !!token;
 
   if (!isAuthenticated) {
     return <Redirect href="/(auth)/login" />;
