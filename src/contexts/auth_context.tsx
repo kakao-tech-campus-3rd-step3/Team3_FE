@@ -4,67 +4,69 @@ import React, {
   useEffect,
   useRef,
   useCallback,
+  useState,
 } from 'react';
-import { View, ActivityIndicator } from 'react-native';
 
 import { authApi } from '@/src/api/auth';
-import { useStorageState } from '@/src/hooks/useStorageState';
+import {
+  createTokenResource,
+  createRefreshTokenResource,
+  updateSecureStoreResource,
+  deleteSecureStoreResource,
+} from '@/src/hooks/useSecureStoreResource';
 import { apiClient } from '@/src/lib/api_client';
 import { queryClient } from '@/src/lib/query_client';
-import { theme } from '@/src/theme';
 
 interface AuthContextType {
   token: string | null;
   refreshToken: string | null;
-  isAuthenticated: boolean;
   login: (
     token: string,
     refreshToken: string,
     accessTokenExpiresIn?: number
   ) => Promise<void>;
   logout: () => Promise<void>;
-  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken, isLoading] = useStorageState<string | null>(
-    'authToken',
-    null,
-    {
-      serialize: value => value ?? '',
-      deserialize: value => (value === '' ? null : value),
-    }
-  );
-  const [refreshToken, setRefreshToken] = useStorageState<string | null>(
-    'refreshToken',
-    null,
-    {
-      serialize: value => value ?? '',
-      deserialize: value => (value === '' ? null : value),
-    }
-  );
+function AuthProviderInner({ children }: { children: React.ReactNode }) {
+  const tokenResource = createTokenResource();
+  const refreshTokenResource = createRefreshTokenResource();
+
+  const token = tokenResource.read();
+  const refreshToken = refreshTokenResource.read();
+
+  const [tokenState, setTokenState] = useState(token);
+  const [refreshTokenState, setRefreshTokenState] = useState(refreshToken);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const refreshAccessToken = useCallback(async () => {
-    if (!refreshToken) {
-      setToken(null);
-      setRefreshToken(null);
+    if (!refreshTokenState) {
+      deleteSecureStoreResource('authToken');
+      deleteSecureStoreResource('refreshToken');
+      setTokenState(null);
+      setRefreshTokenState(null);
       queryClient.clear();
       return;
     }
 
     try {
-      const response = await authApi.refreshToken(refreshToken);
+      const response = await authApi.refreshToken(refreshTokenState);
       const {
         accessToken,
         refreshToken: newRefreshToken,
         accessTokenExpiresIn,
       } = response;
 
-      setToken(accessToken);
-      setRefreshToken(newRefreshToken);
+      updateSecureStoreResource('authToken', accessToken, value => value ?? '');
+      updateSecureStoreResource(
+        'refreshToken',
+        newRefreshToken,
+        value => value ?? ''
+      );
+      setTokenState(accessToken);
+      setRefreshTokenState(newRefreshToken);
       apiClient.setToken(accessToken);
 
       const MIN_LEAD_SECONDS = 10;
@@ -76,21 +78,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       refreshTimeoutRef.current = setTimeout(refreshAccessToken, delayMs);
     } catch (error) {
       console.warn('토큰 갱신 실패:', error);
-      setToken(null);
-      setRefreshToken(null);
+      deleteSecureStoreResource('authToken');
+      deleteSecureStoreResource('refreshToken');
+      setTokenState(null);
+      setRefreshTokenState(null);
       queryClient.clear();
     }
-  }, [refreshToken, setToken, setRefreshToken]);
+  }, [refreshTokenState]);
 
   useEffect(() => {
     const initializeAuth = async () => {
-      if (!isLoading && refreshToken && !token) {
+      if (refreshTokenState && !tokenState) {
         await refreshAccessToken();
       }
     };
 
     initializeAuth();
-  }, [isLoading, refreshToken, token, refreshAccessToken]);
+  }, [refreshTokenState, tokenState, refreshAccessToken]);
 
   useEffect(() => {
     apiClient.setOnTokenExpired(async () => {
@@ -112,8 +116,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     accessTokenExpiresIn?: number
   ) => {
     apiClient.setToken(newToken);
-    setToken(newToken);
-    setRefreshToken(newRefreshToken);
+    updateSecureStoreResource('authToken', newToken, value => value ?? '');
+    updateSecureStoreResource(
+      'refreshToken',
+      newRefreshToken,
+      value => value ?? ''
+    );
+    setTokenState(newToken);
+    setRefreshTokenState(newRefreshToken);
 
     if (accessTokenExpiresIn) {
       const MIN_LEAD_SECONDS = 10;
@@ -137,34 +147,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         refreshTimeoutRef.current = null;
       }
 
-      setToken(null);
-      setRefreshToken(null);
+      deleteSecureStoreResource('authToken');
+      deleteSecureStoreResource('refreshToken');
+      setTokenState(null);
+      setRefreshTokenState(null);
       queryClient.clear();
     }
   };
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={theme.colors.grass[500]} />
-      </View>
-    );
-  }
-
   return (
     <AuthContext.Provider
       value={{
-        token,
-        refreshToken,
-        isAuthenticated: !!token,
+        token: tokenState,
+        refreshToken: refreshTokenState,
         login,
         logout,
-        isLoading,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  return <AuthProviderInner>{children}</AuthProviderInner>;
 }
 
 export function useAuth() {
