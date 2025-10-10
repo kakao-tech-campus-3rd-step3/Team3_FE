@@ -2,13 +2,23 @@ import * as SecureStore from 'expo-secure-store';
 import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
+interface StorageOptions<T> {
+  serialize?: (value: T) => string;
+  deserialize?: (value: string) => T;
+}
+
 export function useStorageState<T>(
   key: string,
-  initialValue: T
+  initialValue: T,
+  options?: StorageOptions<T>
 ): [T, Dispatch<SetStateAction<T>>, boolean] {
   const [state, setState] = useState<T>(initialValue);
   const [isLoading, setIsLoading] = useState(true);
   const isMounted = useRef(true);
+
+  const serialize = options?.serialize ?? ((value: T) => JSON.stringify(value));
+  const deserialize =
+    options?.deserialize ?? ((value: string) => JSON.parse(value) as T);
 
   useEffect(() => {
     isMounted.current = true;
@@ -23,7 +33,7 @@ export function useStorageState<T>(
 
         if (stored !== null) {
           try {
-            const parsed = JSON.parse(stored) as T;
+            const parsed = deserialize(stored);
             setState(parsed);
           } catch {
             console.warn(`저장된 데이터가 손상되었습니다: ${key}`);
@@ -52,7 +62,7 @@ export function useStorageState<T>(
         if (state === undefined || state === null) {
           await SecureStore.deleteItemAsync(key);
         } else {
-          await SecureStore.setItemAsync(key, JSON.stringify(state));
+          await SecureStore.setItemAsync(key, serialize(state));
         }
       } catch (error) {
         console.error(`데이터 저장 실패: ${key}:`, error);
