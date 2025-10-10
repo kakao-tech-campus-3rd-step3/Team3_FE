@@ -31,13 +31,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken, isLoading] = useStorageState<string | null>(
     'authToken',
-    null
+    null,
+    {
+      serialize: value => value ?? '',
+      deserialize: value => (value === '' ? null : value),
+    }
   );
   const [refreshToken, setRefreshToken] = useStorageState<string | null>(
     'refreshToken',
-    null
+    null,
+    {
+      serialize: value => value ?? '',
+      deserialize: value => (value === '' ? null : value),
+    }
   );
-  const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const refreshAccessToken = useCallback(async () => {
     if (!refreshToken) {
@@ -59,11 +67,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setRefreshToken(newRefreshToken);
       apiClient.setToken(accessToken);
 
-      const refreshTime = (accessTokenExpiresIn - 300) * 1000;
+      const MIN_LEAD_SECONDS = 10;
+      const delayMs =
+        Math.max(accessTokenExpiresIn - 300, MIN_LEAD_SECONDS) * 1000;
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
       }
-      refreshTimeoutRef.current = setTimeout(refreshAccessToken, refreshTime);
+      refreshTimeoutRef.current = setTimeout(refreshAccessToken, delayMs);
     } catch (error) {
       console.warn('토큰 갱신 실패:', error);
       setToken(null);
@@ -83,8 +93,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [isLoading, refreshToken, token, refreshAccessToken]);
 
   useEffect(() => {
-    apiClient.setOnTokenExpired(() => {
-      refreshAccessToken();
+    apiClient.setOnTokenExpired(async () => {
+      await refreshAccessToken();
     });
   }, [refreshAccessToken]);
 
@@ -105,13 +115,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(newToken);
     setRefreshToken(newRefreshToken);
 
-    // 토큰 갱신 타이머 설정 (만료 5분 전에 갱신)
     if (accessTokenExpiresIn) {
-      const refreshTime = (accessTokenExpiresIn - 300) * 1000;
+      const MIN_LEAD_SECONDS = 10;
+      const delayMs =
+        Math.max(accessTokenExpiresIn - 300, MIN_LEAD_SECONDS) * 1000;
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
       }
-      refreshTimeoutRef.current = setTimeout(refreshAccessToken, refreshTime);
+      refreshTimeoutRef.current = setTimeout(refreshAccessToken, delayMs);
     }
   };
 
@@ -121,7 +132,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.warn('서버 로그아웃 API 호출 실패:', error);
     } finally {
-      // 타이머 정리
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
         refreshTimeoutRef.current = null;
