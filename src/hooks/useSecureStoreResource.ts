@@ -14,7 +14,7 @@ interface ResolvedResource<T> {
   data: T;
 }
 
-interface RejectedResource<T> {
+interface RejectedResource {
   status: 'rejected';
   error: Error;
 }
@@ -22,7 +22,7 @@ interface RejectedResource<T> {
 type ResourceState<T> =
   | PendingResource<T>
   | ResolvedResource<T>
-  | RejectedResource<T>;
+  | RejectedResource;
 
 const resourceCache = new Map<string, ResourceState<unknown>>();
 
@@ -42,7 +42,6 @@ function createSecureStoreResource<T>(
     deserialize?: (value: string) => T;
   }
 ): Resource<T> {
-  const serialize = options?.serialize ?? ((value: T) => JSON.stringify(value));
   const deserialize =
     options?.deserialize ?? ((value: string) => JSON.parse(value) as T);
 

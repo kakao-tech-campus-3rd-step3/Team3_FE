@@ -74,7 +74,7 @@ export function useStorageState<T>(
     return () => {
       isMounted.current = false;
     };
-  }, [key, initialValue]);
+  }, [key, initialValue, deserialize]);
 
   useEffect(() => {
     const saveValue = async () => {
@@ -90,7 +90,7 @@ export function useStorageState<T>(
     };
 
     saveValue();
-  }, [key, state]);
+  }, [key, state, serialize]);
 
   return [state, setState];
 }
