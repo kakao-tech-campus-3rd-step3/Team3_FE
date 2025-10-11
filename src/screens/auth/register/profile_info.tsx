@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  useWindowDimensions,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -28,10 +29,45 @@ interface Props {
 }
 
 export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
+  const { width } = useWindowDimensions();
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const { errors, validateField } = useRegisterValidation(
     profileValidationRules
   );
+
+  const dynamicStyles = StyleSheet.create({
+    label: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: theme.colors.text.main,
+      marginBottom: Math.max(8, width * 0.02),
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.colors.border.input,
+      borderRadius: Math.max(8, width * 0.02),
+      paddingHorizontal: Math.max(16, width * 0.04),
+      paddingVertical: Math.max(12, width * 0.03),
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.main,
+      backgroundColor: theme.colors.background.input,
+    },
+    errorText: {
+      color: theme.colors.red[500],
+      fontSize: Math.max(12, width * 0.035),
+      marginTop: Math.max(8, width * 0.02),
+    },
+    prevButtonText: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: theme.colors.text.sub,
+    },
+    nextButtonText: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: theme.colors.white,
+    },
+  });
 
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
     if (field === 'studentYear') {
@@ -74,10 +110,10 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
           enableOnAndroid={true}
         >
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>이름</Text>
+            <Text style={dynamicStyles.label}>이름</Text>
             <TextInput
               style={[
-                styles.input,
+                dynamicStyles.input,
                 (focusedField === 'name' || data.name) && styles.inputFilled,
                 errors.name && styles.inputError,
               ]}
@@ -87,14 +123,16 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
               onFocus={() => setFocusedField('name')}
               onBlur={() => setFocusedField(null)}
             />
-            {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+            {errors.name && (
+              <Text style={dynamicStyles.errorText}>{errors.name}</Text>
+            )}
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>카카오 아이디</Text>
+            <Text style={dynamicStyles.label}>카카오 아이디</Text>
             <TextInput
               style={[
-                styles.input,
+                dynamicStyles.input,
                 (focusedField === 'kakaoTalkId' || data.kakaoTalkId) &&
                   styles.inputFilled,
                 errors.kakaoTalkId && styles.inputError,
@@ -106,15 +144,15 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
               onBlur={() => setFocusedField(null)}
             />
             {errors.kakaoTalkId && (
-              <Text style={styles.errorText}>{errors.kakaoTalkId}</Text>
+              <Text style={dynamicStyles.errorText}>{errors.kakaoTalkId}</Text>
             )}
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>입학년도</Text>
+            <Text style={dynamicStyles.label}>입학년도</Text>
             <TextInput
               style={[
-                styles.input,
+                dynamicStyles.input,
                 (focusedField === 'studentYear' || data.studentYear) &&
                   styles.inputFilled,
                 errors.studentYear && styles.inputError,
@@ -128,15 +166,15 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
               onBlur={() => setFocusedField(null)}
             />
             {errors.studentYear && (
-              <Text style={styles.errorText}>{errors.studentYear}</Text>
+              <Text style={dynamicStyles.errorText}>{errors.studentYear}</Text>
             )}
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>학과</Text>
+            <Text style={dynamicStyles.label}>학과</Text>
             <TextInput
               style={[
-                styles.input,
+                dynamicStyles.input,
                 (focusedField === 'department' || data.department) &&
                   styles.inputFilled,
                 errors.department && styles.inputError,
@@ -148,7 +186,7 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
               onBlur={() => setFocusedField(null)}
             />
             {errors.department && (
-              <Text style={styles.errorText}>{errors.department}</Text>
+              <Text style={dynamicStyles.errorText}>{errors.department}</Text>
             )}
           </View>
         </KeyboardAwareScrollView>
@@ -156,7 +194,7 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.prevButton} onPress={handlePrev}>
-          <Text style={styles.prevButtonText}>이전</Text>
+          <Text style={dynamicStyles.prevButtonText}>이전</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -164,7 +202,7 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
           onPress={handleNext}
           disabled={!isFormValid}
         >
-          <Text style={styles.nextButtonText}>다음</Text>
+          <Text style={dynamicStyles.nextButtonText}>다음</Text>
         </TouchableOpacity>
       </View>
     </View>

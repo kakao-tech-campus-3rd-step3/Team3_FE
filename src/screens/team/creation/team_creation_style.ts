@@ -68,7 +68,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: theme.spacing.spacing5,
     paddingVertical: 20,
-    paddingBottom: theme.spacing.spacing10,
+    paddingBottom: theme.spacing.spacing12,
   },
   stepTextInput: {
     borderWidth: 1,

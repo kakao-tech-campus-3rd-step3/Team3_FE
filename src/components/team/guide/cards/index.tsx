@@ -69,7 +69,14 @@ export default function Cards() {
           }}
           activeOpacity={0.8}
         >
-          <Text style={styles.cardText}>{cards[0].text}</Text>
+          <Text
+            style={styles.cardText}
+            numberOfLines={1}
+            adjustsFontSizeToFit={true}
+            minimumFontScale={0.7}
+          >
+            {cards[0].text}
+          </Text>
           <View
             style={[
               styles.cardButton,
@@ -98,7 +105,14 @@ export default function Cards() {
           }}
           activeOpacity={0.8}
         >
-          <Text style={styles.cardText}>{cards[1].text}</Text>
+          <Text
+            style={styles.cardText}
+            numberOfLines={1}
+            adjustsFontSizeToFit={true}
+            minimumFontScale={0.7}
+          >
+            {cards[1].text}
+          </Text>
           <View
             style={[
               styles.cardButton,
@@ -127,7 +141,14 @@ export default function Cards() {
           }}
           activeOpacity={0.8}
         >
-          <Text style={styles.cardText}>{cards[2].text}</Text>
+          <Text
+            style={styles.cardText}
+            numberOfLines={1}
+            adjustsFontSizeToFit={true}
+            minimumFontScale={0.7}
+          >
+            {cards[2].text}
+          </Text>
           <View
             style={[
               styles.cardButton,

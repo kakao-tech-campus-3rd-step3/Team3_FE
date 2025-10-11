@@ -13,11 +13,11 @@ interface TeamGuardProps {
 
 export function TeamGuard({ children, fallbackMessage }: TeamGuardProps) {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { token } = useAuth();
+  const isAuthenticated = !!token;
   const { data: userProfile, isLoading } = useUserProfile();
 
   useEffect(() => {
-    // 인증되지 않은 사용자는 TeamGuard를 실행하지 않음
     if (!isAuthenticated) {
       return;
     }
@@ -51,7 +51,6 @@ export function TeamGuard({ children, fallbackMessage }: TeamGuardProps) {
     isAuthenticated,
   ]);
 
-  // 인증되지 않은 사용자는 TeamGuard를 실행하지 않음
   if (!isAuthenticated) {
     return <>{children}</>;
   }

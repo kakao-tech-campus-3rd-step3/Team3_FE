@@ -26,7 +26,7 @@ export default {
       package: 'com.cheogo.shootdoori',
       versionCode: 6,
       adaptiveIcon: {
-        foregroundImage: './assets/images/logo.png',
+        foregroundImage: './assets/images/icon_logo.png',
         backgroundColor: '#ffffff',
       },
       edgeToEdgeEnabled: true,
@@ -35,7 +35,7 @@ export default {
       bundler: 'metro',
       favicon: './assets/images/logo_without_background.png',
     },
-    plugins: ['expo-router'],
+    plugins: ['expo-router', 'expo-font'],
     extra: {
       apiBaseUrl:
         process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:3000',
