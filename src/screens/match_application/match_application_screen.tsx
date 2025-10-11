@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
   View,
@@ -30,7 +30,13 @@ interface MatchApplicationScreenProps {
 export default function MatchApplicationScreen({
   teamId,
 }: MatchApplicationScreenProps) {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const router = useRouter();
+  const { date } = useLocalSearchParams<{
+    date?: string;
+  }>();
+
+  const initialDate = date ? new Date(date) : null;
+  const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 

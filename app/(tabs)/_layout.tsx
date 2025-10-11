@@ -7,11 +7,8 @@ import { useAuth } from '@/src/contexts/auth_context';
 import { theme } from '@/src/theme';
 
 export default function TabLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return null;
-  }
+  const { token } = useAuth();
+  const isAuthenticated = !!token;
 
   if (!isAuthenticated) {
     return <Redirect href="/(auth)/login" />;
@@ -35,8 +32,8 @@ export default function TabLayout() {
             height: 100,
             borderTopWidth: 1,
             borderTopColor: theme.colors.gray[400],
-            paddingTop: 8,
-            paddingBottom: 8,
+            paddingTop: 4,
+            paddingBottom: 16,
           },
         }),
       }}

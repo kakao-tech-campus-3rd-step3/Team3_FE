@@ -8,15 +8,13 @@ import {
   Linking,
   TouchableWithoutFeedback,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
+  useWindowDimensions,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { Dropdown } from '@/src/components/dropdown';
 import { EMAIL_DOMAINS } from '@/src/constants/email_domains';
 import { EXTERNAL_LINKS } from '@/src/constants/external_links';
-import { UI_CONSTANTS } from '@/src/constants/ui';
 import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 import {
   useRegisterValidation,
@@ -42,12 +40,76 @@ export function AccountSetup({
   isLoading,
   handlePrev,
 }: Props) {
+  const { width } = useWindowDimensions();
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [emailId, setEmailId] = useState<string>('');
   const [emailDomain, setEmailDomain] = useState<string>('naver.com');
   const { errors, validateField } = useRegisterValidation(
     accountValidationRules
   );
+
+  const dynamicStyles = StyleSheet.create({
+    label: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: theme.colors.text.main,
+      marginBottom: Math.max(8, width * 0.02),
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.colors.border.input,
+      borderRadius: Math.max(8, width * 0.02),
+      paddingHorizontal: Math.max(16, width * 0.04),
+      paddingVertical: Math.max(12, width * 0.03),
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.main,
+      backgroundColor: theme.colors.background.input,
+    },
+    emailInput: {
+      flex: 1.2,
+      borderWidth: 1,
+      borderColor: theme.colors.border.input,
+      borderRadius: Math.max(8, width * 0.02),
+      paddingHorizontal: Math.max(16, width * 0.04),
+      paddingVertical: Math.max(12, width * 0.03),
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.main,
+      backgroundColor: theme.colors.background.input,
+      height: Math.max(48, width * 0.12),
+    },
+    atSymbol: {
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.main,
+      fontWeight: 'bold',
+      paddingHorizontal: Math.max(8, width * 0.02),
+    },
+    errorText: {
+      color: theme.colors.red[500],
+      fontSize: Math.max(12, width * 0.035),
+      marginTop: Math.max(8, width * 0.02),
+    },
+    checkboxText: {
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.main,
+      lineHeight: Math.max(20, width * 0.05),
+    },
+    linkText: {
+      fontSize: Math.max(12, width * 0.035),
+      color: theme.colors.brand.main,
+      marginTop: Math.max(4, width * 0.01),
+      textDecorationLine: 'underline',
+    },
+    prevButtonText: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: theme.colors.text.sub,
+    },
+    submitButtonText: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: theme.colors.white,
+    },
+  });
 
   const handleEmailIdChange = (value: string) => {
     setEmailId(value);
@@ -65,7 +127,6 @@ export function AccountSetup({
 
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
     onChange(field, value);
-    // 업데이트된 데이터로 검증
     const updatedData = { ...data, [field]: value };
     validateField(field, value, updatedData);
 
@@ -75,7 +136,6 @@ export function AccountSetup({
   };
 
   const isValid = useMemo(() => {
-    // 현재 단계(계정 설정)의 필드만 검증
     const emailValid =
       data.email &&
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(data.email);
@@ -95,184 +155,169 @@ export function AccountSetup({
   }, [data, errors]);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.keyboardAvoidingView}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={UI_CONSTANTS.KEYBOARD_VERTICAL_OFFSET}
-    >
+    <View style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            automaticallyAdjustKeyboardInsets={true}
-          >
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>이메일</Text>
-              <View style={styles.emailContainer}>
-                <TextInput
-                  style={[
-                    styles.emailInput,
-                    (focusedField === 'emailId' || emailId) &&
-                      styles.inputFilled,
-                    errors.email && styles.inputError,
-                  ]}
-                  placeholder="아이디"
-                  value={emailId}
-                  onChangeText={handleEmailIdChange}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  onFocus={() => setFocusedField('emailId')}
-                  onBlur={() => setFocusedField(null)}
+        <KeyboardAwareScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          enableOnAndroid={true}
+        >
+          <View style={styles.inputGroup}>
+            <Text style={dynamicStyles.label}>이메일</Text>
+            <View style={styles.emailContainer}>
+              <TextInput
+                style={[
+                  dynamicStyles.emailInput,
+                  (focusedField === 'emailId' || emailId) && styles.inputFilled,
+                  errors.email && styles.inputError,
+                ]}
+                placeholder="아이디"
+                value={emailId}
+                onChangeText={handleEmailIdChange}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                onFocus={() => setFocusedField('emailId')}
+                onBlur={() => setFocusedField(null)}
+              />
+              <Text style={dynamicStyles.atSymbol}>@</Text>
+              <View style={styles.domainDropdown}>
+                <Dropdown
+                  items={EMAIL_DOMAINS}
+                  value={emailDomain}
+                  onChange={handleEmailDomainChange}
+                  placeholder="도메인"
                 />
-                <Text style={styles.atSymbol}>@</Text>
-                <View style={styles.domainDropdown}>
-                  <Dropdown
-                    items={EMAIL_DOMAINS}
-                    value={emailDomain}
-                    onChange={handleEmailDomainChange}
-                    placeholder="도메인"
-                  />
-                </View>
               </View>
-              {errors.email && (
-                <Text style={styles.errorText}>{errors.email}</Text>
-              )}
             </View>
+            {errors.email && (
+              <Text style={dynamicStyles.errorText}>{errors.email}</Text>
+            )}
+          </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>비밀번호</Text>
-              <TextInput
+          <View style={styles.inputGroup}>
+            <Text style={dynamicStyles.label}>비밀번호</Text>
+            <TextInput
+              style={[
+                dynamicStyles.input,
+                (focusedField === 'password' || data.password) &&
+                  styles.inputFilled,
+                errors.password && styles.inputError,
+              ]}
+              placeholder="비밀번호를 입력하세요"
+              secureTextEntry
+              value={data.password}
+              onChangeText={text => handleFieldChange('password', text)}
+              onFocus={() => setFocusedField('password')}
+              onBlur={() => setFocusedField(null)}
+            />
+            {errors.password && (
+              <Text style={dynamicStyles.errorText}>{errors.password}</Text>
+            )}
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={dynamicStyles.label}>비밀번호 확인</Text>
+            <TextInput
+              style={[
+                dynamicStyles.input,
+                (focusedField === 'confirmPassword' || data.confirmPassword) &&
+                  styles.inputFilled,
+                errors.confirmPassword && styles.inputError,
+              ]}
+              placeholder="비밀번호 확인"
+              secureTextEntry
+              value={data.confirmPassword}
+              onChangeText={text => handleFieldChange('confirmPassword', text)}
+              onFocus={() => setFocusedField('confirmPassword')}
+              onBlur={() => setFocusedField(null)}
+            />
+            {errors.confirmPassword && (
+              <Text style={dynamicStyles.errorText}>
+                {errors.confirmPassword}
+              </Text>
+            )}
+          </View>
+
+          <View style={styles.agreementContainer}>
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={() => onChange('termsAgreed', !data.termsAgreed)}
+            >
+              <View
                 style={[
-                  styles.input,
-                  (focusedField === 'password' || data.password) &&
-                    styles.inputFilled,
-                  errors.password && styles.inputError,
+                  styles.checkbox,
+                  data.termsAgreed && styles.checkboxChecked,
                 ]}
-                placeholder="비밀번호를 입력하세요"
-                secureTextEntry
-                value={data.password}
-                onChangeText={text => handleFieldChange('password', text)}
-                onFocus={() => setFocusedField('password')}
-                onBlur={() => setFocusedField(null)}
-              />
-              {errors.password && (
-                <Text style={styles.errorText}>{errors.password}</Text>
-              )}
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>비밀번호 확인</Text>
-              <TextInput
-                style={[
-                  styles.input,
-                  (focusedField === 'confirmPassword' ||
-                    data.confirmPassword) &&
-                    styles.inputFilled,
-                  errors.confirmPassword && styles.inputError,
-                ]}
-                placeholder="비밀번호 확인"
-                secureTextEntry
-                value={data.confirmPassword}
-                onChangeText={text =>
-                  handleFieldChange('confirmPassword', text)
-                }
-                onFocus={() => setFocusedField('confirmPassword')}
-                onBlur={() => setFocusedField(null)}
-              />
-              {errors.confirmPassword && (
-                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-              )}
-            </View>
-
-            <View style={styles.agreementContainer}>
-              <TouchableOpacity
-                style={styles.checkboxContainer}
-                onPress={() => onChange('termsAgreed', !data.termsAgreed)}
               >
-                <View
-                  style={[
-                    styles.checkbox,
-                    data.termsAgreed && styles.checkboxChecked,
-                  ]}
+                {data.termsAgreed && <Text style={styles.checkmark}>✓</Text>}
+              </View>
+              <View style={styles.checkboxTextContainer}>
+                <Text style={dynamicStyles.checkboxText}>
+                  서비스 이용약관에 동의합니다
+                </Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    Linking.openURL(EXTERNAL_LINKS.TERMS_OF_SERVICE)
+                  }
                 >
-                  {data.termsAgreed && <Text style={styles.checkmark}>✓</Text>}
-                </View>
-                <View style={styles.checkboxTextContainer}>
-                  <Text style={styles.checkboxText}>
-                    서비스 이용약관에 동의합니다
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Linking.openURL(EXTERNAL_LINKS.TERMS_OF_SERVICE)
-                    }
-                  >
-                    <Text style={styles.linkText}>약관 보기</Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.checkboxContainer}
-                onPress={() => onChange('privacyAgreed', !data.privacyAgreed)}
-              >
-                <View
-                  style={[
-                    styles.checkbox,
-                    data.privacyAgreed && styles.checkboxChecked,
-                  ]}
-                >
-                  {data.privacyAgreed && (
-                    <Text style={styles.checkmark}>✓</Text>
-                  )}
-                </View>
-                <View style={styles.checkboxTextContainer}>
-                  <Text style={styles.checkboxText}>
-                    개인정보 처리방침에 동의합니다
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Linking.openURL(EXTERNAL_LINKS.PRIVACY_POLICY)
-                    }
-                  >
-                    <Text style={styles.linkText}>정책 보기</Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.prevButton} onPress={handlePrev}>
-              <Text style={styles.prevButtonText}>이전</Text>
+                  <Text style={dynamicStyles.linkText}>약관 보기</Text>
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[
-                styles.submitButton,
-                (!isValid || isLoading) && styles.submitButtonDisabled,
-              ]}
-              onPress={onSubmit}
-              disabled={!isValid || isLoading}
+              style={styles.checkboxContainer}
+              onPress={() => onChange('privacyAgreed', !data.privacyAgreed)}
             >
-              <Text style={styles.submitButtonText}>
-                {isLoading ? '처리 중...' : '회원가입 완료'}
-              </Text>
+              <View
+                style={[
+                  styles.checkbox,
+                  data.privacyAgreed && styles.checkboxChecked,
+                ]}
+              >
+                {data.privacyAgreed && <Text style={styles.checkmark}>✓</Text>}
+              </View>
+              <View style={styles.checkboxTextContainer}>
+                <Text style={dynamicStyles.checkboxText}>
+                  개인정보 처리방침에 동의합니다
+                </Text>
+                <TouchableOpacity
+                  onPress={() => Linking.openURL(EXTERNAL_LINKS.PRIVACY_POLICY)}
+                >
+                  <Text style={dynamicStyles.linkText}>정책 보기</Text>
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAwareScrollView>
       </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.prevButton} onPress={handlePrev}>
+          <Text style={dynamicStyles.prevButtonText}>이전</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.submitButton,
+            (!isValid || isLoading) && styles.submitButtonDisabled,
+          ]}
+          onPress={onSubmit}
+          disabled={!isValid || isLoading}
+        >
+          <Text style={dynamicStyles.submitButtonText}>
+            {isLoading ? '처리 중...' : '회원가입 완료'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  keyboardAvoidingView: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     backgroundColor: theme.colors.background.main,

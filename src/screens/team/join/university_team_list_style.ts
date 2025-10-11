@@ -48,8 +48,8 @@ export const styles = StyleSheet.create({
   teamCard: {
     backgroundColor: theme.colors.background.sub,
     borderRadius: theme.spacing.spacing3,
-    padding: theme.spacing.spacing5,
-    marginBottom: theme.spacing.spacing4,
+    padding: theme.spacing.spacing4,
+    marginBottom: theme.spacing.spacing3,
     borderWidth: 1,
     borderColor: theme.colors.border.light,
   },
@@ -57,7 +57,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.spacing3,
+    marginBottom: theme.spacing.spacing2,
   },
   teamName: {
     fontSize: theme.typography.fontSize.font5,
@@ -77,21 +77,21 @@ export const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.medium,
   },
   teamDescription: {
-    fontSize: theme.typography.fontSize.font4,
+    fontSize: theme.typography.fontSize.font3,
     color: theme.colors.text.sub,
-    lineHeight: theme.typography.lineHeight.line6,
-    marginBottom: theme.spacing.spacing4,
+    lineHeight: theme.typography.lineHeight.line5,
+    marginBottom: theme.spacing.spacing3,
   },
   teamInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.spacing4,
+    marginBottom: theme.spacing.spacing3,
     paddingHorizontal: theme.spacing.spacing1,
   },
   infoItem: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: theme.spacing.spacing2,
+    paddingVertical: theme.spacing.spacing1,
   },
   infoLabel: {
     fontSize: theme.typography.fontSize.font2,
@@ -107,12 +107,12 @@ export const styles = StyleSheet.create({
   joinButton: {
     backgroundColor: theme.colors.blue[500],
     borderRadius: theme.spacing.spacing2,
-    paddingVertical: theme.spacing.spacing3,
+    paddingVertical: theme.spacing.spacing2,
     alignItems: 'center',
     opacity: 0.8,
   },
   joinButtonText: {
-    fontSize: theme.typography.fontSize.font4,
+    fontSize: theme.typography.fontSize.font3,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.white,
   },

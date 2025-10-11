@@ -9,13 +9,13 @@ export const style = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
+    backgroundColor: theme.colors.gray[50],
   },
   scrollContent: {
     padding: theme.spacing.spacing4,
-    paddingBottom: 60, // 하단 고정 버튼을 위한 여백 더 감소
+    paddingBottom: 60,
   },
 
-  // 카드 스타일
   card: {
     backgroundColor: theme.colors.white,
     borderRadius: theme.spacing.spacing4,
@@ -41,7 +41,6 @@ export const style = StyleSheet.create({
     color: theme.colors.gray[900],
   },
 
-  // 선택 버튼
   selectButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -88,7 +87,6 @@ export const style = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.semibold,
   },
 
-  // 시간 행
   timeRow: {
     flexDirection: 'row',
     gap: theme.spacing.spacing2,
@@ -123,7 +121,6 @@ export const style = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.semibold,
   },
 
-  // 옵션 행
   optionRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -149,7 +146,6 @@ export const style = StyleSheet.create({
     lineHeight: 18,
   },
 
-  // 토글 스위치
   toggle: {
     width: 50,
     height: 30,
@@ -189,12 +185,10 @@ export const style = StyleSheet.create({
     left: 2,
   },
 
-  // 하단 여백
   bottomSpacing: {
     height: theme.spacing.spacing6,
   },
 
-  // 하단 고정 바
   fixedBottomBar: {
     position: 'absolute',
     left: 0,
@@ -240,7 +234,6 @@ export const style = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.bold,
   },
 
-  // 모달 스타일
   modalWrap: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -284,7 +277,6 @@ export const style = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // 성공 모달 스타일
   successModalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

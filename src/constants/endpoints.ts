@@ -8,6 +8,12 @@ export const AUTH_API = {
   SEND_VERIFICATION: '/api/auth/send-verification',
 };
 
+export const PASSWORD_RESET_API = {
+  SEND_CODE: '/api/password-reset/send-code',
+  VERIFY_CODE: '/api/password-reset/verify-code',
+  CONFIRM: '/api/password-reset/confirm',
+};
+
 export const PROFILE_API = {
   GET_PROFILE: '/api/profiles/me',
   UPDATE_PROFILE: '/api/profiles/me',
@@ -52,6 +58,8 @@ export const TEAM_MEMBER_API = {
     `/api/teams/${teamId}/users/${userId}`,
   REMOVE_MEMBER: (teamId: string | number, userId: string | number) =>
     `/api/teams/${teamId}/users/${userId}`,
+  DELEGATE_LEADERSHIP: (teamId: string | number, memberId: string | number) =>
+    `/api/teams/${teamId}/members/${memberId}/delegate-leadership`,
 };
 
 export const TEAM_MATCH_API = {

@@ -4,6 +4,7 @@ import { memo } from 'react';
 import { Alert, Image, Text, TouchableOpacity, View } from 'react-native';
 
 import { ROUTES } from '@/src/constants/routes';
+import { useAuth } from '@/src/contexts/auth_context';
 import { theme } from '@/src/theme';
 
 import styles from '../../home_style';
@@ -13,7 +14,14 @@ interface EnvelopeSectionProps {
 }
 
 export default memo(function EnvelopeSection({ teamId }: EnvelopeSectionProps) {
+  const { token } = useAuth();
+  const isAuthenticated = !!token;
+
   const checkTeamMembership = () => {
+    if (!isAuthenticated) {
+      return false;
+    }
+
     if (!teamId || teamId === null || teamId === undefined) {
       Alert.alert(
         '팀 참여 필요',

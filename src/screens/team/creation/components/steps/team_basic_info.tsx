@@ -1,6 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 
 import { colors } from '@/src/theme';
 import { TeamType, TEAM_TYPES } from '@/src/types/team';
@@ -34,6 +41,70 @@ export default function TeamBasicInfo({
   onBack,
   errors,
 }: TeamBasicInfoProps) {
+  const { width } = useWindowDimensions();
+
+  const dynamicStyles = StyleSheet.create({
+    stepTitle: {
+      fontSize: Math.max(20, width * 0.06),
+      fontWeight: 'bold',
+      color: colors.text.main,
+      textAlign: 'center',
+      marginBottom: Math.max(8, width * 0.02),
+    },
+    stepSubtitle: {
+      fontSize: Math.max(14, width * 0.04),
+      color: colors.text.sub,
+      textAlign: 'center',
+      lineHeight: Math.max(20, width * 0.05),
+    },
+    inputLabel: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: colors.text.main,
+      marginBottom: Math.max(8, width * 0.02),
+    },
+    stepTextInput: {
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      borderRadius: Math.max(8, width * 0.02),
+      paddingHorizontal: Math.max(16, width * 0.04),
+      paddingVertical: Math.max(12, width * 0.03),
+      fontSize: Math.max(16, width * 0.045),
+      backgroundColor: colors.background.sub,
+    },
+    stepSelectorButton: {
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      borderRadius: Math.max(8, width * 0.02),
+      paddingVertical: Math.max(12, width * 0.03),
+      paddingHorizontal: Math.max(16, width * 0.04),
+      marginBottom: Math.max(12, width * 0.03),
+      backgroundColor: colors.background.sub,
+    },
+    stepSelectorButtonText: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: colors.text.sub,
+      textAlign: 'center',
+    },
+    nextButton: {
+      backgroundColor: colors.blue[500],
+      borderRadius: Math.max(8, width * 0.02),
+      paddingVertical: Math.max(12, width * 0.03),
+      paddingHorizontal: Math.max(20, width * 0.05),
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: Math.max(100, width * 0.25),
+    },
+    nextButtonText: {
+      color: colors.white,
+      fontSize: Math.max(16, width * 0.045),
+      fontWeight: '600',
+      marginRight: Math.max(8, width * 0.02),
+    },
+  });
+
   const isValid =
     teamName.trim().length > 0 &&
     teamName.length <= 100 &&
@@ -44,17 +115,20 @@ export default function TeamBasicInfo({
   return (
     <View style={styles.stepContainer}>
       <View style={styles.stepHeader}>
-        <Text style={styles.stepTitle}>팀 기본 정보를 입력해주세요</Text>
-        <Text style={styles.stepSubtitle}>
+        <Text style={dynamicStyles.stepTitle}>팀 기본 정보를 입력해주세요</Text>
+        <Text style={dynamicStyles.stepSubtitle}>
           팀의 이름과 소속 대학교를 알려주세요
         </Text>
       </View>
 
       <View style={styles.stepContent}>
         <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>팀 이름 *</Text>
+          <Text style={dynamicStyles.inputLabel}>팀 이름 *</Text>
           <TextInput
-            style={[styles.stepTextInput, errors.name && styles.textInputError]}
+            style={[
+              dynamicStyles.stepTextInput,
+              errors.name && styles.textInputError,
+            ]}
             value={teamName}
             onChangeText={onTeamNameChange}
             placeholder="예: 강원대 3팀"
@@ -64,7 +138,7 @@ export default function TeamBasicInfo({
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>대학교 *</Text>
+          <Text style={dynamicStyles.inputLabel}>대학교 *</Text>
           <View
             style={[
               styles.dropdownButton,
@@ -89,20 +163,20 @@ export default function TeamBasicInfo({
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>팀 유형 *</Text>
+          <Text style={dynamicStyles.inputLabel}>팀 유형 *</Text>
           <View style={styles.selectorContainer}>
             {TEAM_TYPES.map(type => (
               <TouchableOpacity
                 key={type}
                 style={[
-                  styles.stepSelectorButton,
+                  dynamicStyles.stepSelectorButton,
                   teamType === type && styles.stepSelectorButtonActive,
                 ]}
                 onPress={() => onTeamTypeChange(type)}
               >
                 <Text
                   style={[
-                    styles.stepSelectorButtonText,
+                    dynamicStyles.stepSelectorButtonText,
                     teamType === type && styles.stepSelectorButtonTextActive,
                   ]}
                 >
@@ -119,11 +193,14 @@ export default function TeamBasicInfo({
 
       <View style={[styles.stepFooter, { justifyContent: 'flex-end' }]}>
         <TouchableOpacity
-          style={[styles.nextButton, !isValid && styles.nextButtonDisabled]}
+          style={[
+            dynamicStyles.nextButton,
+            !isValid && styles.nextButtonDisabled,
+          ]}
           onPress={onNext}
           disabled={!isValid}
         >
-          <Text style={styles.nextButtonText}>다음</Text>
+          <Text style={dynamicStyles.nextButtonText}>다음</Text>
           <Ionicons name="arrow-forward" size={20} color={colors.white} />
         </TouchableOpacity>
       </View>
