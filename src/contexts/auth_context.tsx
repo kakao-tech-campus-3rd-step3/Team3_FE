@@ -20,6 +20,7 @@ import { queryClient } from '@/src/lib/query_client';
 interface AuthContextType {
   token: string | null;
   refreshToken: string | null;
+  isInitialized: boolean;
   login: (
     token: string,
     refreshToken: string,
@@ -31,15 +32,63 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function AuthProviderInner({ children }: { children: React.ReactNode }) {
-  const tokenResource = createTokenResource();
-  const refreshTokenResource = createRefreshTokenResource();
-
-  const token = tokenResource.read();
-  const refreshToken = refreshTokenResource.read();
-
-  const [tokenState, setTokenState] = useState(token);
-  const [refreshTokenState, setRefreshTokenState] = useState(refreshToken);
+  const [tokenState, setTokenState] = useState<string | null>(null);
+  const [refreshTokenState, setRefreshTokenState] = useState<string | null>(
+    null
+  );
+  const [isInitialized, setIsInitialized] = useState(false);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const initializeAuth = useCallback(async () => {
+    try {
+      const tokenResource = createTokenResource();
+      const refreshTokenResource = createRefreshTokenResource();
+
+      const token = tokenResource.read();
+      const refreshToken = refreshTokenResource.read();
+
+      setTokenState(token);
+      setRefreshTokenState(refreshToken);
+
+      if (token) {
+        apiClient.setToken(token);
+      }
+
+      setIsInitialized(true);
+    } catch (error) {
+      if (error instanceof Promise) {
+        try {
+          const token = await error;
+          const refreshTokenResource = createRefreshTokenResource();
+          const refreshToken = refreshTokenResource.read();
+
+          setTokenState(token);
+          setRefreshTokenState(refreshToken);
+
+          if (token) {
+            apiClient.setToken(token);
+          }
+
+          setIsInitialized(true);
+        } catch (refreshError) {
+          if (refreshError instanceof Promise) {
+            const refreshToken = await refreshError;
+            setTokenState(null);
+            setRefreshTokenState(refreshToken);
+            setIsInitialized(true);
+          } else {
+            setTokenState(null);
+            setRefreshTokenState(null);
+            setIsInitialized(true);
+          }
+        }
+      } else {
+        setTokenState(null);
+        setRefreshTokenState(null);
+        setIsInitialized(true);
+      }
+    }
+  }, []);
 
   const refreshAccessToken = useCallback(async () => {
     if (!refreshTokenState) {
@@ -87,14 +136,14 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
   }, [refreshTokenState]);
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      if (refreshTokenState && !tokenState) {
-        await refreshAccessToken();
-      }
-    };
-
     initializeAuth();
-  }, [refreshTokenState, tokenState, refreshAccessToken]);
+  }, [initializeAuth]);
+
+  useEffect(() => {
+    if (isInitialized && refreshTokenState && !tokenState) {
+      refreshAccessToken();
+    }
+  }, [isInitialized, refreshTokenState, tokenState, refreshAccessToken]);
 
   useEffect(() => {
     apiClient.setOnTokenExpired(async () => {
@@ -160,6 +209,7 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       value={{
         token: tokenState,
         refreshToken: refreshTokenState,
+        isInitialized,
         login,
         logout,
       }}

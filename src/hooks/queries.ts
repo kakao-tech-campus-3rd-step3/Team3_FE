@@ -133,22 +133,22 @@ export const queries = {
 } as const;
 
 export function useUserProfile() {
-  const { token } = useAuth();
+  const { token, isInitialized } = useAuth();
 
   return useQuery({
     queryKey: queries.userProfile.key,
     queryFn: queries.userProfile.fn,
-    enabled: !!token,
+    enabled: !!token && isInitialized,
   });
 }
 
 export function useTeamMatchRequests() {
-  const { token } = useAuth();
+  const { token, isInitialized } = useAuth();
 
   return useQuery({
     queryKey: queries.teamMatchRequests.key,
     queryFn: queries.teamMatchRequests.fn,
-    enabled: !!token,
+    enabled: !!token && isInitialized,
   });
 }
 
