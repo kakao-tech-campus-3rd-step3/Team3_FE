@@ -10,10 +10,8 @@ import type { EnemyTeamResponseDto } from '@/src/types/match';
  */
 export const useEnemyTeam = (matchId: number | string | undefined) => {
   return useQuery<EnemyTeamResponseDto>({
-    queryKey: ['enemy-team', matchId], // 캐싱 key (matchId별로 분리)
-    queryFn: () => getEnemyTeam(matchId!), // matchId가 존재할 때만 호출
-    enabled: !!matchId, // matchId가 있을 때만 API 실행
-    staleTime: 1000 * 60 * 5, // (선택) 5분간 캐싱 유지
-    retry: 1, // 실패 시 재시도 1회
+    queryKey: ['enemy-team', matchId], // matchId별 캐싱
+    queryFn: () => getEnemyTeam(matchId!), // 존재할 때만 호출
+    enabled: !!matchId, // matchId 없으면 실행 안 함
   });
 };
