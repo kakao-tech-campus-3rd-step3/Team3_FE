@@ -94,6 +94,8 @@ export const MATCH_REQUEST_API = {
   CANCEL_REQUEST: (requestId: string | number) =>
     `/api/matches/requests/${requestId}`,
   GET_MY_APPLIED_MATCHES: '/api/matches/requests/me',
+  GET_ENEMY_TEAM: (matchId: string | number) =>
+    `/api/matches/${matchId}/enemyTeam`,
 };
 
 export const USER_JOIN_WAITING_API = {

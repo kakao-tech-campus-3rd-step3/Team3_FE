@@ -17,6 +17,7 @@ import {
   MatchWaitingListRequestDto,
   MatchWaitingCancelResponseDto,
   MatchWaitingHistoryResponseDto,
+  EnemyTeamResponseDto,
 } from '@/src/types/match';
 
 export const teamMatchApi = {
@@ -189,3 +190,10 @@ export async function cancelMatchRequestById(
     throw error;
   }
 }
+
+export const getEnemyTeam = async (matchId: number | string) => {
+  const response = await apiClient.get<EnemyTeamResponseDto>(
+    MATCH_REQUEST_API.GET_ENEMY_TEAM(matchId)
+  );
+  return response;
+};
