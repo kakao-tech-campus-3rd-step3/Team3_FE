@@ -16,9 +16,13 @@ function AppContent() {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
-  const { token, isInitialized } = useAuth();
+  const { token, refreshToken, isInitialized } = useAuth();
 
   if (!isInitialized || !loaded) {
+    return null;
+  }
+
+  if (!token && refreshToken) {
     return null;
   }
 
@@ -26,7 +30,6 @@ function AppContent() {
     <ThemeProvider value={DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         {token ? (
-          // 토큰이 있으면 인증된 사용자용 스크린들 렌더링
           [
             <Stack.Screen key="tabs" name="(tabs)" />,
             <Stack.Screen key="team" name="team" />,
@@ -46,7 +49,6 @@ function AppContent() {
             />,
           ]
         ) : (
-          // 토큰이 없으면 인증 화면만 렌더링
           <Stack.Screen name="(auth)" />
         )}
       </Stack>
