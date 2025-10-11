@@ -47,6 +47,7 @@ function AppContent() {
               key="check_applied"
               name="check_applied_matches/index"
             />,
+            <Stack.Screen key="match_set" name="match_set/index" />,
           ]
         ) : (
           <Stack.Screen name="(auth)" />
