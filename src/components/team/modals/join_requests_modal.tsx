@@ -1,6 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import React, { useEffect } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+  BackHandler,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors } from '@/src/theme';
@@ -22,11 +29,30 @@ export default function JoinRequestsModal({
   onClose,
   onJoinRequest,
 }: JoinRequestsModalProps) {
+  // 모달 뒤로가기 버튼 활성화
+  useEffect(() => {
+    const backAction = () => {
+      if (visible) {
+        onClose();
+        return true;
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [visible, onClose]);
+
   return (
     <Modal
       visible={visible}
       animationType="slide"
       presentationStyle="pageSheet"
+      onRequestClose={onClose}
     >
       <SafeAreaView style={styles.modalContainer} edges={['top']}>
         <View style={styles.modalHeader}>
