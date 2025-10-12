@@ -27,8 +27,8 @@ export interface ApiTeamDetailResponse {
   name: string;
   description: string;
   university: string;
-  skillLevel: string; // API에서는 string으로 받음 (AMATEUR, SEMI_PRO, PRO)
-  teamType: string; // API에서는 string으로 받음 (CENTRAL_CLUB, DEPARTMENT_CLUB, OTHER)
+  skillLevel: string;
+  teamType: string;
   memberCount: number;
   createdAt: string;
 }
@@ -49,8 +49,8 @@ export interface ApiTeamListItem {
   name: string;
   description: string;
   university: string;
-  skillLevel: string; // API에서는 string으로 받음 (AMATEUR, SEMI_PRO, PRO)
-  teamType: string; // API에서는 string으로 받음 (CENTRAL_CLUB, DEPARTMENT_CLUB, OTHER)
+  skillLevel: string;
+  teamType: string;
   memberCount: number;
   captainName: string;
   captainId: number;
@@ -70,7 +70,6 @@ export interface TeamListItem {
   createdAt: string;
 }
 
-// Spring Data Page 포맷 응답 타입
 export interface Pageable {
   pageNumber: number;
   pageSize: number;
@@ -216,9 +215,10 @@ export interface JoinRequest {
 
 export interface ApiTeamJoinRequest {
   id: number;
+  applicantName: string;
   teamId: number;
   applicantId: number;
-  status: string; // "대기중" | "승인" | "거절" | "취소"
+  status: string;
   decisionReason: string | null;
   decidedBy: number | null;
   decidedAt: string | null;
@@ -226,6 +226,7 @@ export interface ApiTeamJoinRequest {
 
 export interface TeamJoinRequest {
   id: number;
+  applicantName: string;
   teamId: number;
   applicantId: number;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
@@ -250,6 +251,85 @@ export interface ApiTeamJoinRequestPageResponse {
 
 export interface TeamJoinRequestPageResponse {
   content: TeamJoinRequest[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  size: number;
+  number: number;
+  numberOfElements: number;
+  sort: Sort;
+  empty: boolean;
+}
+
+export interface JoinWaitingRequest {
+  message?: string;
+}
+
+export interface JoinWaitingResponse {
+  id: number;
+  teamId: number;
+  applicantId: number;
+  status: string;
+  decisionReason: string | null;
+  decidedBy: number | null;
+  decidedAt: string | null;
+}
+
+export interface JoinWaitingApproveRequest {
+  role: '회장' | '부회장' | '일반멤버';
+  decisionReason?: string;
+}
+
+export interface JoinWaitingRejectRequest {
+  reason: string;
+}
+
+export interface JoinWaitingCancelRequest {
+  decisionReason?: string;
+}
+
+export interface ApiUserJoinWaitingItem {
+  id: number;
+  applicantName: string;
+  teamId: number;
+  teamName: string;
+  applicantId: number;
+  status: string;
+  decisionReason: string | null;
+  decidedBy: number | null;
+  decidedAt: string | null;
+}
+
+export interface UserJoinWaitingItem {
+  id: number;
+  applicantName: string;
+  teamId: number;
+  teamName: string;
+  applicantId: number;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
+  decisionReason: string | null;
+  decidedBy: number | null;
+  decidedAt: string | null;
+}
+
+export interface ApiUserJoinWaitingPageResponse {
+  content: ApiUserJoinWaitingItem[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  size: number;
+  number: number;
+  numberOfElements: number;
+  sort: Sort;
+  empty: boolean;
+}
+
+export interface UserJoinWaitingPageResponse {
+  content: UserJoinWaitingItem[];
   pageable: Pageable;
   last: boolean;
   totalElements: number;

@@ -202,6 +202,7 @@ export const styles = StyleSheet.create({
     fontSize: typography.fontSize.font4,
     fontWeight: typography.fontWeight.semibold,
     color: colors.gray[700],
+    flexShrink: 1,
   },
   saveButton: {
     flex: 1,
@@ -217,5 +218,6 @@ export const styles = StyleSheet.create({
     fontSize: typography.fontSize.font4,
     fontWeight: typography.fontWeight.semibold,
     color: colors.white,
+    flexShrink: 1,
   },
 });

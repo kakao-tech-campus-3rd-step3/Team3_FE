@@ -1,43 +1,71 @@
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  Alert,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { ROUTES } from '@/src/constants/routes';
 import { useUserProfile } from '@/src/hooks/queries';
 import { useMatchRequest } from '@/src/hooks/useMatchRequest';
 import { useMatchWaitingList } from '@/src/hooks/useMatchWaitingList';
-import DateFilter from '@/src/screens/match_application/component/date_filter';
-import TimeFilter from '@/src/screens/match_application/component/time_filter';
 import type {
   MatchWaitingListRequestDto,
   MatchRequestRequestDto,
 } from '@/src/types/match';
 
-import MatchCard from './component/match_card';
+import FilterCard from './components/filter_card';
+import MatchCard from './components/match_card';
 import { styles } from './match_application_style';
 
-export default function MatchApplicationScreen() {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
+interface MatchApplicationScreenProps {
+  teamId?: number;
+}
 
-  const { data: userProfile, refetch } = useUserProfile();
+export default function MatchApplicationScreen({
+  teamId,
+}: MatchApplicationScreenProps) {
+  const router = useRouter();
+  const { date } = useLocalSearchParams<{
+    date?: string;
+  }>();
+
+  const initialDate = date ? new Date(date) : null;
+  const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
+  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const { data: userProfile, error: profileError, refetch } = useUserProfile();
 
   const params: MatchWaitingListRequestDto = {
-    teamId: userProfile?.teamId ?? 0,
     selectDate: selectedDate
       ? selectedDate.toISOString().split('T')[0]
       : new Date().toISOString().split('T')[0],
-    ...(selectedTime
-      ? { startTime: selectedTime.toTimeString().split(' ')[0] }
-      : {}),
+    startTime: selectedTime
+      ? selectedTime.toTimeString().split(' ')[0]
+      : '00:00:00',
   };
 
-  const { data, isLoading, error } = useMatchWaitingList(params);
-
-  // ✅ 매치 요청 훅
+  const {
+    data,
+    isLoading,
+    error,
+    refetch: refetchData,
+  } = useMatchWaitingList(params);
   const { mutate: requestMatch, isPending } = useMatchRequest();
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([refetch(), refetchData()]);
+    setRefreshing(false);
+  };
+
   const handlePressRequest = async (waitingId: number) => {
-    // userProfile을 먼저 새로고침
     await refetch();
 
     const rawTeamId = userProfile?.teamId;
@@ -47,17 +75,14 @@ export default function MatchApplicationScreen() {
       return;
     }
 
-    // teamId를 number로 변환
     const numericTeamId = Number(rawTeamId);
 
     if (isNaN(numericTeamId) || numericTeamId <= 0) {
-      Alert.alert('알림', '유효하지 않은 팀 ID입니다.');
+      Alert.alert('알림', '유효하지 않는 팀 ID입니다.');
       return;
     }
 
-    // 메시지는 단순히 내 팀/내 유저 기준으로 생성
     const payload: MatchRequestRequestDto = {
-      requestTeamId: numericTeamId,
       requestMessage: `${userProfile.name}(${numericTeamId}) 팀이 매치 요청`,
     };
 
@@ -66,80 +91,165 @@ export default function MatchApplicationScreen() {
       {
         onSuccess: res => {
           Alert.alert(
-            '✅ 신청 완료',
-            `매치 요청이 전송되었습니다.\n상태: ${res.status}`
+            '신청 완료',
+            `매치 요청이 전송되었습니다.\n상태: ${res.status}`,
+            [
+              {
+                text: '확인',
+                style: 'default',
+                onPress: () => router.push(ROUTES.HOME),
+              },
+            ]
           );
         },
         onError: () => {
-          Alert.alert('❌ 오류', '매치 요청 중 문제가 발생했습니다.');
+          Alert.alert('오류', '매치 요청 중 문제가 발생했습니다.');
         },
       }
     );
   };
 
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <CustomHeader title="매치 참여" />
-        <Text>불러오는 중...</Text>
-      </View>
-    );
-  }
+  const renderMatchCard = ({ item }: { item: any }) => (
+    <MatchCard
+      match={item}
+      onPressRequest={() => handlePressRequest(item.waitingId)}
+      disabled={isPending}
+    />
+  );
 
-  if (error) {
+  const renderEmptyState = () => (
+    <View style={styles.emptyState}>
+      <View
+        style={{
+          width: 80,
+          height: 80,
+          borderRadius: 40,
+          backgroundColor: '#f3f4f6',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 24,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 24,
+            color: '#9ca3af',
+            fontWeight: '600',
+          }}
+        >
+          ?
+        </Text>
+      </View>
+      <Text style={styles.emptyStateText}>조건에 맞는 매치가 없습니다</Text>
+      <Text style={styles.emptyStateSubtext}>
+        필터를 조정하여 다른 조건으로 검색해보세요
+      </Text>
+    </View>
+  );
+
+  const renderLoadingState = () => (
+    <View style={styles.loadingState}>
+      <Text style={styles.loadingText}>매치를 불러오는 중...</Text>
+    </View>
+  );
+
+  const renderErrorState = () => (
+    <View style={styles.errorState}>
+      <Text style={styles.errorText}>데이터를 불러올 수 없습니다</Text>
+      <Text style={styles.errorSubtext}>
+        네트워크 연결을 확인하고 다시 시도해주세요
+      </Text>
+    </View>
+  );
+
+  const renderSelectedFilters = () => {
+    const hasFilters = selectedDate || selectedTime;
+    if (!hasFilters) return null;
+
     return (
-      <View style={styles.container}>
-        <CustomHeader title="매치 참여" />
-        <Text>에러 발생: {String(error)}</Text>
+      <View style={styles.filterCard}>
+        <View style={styles.filterCardHeader}>
+          <Text style={styles.filterCardTitle}>선택된 필터</Text>
+        </View>
+        <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
+          {selectedDate && (
+            <Text style={styles.selectedFilterText}>
+              날짜: {selectedDate.toLocaleDateString('ko-KR')}
+            </Text>
+          )}
+          {selectedTime && (
+            <Text style={styles.selectedFilterText}>
+              시간:{' '}
+              {selectedTime.toLocaleTimeString('ko-KR', {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}{' '}
+              이후
+            </Text>
+          )}
+          {(selectedDate || selectedTime) && (
+            <Text style={[styles.selectedFilterText, { color: 'gray' }]}>
+              필터를 초기화하려면 필터 버튼을 다시 선택하세요
+            </Text>
+          )}
+        </View>
       </View>
     );
-  }
+  };
 
   return (
     <View style={styles.container}>
       <CustomHeader title="매치 참여" />
 
-      <DateFilter onDateChange={setSelectedDate} />
-      <TimeFilter onTimeChange={setSelectedTime} />
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={['#007AFF']}
+            tintColor="#007AFF"
+          />
+        }
+      >
+        <FilterCard
+          selectedDate={selectedDate}
+          selectedTime={selectedTime}
+          onDateChange={setSelectedDate}
+          onTimeChange={setSelectedTime}
+        />
 
-      {selectedDate && (
-        <Text style={styles.selectedDateText}>
-          선택된 날짜: {selectedDate.toLocaleDateString('ko-KR')}
-        </Text>
-      )}
+        {renderSelectedFilters()}
 
-      {selectedTime && (
-        <View style={styles.timeFilterRow}>
-          <Text style={styles.selectedDateText}>
-            시작 시간 이후:{' '}
-            {selectedTime.toLocaleTimeString('ko-KR', {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </Text>
-          <TouchableOpacity
-            style={styles.resetButton}
-            onPress={() => setSelectedTime(null)}
-          >
-            <Text style={styles.resetButtonText}>시간 필터 초기화</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+        {profileError && (
+          <View style={[styles.errorState, { marginBottom: 16 }]}>
+            <Text style={styles.errorText}>
+              사용자 정보를 불러올 수 없습니다
+            </Text>
+            <Text style={styles.errorSubtext}>
+              네트워크 연결을 확인하고 새로고침해주세요
+            </Text>
+          </View>
+        )}
 
-      <FlatList
-        data={data || []}
-        keyExtractor={(item, index) => String(item.waitingId ?? index)}
-        renderItem={({ item }) => (
-          <MatchCard
-            match={item}
-            onPressRequest={() => handlePressRequest(item.waitingId)} // ✅ waitingId만 넘김
-            disabled={isPending}
+        {isLoading && !refreshing ? (
+          renderLoadingState()
+        ) : error ? (
+          renderErrorState()
+        ) : (
+          <FlatList
+            data={data || []}
+            keyExtractor={(item, index) => String(item.waitingId ?? index)}
+            renderItem={renderMatchCard}
+            ListEmptyComponent={renderEmptyState}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
           />
         )}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>조건에 맞는 경기가 없습니다.</Text>
-        }
-      />
+      </ScrollView>
+
+      <View style={styles.bottomSpacing} />
     </View>
   );
 }

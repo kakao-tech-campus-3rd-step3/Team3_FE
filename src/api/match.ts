@@ -2,6 +2,7 @@ import {
   TEAM_MATCH_API,
   MATCH_CREATE_API,
   MATCH_REQUEST_API,
+  MATCH_WAITING_API,
 } from '@/src/constants/endpoints';
 import { apiClient } from '@/src/lib/api_client';
 import {
@@ -12,43 +13,38 @@ import {
   MatchRequestResponseDto,
   MatchConfirmedResponseDto,
   RecentMatchResponse,
+  MatchWaitingResponseDto,
+  MatchWaitingListRequestDto,
+  MatchWaitingCancelResponseDto,
+  MatchWaitingHistoryResponseDto,
+  EnemyTeamResponseDto,
 } from '@/src/types/match';
 
 export const teamMatchApi = {
   getTeamMatches: (teamId: string | number) => {
     return apiClient.get<{ [key: string]: Match[] }>(
-      TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES(teamId)
+      TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES()
     );
   },
-  getTeamRecentMatches: (teamId: string | number, status?: string) => {
+  getTeamRecentMatches: (status?: string) => {
     const url = status
-      ? `${TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES(teamId)}?status=${status}`
-      : TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES(teamId);
+      ? `${TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES()}?status=${status}`
+      : TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES();
     return apiClient.get<RecentMatchResponse[]>(url);
   },
-  getTeamMatchRequests: (teamId: string | number) => {
+  getTeamMatchRequests: () => {
     return apiClient.get<{
       content: MatchRequestResponseDto[];
-      empty: boolean;
+      pageable: any;
+      totalElements: number;
+      totalPages: number;
       first: boolean;
       last: boolean;
+      size: number;
       number: number;
       numberOfElements: number;
-      pageable: {
-        offset: number;
-        pageNumber: number;
-        pageSize: number;
-        paged: boolean;
-        sort: any;
-        unpaged: boolean;
-      };
-      size: number;
-      sort: {
-        empty: boolean;
-        sorted: boolean;
-        unsorted: boolean;
-      };
-    }>(TEAM_MATCH_API.GET_TEAM_MATCH_REQUESTS(teamId));
+      empty: boolean;
+    }>(TEAM_MATCH_API.GET_TEAM_MATCH_REQUESTS());
   },
   updateMatchRequest: (
     teamId: string | number,
@@ -56,7 +52,7 @@ export const teamMatchApi = {
     status: 'APPROVED' | 'REJECTED',
     reason?: string
   ) => {
-    return apiClient.put<MatchRequestResponseDto>(
+    return apiClient.patch<MatchRequestResponseDto>(
       TEAM_MATCH_API.UPDATE_MATCH_REQUEST(teamId, requestId),
       { status, reason }
     );
@@ -95,3 +91,109 @@ export async function rejectMatchRequestApi(
   const url = MATCH_REQUEST_API.REJECT_REQUEST(requestId);
   return apiClient.patch<MatchRequestResponseDto>(url);
 }
+
+export async function getMatchWaitingList(
+  params: MatchWaitingListRequestDto
+): Promise<MatchWaitingResponseDto[]> {
+  const queryParams = new URLSearchParams();
+  queryParams.append('selectDate', params.selectDate);
+
+  queryParams.append('startTime', params.startTime || '00:00:00');
+
+  const url = `${MATCH_WAITING_API.GET_WAITING_LIST}?${queryParams.toString()}`;
+
+  interface PageResponse {
+    content: MatchWaitingResponseDto[];
+    empty: boolean;
+    first: boolean;
+    last: boolean;
+    number: number;
+    numberOfElements: number;
+    pageable: any;
+    size: number;
+    sort: any;
+  }
+
+  try {
+    const response = await apiClient.get<PageResponse>(url);
+
+    return response.content || [];
+  } catch (error) {
+    console.error('🌐 [API] getMatchWaitingList 에러:', error);
+    throw error;
+  }
+}
+
+export async function cancelMatchRequestApi(
+  requestId: number | string
+): Promise<MatchRequestResponseDto> {
+  const url = MATCH_REQUEST_API.CANCEL_REQUEST(requestId);
+  return apiClient.delete<MatchRequestResponseDto>(url);
+}
+
+export async function getMyCreatedMatches(): Promise<
+  MatchWaitingResponseDto[]
+> {
+  try {
+    const response = await apiClient.get<{
+      content: MatchWaitingResponseDto[];
+      empty: boolean;
+      totalElements: number;
+      totalPages: number;
+      first: boolean;
+      last: boolean;
+    }>('/api/matches/waiting/me');
+
+    return response.content || [];
+  } catch (error) {
+    console.error('getMyCreatedMatches API 에러:', error);
+    throw error;
+  }
+}
+
+export async function cancelCreatedMatchApi(
+  waitingId: number | string
+): Promise<MatchWaitingCancelResponseDto> {
+  const url = MATCH_WAITING_API.CANCEL_WAITING(waitingId);
+  return apiClient.patch<MatchWaitingCancelResponseDto>(url);
+}
+
+export async function getMyAppliedMatches(): Promise<
+  MatchWaitingHistoryResponseDto[]
+> {
+  try {
+    const response = await apiClient.get<{
+      content: MatchWaitingHistoryResponseDto[];
+      empty: boolean;
+      totalElements: number;
+      totalPages: number;
+      first: boolean;
+      last: boolean;
+    }>(MATCH_REQUEST_API.GET_MY_APPLIED_MATCHES);
+
+    return response.content || [];
+  } catch (error) {
+    console.error('getMyAppliedMatches API 에러:', error);
+    throw error;
+  }
+}
+
+export async function cancelMatchRequestById(
+  requestId: number | string
+): Promise<MatchRequestResponseDto> {
+  try {
+    const url = `${MATCH_REQUEST_API.CANCEL_REQUEST(requestId)}`;
+    const response = await apiClient.delete<MatchRequestResponseDto>(url);
+    return response;
+  } catch (error) {
+    console.error('cancelMatchRequestById API 에러:', error);
+    throw error;
+  }
+}
+
+export const getEnemyTeam = async (matchId: number | string) => {
+  const response = await apiClient.get<EnemyTeamResponseDto>(
+    MATCH_REQUEST_API.GET_ENEMY_TEAM(matchId)
+  );
+  return response;
+};

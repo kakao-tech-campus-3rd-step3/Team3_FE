@@ -6,16 +6,25 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "http://localhost:8080",
+        "EXPO_PUBLIC_ENVIRONMENT": "development"
+      }
     },
     "preview": {
       "distribution": "internal",
+      "autoIncrement": true,
       "android": {
         "buildType": "apk"
       },
       "ios": {
         "buildConfiguration": "Release",
         "simulator": true
+      },
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://app.shootdoori.com",
+        "EXPO_PUBLIC_ENVIRONMENT": "production"
       }
     },
     "production": {
@@ -25,6 +34,10 @@
       },
       "ios": {
         "buildConfiguration": "Release"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://app.shootdoori.com",
+        "EXPO_PUBLIC_ENVIRONMENT": "production"
       }
     }
   },

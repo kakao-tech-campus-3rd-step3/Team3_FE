@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -19,12 +19,34 @@ interface LoginScreenProps {
 }
 
 function LoginScreen({ onSwitchToRegister }: LoginScreenProps) {
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setIsKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setIsKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener?.remove();
+      keyboardDidHideListener?.remove();
+    };
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.content}>
@@ -37,14 +59,16 @@ function LoginScreen({ onSwitchToRegister }: LoginScreenProps) {
               <LoginForm />
             </View>
 
-            <View style={styles.signupSection}>
-              <View style={styles.signupRow}>
-                <Text style={styles.signupText}>계정이 없으신가요?</Text>
-                <TouchableOpacity onPress={onSwitchToRegister}>
-                  <Text style={styles.signupLink}>회원가입</Text>
-                </TouchableOpacity>
+            {!isKeyboardVisible && (
+              <View style={styles.signupSection}>
+                <View style={styles.signupRow}>
+                  <Text style={styles.signupText}>계정이 없으신가요?</Text>
+                  <TouchableOpacity onPress={onSwitchToRegister}>
+                    <Text style={styles.signupLink}>회원가입</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
+            )}
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

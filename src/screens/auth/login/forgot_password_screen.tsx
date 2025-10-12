@@ -8,11 +8,29 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import {
+  useSendPasswordResetCodeMutation,
+  useVerifyCodeMutation,
+  useResetPasswordMutation,
+} from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
+import { VerifyCodeResponse } from '@/src/types';
+
+function isVerifyCodeResponse(
+  response: unknown
+): response is VerifyCodeResponse {
+  return (
+    response !== null &&
+    typeof response === 'object' &&
+    'token' in response &&
+    typeof (response as Record<string, unknown>).token === 'string'
+  );
+}
 
 interface ForgotPasswordScreenProps {
   onBackToLogin: () => void;
@@ -26,8 +44,11 @@ function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
   const [verificationCode, setVerificationCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [, setTempToken] = useState('');
+  const [resetToken, setResetToken] = useState('');
+
+  const sendCodeMutation = useSendPasswordResetCodeMutation();
+  const verifyCodeMutation = useVerifyCodeMutation();
+  const resetPasswordMutation = useResetPasswordMutation();
 
   const handleEmailSubmit = async () => {
     if (!email.trim()) {
@@ -35,19 +56,17 @@ function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
       return;
     }
 
-    setIsLoading(true);
     try {
-      // TODO: API 호출 - 이메일로 인증코드 발송
-      // const response = await sendVerificationCode(email);
+      await sendCodeMutation.mutateAsync(email);
       Alert.alert(
         '인증코드 발송 완료',
         '입력하신 이메일로 인증코드를 발송했습니다.',
         [{ text: '확인', onPress: () => setCurrentStep('verification') }]
       );
-    } catch {
-      Alert.alert('오류', '인증코드 발송에 실패했습니다.');
-    } finally {
-      setIsLoading(false);
+    } catch (error: unknown) {
+      const errorMessage =
+        (error as Error).message || '인증코드 발송에 실패했습니다.';
+      Alert.alert('오류', errorMessage);
     }
   };
 
@@ -57,17 +76,22 @@ function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
       return;
     }
 
-    setIsLoading(true);
     try {
-      // TODO: API 호출 - 이메일과 인증코드 검증
-      // const response = await verifyCode(email, verificationCode);
-      // setTempToken(response.tempToken);
-      setTempToken('temp_token_placeholder'); // 임시 토큰
-      setCurrentStep('newPassword');
-    } catch {
-      Alert.alert('오류', '인증코드가 올바르지 않습니다.');
-    } finally {
-      setIsLoading(false);
+      const response = await verifyCodeMutation.mutateAsync({
+        email,
+        code: verificationCode,
+      });
+
+      if (isVerifyCodeResponse(response)) {
+        setResetToken(response.token);
+        setCurrentStep('newPassword');
+      } else {
+        throw new Error('응답 형식이 올바르지 않습니다.');
+      }
+    } catch (error: unknown) {
+      const errorMessage =
+        (error as Error).message || '인증코드가 올바르지 않습니다.';
+      Alert.alert('오류', errorMessage);
     }
   };
 
@@ -87,19 +111,20 @@ function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
       return;
     }
 
-    setIsLoading(true);
     try {
-      // TODO: API 호출 - 새 비밀번호 설정
-      // await resetPassword(tempToken, newPassword);
+      await resetPasswordMutation.mutateAsync({
+        token: resetToken,
+        password: newPassword,
+      });
       Alert.alert(
         '비밀번호 변경 완료',
         '비밀번호가 성공적으로 변경되었습니다.',
         [{ text: '확인', onPress: () => router.push('/(auth)/login') }]
       );
-    } catch {
-      Alert.alert('오류', '비밀번호 변경에 실패했습니다.');
-    } finally {
-      setIsLoading(false);
+    } catch (error: unknown) {
+      const errorMessage =
+        (error as Error).message || '비밀번호 변경에 실패했습니다.';
+      Alert.alert('오류', errorMessage);
     }
   };
 
@@ -135,14 +160,16 @@ function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
         <TouchableOpacity
           style={[
             styles.submitButton,
-            isLoading && styles.submitButtonDisabled,
+            sendCodeMutation.isPending && styles.submitButtonDisabled,
           ]}
           onPress={handleEmailSubmit}
-          disabled={isLoading}
+          disabled={sendCodeMutation.isPending}
         >
-          <Text style={styles.submitButtonText}>
-            {isLoading ? '발송 중...' : '인증코드 발송'}
-          </Text>
+          {sendCodeMutation.isPending ? (
+            <ActivityIndicator color={theme.colors.white} />
+          ) : (
+            <Text style={styles.submitButtonText}>인증코드 발송</Text>
+          )}
         </TouchableOpacity>
       </View>
     </>
@@ -180,14 +207,16 @@ function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
         <TouchableOpacity
           style={[
             styles.submitButton,
-            isLoading && styles.submitButtonDisabled,
+            verifyCodeMutation.isPending && styles.submitButtonDisabled,
           ]}
           onPress={handleVerificationSubmit}
-          disabled={isLoading}
+          disabled={verifyCodeMutation.isPending}
         >
-          <Text style={styles.submitButtonText}>
-            {isLoading ? '확인 중...' : '인증코드 확인'}
-          </Text>
+          {verifyCodeMutation.isPending ? (
+            <ActivityIndicator color={theme.colors.white} />
+          ) : (
+            <Text style={styles.submitButtonText}>인증코드 확인</Text>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -251,14 +280,16 @@ function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
         <TouchableOpacity
           style={[
             styles.submitButton,
-            isLoading && styles.submitButtonDisabled,
+            resetPasswordMutation.isPending && styles.submitButtonDisabled,
           ]}
           onPress={handlePasswordSubmit}
-          disabled={isLoading}
+          disabled={resetPasswordMutation.isPending}
         >
-          <Text style={styles.submitButtonText}>
-            {isLoading ? '변경 중...' : '비밀번호 변경'}
-          </Text>
+          {resetPasswordMutation.isPending ? (
+            <ActivityIndicator color={theme.colors.white} />
+          ) : (
+            <Text style={styles.submitButtonText}>비밀번호 변경</Text>
+          )}
         </TouchableOpacity>
       </View>
 

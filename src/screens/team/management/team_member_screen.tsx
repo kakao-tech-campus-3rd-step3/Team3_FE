@@ -12,6 +12,8 @@ import {
   useTeamMembers,
   useRemoveMemberMutation,
   useUpdateMemberRoleMutation,
+  useDelegateLeadershipMutation,
+  useUserProfile,
 } from '@/src/hooks/queries';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
 import { getRoleDisplayName } from '@/src/utils/team';
@@ -30,6 +32,7 @@ export default function MemberManagementScreen({
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
   const numericTeamId = teamId ? Number(teamId) : 0;
+  const { data: userProfile } = useUserProfile();
   const {
     data: teamMembers,
     isLoading,
@@ -39,6 +42,7 @@ export default function MemberManagementScreen({
 
   const removeMemberMutation = useRemoveMemberMutation();
   const updateMemberRoleMutation = useUpdateMemberRoleMutation();
+  const delegateLeadershipMutation = useDelegateLeadershipMutation();
 
   if (!teamId || teamId === null || teamId === undefined) {
     return (
@@ -92,10 +96,42 @@ export default function MemberManagementScreen({
   };
 
   const handleRoleChange = (member: TeamMember) => {
+    const teamMembersData = teamMembers?.content || [];
+    const currentUserMember = teamMembersData.find(
+      m => m.name === userProfile?.name
+    );
+
+    if (!currentUserMember) {
+      Alert.alert('오류', '현재 사용자 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    // 회장/부회장만 역할 변경 가능
+    if (
+      currentUserMember.role !== 'LEADER' &&
+      currentUserMember.role !== 'VICE_LEADER'
+    ) {
+      Alert.alert(
+        '권한 없음',
+        '회장과 부회장만 팀원의 역할을 변경할 수 있습니다.'
+      );
+      return;
+    }
+
+    // 자기 자신의 역할은 변경할 수 없음
+    if (member.userId === currentUserMember.userId) {
+      Alert.alert(
+        '알림',
+        '회장/부회장은 자신의 역할을 직접 변경할 수 없습니다.'
+      );
+      return;
+    }
+
     if (member.role === 'LEADER') {
       Alert.alert('알림', '회장의 역할은 변경할 수 없습니다.');
       return;
     }
+
     setSelectedMember(member);
     setShowRoleModal(true);
   };
@@ -131,10 +167,51 @@ export default function MemberManagementScreen({
                 },
                 onError: error => {
                   console.error('역할 변경 실패:', error);
-                  Alert.alert(
-                    '오류',
-                    '역할 변경에 실패했습니다. 다시 시도해주세요.'
-                  );
+
+                  let errorMessage =
+                    '역할 변경에 실패했습니다. 다시 시도해주세요.';
+
+                  if (error && typeof error === 'object' && 'status' in error) {
+                    const apiError = error as {
+                      status: number;
+                      message?: string;
+                      data?: any;
+                    };
+
+                    if (apiError.status === 401) {
+                      errorMessage = '인증이 필요합니다. 다시 로그인해주세요.';
+                    } else if (apiError.status === 403) {
+                      if (apiError.message?.includes('NO_PERMISSION')) {
+                        errorMessage =
+                          '역할 변경 권한이 없습니다. 회장과 부회장만 변경할 수 있습니다.';
+                      } else if (
+                        apiError.message?.includes(
+                          'SELF_DELEGATION_NOT_ALLOWED'
+                        )
+                      ) {
+                        errorMessage =
+                          '회장/부회장은 자신의 역할을 직접 변경할 수 없습니다.';
+                      } else {
+                        errorMessage = '역할 변경 권한이 없습니다.';
+                      }
+                    } else if (apiError.status === 404) {
+                      if (apiError.message?.includes('TEAM_NOT_FOUND')) {
+                        errorMessage = '팀을 찾을 수 없습니다.';
+                      } else if (
+                        apiError.message?.includes('TEAM_MEMBER_NOT_FOUND')
+                      ) {
+                        errorMessage = '팀원을 찾을 수 없습니다.';
+                      } else {
+                        errorMessage = '요청한 정보를 찾을 수 없습니다.';
+                      }
+                    } else if (apiError.status === 400) {
+                      errorMessage = '유효하지 않은 역할입니다.';
+                    } else if (apiError.message) {
+                      errorMessage = apiError.message;
+                    }
+                  }
+
+                  Alert.alert('오류', errorMessage);
                 },
               }
             );
@@ -145,13 +222,41 @@ export default function MemberManagementScreen({
   };
 
   const handleRemoveMember = (member: TeamMember) => {
+    const teamMembersData = teamMembers?.content || [];
+    const currentUserMember = teamMembersData.find(
+      m => m.name === userProfile?.name
+    );
+
+    if (!currentUserMember) {
+      Alert.alert('오류', '현재 사용자 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    if (
+      currentUserMember.role !== 'LEADER' &&
+      currentUserMember.role !== 'VICE_LEADER'
+    ) {
+      Alert.alert('권한 없음', '팀장과 부팀장만 팀원을 강퇴할 수 있습니다.');
+      return;
+    }
+
     if (member.role === 'LEADER') {
       Alert.alert('알림', '회장은 강퇴할 수 없습니다.');
       return;
     }
 
+    if (currentUserMember.role === 'VICE_LEADER') {
+      if (member.role !== 'MEMBER') {
+        Alert.alert('권한 없음', '부회장은 일반 멤버만 강퇴할 수 있습니다.');
+        return;
+      }
+    }
+
     if (!numericTeamId || !member.userId) {
-      Alert.alert('오류', '팀 정보 또는 사용자 정보가 올바르지 않습니다.');
+      Alert.alert(
+        '오류',
+        '팀 정보 또는 사용자 정보가 올바르지 않을 수 없습니다.'
+      );
       return;
     }
 
@@ -176,10 +281,116 @@ export default function MemberManagementScreen({
                 },
                 onError: error => {
                   console.error('팀원 강퇴 실패:', error);
-                  Alert.alert(
-                    '오류',
-                    '팀원 강퇴에 실패했습니다. 다시 시도해주세요.'
-                  );
+
+                  let errorMessage =
+                    '팀원 강퇴에 실패했습니다. 다시 시도해주세요.';
+
+                  if (error && typeof error === 'object' && 'status' in error) {
+                    const apiError = error as {
+                      status: number;
+                      message?: string;
+                      data?: any;
+                    };
+
+                    if (apiError.status === 403) {
+                      errorMessage =
+                        '팀원 강퇴 권한이 없습니다. 회장과 부회장만 강퇴할 수 있습니다.';
+                    } else if (apiError.status === 404) {
+                      errorMessage = '팀원을 찾을 수 없습니다.';
+                    } else if (apiError.message) {
+                      errorMessage = apiError.message;
+                    }
+                  }
+
+                  Alert.alert('오류', errorMessage);
+                },
+              }
+            );
+          },
+        },
+      ]
+    );
+  };
+
+  const handleDelegateLeadership = (member: TeamMember) => {
+    const teamMembersData = teamMembers?.content || [];
+    const currentUserMember = teamMembersData.find(
+      m => m.name === userProfile?.name
+    );
+
+    if (!currentUserMember) {
+      Alert.alert('오류', '현재 사용자 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    if (currentUserMember.role !== 'LEADER') {
+      Alert.alert('권한 없음', '회장만 리더십을 위임할 수 있습니다.');
+      return;
+    }
+
+    if (member.userId === currentUserMember.userId) {
+      Alert.alert('알림', '자기 자신에게는 리더십을 위임할 수 없습니다.');
+      return;
+    }
+
+    if (member.role === 'LEADER') {
+      Alert.alert('알림', '이미 회장인 멤버에게는 위임할 수 없습니다.');
+      return;
+    }
+
+    if (!numericTeamId || !member.userId) {
+      Alert.alert('오류', '팀 정보 또는 사용자 정보가 올바르지 않습니다.');
+      return;
+    }
+
+    Alert.alert(
+      '리더십 위임',
+      `${member.name}님에게 회장 자리를 위임하시겠습니까?\n\n위임 후 현재 회장은 일반 멤버가 되고, ${member.name}님이 새로운 회장이 됩니다.`,
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '위임',
+          style: 'destructive',
+          onPress: () => {
+            delegateLeadershipMutation.mutate(
+              {
+                teamId: numericTeamId,
+                memberId: member.id,
+              },
+              {
+                onSuccess: () => {
+                  Alert.alert('성공', '리더십이 성공적으로 위임되었습니다.');
+                  refetch();
+                },
+                onError: error => {
+                  console.error('리더십 위임 실패:', error);
+
+                  let errorMessage =
+                    '리더십 위임에 실패했습니다. 다시 시도해주세요.';
+
+                  if (error && typeof error === 'object' && 'status' in error) {
+                    const apiError = error as {
+                      status: number;
+                      message?: string;
+                      data?: any;
+                    };
+
+                    if (apiError.status === 403) {
+                      errorMessage =
+                        '리더십 위임 권한이 없습니다. 회장만 위임할 수 있습니다.';
+                    } else if (apiError.status === 404) {
+                      errorMessage = '팀원을 찾을 수 없습니다.';
+                    } else if (apiError.status === 409) {
+                      errorMessage =
+                        '자기 자신에게는 리더십을 위임할 수 없습니다.';
+                    } else if (apiError.status === 400) {
+                      errorMessage = '대상 멤버가 다른 팀에 속해있습니다.';
+                    } else if (apiError.message) {
+                      errorMessage = apiError.message;
+                    }
+                  }
+
+                  Alert.alert('오류', errorMessage);
                 },
               }
             );
@@ -202,10 +413,27 @@ export default function MemberManagementScreen({
         <View style={styles.contentContainer}>
           <MemberInfoCard />
           <MemberListSection
-            teamMembers={teamMembers.content}
+            teamMembers={teamMembers.content.sort((a, b) => {
+              // 역할 우선순위: 회장(1) > 부회장(2) > 일반멤버(3)
+              const roleOrder = { LEADER: 1, VICE_LEADER: 2, MEMBER: 3 };
+              const aOrder = roleOrder[a.role] || 3;
+              const bOrder = roleOrder[b.role] || 3;
+
+              // 역할이 다르면 역할 순서로 정렬
+              if (aOrder !== bOrder) {
+                return aOrder - bOrder;
+              }
+
+              // 같은 역할이면 이름순으로 정렬
+              return a.name.localeCompare(b.name);
+            })}
+            currentUserMember={teamMembers.content.find(
+              m => m.name === userProfile?.name
+            )}
             onMemberPress={handleMemberPress}
             onRoleChange={handleRoleChange}
             onRemoveMember={handleRemoveMember}
+            onDelegateLeadership={handleDelegateLeadership}
           />
         </View>
       </ScrollView>

@@ -16,6 +16,10 @@ import type {
   TeamJoinRequest,
   ApiTeamJoinRequestPageResponse,
   TeamJoinRequestPageResponse,
+  ApiUserJoinWaitingItem,
+  UserJoinWaitingItem,
+  ApiUserJoinWaitingPageResponse,
+  UserJoinWaitingPageResponse,
 } from '@/src/types/team';
 
 export const TEAM_TYPE_MAPPING: Record<string, TeamType> = {
@@ -105,9 +109,18 @@ export const getRoleDisplayName = (role: TeamMemberRole): string => {
   const roleMapping: Record<TeamMemberRole, string> = {
     LEADER: '회장',
     VICE_LEADER: '부회장',
-    MEMBER: '팀원',
+    MEMBER: '일반멤버',
   };
-  return roleMapping[role] || '팀원';
+  return roleMapping[role] || '일반멤버';
+};
+
+export const getRoleInKorean = (role: TeamMemberRole): string => {
+  const roleMapping: Record<TeamMemberRole, string> = {
+    LEADER: '회장',
+    VICE_LEADER: '부회장',
+    MEMBER: '일반멤버',
+  };
+  return roleMapping[role] || '일반멤버';
 };
 
 export const JOIN_REQUEST_STATUS_MAPPING: Record<
@@ -118,6 +131,10 @@ export const JOIN_REQUEST_STATUS_MAPPING: Record<
   승인: 'APPROVED',
   거절: 'REJECTED',
   취소: 'CANCELED',
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELED: 'CANCELED',
 };
 
 export const getJoinRequestStatusInEnglish = (
@@ -131,6 +148,7 @@ export const transformTeamJoinRequestItem = (
 ): TeamJoinRequest => {
   return {
     id: apiItem.id,
+    applicantName: apiItem.applicantName,
     teamId: apiItem.teamId,
     applicantId: apiItem.applicantId,
     status: getJoinRequestStatusInEnglish(apiItem.status),
@@ -150,9 +168,64 @@ export const transformTeamJoinRequestPageResponse = (
 };
 
 export const getJoinRequestStatusDisplayName = (
-  status: TeamJoinRequest['status']
+  status: TeamJoinRequest['status'] | 'ACCEPTED'
 ): string => {
-  const statusMapping: Record<TeamJoinRequest['status'], string> = {
+  const statusMapping: Record<TeamJoinRequest['status'] | 'ACCEPTED', string> =
+    {
+      PENDING: '대기중',
+      APPROVED: '승인',
+      REJECTED: '거절',
+      CANCELED: '취소',
+      ACCEPTED: '수락',
+    };
+  return statusMapping[status] || '대기중';
+};
+
+export const USER_JOIN_WAITING_STATUS_MAPPING: Record<
+  string,
+  UserJoinWaitingItem['status']
+> = {
+  대기중: 'PENDING',
+  승인: 'APPROVED',
+  거절: 'REJECTED',
+  취소: 'CANCELED',
+};
+
+export const getUserJoinWaitingStatusInEnglish = (
+  koreanStatus: string
+): UserJoinWaitingItem['status'] => {
+  return USER_JOIN_WAITING_STATUS_MAPPING[koreanStatus] || 'PENDING';
+};
+
+export const transformUserJoinWaitingItem = (
+  apiItem: ApiUserJoinWaitingItem
+): UserJoinWaitingItem => {
+  return {
+    id: apiItem.id,
+    applicantName: apiItem.applicantName,
+    teamId: apiItem.teamId,
+    teamName: apiItem.teamName,
+    applicantId: apiItem.applicantId,
+    status: getUserJoinWaitingStatusInEnglish(apiItem.status),
+    decisionReason: apiItem.decisionReason,
+    decidedBy: apiItem.decidedBy,
+    decidedAt: apiItem.decidedAt,
+  };
+};
+
+export const transformUserJoinWaitingPageResponse = (
+  apiResponse: ApiUserJoinWaitingPageResponse
+): UserJoinWaitingPageResponse => {
+  return {
+    ...apiResponse,
+    content: apiResponse.content.map(transformUserJoinWaitingItem),
+  };
+};
+
+export const getUserJoinWaitingStatusDisplayName = (
+  status: UserJoinWaitingItem['status']
+): string => {
+  const statusMapping: Record<UserJoinWaitingItem['status'], string> = {
     PENDING: '대기중',
     APPROVED: '승인',
     REJECTED: '거절',

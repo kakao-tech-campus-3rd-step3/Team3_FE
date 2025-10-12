@@ -54,6 +54,7 @@ export const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
     paddingTop: spacing.spacing3,
+    backgroundColor: colors.gray[50],
   },
   contentContainer: {
     paddingHorizontal: spacing.spacing4,
@@ -74,6 +75,7 @@ export const styles = StyleSheet.create({
     color: colors.white,
     fontSize: typography.fontSize.font4,
     fontWeight: typography.fontWeight.semibold,
+    flexShrink: 1,
   },
 
   membersSection: {

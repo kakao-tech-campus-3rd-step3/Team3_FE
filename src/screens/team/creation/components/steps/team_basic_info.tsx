@@ -1,15 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  Modal,
-  FlatList,
+  StyleSheet,
+  useWindowDimensions,
 } from 'react-native';
 
-import { UNIVERSITIES } from '@/src/constants/universities';
 import { colors } from '@/src/theme';
 import { TeamType, TEAM_TYPES } from '@/src/types/team';
 
@@ -42,7 +41,69 @@ export default function TeamBasicInfo({
   onBack,
   errors,
 }: TeamBasicInfoProps) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { width } = useWindowDimensions();
+
+  const dynamicStyles = StyleSheet.create({
+    stepTitle: {
+      fontSize: Math.max(20, width * 0.06),
+      fontWeight: 'bold',
+      color: colors.text.main,
+      textAlign: 'center',
+      marginBottom: Math.max(8, width * 0.02),
+    },
+    stepSubtitle: {
+      fontSize: Math.max(14, width * 0.04),
+      color: colors.text.sub,
+      textAlign: 'center',
+      lineHeight: Math.max(20, width * 0.05),
+    },
+    inputLabel: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: colors.text.main,
+      marginBottom: Math.max(8, width * 0.02),
+    },
+    stepTextInput: {
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      borderRadius: Math.max(8, width * 0.02),
+      paddingHorizontal: Math.max(16, width * 0.04),
+      paddingVertical: Math.max(12, width * 0.03),
+      fontSize: Math.max(16, width * 0.045),
+      backgroundColor: colors.background.sub,
+    },
+    stepSelectorButton: {
+      borderWidth: 1,
+      borderColor: colors.border.light,
+      borderRadius: Math.max(8, width * 0.02),
+      paddingVertical: Math.max(12, width * 0.03),
+      paddingHorizontal: Math.max(16, width * 0.04),
+      marginBottom: Math.max(12, width * 0.03),
+      backgroundColor: colors.background.sub,
+    },
+    stepSelectorButtonText: {
+      fontSize: Math.max(14, width * 0.04),
+      fontWeight: '500',
+      color: colors.text.sub,
+      textAlign: 'center',
+    },
+    nextButton: {
+      backgroundColor: colors.blue[500],
+      borderRadius: Math.max(8, width * 0.02),
+      paddingVertical: Math.max(12, width * 0.03),
+      paddingHorizontal: Math.max(20, width * 0.05),
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: Math.max(100, width * 0.25),
+    },
+    nextButtonText: {
+      color: colors.white,
+      fontSize: Math.max(16, width * 0.045),
+      fontWeight: '600',
+      marginRight: Math.max(8, width * 0.02),
+    },
+  });
 
   const isValid =
     teamName.trim().length > 0 &&
@@ -51,25 +112,23 @@ export default function TeamBasicInfo({
     university.length <= 100 &&
     teamType.length > 0;
 
-  const handleUniversitySelect = (selectedUniversity: string) => {
-    onUniversityChange(selectedUniversity);
-    setIsDropdownOpen(false);
-  };
-
   return (
     <View style={styles.stepContainer}>
       <View style={styles.stepHeader}>
-        <Text style={styles.stepTitle}>팀 기본 정보를 입력해주세요</Text>
-        <Text style={styles.stepSubtitle}>
+        <Text style={dynamicStyles.stepTitle}>팀 기본 정보를 입력해주세요</Text>
+        <Text style={dynamicStyles.stepSubtitle}>
           팀의 이름과 소속 대학교를 알려주세요
         </Text>
       </View>
 
       <View style={styles.stepContent}>
         <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>팀 이름 *</Text>
+          <Text style={dynamicStyles.inputLabel}>팀 이름 *</Text>
           <TextInput
-            style={[styles.stepTextInput, errors.name && styles.textInputError]}
+            style={[
+              dynamicStyles.stepTextInput,
+              errors.name && styles.textInputError,
+            ]}
             value={teamName}
             onChangeText={onTeamNameChange}
             placeholder="예: 강원대 3팀"
@@ -79,44 +138,45 @@ export default function TeamBasicInfo({
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>대학교 *</Text>
-          <TouchableOpacity
+          <Text style={dynamicStyles.inputLabel}>대학교 *</Text>
+          <View
             style={[
               styles.dropdownButton,
+              styles.readOnlyField,
               errors.university && styles.textInputError,
             ]}
-            onPress={() => setIsDropdownOpen(true)}
           >
             <Text
               style={[
                 styles.dropdownButtonText,
+                styles.readOnlyText,
                 !university && styles.placeholderText,
               ]}
             >
-              {university || '대학교를 선택해주세요'}
+              {university || '대학교 정보를 불러오는 중...'}
             </Text>
-            <Ionicons name="chevron-down" size={20} color={colors.gray[600]} />
-          </TouchableOpacity>
+            <Ionicons name="lock-closed" size={20} color={colors.gray[400]} />
+          </View>
           {errors.university && (
             <Text style={styles.errorText}>{errors.university}</Text>
           )}
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>팀 유형 *</Text>
+          <Text style={dynamicStyles.inputLabel}>팀 유형 *</Text>
           <View style={styles.selectorContainer}>
             {TEAM_TYPES.map(type => (
               <TouchableOpacity
                 key={type}
                 style={[
-                  styles.stepSelectorButton,
+                  dynamicStyles.stepSelectorButton,
                   teamType === type && styles.stepSelectorButtonActive,
                 ]}
                 onPress={() => onTeamTypeChange(type)}
               >
                 <Text
                   style={[
-                    styles.stepSelectorButtonText,
+                    dynamicStyles.stepSelectorButtonText,
                     teamType === type && styles.stepSelectorButtonTextActive,
                   ]}
                 >
@@ -133,67 +193,17 @@ export default function TeamBasicInfo({
 
       <View style={[styles.stepFooter, { justifyContent: 'flex-end' }]}>
         <TouchableOpacity
-          style={[styles.nextButton, !isValid && styles.nextButtonDisabled]}
+          style={[
+            dynamicStyles.nextButton,
+            !isValid && styles.nextButtonDisabled,
+          ]}
           onPress={onNext}
           disabled={!isValid}
         >
-          <Text style={styles.nextButtonText}>다음</Text>
+          <Text style={dynamicStyles.nextButtonText}>다음</Text>
           <Ionicons name="arrow-forward" size={20} color={colors.white} />
         </TouchableOpacity>
       </View>
-
-      <Modal
-        visible={isDropdownOpen}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setIsDropdownOpen(false)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setIsDropdownOpen(false)}
-        >
-          <View style={styles.dropdownModal}>
-            <View style={styles.dropdownHeader}>
-              <Text style={styles.dropdownTitle}>대학교 선택</Text>
-              <TouchableOpacity onPress={() => setIsDropdownOpen(false)}>
-                <Ionicons name="close" size={24} color={colors.gray[600]} />
-              </TouchableOpacity>
-            </View>
-            <FlatList
-              data={UNIVERSITIES}
-              keyExtractor={item => item.id.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[
-                    styles.dropdownItem,
-                    university === item.name && styles.dropdownItemSelected,
-                  ]}
-                  onPress={() => handleUniversitySelect(item.name)}
-                >
-                  <Text
-                    style={[
-                      styles.dropdownItemText,
-                      university === item.name &&
-                        styles.dropdownItemTextSelected,
-                    ]}
-                  >
-                    {item.name}
-                  </Text>
-                  {university === item.name && (
-                    <Ionicons
-                      name="checkmark"
-                      size={20}
-                      color={colors.blue[500]}
-                    />
-                  )}
-                </TouchableOpacity>
-              )}
-              showsVerticalScrollIndicator={false}
-            />
-          </View>
-        </TouchableOpacity>
-      </Modal>
     </View>
   );
 }

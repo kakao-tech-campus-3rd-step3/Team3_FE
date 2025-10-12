@@ -2,7 +2,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useEffect } from 'react';
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -20,11 +26,50 @@ interface WelcomeScreenProps {
 }
 
 export function WelcomeScreen({ onSwitchToLogin }: WelcomeScreenProps) {
+  const { width } = useWindowDimensions();
   const logoScale = useSharedValue(0);
   const logoOpacity = useSharedValue(0);
 
   const startButtonScale = useSharedValue(1);
   const startButtonShadow = useSharedValue(3);
+
+  const dynamicStyles = StyleSheet.create({
+    welcomeTitle: {
+      fontSize: Math.max(20, width * 0.06),
+      fontWeight: '700',
+      color: theme.colors.text.main,
+      textAlign: 'center',
+      lineHeight: Math.max(28, width * 0.08),
+    },
+    welcomeSubtitle: {
+      fontSize: Math.max(12, width * 0.035),
+      color: theme.colors.text.sub,
+      textAlign: 'center',
+      lineHeight: Math.max(18, width * 0.05),
+      marginTop: Math.max(16, width * 0.04),
+      paddingHorizontal: Math.max(20, width * 0.05),
+    },
+    startButtonText: {
+      color: theme.colors.text.white,
+      fontSize: Math.max(16, width * 0.045),
+      fontWeight: '700',
+    },
+    welcomeButtonText: {
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.sub,
+      textAlign: 'center',
+      lineHeight: Math.max(20, width * 0.055),
+    },
+    logoImage: {
+      width: Math.max(100, width * 0.25),
+      height: Math.max(100, width * 0.25),
+      marginBottom: Math.max(32, width * 0.08),
+    },
+    welcomeContainer: {
+      alignItems: 'center',
+      maxWidth: Math.max(300, width * 0.85),
+    },
+  });
 
   useEffect(() => {
     logoScale.value = withSpring(1, { damping: 20, stiffness: 80 });
@@ -77,17 +122,24 @@ export function WelcomeScreen({ onSwitchToLogin }: WelcomeScreenProps) {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.content}>
           <View style={styles.mainContent}>
-            <View style={styles.welcomeContainer}>
+            <View style={dynamicStyles.welcomeContainer}>
               <Animated.Image
                 source={require('@/assets/images/logo_without_background.png')}
-                style={[styles.logoImage, logoAnimatedStyle]}
+                style={[dynamicStyles.logoImage, logoAnimatedStyle]}
                 resizeMode="contain"
               />
-              <Text style={styles.welcomeTitle}>대학생 축구 커뮤니티에</Text>
-              <Text style={styles.welcomeTitle}>오신 것을 환영합니다!</Text>
-              <Text style={styles.welcomeSubtitle}>
-                대학 이메일 인증을 통해 안전하게 가입하고,{'\n'}
-                같은 대학교 축구 동아리원들과 연결하세요.
+              <Text style={dynamicStyles.welcomeTitle}>
+                대학생 축구 커뮤니티에
+              </Text>
+              <Text style={dynamicStyles.welcomeTitle}>
+                오신 것을 환영합니다!
+              </Text>
+              <Text
+                style={dynamicStyles.welcomeSubtitle}
+                adjustsFontSizeToFit={true}
+                minimumFontScale={0.6}
+              >
+                슛두리를 통해 안전하게 가입하고 연결하세요.
               </Text>
             </View>
           </View>
@@ -101,7 +153,7 @@ export function WelcomeScreen({ onSwitchToLogin }: WelcomeScreenProps) {
                 onPressOut={handleStartButtonPressOut}
                 activeOpacity={1}
               >
-                <Text style={styles.startButtonText}>시작하기</Text>
+                <Text style={dynamicStyles.startButtonText}>시작하기</Text>
                 <Ionicons name="arrow-forward" size={20} color="#fff" />
               </TouchableOpacity>
             </Animated.View>
@@ -111,7 +163,7 @@ export function WelcomeScreen({ onSwitchToLogin }: WelcomeScreenProps) {
               onPress={onSwitchToLogin}
               activeOpacity={0.8}
             >
-              <Text style={styles.welcomeButtonText}>
+              <Text style={dynamicStyles.welcomeButtonText}>
                 이미 계정이 있으신가요?{' '}
                 <Text style={styles.loginLink}>로그인</Text>
               </Text>

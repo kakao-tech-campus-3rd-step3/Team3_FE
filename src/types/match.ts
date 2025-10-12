@@ -30,7 +30,6 @@ export interface Match {
   updatedAt: string;
 }
 
-// API 명세서에 맞는 새로운 타입 정의
 export interface RecentMatchResponse {
   matchId: number;
   team1Name: string;
@@ -44,14 +43,15 @@ export interface RecentMatchResponse {
 }
 
 export interface MatchWaitingListRequestDto {
-  teamId: number;
-  selectDate: string; // yyyy-MM-dd
-  startTime?: string; // HH:mm:ss (없으면 필터 미적용)
+  selectDate: string;
+  startTime: string;
+  teamId?: number;
 }
 
 export interface MatchWaitingResponseDto {
   waitingId: number;
   teamId: number;
+  teamName: string | { name: string };
   preferredDate: string;
   preferredTimeStart: string;
   preferredTimeEnd: string;
@@ -60,17 +60,17 @@ export interface MatchWaitingResponseDto {
   skillLevelMax: 'AMATEUR' | 'SEMI_PRO' | 'PRO';
   universityOnly: boolean;
   message: string;
-  status: 'WAITING' | 'MATCHED' | 'CANCELLED';
+  status: 'WAITING' | 'MATCHED' | 'CANCELLED' | 'COMPLETED';
   expiresAt: string;
 }
 
 export interface MatchCreateRequestDto {
   teamId: number;
-  preferredDate: string; // "YYYY-MM-DD"
-  preferredTimeStart: string; // "HH:mm:ss"
-  preferredTimeEnd: string; // "HH:mm:ss"
+  preferredDate: string;
+  preferredTimeStart: string;
+  preferredTimeEnd: string;
   preferredVenueId: number;
-  skillLevelMin: string; // "AMATEUR" | "PRO" 등
+  skillLevelMin: string;
   skillLevelMax: string;
   universityOnly: boolean;
   message: string;
@@ -79,11 +79,10 @@ export interface MatchCreateRequestDto {
 export interface MatchCreateResponseDto {
   waitingId: number;
   teamId: number;
-  status: string; // e.g. "WAITING"
+  status: string;
   expiresAt: string;
 }
 export interface MatchRequestRequestDto {
-  requestTeamId: number;
   requestMessage: string;
 }
 
@@ -92,22 +91,60 @@ export type MatchRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 export interface MatchRequestResponseDto {
   requestId: number;
   requestTeamId: number;
+  requestTeamName: {
+    name: string;
+  };
   targetTeamId: number;
+  targetTeamName: {
+    name: string;
+  };
   requestMessage: string;
-  status: MatchRequestStatus; // 명세 예시는 PENDING
-  waitingId?: number;
-  decisionReason?: string;
-  decidedBy?: number;
-  decidedAt?: string;
-  createdAt: string;
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELED';
 }
 
 export interface MatchConfirmedResponseDto {
   matchId: number;
   team1Id: number;
+  team1Name: {
+    name: string;
+  };
   team2Id: number;
+  team2Name: {
+    name: string;
+  };
   matchDate: string;
   matchTime: string;
   venueId: number;
   status: string;
+}
+
+export interface MatchWaitingCancelResponseDto {
+  waitingId: number;
+  teamId: number;
+  teamName: string;
+  status: 'WAITING' | 'MATCHED' | 'REJECTED' | 'CANCELLED';
+  expiresAt: string;
+}
+
+export interface MatchWaitingHistoryResponseDto {
+  requestId: number;
+  requestTeamId: number;
+  requestTeamName: string | { name: string };
+  targetTeamId: number;
+  targetTeamName: string | { name: string };
+  requestMessage: string;
+  requestAt: string;
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
+}
+
+export interface EnemyTeamResponseDto {
+  teamId: number;
+  teamName: string;
+  captainId: number;
+  captainName: string;
+  universityName: string;
+  teamType: 'CENTRAL_CLUB' | 'DEPARTMENT_CLUB' | 'OTHER';
+  memberCount: number;
+  skillLevel: 'PRO' | 'SEMI_PRO' | 'AMATEUR';
+  description: string;
 }

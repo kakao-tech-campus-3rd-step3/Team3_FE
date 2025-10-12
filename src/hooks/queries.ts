@@ -4,8 +4,10 @@ import {
   keepPreviousData,
   useInfiniteQuery,
 } from '@tanstack/react-query';
+import { router } from 'expo-router';
 
 import * as api from '@/src/api';
+import { ROUTES } from '@/src/constants/routes';
 import { useAuth } from '@/src/contexts/auth_context';
 import { queryClient } from '@/src/lib/query_client';
 import type {
@@ -17,12 +19,13 @@ import type {
   RegisterRequest,
   RegisterResponse,
   SendVerificationResponse,
-  VerifyEmailResponse,
   VerifyEmailRequest,
   UpdateProfileRequest,
   TeamMemberRole,
   SkillLevel,
   TeamType,
+  VerifyCodeRequest,
+  ResetPasswordRequest,
 } from '@/src/types';
 
 export const queries = {
@@ -43,6 +46,18 @@ export const queries = {
     key: ['verifyEmail'] as const,
     fn: (verifyEmailCode: VerifyEmailRequest) =>
       api.authApi.verifyEmail(verifyEmailCode),
+  },
+  sendPasswordResetCode: {
+    key: ['sendPasswordResetCode'] as const,
+    fn: (email: string) => api.passwordResetApi.sendCode(email),
+  },
+  verifyCode: {
+    key: ['verifyCode'] as const,
+    fn: (data: VerifyCodeRequest) => api.passwordResetApi.verifyCode(data),
+  },
+  resetPassword: {
+    key: ['resetPassword'] as const,
+    fn: (data: ResetPasswordRequest) => api.passwordResetApi.confirm(data),
   },
   userProfile: {
     key: ['user', 'profile'] as const,
@@ -90,10 +105,8 @@ export const queries = {
     fn: (teamId: string | number) => api.teamMatchApi.getTeamMatches(teamId),
   },
   teamRecentMatches: {
-    key: (teamId: string | number, status?: string) =>
-      ['teamRecentMatches', teamId, status] as const,
-    fn: (teamId: string | number, status?: string) =>
-      api.teamMatchApi.getTeamRecentMatches(teamId, status),
+    key: (status?: string) => ['teamRecentMatches', status] as const,
+    fn: (status?: string) => api.teamMatchApi.getTeamRecentMatches(status),
   },
   teamJoinWaitingList: {
     key: (
@@ -110,15 +123,32 @@ export const queries = {
     ) =>
       api.teamJoinRequestApi.getTeamJoinWaitingList(teamId, status, page, size),
   },
+  teamMatchRequests: {
+    key: ['teamMatchRequests'] as const,
+    fn: async () => {
+      const response = await api.teamMatchApi.getTeamMatchRequests();
+      return response.content;
+    },
+  },
 } as const;
 
 export function useUserProfile() {
-  const { token } = useAuth();
+  const { token, isInitialized } = useAuth();
 
   return useQuery({
     queryKey: queries.userProfile.key,
     queryFn: queries.userProfile.fn,
-    enabled: !!token,
+    enabled: !!token && isInitialized,
+  });
+}
+
+export function useTeamMatchRequests() {
+  const { token, isInitialized } = useAuth();
+
+  return useQuery({
+    queryKey: queries.teamMatchRequests.key,
+    queryFn: queries.teamMatchRequests.fn,
+    enabled: !!token && isInitialized,
   });
 }
 
@@ -219,11 +249,11 @@ export function useTeamMatches(teamId: string | number) {
   });
 }
 
-export function useTeamRecentMatches(teamId: string | number, status?: string) {
+export function useTeamRecentMatches(status?: string) {
   return useQuery({
-    queryKey: queries.teamRecentMatches.key(teamId, status),
-    queryFn: () => queries.teamRecentMatches.fn(teamId, status),
-    enabled: !!teamId,
+    queryKey: queries.teamRecentMatches.key(status),
+    queryFn: () => queries.teamRecentMatches.fn(status),
+    enabled: true,
   });
 }
 
@@ -249,7 +279,7 @@ export function useCreateTeamMutation() {
     mutationFn: (teamData: CreateTeamRequest): Promise<CreateTeamResponse> =>
       api.createTeam(teamData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('팀 생성 실패:', error);
@@ -262,13 +292,13 @@ export function useJoinTeamMutation() {
     mutationFn: (teamId: number): Promise<JoinTeamResponse> =>
       api.joinTeamApi.joinTeam(teamId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('팀 참여 실패:', error);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
   });
 }
@@ -278,8 +308,12 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: logout,
-    onSuccess: () => {
-      queryClient.clear();
+    onSuccess: async () => {
+      await queryClient.clear();
+      router.replace('/(auth)/login');
+    },
+    onError: (error: unknown) => {
+      console.error('로그아웃 실패:', error);
     },
   });
 }
@@ -289,11 +323,17 @@ export function useLoginMutation() {
 
   return useMutation({
     mutationFn: queries.login.fn,
-    onSuccess: (data: LoginResponse) => {
-      login(data.accessToken);
-
-      queryClient.invalidateQueries({ queryKey: queries.login.key });
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+    onSuccess: async (data: LoginResponse) => {
+      await login(
+        data.accessToken,
+        data.refreshToken,
+        data.accessTokenExpiresIn
+      );
+      await queryClient.clear();
+      router.replace('/(tabs)');
+    },
+    onError: (error: unknown) => {
+      console.error('로그인 실패:', error);
     },
   });
 }
@@ -303,13 +343,14 @@ export function useRegisterMutation() {
 
   return useMutation({
     mutationFn: queries.register.fn,
-    onSuccess: (data: RegisterResponse) => {
-      login(data.accessToken);
-
-      queryClient.invalidateQueries({ queryKey: queries.login.key });
-      queryClient.invalidateQueries({
-        queryKey: [{ queryKey: queries.user.key }],
-      });
+    onSuccess: async (data: RegisterResponse) => {
+      await login(
+        data.accessToken,
+        data.refreshToken,
+        data.accessTokenExpiresIn
+      );
+      await queryClient.clear();
+      router.replace('/(tabs)');
     },
     onError: (error: unknown) => {
       console.error('회원가입 실패:', error);
@@ -327,12 +368,29 @@ export function useSendVerificationMutation() {
   });
 }
 
-export function useVerifyEmailMutation() {
+export function useSendPasswordResetCodeMutation() {
   return useMutation({
-    mutationFn: queries.verifyEmail.fn,
-    onSuccess: (data: VerifyEmailResponse) => {},
+    mutationFn: queries.sendPasswordResetCode.fn,
     onError: (error: unknown) => {
-      console.error('이메일 인증 실패:', error);
+      console.error('인증번호 발송 실패:', error);
+    },
+  });
+}
+
+export function useVerifyCodeMutation() {
+  return useMutation({
+    mutationFn: queries.verifyCode.fn,
+    onError: (error: unknown) => {
+      console.error('인증코드 검증 실패:', error);
+    },
+  });
+}
+
+export function useResetPasswordMutation() {
+  return useMutation({
+    mutationFn: queries.resetPassword.fn,
+    onError: (error: unknown) => {
+      console.error('비밀번호 변경 실패:', error);
     },
   });
 }
@@ -342,7 +400,7 @@ export function useUpdateProfileMutation() {
     mutationFn: (data: UpdateProfileRequest) =>
       api.profileApi.updateProfile(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('프로필 수정 실패:', error);
@@ -354,7 +412,7 @@ export function useDeleteProfileMutation() {
   return useMutation({
     mutationFn: () => api.profileApi.deleteProfile(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('계정 탈퇴 실패:', error);
@@ -419,7 +477,7 @@ export function useUpdateTeamMutation() {
       queryClient.invalidateQueries({
         queryKey: queries.team.key(variables.teamId),
       });
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('팀 정보 수정 실패:', error);
@@ -429,13 +487,53 @@ export function useUpdateTeamMutation() {
 
 export function useDeleteTeamMutation() {
   return useMutation({
-    mutationFn: (teamId: string | number) =>
-      api.teamDeleteApi.deleteTeam(teamId),
+    mutationFn: (teamId: string | number) => {
+      return api.teamDeleteApi.deleteTeam(teamId);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
     },
     onError: (error: unknown) => {
-      console.error('팀 삭제 실패:', error);
+      console.error('[팀 삭제 Mutation] API 실패:', error);
+    },
+  });
+}
+
+export function useTeamExitMutation() {
+  return useMutation({
+    mutationFn: (teamId: string | number) => api.teamExitApi.exitTeam(teamId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+      router.replace(ROUTES.TEAM_GUIDE);
+    },
+    onError: (error: unknown) => {
+      console.error('팀 나가기 실패:', error);
+    },
+  });
+}
+
+export function useDelegateLeadershipMutation() {
+  return useMutation({
+    mutationFn: ({
+      teamId,
+      memberId,
+    }: {
+      teamId: string | number;
+      memberId: string | number;
+    }) => api.teamMemberApi.delegateLeadership(teamId, memberId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['teamMembers', variables.teamId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.team.key(variables.teamId),
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('리더십 위임 실패:', error);
     },
   });
 }

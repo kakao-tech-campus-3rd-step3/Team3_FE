@@ -15,23 +15,20 @@ import { useLoginMutation } from '@/src/hooks/queries';
 import { useLoginForm } from '@/src/hooks/useLoginForm';
 import { theme } from '@/src/theme';
 
-interface LoginFormProps {
-  onLoginSuccess?: () => void;
-}
-
-function LoginForm({ onLoginSuccess }: LoginFormProps) {
+function LoginForm() {
   const { formData, errors, updateField, validateForm } = useLoginForm();
   const loginMutation = useLoginMutation();
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState<string>('');
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      return;
+    }
 
     setPasswordError('');
     try {
       await loginMutation.mutateAsync(formData);
-      onLoginSuccess?.();
     } catch (error: unknown) {
       const errorMessage = (error as Error).message || '로그인에 실패했습니다.';
 

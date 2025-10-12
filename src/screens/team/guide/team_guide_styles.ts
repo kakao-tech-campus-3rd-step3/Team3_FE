@@ -118,6 +118,7 @@ export const styles = StyleSheet.create({
     color: theme.colors.text.main,
     flex: 1,
     lineHeight: theme.typography.lineHeight.line4,
+    flexShrink: 1,
   },
   cardButton: {
     width: 14,
@@ -168,6 +169,7 @@ export const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text.white,
     marginLeft: theme.spacing.spacing2,
+    flexShrink: 1,
   },
   joinButton: {
     backgroundColor: theme.colors.white,
@@ -191,5 +193,24 @@ export const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.blue[500],
     marginLeft: theme.spacing.spacing2,
+    flexShrink: 1,
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: theme.colors.red[500],
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: theme.colors.white,
+  },
+  notificationText: {
+    fontSize: 12,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.text.white,
   },
 });

@@ -10,16 +10,20 @@ import { styles } from './member_list_section_styles';
 
 interface MemberListSectionProps {
   teamMembers: TeamMember[];
+  currentUserMember?: TeamMember | null;
   onMemberPress: (member: TeamMember) => void;
   onRoleChange: (member: TeamMember) => void;
   onRemoveMember: (member: TeamMember) => void;
+  onDelegateLeadership: (member: TeamMember) => void;
 }
 
 export default memo(function MemberListSection({
   teamMembers,
+  currentUserMember,
   onMemberPress,
   onRoleChange,
   onRemoveMember,
+  onDelegateLeadership,
 }: MemberListSectionProps) {
   const getRoleColor = (role: TeamMemberRole): string => {
     switch (role) {
@@ -78,34 +82,78 @@ export default memo(function MemberListSection({
               </View>
             </View>
 
-            {member.role !== 'LEADER' && (
+            {currentUserMember && (
               <View style={styles.memberActions}>
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  onPress={() => onRoleChange(member)}
-                >
-                  <Ionicons
-                    name="swap-horizontal-outline"
-                    size={18}
-                    color={theme.colors.blue[600]}
-                  />
-                  <Text style={styles.actionButtonText}>역할변경</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.removeButton]}
-                  onPress={() => onRemoveMember(member)}
-                >
-                  <Ionicons
-                    name="trash-outline"
-                    size={18}
-                    color={theme.colors.red[600]}
-                  />
-                  <Text
-                    style={[styles.actionButtonText, styles.removeButtonText]}
-                  >
-                    강퇴
-                  </Text>
-                </TouchableOpacity>
+                {/* 회장만 보이는 리더십 위임 버튼 */}
+                {currentUserMember.role === 'LEADER' &&
+                  member.role !== 'LEADER' && (
+                    <TouchableOpacity
+                      style={[styles.actionButton, styles.delegateButton]}
+                      onPress={() => onDelegateLeadership(member)}
+                    >
+                      <Text
+                        style={[
+                          styles.actionButtonText,
+                          styles.delegateButtonText,
+                        ]}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                      >
+                        회장위임
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+
+                {/* 역할 변경 버튼 */}
+                {member.role !== 'LEADER' &&
+                  (currentUserMember.role === 'LEADER' ||
+                    (currentUserMember.role === 'VICE_LEADER' &&
+                      member.role === 'MEMBER')) && (
+                    <TouchableOpacity
+                      style={styles.actionButton}
+                      onPress={() => onRoleChange(member)}
+                    >
+                      <Ionicons
+                        name="swap-horizontal-outline"
+                        size={18}
+                        color={theme.colors.blue[600]}
+                      />
+                      <Text
+                        style={styles.actionButtonText}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                      >
+                        역할변경
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+
+                {/* 강퇴 버튼 */}
+                {member.role !== 'LEADER' &&
+                  (currentUserMember.role === 'LEADER' ||
+                    (currentUserMember.role === 'VICE_LEADER' &&
+                      member.role === 'MEMBER')) && (
+                    <TouchableOpacity
+                      style={[styles.actionButton, styles.removeButton]}
+                      onPress={() => onRemoveMember(member)}
+                    >
+                      <Ionicons
+                        name="trash-outline"
+                        size={18}
+                        color={theme.colors.red[600]}
+                      />
+                      <Text
+                        style={[
+                          styles.actionButtonText,
+                          styles.removeButtonText,
+                        ]}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                      >
+                        강퇴
+                      </Text>
+                    </TouchableOpacity>
+                  )}
               </View>
             )}
           </TouchableOpacity>

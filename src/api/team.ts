@@ -1,4 +1,8 @@
-import { TEAM_API, TEAM_MEMBER_API } from '@/src/constants/endpoints';
+import {
+  TEAM_API,
+  TEAM_MEMBER_API,
+  USER_JOIN_WAITING_API,
+} from '@/src/constants/endpoints';
 import { apiClient } from '@/src/lib/api_client';
 import type {
   CreateTeamRequest,
@@ -18,6 +22,13 @@ import type {
   JoinRequest,
   TeamJoinRequestPageResponse,
   ApiTeamJoinRequestPageResponse,
+  JoinWaitingRequest,
+  JoinWaitingResponse,
+  JoinWaitingApproveRequest,
+  JoinWaitingRejectRequest,
+  JoinWaitingCancelRequest,
+  ApiUserJoinWaitingPageResponse,
+  UserJoinWaitingPageResponse,
 } from '@/src/types/team';
 import {
   transformTeamListPageResponse,
@@ -25,8 +36,10 @@ import {
   transformTeamMemberPageResponse,
   transformTeamMemberItem,
   transformTeamJoinRequestPageResponse,
+  transformUserJoinWaitingPageResponse,
   getTeamTypeInEnglish,
   getSkillLevelInEnglish,
+  getRoleInKorean,
 } from '@/src/utils/team';
 
 export const createTeam = (data: CreateTeamRequest) => {
@@ -100,7 +113,7 @@ export const teamMemberApi = {
     return apiClient.put<TeamMember>(
       TEAM_MEMBER_API.UPDATE_ROLE(teamId, userId),
       {
-        role,
+        role: getRoleInKorean(role),
       }
     );
   },
@@ -113,11 +126,27 @@ export const teamMemberApi = {
       TEAM_MEMBER_API.REMOVE_MEMBER(teamId, userId)
     );
   },
+
+  delegateLeadership: (
+    teamId: string | number,
+    memberId: string | number
+  ): Promise<TeamMember> => {
+    return apiClient.post<TeamMember>(
+      TEAM_MEMBER_API.DELEGATE_LEADERSHIP(teamId, memberId),
+      {}
+    );
+  },
 };
 
 export const joinTeamApi = {
   joinTeam: (teamId: number) =>
     apiClient.post<JoinTeamResponse>(TEAM_API.JOIN_TEAM, { teamId }),
+};
+
+export const teamExitApi = {
+  exitTeam: (teamId: string | number): Promise<void> => {
+    return apiClient.delete<void>(TEAM_API.EXIT_TEAM(teamId));
+  },
 };
 
 export const teamEditApi = {
@@ -167,7 +196,48 @@ export const teamJoinRequestApi = {
     const apiResponse = await apiClient.get<ApiTeamJoinRequestPageResponse>(
       `${TEAM_API.GET_JOIN_WAITING_LIST(teamId)}?${params.toString()}`
     );
+
     return transformTeamJoinRequestPageResponse(apiResponse);
+  },
+
+  joinWaiting: (teamId: string | number, data: JoinWaitingRequest) => {
+    return apiClient.post<JoinWaitingResponse>(
+      TEAM_API.JOIN_WAITING(teamId),
+      data
+    );
+  },
+
+  approveJoinRequest: (
+    teamId: string | number,
+    requestId: string | number,
+    data: JoinWaitingApproveRequest
+  ) => {
+    return apiClient.post<JoinWaitingResponse>(
+      TEAM_API.APPROVE_JOIN_REQUEST(teamId, requestId),
+      data
+    );
+  },
+
+  rejectJoinRequest: (
+    teamId: string | number,
+    requestId: string | number,
+    data: JoinWaitingRejectRequest
+  ) => {
+    return apiClient.post<JoinWaitingResponse>(
+      TEAM_API.REJECT_JOIN_REQUEST(teamId, requestId),
+      data
+    );
+  },
+
+  cancelJoinRequest: (
+    teamId: string | number,
+    joinWaitingId: string | number,
+    data: JoinWaitingCancelRequest
+  ) => {
+    return apiClient.post<JoinWaitingResponse>(
+      TEAM_API.CANCEL_JOIN_REQUEST(teamId, joinWaitingId),
+      data
+    );
   },
 };
 export const teamDeleteApi = {
@@ -177,5 +247,59 @@ export const teamDeleteApi = {
     return apiClient.delete<{ success: boolean; message: string }>(
       TEAM_API.DELETE(teamId)
     );
+  },
+
+  getTeamMatches: async (teamId: string | number) => {
+    try {
+      let matchRequests = null;
+      try {
+        matchRequests = await apiClient.get('/api/matches/receive/me/pending');
+      } catch (error) {
+        console.log('[팀 삭제 API] 매치 요청 조회 실패:', error);
+      }
+
+      let recentMatches = null;
+      try {
+        recentMatches = await apiClient.get('/api/teams/me/matches');
+      } catch (error) {
+        console.log('[팀 삭제 API] 최근 매치 조회 실패:', error);
+      }
+
+      let matchWaiting = null;
+      try {
+        matchWaiting = await apiClient.get(
+          `/api/matches/waiting?teamId=${teamId}`
+        );
+      } catch (error) {
+        console.log('[팀 삭제 API] 매치 대기 목록 조회 실패:', error);
+      }
+
+      const result = {
+        matchRequests,
+        recentMatches,
+        matchWaiting,
+      };
+
+      return result;
+    } catch {
+      return {
+        matchRequests: null,
+        recentMatches: null,
+        matchWaiting: null,
+      };
+    }
+  },
+};
+
+export const userJoinWaitingApi = {
+  getMyJoinWaitingList: async (
+    page: number = 0,
+    size: number = 10,
+    sort: string = 'createdAt,desc'
+  ): Promise<UserJoinWaitingPageResponse> => {
+    const apiResponse = await apiClient.get<ApiUserJoinWaitingPageResponse>(
+      USER_JOIN_WAITING_API.GET_MY_JOIN_WAITING(page, size, sort)
+    );
+    return transformUserJoinWaitingPageResponse(apiResponse);
   },
 };

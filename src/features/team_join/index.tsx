@@ -181,7 +181,7 @@ export default function UniversityTeamListScreen() {
 
   if (loading && !data) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={theme.colors.blue[500]} />
       </View>
     );

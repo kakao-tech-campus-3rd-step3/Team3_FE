@@ -7,6 +7,7 @@ import {
   FlatList,
   StyleSheet,
   TouchableWithoutFeedback,
+  useWindowDimensions,
 } from 'react-native';
 
 import { theme } from '@/src/theme';
@@ -25,6 +26,11 @@ export function Dropdown<T extends string | number>({
   placeholder = '선택하세요',
 }: DropdownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
+  const { width } = useWindowDimensions();
+
+  const getDynamicFontSize = (baseSize: number) => {
+    return Math.max(baseSize, width * 0.035);
+  };
 
   return (
     <View>
@@ -33,7 +39,15 @@ export function Dropdown<T extends string | number>({
         style={styles.dropdownButton}
         onPress={() => setIsOpen(true)}
       >
-        <Text style={[styles.dropdownText, !value && styles.placeholder]}>
+        <Text
+          style={[
+            styles.dropdownText,
+            !value && styles.placeholder,
+            { fontSize: getDynamicFontSize(14) },
+          ]}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
           {value || placeholder}
         </Text>
         <Text style={styles.dropdownArrow}>⌄</Text>
@@ -54,7 +68,16 @@ export function Dropdown<T extends string | number>({
                       setIsOpen(false);
                     }}
                   >
-                    <Text style={styles.itemText}>{String(item)}</Text>
+                    <Text
+                      style={[
+                        styles.itemText,
+                        { fontSize: getDynamicFontSize(14) },
+                      ]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {String(item)}
+                    </Text>
                   </TouchableOpacity>
                 )}
               />

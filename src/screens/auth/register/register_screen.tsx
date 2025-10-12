@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  useWindowDimensions,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useRegisterMutation } from '@/src/hooks/queries';
@@ -13,9 +19,34 @@ import { ProfileInfo } from './profile_info';
 type Step = 1 | 2 | 3;
 
 export default function RegisterScreen() {
+  const { width } = useWindowDimensions();
   const registerMutation = useRegisterMutation();
   const { step, handlePrev, handleNext } = useStep<Step>(1, 3);
   const { formData, updateForm, getRegisterData } = useRegisterForm();
+
+  const dynamicStyles = StyleSheet.create({
+    title: {
+      fontSize: Math.max(24, width * 0.07),
+      fontWeight: 'bold',
+      color: theme.colors.text.main,
+      marginBottom: Math.max(8, width * 0.02),
+    },
+    subtitle: {
+      fontSize: Math.max(14, width * 0.04),
+      color: theme.colors.text.sub,
+    },
+    stepText: {
+      fontSize: Math.max(12, width * 0.035),
+      color: theme.colors.text.sub,
+    },
+    progressBar: {
+      height: Math.max(6, width * 0.015),
+      backgroundColor: theme.colors.gray[200],
+      borderRadius: Math.max(3, width * 0.008),
+      width: Math.max(280, width * 0.8),
+      marginBottom: Math.max(8, width * 0.02),
+    },
+  });
 
   const handleSubmit = async () => {
     if (
@@ -35,8 +66,23 @@ export default function RegisterScreen() {
         throw new Error('회원가입 실패');
       }
       Alert.alert('성공', '회원가입이 완료되었습니다.');
-    } catch {
-      Alert.alert('회원가입 실패', '다시 시도해주세요.');
+    } catch (error: unknown) {
+      const errorMessage =
+        (error as Error).message || '회원가입에 실패했습니다.';
+
+      if (errorMessage.includes('아이디의 형식이 올바르지 않습니다')) {
+        Alert.alert(
+          '입력 오류',
+          '카카오톡 아이디 형식을 확인해주세요.\n영문, 숫자, 특수문자(-, _, .)를 포함하여 4~20자이어야 합니다.'
+        );
+      } else if (errorMessage.includes('이미 존재하는')) {
+        Alert.alert(
+          '입력 오류',
+          '이미 사용 중인 정보입니다. 다른 정보를 입력해주세요.'
+        );
+      } else {
+        Alert.alert('회원가입 실패', errorMessage);
+      }
     }
   };
 
@@ -77,16 +123,16 @@ export default function RegisterScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>회원가입</Text>
-        <Text style={styles.subtitle}>새 계정을 만들어보세요</Text>
+        <Text style={dynamicStyles.title}>회원가입</Text>
+        <Text style={dynamicStyles.subtitle}>새 계정을 만들어보세요</Text>
 
         <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
+          <View style={dynamicStyles.progressBar}>
             <View
               style={[styles.progressFill, { width: `${(step / 3) * 100}%` }]}
             />
           </View>
-          <Text style={styles.stepText}>{step} / 3</Text>
+          <Text style={dynamicStyles.stepText}>{step} / 3</Text>
         </View>
       </View>
       <View style={styles.formContainer}>{renderStep()}</View>

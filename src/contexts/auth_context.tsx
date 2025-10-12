@@ -1,68 +1,226 @@
-import React, { createContext, useContext, useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useCallback,
+  useState,
+} from 'react';
 
-import { useStorageState } from '@/src/hooks/useStorageState';
+import { authApi } from '@/src/api/auth';
+import {
+  createTokenResource,
+  createRefreshTokenResource,
+  updateSecureStoreResource,
+  deleteSecureStoreResource,
+} from '@/src/hooks/useSecureStoreResource';
 import { apiClient } from '@/src/lib/api_client';
 import { queryClient } from '@/src/lib/query_client';
-import { theme } from '@/src/theme';
 
 interface AuthContextType {
   token: string | null;
-  isAuthenticated: boolean;
-  login: (token: string) => Promise<void>;
+  refreshToken: string | null;
+  isInitialized: boolean;
+  login: (
+    token: string,
+    refreshToken: string,
+    accessTokenExpiresIn?: number
+  ) => Promise<void>;
   logout: () => Promise<void>;
-  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setToken, isLoading] = useStorageState<string | null>(
-    'authToken',
+function AuthProviderInner({ children }: { children: React.ReactNode }) {
+  const [tokenState, setTokenState] = useState<string | null>(null);
+  const [refreshTokenState, setRefreshTokenState] = useState<string | null>(
     null
   );
+  const [isInitialized, setIsInitialized] = useState(false);
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    apiClient.setToken(token);
-  }, [token]);
+  const initializeAuth = useCallback(async () => {
+    try {
+      const tokenResource = createTokenResource();
+      const refreshTokenResource = createRefreshTokenResource();
 
-  useEffect(() => {
-    apiClient.setOnTokenExpired(() => {
-      setToken(null);
+      const token = tokenResource.read();
+      const refreshToken = refreshTokenResource.read();
+
+      setTokenState(token);
+      setRefreshTokenState(refreshToken);
+
+      if (token) {
+        apiClient.setToken(token);
+      }
+
+      setIsInitialized(true);
+    } catch (error) {
+      if (error instanceof Promise) {
+        try {
+          const token = await error;
+          const refreshTokenResource = createRefreshTokenResource();
+          const refreshToken = refreshTokenResource.read();
+
+          setTokenState(token);
+          setRefreshTokenState(refreshToken);
+
+          if (token) {
+            apiClient.setToken(token);
+          }
+
+          setIsInitialized(true);
+        } catch (refreshError) {
+          if (refreshError instanceof Promise) {
+            const refreshToken = await refreshError;
+            setTokenState(null);
+            setRefreshTokenState(refreshToken);
+            setIsInitialized(true);
+          } else {
+            setTokenState(null);
+            setRefreshTokenState(null);
+            setIsInitialized(true);
+          }
+        }
+      } else {
+        setTokenState(null);
+        setRefreshTokenState(null);
+        setIsInitialized(true);
+      }
+    }
+  }, []);
+
+  const refreshAccessToken = useCallback(async () => {
+    if (!refreshTokenState) {
+      deleteSecureStoreResource('authToken');
+      deleteSecureStoreResource('refreshToken');
+      setTokenState(null);
+      setRefreshTokenState(null);
       queryClient.clear();
-    });
-  }, [setToken]);
+      return;
+    }
 
-  const login = async (newToken: string) => {
-    setToken(newToken);
+    try {
+      const response = await authApi.refreshToken(refreshTokenState);
+      const {
+        accessToken,
+        refreshToken: newRefreshToken,
+        accessTokenExpiresIn,
+      } = response;
+
+      updateSecureStoreResource('authToken', accessToken, value => value ?? '');
+      updateSecureStoreResource(
+        'refreshToken',
+        newRefreshToken,
+        value => value ?? ''
+      );
+      setTokenState(accessToken);
+      setRefreshTokenState(newRefreshToken);
+      apiClient.setToken(accessToken);
+
+      const MIN_LEAD_SECONDS = 10;
+      const delayMs =
+        Math.max(accessTokenExpiresIn - 300, MIN_LEAD_SECONDS) * 1000;
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+      refreshTimeoutRef.current = setTimeout(refreshAccessToken, delayMs);
+    } catch (error) {
+      console.warn('토큰 갱신 실패:', error);
+      deleteSecureStoreResource('authToken');
+      deleteSecureStoreResource('refreshToken');
+      setTokenState(null);
+      setRefreshTokenState(null);
+      queryClient.clear();
+    }
+  }, [refreshTokenState]);
+
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
+  useEffect(() => {
+    if (isInitialized && refreshTokenState && !tokenState) {
+      refreshAccessToken();
+    }
+  }, [isInitialized, refreshTokenState, tokenState, refreshAccessToken]);
+
+  useEffect(() => {
+    apiClient.setOnTokenExpired(async () => {
+      await refreshAccessToken();
+    });
+  }, [refreshAccessToken]);
+
+  useEffect(() => {
+    return () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const login = async (
+    newToken: string,
+    newRefreshToken: string,
+    accessTokenExpiresIn?: number
+  ) => {
+    apiClient.setToken(newToken);
+    updateSecureStoreResource('authToken', newToken, value => value ?? '');
+    updateSecureStoreResource(
+      'refreshToken',
+      newRefreshToken,
+      value => value ?? ''
+    );
+    setTokenState(newToken);
+    setRefreshTokenState(newRefreshToken);
+
+    if (accessTokenExpiresIn) {
+      const MIN_LEAD_SECONDS = 10;
+      const delayMs =
+        Math.max(accessTokenExpiresIn - 300, MIN_LEAD_SECONDS) * 1000;
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+      refreshTimeoutRef.current = setTimeout(refreshAccessToken, delayMs);
+    }
   };
 
   const logout = async () => {
-    setToken(null);
-    queryClient.clear();
-  };
+    try {
+      await authApi.logoutAll();
+    } catch (error) {
+      console.warn('서버 로그아웃 API 호출 실패:', error);
+    } finally {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+        refreshTimeoutRef.current = null;
+      }
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={theme.colors.grass[500]} />
-      </View>
-    );
-  }
+      deleteSecureStoreResource('authToken');
+      deleteSecureStoreResource('refreshToken');
+      setTokenState(null);
+      setRefreshTokenState(null);
+      queryClient.clear();
+    }
+  };
 
   return (
     <AuthContext.Provider
       value={{
-        token,
-        isAuthenticated: !!token,
+        token: tokenState,
+        refreshToken: refreshTokenState,
+        isInitialized,
         login,
         logout,
-        isLoading,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  return <AuthProviderInner>{children}</AuthProviderInner>;
 }
 
 export function useAuth() {

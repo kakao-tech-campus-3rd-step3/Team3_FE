@@ -1,5 +1,7 @@
 export const ROUTES = {
   HOME: '/',
+  LOGIN: '/(auth)/login',
+  REGISTER: '/(auth)/register',
   PROFILE: '/profile',
 
   EDIT_PROFILE: '/profile/edit',
@@ -15,6 +17,9 @@ export const ROUTES = {
 
   MATCH_MAKING: '/match_making/match_info',
   MATCH_APPLICATION: '/match_application',
+  CHECK_CREATED_MATCHES: '/check_created_matches',
+  CHECK_APPLIED_MATCHES: '/check_applied_matches',
+  MATCH_SET: '/match_set',
 
   TOURNAMENT: '/tournament',
 } as const;

@@ -33,6 +33,7 @@ export default StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
+    backgroundColor: theme.colors.background.sub,
   },
   profileCard: {
     margin: theme.spacing.spacing6,
@@ -161,7 +162,7 @@ export default StyleSheet.create({
   },
   settingsCard: {
     margin: theme.spacing.spacing6,
-    marginBottom: theme.spacing.spacing4,
+    marginBottom: theme.spacing.spacing2,
   },
   settingItem: {
     flexDirection: 'row',
@@ -181,6 +182,6 @@ export default StyleSheet.create({
     marginRight: theme.spacing.spacing2,
   },
   bottomSpacer: {
-    height: theme.spacing.spacing8,
+    height: theme.spacing.spacing1,
   },
 });

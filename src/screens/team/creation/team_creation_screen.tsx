@@ -31,12 +31,18 @@ interface TeamFormData {
   description: string;
 }
 
-export default function TeamCreationScreen() {
+interface TeamCreationScreenProps {
+  initialUniversity?: string;
+}
+
+export default function TeamCreationScreen({
+  initialUniversity,
+}: TeamCreationScreenProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<TeamFormData>({
     name: '',
-    university: '',
+    university: initialUniversity || '',
     teamType: DEFAULT_TEAM_TYPE,
     skillLevel: DEFAULT_SKILL_LEVEL,
     description: '',
@@ -122,9 +128,7 @@ export default function TeamCreationScreen() {
             university={formData.university}
             teamType={formData.teamType}
             onTeamNameChange={name => updateFormData('name', name)}
-            onUniversityChange={university =>
-              updateFormData('university', university)
-            }
+            onUniversityChange={() => {}} // 대학교는 수정 불가
             onTeamTypeChange={type => updateFormData('teamType', type)}
             {...stepProps}
             errors={{

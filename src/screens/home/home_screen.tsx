@@ -1,9 +1,11 @@
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
-import { ScrollView, View, ActivityIndicator } from 'react-native';
+import { router } from 'expo-router';
+import { useCallback, useEffect, useRef } from 'react';
+import { ScrollView, View, ActivityIndicator, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useUserProfile } from '@/src/hooks/queries';
+import { ROUTES } from '@/src/constants/routes';
+import { useUserProfile, useLogout } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 
 import BenefitsSection from './components/benefit_section';
@@ -15,12 +17,66 @@ import styles from './home_style';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { data: userProfile, isLoading, refetch } = useUserProfile();
+  const { data: userProfile, isLoading, refetch, error } = useUserProfile();
+  const logoutMutation = useLogout();
+  const alertShownRef = useRef(false);
+
+  const handleLogoutAndRedirect = useCallback(async () => {
+    try {
+      await logoutMutation.mutateAsync();
+    } catch (error) {
+      console.error('로그아웃 처리 중 오류:', error);
+    }
+  }, [logoutMutation]);
+
+  const handleErrorAlert = useCallback(() => {
+    if (alertShownRef.current) {
+      return;
+    }
+
+    alertShownRef.current = true;
+
+    Alert.alert(
+      '인증 오류',
+      '로그인이 필요합니다. 다시 로그인해주세요.',
+      [
+        {
+          text: '로그인 하기',
+          onPress: () => {
+            alertShownRef.current = false;
+            handleLogoutAndRedirect();
+          },
+        },
+      ],
+      {
+        cancelable: false,
+        onDismiss: () => {
+          alertShownRef.current = false;
+        },
+      }
+    );
+  }, [handleLogoutAndRedirect]);
 
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [refetch])
+  );
+
+  useEffect(() => {
+    if (error) {
+      handleErrorAlert();
+    }
+  }, [error, handleErrorAlert]);
+
+  const handleMatchPress = useCallback(
+    (matchId: number, matchDate?: string) => {
+      const params = matchDate
+        ? `?waitingId=${matchId}&date=${matchDate}`
+        : `?waitingId=${matchId}`;
+      router.push(`${ROUTES.MATCH_APPLICATION}${params}`);
+    },
+    []
   );
 
   if (isLoading) {
@@ -46,7 +102,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: insets.bottom + theme.spacing.spacing10 },
+          { paddingBottom: insets.bottom + theme.spacing.spacing1 },
         ]}
       >
         <View style={styles.mainSection}>
@@ -54,11 +110,11 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.matchSection}>
-          <RecommendedMatchCard />
+          <RecommendedMatchCard onMatchPress={handleMatchPress} />
         </View>
 
         <View style={styles.serviceSection}>
-          <EnvelopeSection />
+          <EnvelopeSection teamId={userProfile?.teamId || null} />
           <BenefitsSection teamId={userProfile?.teamId || null} />
         </View>
       </ScrollView>

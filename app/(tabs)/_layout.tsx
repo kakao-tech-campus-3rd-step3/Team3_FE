@@ -7,14 +7,9 @@ import { useAuth } from '@/src/contexts/auth_context';
 import { theme } from '@/src/theme';
 
 export default function TabLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { token } = useAuth();
+  const isAuthenticated = !!token;
 
-  // 로딩 중일 때는 아무것도 렌더링하지 않음
-  if (isLoading) {
-    return null;
-  }
-
-  // 로그인되지 않은 상태라면 로그인 화면으로 리다이렉트
   if (!isAuthenticated) {
     return <Redirect href="/(auth)/login" />;
   }
@@ -34,9 +29,11 @@ export default function TabLayout() {
           },
           default: {
             backgroundColor: theme.colors.background.main,
-            height: theme.spacing.spacing15,
+            height: 100,
             borderTopWidth: 1,
             borderTopColor: theme.colors.gray[400],
+            paddingTop: 4,
+            paddingBottom: 16,
           },
         }),
       }}

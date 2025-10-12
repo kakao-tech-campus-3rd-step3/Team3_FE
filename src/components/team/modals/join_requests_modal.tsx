@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors } from '@/src/theme';
 import type { TeamJoinRequest } from '@/src/types/team';
@@ -27,7 +28,7 @@ export default function JoinRequestsModal({
       animationType="slide"
       presentationStyle="pageSheet"
     >
-      <View style={styles.modalContainer}>
+      <SafeAreaView style={styles.modalContainer} edges={['top']}>
         <View style={styles.modalHeader}>
           <Text style={styles.modalTitle}>가입 요청 관리</Text>
           <TouchableOpacity style={styles.modalCloseButton} onPress={onClose}>
@@ -55,10 +56,8 @@ export default function JoinRequestsModal({
                   <View style={styles.requestHeader}>
                     <View style={styles.applicantInfo}>
                       <Text style={styles.applicantName}>
-                        신청자 ID: {request.applicantId}
-                      </Text>
-                      <Text style={styles.applicantEmail}>
-                        신청 ID: {request.id}
+                        {request.applicantName ||
+                          `사용자 ${request.applicantId}`}
                       </Text>
                     </View>
                     <View style={styles.requestStatus}>
@@ -90,12 +89,6 @@ export default function JoinRequestsModal({
                   </View>
 
                   <View style={styles.requestDetails}>
-                    <View style={styles.requestDetailRow}>
-                      <Text style={styles.requestDetailLabel}>팀 ID:</Text>
-                      <Text style={styles.requestDetailValue}>
-                        {request.teamId}
-                      </Text>
-                    </View>
                     {request.decisionReason && (
                       <View style={styles.requestDetailRow}>
                         <Text style={styles.requestDetailLabel}>
@@ -137,14 +130,26 @@ export default function JoinRequestsModal({
                           size={16}
                           color={colors.white}
                         />
-                        <Text style={styles.approveButtonText}>승인</Text>
+                        <Text
+                          style={styles.approveButtonText}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                        >
+                          승인
+                        </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.rejectButton}
                         onPress={() => onJoinRequest(request.id, 'rejected')}
                       >
                         <Ionicons name="close" size={16} color={colors.white} />
-                        <Text style={styles.rejectButtonText}>거절</Text>
+                        <Text
+                          style={styles.rejectButtonText}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                        >
+                          거절
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -153,7 +158,7 @@ export default function JoinRequestsModal({
             </View>
           )}
         </ScrollView>
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 }
