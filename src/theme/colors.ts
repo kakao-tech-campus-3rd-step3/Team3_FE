@@ -36,6 +36,8 @@ export const colors = {
     light: '#999999',
     disabled: '#b8a890',
     white: '#ffffff',
+    primary: '#6C8E68',
+    secondary: '#6b6b6b',
   },
 
   background: {
@@ -43,6 +45,7 @@ export const colors = {
     sub: '#f8fafc',
     card: '#f8f8f8',
     input: '#f0f0f0',
+    primary: '#6C8E68',
   },
 
   border: {
