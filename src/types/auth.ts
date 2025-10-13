@@ -13,7 +13,6 @@ export interface LoginResponse {
 export interface RegisterRequest {
   name: string;
   skillLevel: string;
-  email: string;
   universityEmail: string;
   password: string;
   kakaoTalkId: string;
