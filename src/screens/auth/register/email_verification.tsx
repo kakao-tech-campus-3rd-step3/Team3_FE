@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -32,6 +32,92 @@ interface Props {
 export function EmailVerification({ data, onChange, handleNext }: Props) {
   const { width } = useWindowDimensions();
   const { errors, validateField } = useRegisterValidation(emailValidationRules);
+
+  // 인증 관련 상태
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isSendingCode, setIsSendingCode] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+
+  // 타이머 효과
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  // 인증 코드 전송
+  const handleSendCode = async () => {
+    if (!data.universityEmail) {
+      Alert.alert('입력 오류', '대학교 이메일을 먼저 입력해주세요.');
+      return;
+    }
+
+    if (errors.universityEmail) {
+      Alert.alert('입력 오류', '올바른 대학교 이메일 형식으로 입력해주세요.');
+      return;
+    }
+
+    setIsSendingCode(true);
+    try {
+      // TODO: 실제 API 호출로 대체
+      // await authApi.sendVerification(data.universityEmail);
+
+      // 임시로 성공 처리
+      setTimeout(() => {
+        setIsCodeSent(true);
+        setTimer(300); // 5분 타이머
+        setIsSendingCode(false);
+        Alert.alert('전송 완료', '인증 코드가 이메일로 전송되었습니다.');
+      }, 1000);
+    } catch (error) {
+      setIsSendingCode(false);
+      Alert.alert(
+        '전송 실패',
+        '인증 코드 전송에 실패했습니다. 다시 시도해주세요.'
+      );
+    }
+  };
+
+  // 인증 코드 검증
+  const handleVerifyCode = async () => {
+    if (!data.verificationCode) {
+      Alert.alert('입력 오류', '인증 코드를 입력해주세요.');
+      return;
+    }
+
+    if (data.verificationCode.length !== 6) {
+      Alert.alert('입력 오류', '인증 코드는 6자리 숫자입니다.');
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      // TODO: 실제 API 호출로 대체
+      // await authApi.verifyEmail({
+      //   universityEmail: data.universityEmail,
+      //   code: data.verificationCode
+      // });
+
+      // 임시로 성공 처리
+      setTimeout(() => {
+        onChange('isEmailVerified', true);
+        setIsVerifying(false);
+        Alert.alert('인증 완료', '이메일 인증이 완료되었습니다.');
+      }, 1000);
+    } catch (error) {
+      setIsVerifying(false);
+      Alert.alert(
+        '인증 실패',
+        '인증 코드가 올바르지 않습니다. 다시 확인해주세요.'
+      );
+    }
+  };
 
   const dynamicStyles = StyleSheet.create({
     label: {
@@ -71,7 +157,10 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
   });
 
   const isNextButtonDisabled =
-    !data.university || !data.universityEmail || !!errors.universityEmail;
+    !data.university ||
+    !data.universityEmail ||
+    !!errors.universityEmail ||
+    !data.isEmailVerified;
 
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
     onChange(field, value);
@@ -113,25 +202,134 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
         </View>
         <View style={styles.inputGroup}>
           <Text style={dynamicStyles.label}>대학교 이메일</Text>
-          <TextInput
-            style={[
-              dynamicStyles.input,
-              data.universityEmail && styles.inputFilled,
-              errors.universityEmail && styles.inputError,
-            ]}
-            placeholder="대학교 이메일을 입력하세요"
-            value={data.universityEmail}
-            onChangeText={text => handleFieldChange('universityEmail', text)}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
+          <View style={styles.emailContainer}>
+            <TextInput
+              style={[
+                dynamicStyles.input,
+                styles.emailInput,
+                (focusedField === 'universityEmail' || data.universityEmail) &&
+                  styles.inputFilled,
+                errors.universityEmail && styles.inputError,
+              ]}
+              placeholder="대학교 이메일을 입력하세요"
+              value={data.universityEmail}
+              onChangeText={text => handleFieldChange('universityEmail', text)}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              onFocus={() => setFocusedField('universityEmail')}
+              onBlur={() => setFocusedField(null)}
+            />
+            <TouchableOpacity
+              style={[
+                styles.sendCodeButton,
+                (!data.universityEmail ||
+                  errors.universityEmail ||
+                  isSendingCode) &&
+                  styles.sendCodeButtonDisabled,
+              ]}
+              onPress={handleSendCode}
+              disabled={
+                !data.universityEmail ||
+                !!errors.universityEmail ||
+                isSendingCode
+              }
+            >
+              <Text
+                style={[
+                  styles.sendCodeButtonText,
+                  (!data.universityEmail ||
+                    errors.universityEmail ||
+                    isSendingCode) &&
+                    styles.sendCodeButtonTextDisabled,
+                ]}
+              >
+                {isSendingCode
+                  ? '전송 중...'
+                  : isCodeSent
+                    ? '재전송'
+                    : '인증번호 전송'}
+              </Text>
+            </TouchableOpacity>
+          </View>
           {errors.universityEmail && (
             <Text style={dynamicStyles.errorText}>
               {errors.universityEmail}
             </Text>
           )}
         </View>
+
+        {isCodeSent && (
+          <View style={styles.inputGroup}>
+            <Text style={dynamicStyles.label}>인증 코드</Text>
+            <View style={styles.verificationContainer}>
+              <TextInput
+                style={[
+                  dynamicStyles.input,
+                  styles.verificationInput,
+                  (focusedField === 'verificationCode' ||
+                    data.verificationCode) &&
+                    styles.inputFilled,
+                  errors.verificationCode && styles.inputError,
+                ]}
+                placeholder="6자리 인증 코드"
+                value={data.verificationCode}
+                onChangeText={text => {
+                  const numericValue = text.replace(/[^0-9]/g, '').slice(0, 6);
+                  handleFieldChange('verificationCode', numericValue);
+                }}
+                keyboardType="number-pad"
+                maxLength={6}
+                onFocus={() => setFocusedField('verificationCode')}
+                onBlur={() => setFocusedField(null)}
+              />
+              <TouchableOpacity
+                style={[
+                  styles.verifyButton,
+                  (!data.verificationCode ||
+                    data.verificationCode.length !== 6 ||
+                    isVerifying ||
+                    data.isEmailVerified) &&
+                    styles.verifyButtonDisabled,
+                ]}
+                onPress={handleVerifyCode}
+                disabled={
+                  !data.verificationCode ||
+                  data.verificationCode.length !== 6 ||
+                  isVerifying ||
+                  data.isEmailVerified
+                }
+              >
+                <Text
+                  style={[
+                    styles.verifyButtonText,
+                    (!data.verificationCode ||
+                      data.verificationCode.length !== 6 ||
+                      isVerifying ||
+                      data.isEmailVerified) &&
+                      styles.verifyButtonTextDisabled,
+                  ]}
+                >
+                  {isVerifying
+                    ? '인증 중...'
+                    : data.isEmailVerified
+                      ? '인증 완료'
+                      : '인증하기'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            {errors.verificationCode && (
+              <Text style={dynamicStyles.errorText}>
+                {errors.verificationCode}
+              </Text>
+            )}
+            {data.isEmailVerified && (
+              <Text style={styles.verifiedText}>
+                ✓ 이메일 인증이 완료되었습니다.
+              </Text>
+            )}
+          </View>
+        )}
 
         <TouchableOpacity
           style={[
@@ -164,29 +362,8 @@ const styles = StyleSheet.create({
     paddingBottom: theme.spacing.spacing20,
   },
   inputGroup: { marginBottom: theme.spacing.spacing6 },
-  label: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing2,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.colors.border.input,
-    borderRadius: 8,
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    backgroundColor: theme.colors.background.input,
-  },
   inputFilled: { borderColor: theme.colors.brand.main },
   inputError: { borderColor: theme.colors.red[500] },
-  errorText: {
-    color: theme.colors.red[500],
-    fontSize: theme.typography.fontSize.font3,
-    marginTop: theme.spacing.spacing2,
-  },
   nextButton: {
     backgroundColor: theme.colors.brand.main,
     paddingVertical: theme.spacing.spacing4,
@@ -205,5 +382,71 @@ const styles = StyleSheet.create({
   },
   nextButtonTextDisabled: {
     color: theme.colors.gray[500],
+  },
+  emailContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.spacing2,
+  },
+  emailInput: {
+    flex: 4,
+  },
+  sendCodeButton: {
+    backgroundColor: theme.colors.brand.main,
+    paddingVertical: theme.spacing.spacing3,
+    paddingHorizontal: theme.spacing.spacing2,
+    borderRadius: 8,
+    width: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+  },
+  sendCodeButtonDisabled: {
+    backgroundColor: theme.colors.gray[300],
+  },
+  sendCodeButtonText: {
+    color: theme.colors.white,
+    fontSize: theme.typography.fontSize.font3,
+    fontWeight: theme.typography.fontWeight.medium,
+    textAlign: 'center',
+  },
+  sendCodeButtonTextDisabled: {
+    color: theme.colors.gray[500],
+  },
+  verificationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.spacing2,
+  },
+  verificationInput: {
+    flex: 4,
+  },
+  verifyButton: {
+    backgroundColor: theme.colors.brand.main,
+    paddingVertical: theme.spacing.spacing3,
+    paddingHorizontal: theme.spacing.spacing2,
+    borderRadius: 8,
+    width: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+  },
+  verifyButtonDisabled: {
+    backgroundColor: theme.colors.gray[300],
+  },
+  verifyButtonText: {
+    color: theme.colors.white,
+    fontSize: theme.typography.fontSize.font3,
+    fontWeight: theme.typography.fontWeight.medium,
+    textAlign: 'center',
+  },
+  verifyButtonTextDisabled: {
+    color: theme.colors.gray[500],
+  },
+  verifiedText: {
+    color: theme.colors.green[600],
+    fontSize: theme.typography.fontSize.font3,
+    marginTop: theme.spacing.spacing2,
+    fontWeight: theme.typography.fontWeight.medium,
   },
 });
