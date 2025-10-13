@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 import type { RegisterFormData } from './useRegisterForm';
 
-const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const UNIVERSITY_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.ac\.kr$/;
 const KAKAO_TALK_ID_REGEX = /^[a-zA-Z0-9._-]{4,20}$/;
 const STUDENT_YEAR_REGEX = /^\d{2}$/;
@@ -128,7 +127,6 @@ const getFieldLabel = (field: string): string => {
     department: '학과',
     studentYear: '입학년도',
     university: '대학교',
-    email: '이메일',
     universityEmail: '학교 이메일',
     verificationCode: '인증번호',
     password: '비밀번호',
@@ -142,7 +140,6 @@ const getPatternErrorMessage = (field: string): string => {
   const messages: Record<string, string> = {
     studentYear: '입학년도는 2자리 숫자로 입력해주세요 (예: 25)',
     verificationCode: '인증번호는 6자리 숫자로 입력해주세요',
-    email: '올바른 이메일 형식을 입력해주세요',
     universityEmail: '학교 이메일은 *.ac.kr 도메인으로 입력해주세요',
     password: '비밀번호는 특수문자를 포함한 8자 이상으로 입력해주세요',
     kakaoTalkId:
@@ -201,12 +198,6 @@ export const emailValidationRules: ValidationRules = {
 };
 
 export const accountValidationRules: ValidationRules = {
-  email: {
-    required: true,
-    pattern: EMAIL_REGEX,
-    label: '이메일',
-    patternMessage: '올바른 이메일 형식을 입력해주세요',
-  },
   password: {
     required: true,
     label: '비밀번호',
