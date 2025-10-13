@@ -47,11 +47,11 @@ export default function CancelModal({
       [
         {
           text: '아니오',
-          style: 'cancel',
+          style: 'destructive',
         },
         {
-          text: '취소',
-          style: 'destructive',
+          text: '예',
+          style: 'default',
           onPress: () => {
             cancelJoinRequest(
               {

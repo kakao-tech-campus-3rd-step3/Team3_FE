@@ -24,7 +24,11 @@ export default memo(function Buttons() {
   const { data: userProfile } = useUserProfile();
   const { width } = useWindowDimensions();
 
-  const { data: joinWaitingData, refetch } = useMyJoinWaitingList(0, 1);
+  const {
+    data: joinWaitingData,
+    isLoading: isJoinWaitingLoading,
+    refetch,
+  } = useMyJoinWaitingList(0, 1);
   const hasJoinWaiting = joinWaitingData && !joinWaitingData.empty;
 
   const dynamicStyles = StyleSheet.create({
@@ -90,6 +94,25 @@ export default memo(function Buttons() {
     }
   };
 
+  // 로딩 중일 때는 버튼들을 숨김
+  if (isJoinWaitingLoading) {
+    return (
+      <View style={styles.buttonContainer}>
+        <View style={[dynamicStyles.joinButton, { opacity: 0.5 }]}>
+          <Ionicons name="people-outline" size={24} color={colors.blue[500]} />
+          <Text
+            style={dynamicStyles.joinButtonText}
+            numberOfLines={1}
+            adjustsFontSizeToFit={true}
+            minimumFontScale={0.8}
+          >
+            로딩 중...
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.buttonContainer}>
       <TouchableOpacity
@@ -114,29 +137,31 @@ export default memo(function Buttons() {
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={dynamicStyles.createButton}
-        onPress={() =>
-          router.push({
-            pathname: '/team/creation',
-            params: { university: userProfile?.university || '' },
-          })
-        }
-      >
-        <Ionicons
-          name="add-circle-outline"
-          size={24}
-          color={colors.text.white}
-        />
-        <Text
-          style={dynamicStyles.createButtonText}
-          numberOfLines={1}
-          adjustsFontSizeToFit={true}
-          minimumFontScale={0.8}
+      {!hasJoinWaiting && (
+        <TouchableOpacity
+          style={dynamicStyles.createButton}
+          onPress={() =>
+            router.push({
+              pathname: '/team/creation',
+              params: { university: userProfile?.university || '' },
+            })
+          }
         >
-          팀 생성하기
-        </Text>
-      </TouchableOpacity>
+          <Ionicons
+            name="add-circle-outline"
+            size={24}
+            color={colors.text.white}
+          />
+          <Text
+            style={dynamicStyles.createButtonText}
+            numberOfLines={1}
+            adjustsFontSizeToFit={true}
+            minimumFontScale={0.8}
+          >
+            팀 생성하기
+          </Text>
+        </TouchableOpacity>
+      )}
 
       <Modal
         visible={showJoinWaitingList}
