@@ -52,6 +52,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="mercenary"
+        options={{
+          title: '용병',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'shield' : 'shield-outline'}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: '프로필',
