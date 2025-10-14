@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  BackHandler,
 } from 'react-native';
 
 import { theme } from '@/src/theme';
@@ -53,12 +54,30 @@ export const ModalTimePicker: React.FC<ModalTimePickerProps> = ({
     onClose();
   };
 
+  // 뒤로가기 버튼 활성화화
+  useEffect(() => {
+    const backAction = () => {
+      if (visible) {
+        onClose();
+        return true; // 뒤로가기 버튼 이벤트 막기
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [visible, onClose]);
+
   return (
     <Modal
       visible={visible}
       transparent
       animationType="slide"
-      onRequestClose={() => {}}
+      onRequestClose={onClose}
     >
       <TouchableOpacity
         style={styles.overlay}
