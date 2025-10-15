@@ -1,5 +1,4 @@
 import 'dotenv/config';
-import { colors } from './src/theme/colors';
 
 export default {
   expo: {
@@ -14,7 +13,7 @@ export default {
     splash: {
       image: './assets/images/splash.png',
       resizeMode: 'contain',
-      backgroundColor: colors.white,
+      backgroundColor: '#ffffff',
     },
     ios: {
       supportsTablet: true,
@@ -28,7 +27,7 @@ export default {
       versionCode: 6,
       adaptiveIcon: {
         foregroundImage: './assets/images/icon_logo.png',
-        backgroundColor: colors.white,
+        backgroundColor: '#ffffff',
       },
       edgeToEdgeEnabled: true,
     },
