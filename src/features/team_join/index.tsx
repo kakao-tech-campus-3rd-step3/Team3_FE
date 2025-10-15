@@ -16,7 +16,10 @@ import TeamCard from '@/src/components/team/filters/team_card';
 import TeamListHeader from '@/src/components/team/filters/team_list_header';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
-import { useTeamsByUniversityInfinite } from '@/src/hooks/queries';
+import {
+  useTeamsByUniversityInfinite,
+  useUserProfile,
+} from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import type { TeamListItem } from '@/src/types';
 import { SkillLevel, TeamType } from '@/src/types/team';
@@ -31,6 +34,9 @@ interface FilterOptions {
 
 export default function UniversityTeamListScreen() {
   const { university } = useLocalSearchParams<{ university: string }>();
+  const { data: userProfile } = useUserProfile();
+
+  const userUniversity = userProfile?.university || university;
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<TeamListItem | null>(null);
@@ -49,7 +55,7 @@ export default function UniversityTeamListScreen() {
     fetchNextPage,
     hasNextPage,
     refetch,
-  } = useTeamsByUniversityInfinite(university || '', 10);
+  } = useTeamsByUniversityInfinite(userUniversity || '', 10);
 
   const filteredTeams = useMemo(() => {
     const allTeams = data?.pages.flatMap((page: any) => page.content) ?? [];
@@ -201,7 +207,7 @@ export default function UniversityTeamListScreen() {
       <CustomHeader title="팀 목록" showBackButton={true} />
 
       <TeamListHeader
-        university={university || ''}
+        university={userUniversity || ''}
         onFilterPress={openFilterModal}
       />
 

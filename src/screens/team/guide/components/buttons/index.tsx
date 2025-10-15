@@ -90,7 +90,11 @@ export default memo(function Buttons() {
     if (hasJoinWaiting) {
       setShowJoinWaitingList(true);
     } else {
-      router.push('/team/join-university');
+      // 사용자 대학 정보를 파라미터로 전달하여 바로 팀 목록으로 이동
+      router.push({
+        pathname: '/team/join-university',
+        params: { university: userProfile?.university || '' },
+      });
     }
   };
 
