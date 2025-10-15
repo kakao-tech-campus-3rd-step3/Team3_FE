@@ -1,6 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 import type { Dispatch, SetStateAction } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface StorageOptions<T> {
   serialize?: (value: T) => string;
@@ -17,9 +17,14 @@ export function useStorageState<T>(
   const [state, setState] = useState<T>(initialValue);
   const isMounted = useRef(true);
 
-  const serialize = options?.serialize ?? ((value: T) => JSON.stringify(value));
-  const deserialize =
-    options?.deserialize ?? ((value: string) => JSON.parse(value) as T);
+  const serialize = useMemo(
+    () => options?.serialize ?? ((value: T) => JSON.stringify(value)),
+    [options?.serialize]
+  );
+  const deserialize = useMemo(
+    () => options?.deserialize ?? ((value: string) => JSON.parse(value) as T),
+    [options?.deserialize]
+  );
 
   useEffect(() => {
     isMounted.current = true;
