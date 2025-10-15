@@ -6,6 +6,8 @@ export const AUTH_API = {
   REGISTER: '/api/auth/register',
   VERIFY_EMAIL: '/api/auth/verify-email',
   SEND_VERIFICATION: '/api/auth/send-verification',
+  SEND_CODE: '/api/auth/signup/email/send-code',
+  VERIFY_CODE: '/api/auth/signup/email/verify-code',
 };
 
 export const PASSWORD_RESET_API = {

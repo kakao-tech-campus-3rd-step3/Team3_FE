@@ -6,6 +6,8 @@ export interface RegisterFormData {
   // step 1
   university: string;
   universityEmail: string;
+  verificationCode: string;
+  isEmailVerified: boolean;
   // step 2
   name: string;
   kakaoTalkId: string;
@@ -13,7 +15,6 @@ export interface RegisterFormData {
   department: string;
   bio: string;
   // step 3
-  email: string;
   password: string;
   confirmPassword: string;
   termsAgreed: boolean;
@@ -23,12 +24,13 @@ export interface RegisterFormData {
 const initialFormData: RegisterFormData = {
   university: '',
   universityEmail: '',
+  verificationCode: '',
+  isEmailVerified: false,
   name: '',
   kakaoTalkId: '',
   studentYear: '',
   department: '',
   bio: '',
-  email: '',
   password: '',
   confirmPassword: '',
   termsAgreed: false,
@@ -50,8 +52,7 @@ export const useRegisterForm = () => {
   const getRegisterData = (): RegisterRequest => ({
     name: formData.name,
     skillLevel: '아마추어',
-    email: formData.email,
-    universityEmail: formData.universityEmail,
+    email: formData.universityEmail,
     password: formData.password,
     kakaoTalkId: formData.kakaoTalkId,
     position: '공격수',

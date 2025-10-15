@@ -64,7 +64,7 @@ function LoginForm() {
         />
         <TextInput
           style={[styles.textInput, errors.email && styles.inputError]}
-          placeholder="이메일을 입력하세요"
+          placeholder="대학교 이메일을 입력하세요"
           value={formData.email}
           onChangeText={text => updateField('email', text)}
           keyboardType="email-address"

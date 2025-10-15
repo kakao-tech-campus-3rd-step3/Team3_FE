@@ -13,6 +13,7 @@ import {
   ResetPasswordRequest,
   ResetPasswordResponse,
   SendPasswordResetCodeResponse,
+  VerifyCodeRequestSignup,
 } from '@/src/types';
 
 export const authApi = {
@@ -58,6 +59,12 @@ export const authApi = {
       },
       { authRequired: false }
     ),
+
+  sendCode: (email: string) =>
+    apiClient.post(AUTH_API.SEND_CODE, { email }, { authRequired: false }),
+
+  verifyCode: (data: VerifyCodeRequestSignup) =>
+    apiClient.post(AUTH_API.VERIFY_CODE, data, { authRequired: false }),
 };
 
 export const passwordResetApi = {

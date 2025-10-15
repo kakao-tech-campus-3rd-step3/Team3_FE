@@ -14,7 +14,6 @@ export interface RegisterRequest {
   name: string;
   skillLevel: string;
   email: string;
-  universityEmail: string;
   password: string;
   kakaoTalkId: string;
   position: string;
@@ -79,4 +78,9 @@ export interface ResetPasswordRequest {
 
 export interface ResetPasswordResponse {
   message: string;
+}
+
+export interface VerifyCodeRequestSignup {
+  email: string;
+  code: string;
 }
