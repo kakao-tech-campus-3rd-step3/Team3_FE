@@ -53,7 +53,7 @@ export default function SkillLevelSelector({ onChange }: Props) {
 
   return (
     <View style={style.section}>
-      <Text style={style.label}>선호하는 수준</Text>
+      <Text style={style.label}>🏆 선호하는 수준</Text>
       <View style={style.selectedLevelSection}>
         <Text style={style.selectedText}>
           {LEVELS[minLevel].label} ~ {LEVELS[maxLevel].label}

@@ -12,10 +12,10 @@ export const style = StyleSheet.create({
   label: {
     fontSize: theme.typography.fontSize.font4,
     fontWeight: theme.typography.fontWeight.bold,
-    marginBottom: theme.spacing.spacing3,
+    marginBottom: theme.spacing.spacing2,
     color: theme.colors.gray[900],
-    textAlign: 'center',
-    paddingTop: theme.spacing.spacing4, // 상단 여백 추가
+    paddingHorizontal: theme.spacing.spacing4,
+    paddingTop: theme.spacing.spacing4,
   },
   selectedLevelSection: {
     marginVertical: theme.spacing.spacing1,
