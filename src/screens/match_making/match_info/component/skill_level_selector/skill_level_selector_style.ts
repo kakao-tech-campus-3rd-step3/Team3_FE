@@ -12,14 +12,17 @@ export const style = StyleSheet.create({
   label: {
     fontSize: theme.typography.fontSize.font4,
     fontWeight: theme.typography.fontWeight.bold,
-    marginBottom: theme.spacing.spacing3,
+    marginBottom: theme.spacing.spacing2,
     color: theme.colors.gray[900],
-    textAlign: 'center',
-    paddingTop: theme.spacing.spacing4, // 상단 여백 추가
+    paddingHorizontal: theme.spacing.spacing4,
+    paddingTop: theme.spacing.spacing4,
+  },
+  selectedLevelSection: {
+    marginVertical: theme.spacing.spacing1,
+    paddingHorizontal: theme.spacing.spacing4,
   },
   selectedText: {
     fontSize: theme.typography.fontSize.font5,
-    marginBottom: theme.spacing.spacing6,
     color: theme.colors.blue[600],
     fontWeight: theme.typography.fontWeight.bold,
     textAlign: 'center',
@@ -31,11 +34,11 @@ export const style = StyleSheet.create({
     borderColor: theme.colors.blue[200],
   },
   sliderContainer: {
-    padding: theme.spacing.spacing4,
+    padding: theme.spacing.spacing2,
   },
   // 드롭다운 기반 레벨 선택 스타일
   dropdownContainer: {
-    marginVertical: theme.spacing.spacing5,
+    marginVertical: theme.spacing.spacing4,
     paddingHorizontal: theme.spacing.spacing4,
   },
   dropdownRow: {

@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 import { ModalDatePicker } from '@/src/components/ui/modal_date_picker';
 import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
+import { formatKoreanDate } from '@/src/utils/date';
 
 import { styles } from '../match_application_style';
 
@@ -21,22 +22,6 @@ export default function FilterCard({
 }: FilterCardProps) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'short',
-    });
-  };
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('ko-KR', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   return (
     <>
@@ -59,7 +44,9 @@ export default function FilterCard({
                 selectedDate && styles.filterButtonTextActive,
               ]}
             >
-              {selectedDate ? formatDate(selectedDate) : formatDate(new Date())}
+              {selectedDate
+                ? formatKoreanDate(selectedDate)
+                : formatKoreanDate(new Date())}
             </Text>
           </TouchableOpacity>
 
@@ -76,7 +63,7 @@ export default function FilterCard({
                 selectedTime && styles.filterButtonTextActive,
               ]}
             >
-              {selectedTime ? formatTime(selectedTime) : '시간 선택'}
+              {selectedTime ? formatKoreanDate(selectedTime) : '시간 선택'}
             </Text>
           </TouchableOpacity>
         </View>

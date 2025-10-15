@@ -23,6 +23,7 @@ import Message from '@/src/screens/match_making/match_info/component/message/mes
 import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
 import { MatchCreateRequestDto } from '@/src/types/match';
 import type { Venue } from '@/src/types/venue';
+import { formatKoreanDate } from '@/src/utils/date';
 
 import { style } from './match_info_style';
 
@@ -166,14 +167,7 @@ export default function MatchInfoScreen() {
               }}
             >
               <Text style={style.dateTimeLabel}>날짜</Text>
-              <Text style={style.dateTimeValue}>
-                {date.toLocaleDateString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  weekday: 'short',
-                })}
-              </Text>
+              <Text style={style.dateTimeValue}>{formatKoreanDate(date)}</Text>
             </TouchableOpacity>
 
             <View style={style.timeRow}>
@@ -381,13 +375,7 @@ export default function MatchInfoScreen() {
               )}
 
               <Text style={style.successInfoText}>
-                🗓{' '}
-                {date.toLocaleDateString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  weekday: 'short',
-                })}
+                🗓 {formatKoreanDate(date)}
               </Text>
 
               <Text style={style.successInfoText}>

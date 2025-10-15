@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  BackHandler,
 } from 'react-native';
 
 import { theme } from '@/src/theme';
@@ -58,7 +59,7 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
 
   // 해당 월의 일수 계산
   const getDaysInMonth = (year: number, month: number) => {
-    return new Date(year, month, 0).getDate();
+    return new Date(year, month + 1, 0).getDate();
   };
 
   // 월 범위 (0-11) - JavaScript Date 객체와 일치
@@ -76,12 +77,30 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
     }
   }, [selectedMonth, selectedDay, currentYear]);
 
+  // 뒤로가기 버튼 활성화화
+  useEffect(() => {
+    const backAction = () => {
+      if (visible) {
+        onClose();
+        return true; // 뒤로가기 버튼 이벤트 막기
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [visible, onClose]);
+
   return (
     <Modal
       visible={visible}
       transparent
       animationType="slide"
-      onRequestClose={() => {}}
+      onRequestClose={onClose}
     >
       <TouchableOpacity
         style={styles.overlay}
