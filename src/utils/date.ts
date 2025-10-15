@@ -37,3 +37,27 @@ export const getDateOptions = (baseDate: Date = new Date()) => {
 
   return dates;
 };
+
+/**
+ * 한국식 날짜 포맷 (예: 2025년 10월 15일 (수))
+ */
+export const formatKoreanDate = (date: Date): string => {
+  const formatted = date.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'short',
+  });
+  return formatted.replace(/\s([월화수목금토일])$/, ' ($1)');
+};
+
+/**
+ * 한국식 시간 포맷 (예: 14:30)
+ */
+export const formatKoreanTime = (date: Date): string => {
+  return date.toLocaleTimeString('ko-KR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+};

@@ -23,6 +23,7 @@ import Message from '@/src/screens/match_making/match_info/component/message/mes
 import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
 import { MatchCreateRequestDto } from '@/src/types/match';
 import type { Venue } from '@/src/types/venue';
+import { formatKoreanDate } from '@/src/utils/date';
 
 import { style } from './match_info_style';
 
@@ -69,16 +70,6 @@ export default function MatchInfoScreen() {
   const onSelectStadium = (venue: Venue) => {
     setSelectedStadium(venue);
     setStadiumModalVisible(false);
-  };
-
-  const formatKoreanDate = (d: Date) => {
-    const formatted = d.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'short',
-    });
-    return formatted.replace(/\s([월화수목금토일])$/, ' ($1)');
   };
 
   const pad2 = (n: number) => String(n).padStart(2, '0');
