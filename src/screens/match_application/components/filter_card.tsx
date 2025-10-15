@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 import { ModalDatePicker } from '@/src/components/ui/modal_date_picker';
 import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
-import { formatKoreanDate } from '@/src/utils/date';
+import { formatKoreanDate, formatKoreanTime } from '@/src/utils/date';
 
 import { styles } from '../match_application_style';
 
@@ -63,7 +63,7 @@ export default function FilterCard({
                 selectedTime && styles.filterButtonTextActive,
               ]}
             >
-              {selectedTime ? formatKoreanDate(selectedTime) : '시간 선택'}
+              {selectedTime ? formatKoreanTime(selectedTime) : '시간 선택'}
             </Text>
           </TouchableOpacity>
         </View>
