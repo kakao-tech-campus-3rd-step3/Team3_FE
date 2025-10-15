@@ -14,6 +14,10 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import { Dropdown } from '@/src/components/dropdown';
 import { UNIVERSITIES } from '@/src/constants/universities';
+import {
+  useSendCodeMutation,
+  useVerifyCodeSignupMutation,
+} from '@/src/hooks/queries';
 import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 import {
   useRegisterValidation,
@@ -33,10 +37,12 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
   const { width } = useWindowDimensions();
   const { errors, validateField } = useRegisterValidation(emailValidationRules);
 
+  // 이메일 인증 관련 훅
+  const sendCodeMutation = useSendCodeMutation();
+  const verifyCodeMutation = useVerifyCodeSignupMutation();
+
   // 인증 관련 상태
   const [isCodeSent, setIsCodeSent] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [isSendingCode, setIsSendingCode] = useState(false);
   const [timer, setTimer] = useState(0);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
@@ -63,20 +69,12 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
       return;
     }
 
-    setIsSendingCode(true);
     try {
-      // TODO: 실제 API 호출로 대체
-      // await authApi.sendVerification(data.universityEmail);
-
-      // 임시로 성공 처리
-      setTimeout(() => {
-        setIsCodeSent(true);
-        setTimer(300); // 5분 타이머
-        setIsSendingCode(false);
-        Alert.alert('전송 완료', '인증 코드가 이메일로 전송되었습니다.');
-      }, 1000);
+      await sendCodeMutation.mutateAsync(data.universityEmail);
+      setIsCodeSent(true);
+      setTimer(300); // 5분 타이머
+      Alert.alert('전송 완료', '인증 코드가 이메일로 전송되었습니다.');
     } catch (error) {
-      setIsSendingCode(false);
       Alert.alert(
         '전송 실패',
         '인증 코드 전송에 실패했습니다. 다시 시도해주세요.'
@@ -96,22 +94,14 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
       return;
     }
 
-    setIsVerifying(true);
     try {
-      // TODO: 실제 API 호출로 대체
-      // await authApi.verifyEmail({
-      //   universityEmail: data.universityEmail,
-      //   code: data.verificationCode
-      // });
-
-      // 임시로 성공 처리
-      setTimeout(() => {
-        onChange('isEmailVerified', true);
-        setIsVerifying(false);
-        Alert.alert('인증 완료', '이메일 인증이 완료되었습니다.');
-      }, 1000);
+      await verifyCodeMutation.mutateAsync({
+        email: data.universityEmail,
+        code: data.verificationCode,
+      });
+      onChange('isEmailVerified', true);
+      Alert.alert('인증 완료', '이메일 인증이 완료되었습니다.');
     } catch (error) {
-      setIsVerifying(false);
       Alert.alert(
         '인증 실패',
         '인증 코드가 올바르지 않습니다. 다시 확인해주세요.'
@@ -225,14 +215,14 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
                 styles.sendCodeButton,
                 (!data.universityEmail ||
                   errors.universityEmail ||
-                  isSendingCode) &&
+                  sendCodeMutation.isPending) &&
                   styles.sendCodeButtonDisabled,
               ]}
               onPress={handleSendCode}
               disabled={
                 !data.universityEmail ||
                 !!errors.universityEmail ||
-                isSendingCode
+                sendCodeMutation.isPending
               }
             >
               <Text
@@ -240,11 +230,11 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
                   styles.sendCodeButtonText,
                   (!data.universityEmail ||
                     errors.universityEmail ||
-                    isSendingCode) &&
+                    sendCodeMutation.isPending) &&
                     styles.sendCodeButtonTextDisabled,
                 ]}
               >
-                {isSendingCode
+                {sendCodeMutation.isPending
                   ? '전송 중...'
                   : isCodeSent
                     ? '재전송'
@@ -288,7 +278,7 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
                   styles.verifyButton,
                   (!data.verificationCode ||
                     data.verificationCode.length !== 6 ||
-                    isVerifying ||
+                    verifyCodeMutation.isPending ||
                     data.isEmailVerified) &&
                     styles.verifyButtonDisabled,
                 ]}
@@ -296,7 +286,7 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
                 disabled={
                   !data.verificationCode ||
                   data.verificationCode.length !== 6 ||
-                  isVerifying ||
+                  verifyCodeMutation.isPending ||
                   data.isEmailVerified
                 }
               >
@@ -305,12 +295,12 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
                     styles.verifyButtonText,
                     (!data.verificationCode ||
                       data.verificationCode.length !== 6 ||
-                      isVerifying ||
+                      verifyCodeMutation.isPending ||
                       data.isEmailVerified) &&
                       styles.verifyButtonTextDisabled,
                   ]}
                 >
-                  {isVerifying
+                  {verifyCodeMutation.isPending
                     ? '인증 중...'
                     : data.isEmailVerified
                       ? '인증 완료'
