@@ -24,7 +24,6 @@ export default {
     },
     android: {
       package: 'com.cheogo.shootdoori',
-      versionCode: 6,
       adaptiveIcon: {
         foregroundImage: './assets/images/icon_logo.png',
         backgroundColor: '#ffffff',
