@@ -37,16 +37,13 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
   const { width } = useWindowDimensions();
   const { errors, validateField } = useRegisterValidation(emailValidationRules);
 
-  // 이메일 인증 관련 훅
   const sendCodeMutation = useSendCodeMutation();
   const verifyCodeMutation = useVerifyCodeSignupMutation();
 
-  // 인증 관련 상태
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [timer, setTimer] = useState(0);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
-  // 타이머 효과
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (timer > 0) {
@@ -57,7 +54,6 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
     return () => clearInterval(interval);
   }, [timer]);
 
-  // 인증 코드 전송
   const handleSendCode = async () => {
     if (!data.universityEmail) {
       Alert.alert('입력 오류', '대학교 이메일을 먼저 입력해주세요.');
@@ -72,25 +68,25 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
     try {
       await sendCodeMutation.mutateAsync(data.universityEmail);
       setIsCodeSent(true);
-      setTimer(300); // 5분 타이머
+      setTimer(180);
       Alert.alert('전송 완료', '인증 코드가 이메일로 전송되었습니다.');
     } catch (error) {
-      Alert.alert(
-        '전송 실패',
-        '인증 코드 전송에 실패했습니다. 다시 시도해주세요.'
-      );
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : '인증 코드 전송에 실패했습니다. 다시 시도해주세요.';
+      Alert.alert('전송 실패', errorMessage);
     }
   };
 
-  // 인증 코드 검증
   const handleVerifyCode = async () => {
     if (!data.verificationCode) {
       Alert.alert('입력 오류', '인증 코드를 입력해주세요.');
       return;
     }
 
-    if (data.verificationCode.length !== 6) {
-      Alert.alert('입력 오류', '인증 코드는 6자리 숫자입니다.');
+    if (errors.verificationCode) {
+      Alert.alert('입력 오류', errors.verificationCode);
       return;
     }
 
@@ -102,10 +98,11 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
       onChange('isEmailVerified', true);
       Alert.alert('인증 완료', '이메일 인증이 완료되었습니다.');
     } catch (error) {
-      Alert.alert(
-        '인증 실패',
-        '인증 코드가 올바르지 않습니다. 다시 확인해주세요.'
-      );
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : '인증 코드가 올바르지 않습니다. 다시 확인해주세요.';
+      Alert.alert('인증 실패', errorMessage);
     }
   };
 
@@ -151,6 +148,18 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
     !data.universityEmail ||
     !!errors.universityEmail ||
     !data.isEmailVerified;
+
+  // 버튼 비활성화 상태 변수들
+  const isSendCodeButtonDisabled =
+    !data.universityEmail ||
+    !!errors.universityEmail ||
+    sendCodeMutation.isPending;
+
+  const isVerifyButtonDisabled =
+    !data.verificationCode ||
+    !!errors.verificationCode ||
+    verifyCodeMutation.isPending ||
+    data.isEmailVerified;
 
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
     onChange(field, value);
@@ -213,25 +222,15 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
             <TouchableOpacity
               style={[
                 styles.sendCodeButton,
-                (!data.universityEmail ||
-                  errors.universityEmail ||
-                  sendCodeMutation.isPending) &&
-                  styles.sendCodeButtonDisabled,
+                isSendCodeButtonDisabled && styles.sendCodeButtonDisabled,
               ]}
               onPress={handleSendCode}
-              disabled={
-                !data.universityEmail ||
-                !!errors.universityEmail ||
-                sendCodeMutation.isPending
-              }
+              disabled={isSendCodeButtonDisabled}
             >
               <Text
                 style={[
                   styles.sendCodeButtonText,
-                  (!data.universityEmail ||
-                    errors.universityEmail ||
-                    sendCodeMutation.isPending) &&
-                    styles.sendCodeButtonTextDisabled,
+                  isSendCodeButtonDisabled && styles.sendCodeButtonTextDisabled,
                 ]}
               >
                 {sendCodeMutation.isPending
@@ -276,28 +275,15 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
               <TouchableOpacity
                 style={[
                   styles.verifyButton,
-                  (!data.verificationCode ||
-                    data.verificationCode.length !== 6 ||
-                    verifyCodeMutation.isPending ||
-                    data.isEmailVerified) &&
-                    styles.verifyButtonDisabled,
+                  isVerifyButtonDisabled && styles.verifyButtonDisabled,
                 ]}
                 onPress={handleVerifyCode}
-                disabled={
-                  !data.verificationCode ||
-                  data.verificationCode.length !== 6 ||
-                  verifyCodeMutation.isPending ||
-                  data.isEmailVerified
-                }
+                disabled={isVerifyButtonDisabled}
               >
                 <Text
                   style={[
                     styles.verifyButtonText,
-                    (!data.verificationCode ||
-                      data.verificationCode.length !== 6 ||
-                      verifyCodeMutation.isPending ||
-                      data.isEmailVerified) &&
-                      styles.verifyButtonTextDisabled,
+                    isVerifyButtonDisabled && styles.verifyButtonTextDisabled,
                   ]}
                 >
                   {verifyCodeMutation.isPending
