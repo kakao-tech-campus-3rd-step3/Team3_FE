@@ -23,12 +23,14 @@ export default function FilterCard({
   const [showTimePicker, setShowTimePicker] = useState(false);
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('ko-KR', {
+    const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
       weekday: 'short',
-    });
+    };
+    const formatted = date.toLocaleDateString('ko-KR', options);
+    return formatted.replace(/\s([월화수목금토일])$/, ' ($1)');
   };
 
   const formatTime = (date: Date) => {

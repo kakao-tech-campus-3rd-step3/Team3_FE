@@ -71,6 +71,16 @@ export default function MatchInfoScreen() {
     setStadiumModalVisible(false);
   };
 
+  const formatKoreanDate = (d: Date) => {
+    const formatted = d.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'short',
+    });
+    return formatted.replace(/\s([월화수목금토일])$/, ' ($1)');
+  };
+
   const pad2 = (n: number) => String(n).padStart(2, '0');
   const fmtDate = (d: Date) => {
     const result = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
@@ -166,14 +176,7 @@ export default function MatchInfoScreen() {
               }}
             >
               <Text style={style.dateTimeLabel}>날짜</Text>
-              <Text style={style.dateTimeValue}>
-                {date.toLocaleDateString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  weekday: 'short',
-                })}
-              </Text>
+              <Text style={style.dateTimeValue}>{formatKoreanDate(date)}</Text>
             </TouchableOpacity>
 
             <View style={style.timeRow}>
@@ -381,13 +384,7 @@ export default function MatchInfoScreen() {
               )}
 
               <Text style={style.successInfoText}>
-                🗓{' '}
-                {date.toLocaleDateString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  weekday: 'short',
-                })}
+                🗓 {formatKoreanDate(date)}
               </Text>
 
               <Text style={style.successInfoText}>
