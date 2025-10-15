@@ -51,7 +51,7 @@ class ApiClient {
     this.axios = axios.create({ baseURL });
 
     this.axios.interceptors.request.use(config => {
-      if (this.token && config.headers?.['Authorization'] !== undefined) {
+      if (this.token) {
         config.headers = config.headers || {};
         config.headers['Authorization'] = `Bearer ${this.token}`;
       }
