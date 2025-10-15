@@ -51,6 +51,10 @@ class ApiClient {
     this.axios = axios.create({ baseURL });
 
     this.axios.interceptors.request.use(config => {
+      if (config.authRequired === false) {
+        return config;
+      }
+
       if (this.token) {
         config.headers = config.headers || {};
         config.headers['Authorization'] = `Bearer ${this.token}`;
@@ -105,24 +109,19 @@ class ApiClient {
 
   private async request<T>(
     endpoint: string,
-    options: AxiosRequestConfig & { authRequired?: boolean } = {}
+    options: AxiosRequestConfig = {}
   ): Promise<T> {
     const { authRequired, ...axiosOptions } = options;
-
-    const finalHeaders: Record<string, any> = {
-      'Content-Type': 'application/json',
-      ...axiosOptions.headers,
-    };
-
-    if (authRequired === false) {
-      delete finalHeaders['Authorization'];
-    }
 
     try {
       const response: AxiosResponse<T> = await this.axios({
         ...axiosOptions,
         url: endpoint,
-        headers: finalHeaders,
+        headers: {
+          'Content-Type': 'application/json',
+          ...axiosOptions.headers,
+        },
+        authRequired,
       });
 
       return response.data;
@@ -137,17 +136,14 @@ class ApiClient {
     }
   }
 
-  async get<T>(
-    endpoint: string,
-    options?: AxiosRequestConfig & { authRequired?: boolean }
-  ): Promise<T> {
+  async get<T>(endpoint: string, options?: AxiosRequestConfig): Promise<T> {
     return this.request<T>(endpoint, options);
   }
 
   async post<T>(
     endpoint: string,
     body: unknown,
-    options?: AxiosRequestConfig & { authRequired?: boolean }
+    options?: AxiosRequestConfig
   ): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
@@ -159,7 +155,7 @@ class ApiClient {
   async put<T>(
     endpoint: string,
     body: unknown,
-    options?: AxiosRequestConfig & { authRequired?: boolean }
+    options?: AxiosRequestConfig
   ): Promise<T> {
     return this.request<T>(endpoint, { method: 'PUT', data: body, ...options });
   }
@@ -167,7 +163,7 @@ class ApiClient {
   async patch<T>(
     endpoint: string,
     body?: unknown,
-    options?: AxiosRequestConfig & { authRequired?: boolean }
+    options?: AxiosRequestConfig
   ): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PATCH',
@@ -176,10 +172,7 @@ class ApiClient {
     });
   }
 
-  async delete<T>(
-    endpoint: string,
-    options?: AxiosRequestConfig & { authRequired?: boolean }
-  ): Promise<T> {
+  async delete<T>(endpoint: string, options?: AxiosRequestConfig): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE', ...options });
   }
 }
