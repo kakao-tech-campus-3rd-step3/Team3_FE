@@ -52,7 +52,7 @@ export const useRegisterForm = () => {
   const getRegisterData = (): RegisterRequest => ({
     name: formData.name,
     skillLevel: '아마추어',
-    universityEmail: formData.universityEmail,
+    email: formData.universityEmail,
     password: formData.password,
     kakaoTalkId: formData.kakaoTalkId,
     position: '공격수',
