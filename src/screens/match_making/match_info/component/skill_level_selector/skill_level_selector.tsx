@@ -54,9 +54,11 @@ export default function SkillLevelSelector({ onChange }: Props) {
   return (
     <View style={style.section}>
       <Text style={style.label}>선호하는 수준</Text>
-      <Text style={style.selectedText}>
-        {LEVELS[minLevel].label} ~ {LEVELS[maxLevel].label}
-      </Text>
+      <View style={style.selectedLevelSection}>
+        <Text style={style.selectedText}>
+          {LEVELS[minLevel].label} ~ {LEVELS[maxLevel].label}
+        </Text>
+      </View>
 
       <View style={style.sliderContainer}>
         {/* 드롭다운 기반 레벨 선택 */}
