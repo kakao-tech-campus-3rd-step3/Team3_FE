@@ -59,7 +59,7 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
 
   // 해당 월의 일수 계산
   const getDaysInMonth = (year: number, month: number) => {
-    return new Date(year, month, 0).getDate();
+    return new Date(year, month + 1, 0).getDate();
   };
 
   // 월 범위 (0-11) - JavaScript Date 객체와 일치
