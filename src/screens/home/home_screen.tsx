@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef } from 'react';
 import { ScrollView, View, ActivityIndicator, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ROUTES } from '@/src/constants/routes';
 import { useUserProfile, useLogout } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 

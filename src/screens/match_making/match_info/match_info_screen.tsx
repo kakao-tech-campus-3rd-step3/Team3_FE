@@ -23,11 +23,7 @@ import Message from '@/src/screens/match_making/match_info/component/message/mes
 import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
 import { MatchCreateRequestDto } from '@/src/types/match';
 import type { Venue } from '@/src/types/venue';
-import {
-  formatKoreanDate,
-  formatDateForAPI,
-  formatTimeForAPI,
-} from '@/src/utils/date';
+import { formatKoreanDate, formatDateForAPI } from '@/src/utils/date';
 import { convertKSTToUTCTime } from '@/src/utils/timezone';
 
 import { style } from './match_info_style';
@@ -76,15 +72,6 @@ export default function MatchInfoScreen() {
     setSelectedStadium(venue);
     setStadiumModalVisible(false);
   };
-
-  const pad2 = (n: number) => String(n).padStart(2, '0');
-  const fmtDate = (d: Date) => {
-    const result = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
-
-    return result;
-  };
-  const fmtTime = (d: Date) =>
-    `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
 
   const onSubmit = async () => {
     if (!selectedStadium) {
