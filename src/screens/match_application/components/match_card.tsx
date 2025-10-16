@@ -40,8 +40,13 @@ export default function MatchCard({
   }, []);
 
   const formatTime = (timeStart: string, timeEnd: string) => {
-    const kstStart = convertUTCToKSTTime(timeStart);
-    const kstEnd = convertUTCToKSTTime(timeEnd);
+    if (!match.preferredDate) {
+      return `${timeStart.slice(0, 5)} ~ ${timeEnd.slice(0, 5)}`;
+    }
+    const kstStart = convertUTCToKSTTime(
+      `${match.preferredDate}T${timeStart}Z`
+    );
+    const kstEnd = convertUTCToKSTTime(`${match.preferredDate}T${timeEnd}Z`);
     return `${kstStart} ~ ${kstEnd}`;
   };
 

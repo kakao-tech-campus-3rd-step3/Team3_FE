@@ -1,5 +1,5 @@
 import { format, addHours } from 'date-fns';
-import { toZonedTime } from 'date-fns-tz';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 
 const KST_TIMEZONE = 'Asia/Seoul';
 
@@ -16,8 +16,14 @@ export const convertKSTToUTCTime = (kstTime: Date): string => {
   return `${String(utcHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
 
-export const convertUTCToKSTTime = (utcTime: string): string => {
-  const [hours, minutes] = utcTime.split(':').map(Number);
+export const convertUTCToKSTTime = (utcDateTimeString: string): string => {
+  let timeString = utcDateTimeString;
+  if (utcDateTimeString.includes('T')) {
+    const timePart = utcDateTimeString.split('T')[1];
+    timeString = timePart.replace('Z', '').split('.')[0];
+  }
+
+  const [hours, minutes] = timeString.split(':').map(Number);
   let kstHours = hours + 9;
   if (kstHours >= 24) {
     kstHours -= 24;

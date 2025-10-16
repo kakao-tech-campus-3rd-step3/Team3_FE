@@ -100,12 +100,13 @@ export async function getMatchWaitingList(
   queryParams.append('selectDate', params.selectDate);
 
   if (params.startTime && params.startTime.trim() !== '') {
-    const kstTime = new Date();
-    const [hours, minutes, seconds] = params.startTime.split(':').map(Number);
-    kstTime.setHours(hours, minutes, seconds, 0);
-
-    const utcTime = convertKSTToUTCTime(kstTime);
-    queryParams.append('startTime', utcTime);
+    const kstDateTime = new Date(`${params.selectDate}T${params.startTime}`);
+    if (isNaN(kstDateTime.getTime())) {
+      queryParams.append('startTime', '00:00:00');
+    } else {
+      const utcTime = convertKSTToUTCTime(kstDateTime);
+      queryParams.append('startTime', utcTime);
+    }
   } else {
     queryParams.append('startTime', '00:00:00');
   }
