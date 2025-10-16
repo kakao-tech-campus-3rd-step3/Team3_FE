@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { getVenues } from '@/src/api/venue';
 import { theme } from '@/src/theme';
 import { MatchWaitingResponseDto } from '@/src/types/match';
+import { convertUTCToKSTTime } from '@/src/utils/timezone';
 
 import { styles } from '../match_application_style';
 
@@ -39,18 +40,8 @@ export default function MatchCard({
   }, []);
 
   const formatTime = (timeStart: string, timeEnd: string) => {
-    // UTC 시간을 KST로 변환하여 표시
-    const convertUTCToKST = (utcTime: string): string => {
-      const [hours, minutes] = utcTime.split(':').map(Number);
-      let kstHours = hours + 9;
-      if (kstHours >= 24) {
-        kstHours -= 24;
-      }
-      return `${String(kstHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-    };
-
-    const kstStart = convertUTCToKST(timeStart);
-    const kstEnd = convertUTCToKST(timeEnd);
+    const kstStart = convertUTCToKSTTime(timeStart);
+    const kstEnd = convertUTCToKSTTime(timeEnd);
     return `${kstStart} ~ ${kstEnd}`;
   };
 
@@ -232,7 +223,7 @@ export default function MatchCard({
             style={[
               styles.requestButton,
               disabled && styles.requestButtonDisabled,
-              isCancellable && { backgroundColor: theme.colors.red[600] }, // ✅ 빨간색 적용
+              isCancellable && { backgroundColor: theme.colors.red[600] },
             ]}
           >
             <Text style={styles.requestButtonText}>
