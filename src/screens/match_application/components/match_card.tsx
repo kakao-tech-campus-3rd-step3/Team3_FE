@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { getVenues } from '@/src/api/venue';
 import { theme } from '@/src/theme';
 import { MatchWaitingResponseDto } from '@/src/types/match';
+import { convertUTCToKSTTime } from '@/src/utils/timezone';
 
 import { styles } from '../match_application_style';
 
@@ -38,8 +39,16 @@ export default function MatchCard({
     loadVenues();
   }, []);
 
-  const formatTime = (timeStart: string, timeEnd: string) =>
-    `${timeStart.slice(0, 5)} ~ ${timeEnd.slice(0, 5)}`;
+  const formatTime = (timeStart: string, timeEnd: string) => {
+    if (!match.preferredDate) {
+      return `${timeStart.slice(0, 5)} ~ ${timeEnd.slice(0, 5)}`;
+    }
+    const kstStart = convertUTCToKSTTime(
+      `${match.preferredDate}T${timeStart}Z`
+    );
+    const kstEnd = convertUTCToKSTTime(`${match.preferredDate}T${timeEnd}Z`);
+    return `${kstStart} ~ ${kstEnd}`;
+  };
 
   const getVenueName = (venueId: number) =>
     venueMap[venueId] || `경기장 #${venueId}`;
@@ -219,7 +228,7 @@ export default function MatchCard({
             style={[
               styles.requestButton,
               disabled && styles.requestButtonDisabled,
-              isCancellable && { backgroundColor: theme.colors.red[600] }, // ✅ 빨간색 적용
+              isCancellable && { backgroundColor: theme.colors.red[600] },
             ]}
           >
             <Text style={styles.requestButtonText}>

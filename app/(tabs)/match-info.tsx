@@ -1,4 +1,4 @@
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   View,
@@ -9,35 +9,23 @@ import {
   RefreshControl,
 } from 'react-native';
 
-import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ROUTES } from '@/src/constants/routes';
 import { useUserProfile } from '@/src/hooks/queries';
 import { useMatchRequest } from '@/src/hooks/useMatchRequest';
 import { useMatchWaitingList } from '@/src/hooks/useMatchWaitingList';
+import FilterCard from '@/src/screens/match_application/components/filter_card';
+import MatchCard from '@/src/screens/match_application/components/match_card';
+import { styles } from '@/src/screens/match_application/match_application_style';
 import type {
   MatchWaitingListRequestDto,
   MatchRequestRequestDto,
+  MatchWaitingResponseDto,
 } from '@/src/types/match';
 import { formatDateForAPI, formatTimeForAPI } from '@/src/utils/date';
 
-import FilterCard from './components/filter_card';
-import MatchCard from './components/match_card';
-import { styles } from './match_application_style';
-
-interface MatchApplicationScreenProps {
-  teamId?: number;
-}
-
-export default function MatchApplicationScreen({
-  teamId,
-}: MatchApplicationScreenProps) {
+export default function MatchInfoScreen() {
   const router = useRouter();
-  const { date } = useLocalSearchParams<{
-    date?: string;
-  }>();
-
-  const initialDate = date ? new Date(date) : null;
-  const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -108,7 +96,7 @@ export default function MatchApplicationScreen({
     );
   };
 
-  const renderMatchCard = ({ item }: { item: any }) => (
+  const renderMatchCard = ({ item }: { item: MatchWaitingResponseDto }) => (
     <MatchCard
       match={item}
       onPressRequest={() => handlePressRequest(item.waitingId)}
@@ -198,8 +186,6 @@ export default function MatchApplicationScreen({
 
   return (
     <View style={styles.container}>
-      <CustomHeader title="매치 참여" />
-
       <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={styles.scrollContent}

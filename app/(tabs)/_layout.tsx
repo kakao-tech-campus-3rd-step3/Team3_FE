@@ -52,6 +52,21 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="match-info"
+        options={{
+          title: '매치 정보',
+          headerTitle: '매치 정보',
+          headerShown: true,
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'calendar' : 'calendar-outline'}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: '프로필',
