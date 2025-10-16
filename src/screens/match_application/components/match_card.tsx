@@ -38,8 +38,21 @@ export default function MatchCard({
     loadVenues();
   }, []);
 
-  const formatTime = (timeStart: string, timeEnd: string) =>
-    `${timeStart.slice(0, 5)} ~ ${timeEnd.slice(0, 5)}`;
+  const formatTime = (timeStart: string, timeEnd: string) => {
+    // UTC 시간을 KST로 변환하여 표시
+    const convertUTCToKST = (utcTime: string): string => {
+      const [hours, minutes] = utcTime.split(':').map(Number);
+      let kstHours = hours + 9;
+      if (kstHours >= 24) {
+        kstHours -= 24;
+      }
+      return `${String(kstHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    };
+
+    const kstStart = convertUTCToKST(timeStart);
+    const kstEnd = convertUTCToKST(timeEnd);
+    return `${kstStart} ~ ${kstEnd}`;
+  };
 
   const getVenueName = (venueId: number) =>
     venueMap[venueId] || `경기장 #${venueId}`;

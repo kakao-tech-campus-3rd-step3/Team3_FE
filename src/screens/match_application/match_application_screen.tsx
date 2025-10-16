@@ -18,6 +18,7 @@ import type {
   MatchWaitingListRequestDto,
   MatchRequestRequestDto,
 } from '@/src/types/match';
+import { formatDateForAPI, formatTimeForAPI } from '@/src/utils/date';
 
 import FilterCard from './components/filter_card';
 import MatchCard from './components/match_card';
@@ -44,11 +45,9 @@ export default function MatchApplicationScreen({
 
   const params: MatchWaitingListRequestDto = {
     selectDate: selectedDate
-      ? selectedDate.toISOString().split('T')[0]
-      : new Date().toISOString().split('T')[0],
-    startTime: selectedTime
-      ? selectedTime.toTimeString().split(' ')[0]
-      : '00:00:00',
+      ? formatDateForAPI(selectedDate)
+      : formatDateForAPI(new Date()),
+    startTime: selectedTime ? formatTimeForAPI(selectedTime) : '00:00:00',
   };
 
   const {
