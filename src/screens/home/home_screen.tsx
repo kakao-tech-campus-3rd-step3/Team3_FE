@@ -1,5 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { useCallback, useEffect, useRef } from 'react';
 import { ScrollView, View, ActivityIndicator, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -67,6 +68,12 @@ export default function HomeScreen() {
       handleErrorAlert();
     }
   }, [error, handleErrorAlert]);
+
+  useEffect(() => {
+    if (!isLoading && !error) {
+      SplashScreen.hideAsync();
+    }
+  }, [isLoading, error]);
 
   const handleMatchPress = useCallback((matchDate?: string) => {
     if (matchDate) {

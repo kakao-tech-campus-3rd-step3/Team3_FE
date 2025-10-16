@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   FlatList,
   Modal,
@@ -36,7 +35,6 @@ export default function MatchInfoScreen() {
   const { mutate: createMatch, isPending } = useCreateMatch();
   const { data: venues, isLoading, error } = useVenues();
 
-  const [stadiumQuery, setStadiumQuery] = useState('');
   const [stadiumModalVisible, setStadiumModalVisible] = useState(false);
   const [selectedStadium, setSelectedStadium] = useState<Venue | null>(null);
 
@@ -63,10 +61,6 @@ export default function MatchInfoScreen() {
   const [universityOnly, setUniversityOnly] = useState(false);
   const [message, setMessage] = useState('');
   const [successModalVisible, setSuccessModalVisible] = useState(false);
-
-  const filteredStadiums = (venues ?? []).filter(s =>
-    s.venueName.toLowerCase().includes(stadiumQuery.toLowerCase())
-  );
 
   const onSelectStadium = (venue: Venue) => {
     setSelectedStadium(venue);
@@ -159,7 +153,13 @@ export default function MatchInfoScreen() {
               }}
             >
               <Text style={style.dateTimeLabel}>날짜</Text>
-              <Text style={style.dateTimeValue}>{formatKoreanDate(date)}</Text>
+              <Text style={style.dateTimeValue} numberOfLines={1}>
+                {date.toLocaleDateString('ko-KR', {
+                  month: 'short',
+                  day: 'numeric',
+                  weekday: 'short',
+                })}
+              </Text>
             </TouchableOpacity>
 
             <View style={style.timeRow}>
@@ -168,9 +168,9 @@ export default function MatchInfoScreen() {
                 onPress={() => setShowTimeStartPicker(true)}
               >
                 <Text style={style.timeLabel}>시작</Text>
-                <Text style={style.timeValue}>
+                <Text style={style.timeValue} numberOfLines={1}>
                   {timeStart.toLocaleTimeString('ko-KR', {
-                    hour: '2-digit',
+                    hour: 'numeric',
                     minute: '2-digit',
                     hour12: false,
                   })}
@@ -182,9 +182,9 @@ export default function MatchInfoScreen() {
                 onPress={() => setShowTimeEndPicker(true)}
               >
                 <Text style={style.timeLabel}>종료</Text>
-                <Text style={style.timeValue}>
+                <Text style={style.timeValue} numberOfLines={1}>
                   {timeEnd.toLocaleTimeString('ko-KR', {
-                    hour: '2-digit',
+                    hour: 'numeric',
                     minute: '2-digit',
                     hour12: false,
                   })}
@@ -232,22 +232,25 @@ export default function MatchInfoScreen() {
           <Message value={message} onChange={setMessage} />
         </View>
 
+        <View style={style.submitButtonContainer}>
+          <TouchableOpacity
+            style={[
+              style.submitButton,
+              isPending && style.submitButtonDisabled,
+            ]}
+            onPress={onSubmit}
+            disabled={isPending}
+          >
+            <Text style={style.submitButtonText}>
+              {isPending ? '등록 중...' : '매치 등록하기'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={style.bottomSpacing} />
       </ScrollView>
 
-      <View style={style.fixedBottomBar}>
-        <TouchableOpacity
-          style={[style.submitButton, isPending && style.submitButtonDisabled]}
-          onPress={onSubmit}
-          disabled={isPending}
-        >
-          <Text style={style.submitButtonText}>
-            {isPending ? '등록 중...' : '매치 등록하기'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <Modal visible={stadiumModalVisible} transparent animationType="slide">
+      <Modal visible={stadiumModalVisible} transparent animationType="fade">
         <TouchableOpacity
           style={style.modalWrap}
           activeOpacity={1}
@@ -259,20 +262,13 @@ export default function MatchInfoScreen() {
             onPress={e => e.stopPropagation()}
           >
             <Text style={style.modalTitle}>경기장 선택</Text>
-            <TextInput
-              style={style.searchInput}
-              placeholder="경기장 검색"
-              placeholderTextColor="#9CA3AF"
-              value={stadiumQuery}
-              onChangeText={setStadiumQuery}
-            />
             {isLoading ? (
               <Text>불러오는 중...</Text>
             ) : error ? (
               <Text>에러 발생: {error.message}</Text>
             ) : (
               <FlatList
-                data={filteredStadiums}
+                data={venues ?? []}
                 keyExtractor={item => String(item.venueId)}
                 renderItem={({ item }) => (
                   <TouchableOpacity
@@ -285,6 +281,8 @@ export default function MatchInfoScreen() {
                     </Text>
                   </TouchableOpacity>
                 )}
+                style={{ maxHeight: 300 }}
+                showsVerticalScrollIndicator={true}
               />
             )}
             <TouchableOpacity

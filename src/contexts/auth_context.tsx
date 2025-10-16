@@ -40,6 +40,21 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const initializeAuth = useCallback(async () => {
+    const handleTokenInitialization = (
+      token: string | null,
+      refreshToken: string | null
+    ) => {
+      if (refreshToken) {
+        setTokenState(null);
+        setRefreshTokenState(refreshToken);
+        setIsInitialized(true);
+      } else {
+        setTokenState(null);
+        setRefreshTokenState(null);
+        setIsInitialized(true);
+      }
+    };
+
     try {
       const tokenResource = createTokenResource();
       const refreshTokenResource = createRefreshTokenResource();
@@ -47,14 +62,7 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       const token = tokenResource.read();
       const refreshToken = refreshTokenResource.read();
 
-      setTokenState(token);
-      setRefreshTokenState(refreshToken);
-
-      if (token) {
-        apiClient.setToken(token);
-      }
-
-      setIsInitialized(true);
+      handleTokenInitialization(token, refreshToken);
     } catch (error) {
       if (error instanceof Promise) {
         try {
@@ -62,30 +70,17 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
           const refreshTokenResource = createRefreshTokenResource();
           const refreshToken = refreshTokenResource.read();
 
-          setTokenState(token);
-          setRefreshTokenState(refreshToken);
-
-          if (token) {
-            apiClient.setToken(token);
-          }
-
-          setIsInitialized(true);
+          handleTokenInitialization(token, refreshToken);
         } catch (refreshError) {
           if (refreshError instanceof Promise) {
             const refreshToken = await refreshError;
-            setTokenState(null);
-            setRefreshTokenState(refreshToken);
-            setIsInitialized(true);
+            handleTokenInitialization(null, refreshToken);
           } else {
-            setTokenState(null);
-            setRefreshTokenState(null);
-            setIsInitialized(true);
+            handleTokenInitialization(null, null);
           }
         }
       } else {
-        setTokenState(null);
-        setRefreshTokenState(null);
-        setIsInitialized(true);
+        handleTokenInitialization(null, null);
       }
     }
   }, []);

@@ -76,7 +76,7 @@ export const ModalTimePicker: React.FC<ModalTimePickerProps> = ({
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
     >
       <TouchableOpacity
@@ -184,27 +184,39 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.spacing4,
   },
   modalContainer: {
-    backgroundColor: theme.colors.background.main,
-    borderTopLeftRadius: theme.spacing.spacing4,
-    borderTopRightRadius: theme.spacing.spacing4,
-    paddingBottom: theme.spacing.spacing6,
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.spacing.spacing4,
+    padding: theme.spacing.spacing4,
+    width: '100%',
+    maxWidth: 400,
+    maxHeight: '80%',
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing.spacing5,
-    paddingVertical: theme.spacing.spacing4,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
+    paddingHorizontal: theme.spacing.spacing4,
+    paddingVertical: theme.spacing.spacing3,
+    marginBottom: theme.spacing.spacing4,
   },
   title: {
     fontSize: theme.typography.fontSize.font5,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.main,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.gray[900],
+    textAlign: 'center',
   },
   cancelButton: {
     paddingHorizontal: theme.spacing.spacing3,
@@ -263,20 +275,18 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.semibold,
   },
   footer: {
-    paddingHorizontal: theme.spacing.spacing5,
     paddingTop: theme.spacing.spacing4,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border.light,
+    marginTop: theme.spacing.spacing4,
   },
   confirmButton: {
-    backgroundColor: theme.colors.blue[500],
+    backgroundColor: theme.colors.blue[600],
     paddingVertical: theme.spacing.spacing4,
     borderRadius: theme.spacing.spacing3,
     alignItems: 'center',
   },
   confirmButtonText: {
     fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.semibold,
+    fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.white,
   },
 });
