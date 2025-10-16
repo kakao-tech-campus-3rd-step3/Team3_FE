@@ -6,6 +6,8 @@ export const AUTH_API = {
   REGISTER: '/api/auth/register',
   VERIFY_EMAIL: '/api/auth/verify-email',
   SEND_VERIFICATION: '/api/auth/send-verification',
+  SEND_CODE: '/api/auth/signup/email/send-code',
+  VERIFY_CODE: '/api/auth/signup/email/verify-code',
 };
 
 export const PASSWORD_RESET_API = {
@@ -94,6 +96,8 @@ export const MATCH_REQUEST_API = {
   CANCEL_REQUEST: (requestId: string | number) =>
     `/api/matches/requests/${requestId}`,
   GET_MY_APPLIED_MATCHES: '/api/matches/requests/me',
+  GET_ENEMY_TEAM: (matchId: string | number) =>
+    `/api/matches/${matchId}/enemyTeam`,
 };
 
 export const USER_JOIN_WAITING_API = {

@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, BackHandler } from 'react-native';
 
 import { colors } from '@/src/theme';
 
@@ -147,6 +147,24 @@ export default function MatchRequestsModal({
       </View>
     );
   };
+
+  // 뒤로가기 버튼 활성화
+  useEffect(() => {
+    const backAction = () => {
+      if (visible) {
+        onClose();
+        return true;
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [visible, onClose]);
 
   return (
     <RequestManagementModal

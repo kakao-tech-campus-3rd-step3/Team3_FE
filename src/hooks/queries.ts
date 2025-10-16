@@ -26,6 +26,7 @@ import type {
   TeamType,
   VerifyCodeRequest,
   ResetPasswordRequest,
+  VerifyCodeRequestSignup,
 } from '@/src/types';
 
 export const queries = {
@@ -58,6 +59,14 @@ export const queries = {
   resetPassword: {
     key: ['resetPassword'] as const,
     fn: (data: ResetPasswordRequest) => api.passwordResetApi.confirm(data),
+  },
+  sendCode: {
+    key: ['sendCode'] as const,
+    fn: (email: string) => api.authApi.sendCode(email),
+  },
+  verifyCodeSignup: {
+    key: ['verifyCodeSignup'] as const,
+    fn: (data: VerifyCodeRequestSignup) => api.authApi.verifyCode(data),
   },
   userProfile: {
     key: ['user', 'profile'] as const,
@@ -133,22 +142,22 @@ export const queries = {
 } as const;
 
 export function useUserProfile() {
-  const { token } = useAuth();
+  const { token, isInitialized } = useAuth();
 
   return useQuery({
     queryKey: queries.userProfile.key,
     queryFn: queries.userProfile.fn,
-    enabled: !!token,
+    enabled: !!token && isInitialized,
   });
 }
 
 export function useTeamMatchRequests() {
-  const { token } = useAuth();
+  const { token, isInitialized } = useAuth();
 
   return useQuery({
     queryKey: queries.teamMatchRequests.key,
     queryFn: queries.teamMatchRequests.fn,
-    enabled: !!token,
+    enabled: !!token && isInitialized,
   });
 }
 
@@ -391,6 +400,25 @@ export function useResetPasswordMutation() {
     mutationFn: queries.resetPassword.fn,
     onError: (error: unknown) => {
       console.error('비밀번호 변경 실패:', error);
+    },
+  });
+}
+
+// 회원가입 이메일 인증 관련 훅
+export function useSendCodeMutation() {
+  return useMutation({
+    mutationFn: queries.sendCode.fn,
+    onError: (error: unknown) => {
+      console.error('인증번호 발송 실패:', error);
+    },
+  });
+}
+
+export function useVerifyCodeSignupMutation() {
+  return useMutation({
+    mutationFn: queries.verifyCodeSignup.fn,
+    onError: (error: unknown) => {
+      console.error('인증코드 검증 실패:', error);
     },
   });
 }

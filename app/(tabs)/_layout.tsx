@@ -7,11 +7,8 @@ import { useAuth } from '@/src/contexts/auth_context';
 import { theme } from '@/src/theme';
 
 export default function TabLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return null;
-  }
+  const { token } = useAuth();
+  const isAuthenticated = !!token;
 
   if (!isAuthenticated) {
     return <Redirect href="/(auth)/login" />;
@@ -48,6 +45,21 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? 'home' : 'home-outline'}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="match-info"
+        options={{
+          title: '매치 정보',
+          headerTitle: '매치 정보',
+          headerShown: true,
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'calendar' : 'calendar-outline'}
               size={size}
               color={color}
             />

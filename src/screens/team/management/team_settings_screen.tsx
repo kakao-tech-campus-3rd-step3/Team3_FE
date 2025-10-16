@@ -12,6 +12,7 @@ import ManageSection from '@/src/components/team/sections/manage_section';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { LoadingState } from '@/src/components/ui/loading_state';
+import { ROUTES } from '@/src/constants/routes';
 import {
   useTeamJoinWaitingList,
   useTeamMembers,
@@ -32,7 +33,10 @@ export default function TeamSettingsScreen({
 }: TeamSettingsScreenProps) {
   const [showJoinRequestsModal, setShowJoinRequestsModal] = useState(false);
   const [showMatchRequestsModal, setShowMatchRequestsModal] = useState(false);
+  const [matchAccepted, setMatchAccepted] = useState(false);
+  const [acceptedMatchId, setAcceptedMatchId] = useState<number | null>(null);
   const { data: userProfile } = useUserProfile();
+
   const deleteTeamMutation = useDeleteTeamMutation();
 
   const numericTeamId = teamId ? Number(teamId) : 0;
@@ -86,6 +90,26 @@ export default function TeamSettingsScreen({
       );
     }
   }, [currentUserMember, canManageTeam, numericTeamId]);
+
+  // 모달 닫힌 후 alert 실행행
+  useEffect(() => {
+    if (!showMatchRequestsModal && matchAccepted && acceptedMatchId) {
+      // 모달이 실제로 언마운트된 이후 실행
+      requestAnimationFrame(() => {
+        Alert.alert('성공', '매치가 성사되었습니다!', [
+          {
+            text: '확인',
+            onPress: () => {
+              router.push(`${ROUTES.MATCH_SET}?matchId=${acceptedMatchId}`);
+              setMatchAccepted(false);
+              setAcceptedMatchId(null);
+            },
+          },
+        ]);
+        setMatchAccepted(false);
+      });
+    }
+  }, [showMatchRequestsModal, matchAccepted, acceptedMatchId]);
 
   if (!teamId || teamId === null || teamId === undefined) {
     return (
@@ -189,13 +213,20 @@ export default function TeamSettingsScreen({
         onPress: async () => {
           try {
             if (status === 'approved') {
-              await acceptMatchRequestApi(requestId);
+              // ✅ 1️⃣ 매치 요청 수락 API 호출 → matchId 반환
+              const response = await acceptMatchRequestApi(requestId);
+              const { matchId } = response;
+
+              // ✅ 2️⃣ matchId 저장 → 모달 닫힘 트리거
+              setAcceptedMatchId(matchId);
+              setMatchAccepted(true);
+              setShowMatchRequestsModal(false);
             } else {
               await rejectMatchRequestApi(requestId);
+              Alert.alert('성공', `매치 요청을 ${action}했습니다.`);
             }
 
-            Alert.alert('성공', `매치 요청을 ${action}했습니다.`);
-            refetchMatchRequests(); // 매치 요청 목록 새로고침
+            refetchMatchRequests();
           } catch {
             Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
           }

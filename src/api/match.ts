@@ -17,7 +17,9 @@ import {
   MatchWaitingListRequestDto,
   MatchWaitingCancelResponseDto,
   MatchWaitingHistoryResponseDto,
+  EnemyTeamResponseDto,
 } from '@/src/types/match';
+import { convertKSTToUTCTime } from '@/src/utils/timezone';
 
 export const teamMatchApi = {
   getTeamMatches: (teamId: string | number) => {
@@ -97,7 +99,17 @@ export async function getMatchWaitingList(
   const queryParams = new URLSearchParams();
   queryParams.append('selectDate', params.selectDate);
 
-  queryParams.append('startTime', params.startTime || '00:00:00');
+  if (params.startTime && params.startTime.trim() !== '') {
+    const kstDateTime = new Date(`${params.selectDate}T${params.startTime}`);
+    if (isNaN(kstDateTime.getTime())) {
+      queryParams.append('startTime', '00:00:00');
+    } else {
+      const utcTime = convertKSTToUTCTime(kstDateTime);
+      queryParams.append('startTime', utcTime);
+    }
+  } else {
+    queryParams.append('startTime', '00:00:00');
+  }
 
   const url = `${MATCH_WAITING_API.GET_WAITING_LIST}?${queryParams.toString()}`;
 
@@ -115,7 +127,6 @@ export async function getMatchWaitingList(
 
   try {
     const response = await apiClient.get<PageResponse>(url);
-
     return response.content || [];
   } catch (error) {
     console.error('🌐 [API] getMatchWaitingList 에러:', error);
@@ -189,3 +200,10 @@ export async function cancelMatchRequestById(
     throw error;
   }
 }
+
+export const getEnemyTeam = async (matchId: number | string) => {
+  const response = await apiClient.get<EnemyTeamResponseDto>(
+    MATCH_REQUEST_API.GET_ENEMY_TEAM(matchId)
+  );
+  return response;
+};

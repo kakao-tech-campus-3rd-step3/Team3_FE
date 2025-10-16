@@ -3,12 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 import { getMatchWaitingList } from '@/src/api/match';
 import { RecommendedMatch } from '@/src/types/home';
 import { MatchWaitingResponseDto } from '@/src/types/match';
+import { formatDateForAPI } from '@/src/utils/date';
 
 import { useUserProfile } from './queries';
 
 const fetchWaitingMatches = async (): Promise<MatchWaitingResponseDto[]> => {
   const today = new Date();
-  const todayString = today.toISOString().split('T')[0];
+  const todayString = formatDateForAPI(today);
 
   try {
     let result = await getMatchWaitingList({
@@ -19,7 +20,7 @@ const fetchWaitingMatches = async (): Promise<MatchWaitingResponseDto[]> => {
     if (result.length === 0) {
       const tomorrow = new Date(today);
       tomorrow.setDate(today.getDate() + 1);
-      const tomorrowString = tomorrow.toISOString().split('T')[0];
+      const tomorrowString = formatDateForAPI(tomorrow);
 
       const tomorrowResult = await getMatchWaitingList({
         selectDate: tomorrowString,
@@ -31,9 +32,7 @@ const fetchWaitingMatches = async (): Promise<MatchWaitingResponseDto[]> => {
       if (tomorrowResult.length === 0) {
         const dayAfterTomorrow = new Date(today);
         dayAfterTomorrow.setDate(today.getDate() + 2);
-        const dayAfterTomorrowString = dayAfterTomorrow
-          .toISOString()
-          .split('T')[0];
+        const dayAfterTomorrowString = formatDateForAPI(dayAfterTomorrow);
 
         const dayAfterTomorrowResult = await getMatchWaitingList({
           selectDate: dayAfterTomorrowString,

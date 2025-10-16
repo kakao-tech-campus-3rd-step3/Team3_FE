@@ -66,7 +66,7 @@ export const styles = StyleSheet.create({
   },
 
   filterButtonText: {
-    fontSize: theme.typography.fontSize.font3,
+    fontSize: theme.typography.fontSize.font2,
     color: theme.colors.blue[600],
     fontWeight: theme.typography.fontWeight.medium,
   },

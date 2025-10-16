@@ -10,7 +10,7 @@ import { RecommendedMatch } from '@/src/types/home';
 import { styles } from './styles';
 
 interface SafeMatchPreviewProps {
-  onMatchPress?: (matchId: number, matchDate?: string) => void;
+  onMatchPress?: (matchDate?: string) => void;
 }
 
 function SafeMatchPreview({ onMatchPress }: SafeMatchPreviewProps) {
@@ -21,7 +21,7 @@ function SafeMatchPreview({ onMatchPress }: SafeMatchPreviewProps) {
     <TouchableOpacity
       key={`${match.id}-${index}`}
       activeOpacity={0.8}
-      onPress={() => onMatchPress?.(match.id, match.matchDate)}
+      onPress={() => onMatchPress?.(match.matchDate)}
       style={styles.cardTouchable}
     >
       <View style={styles.card}>

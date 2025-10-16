@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef } from 'react';
 import { ScrollView, View, ActivityIndicator, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ROUTES } from '@/src/constants/routes';
 import { useUserProfile, useLogout } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 
@@ -69,15 +68,13 @@ export default function HomeScreen() {
     }
   }, [error, handleErrorAlert]);
 
-  const handleMatchPress = useCallback(
-    (matchId: number, matchDate?: string) => {
-      const params = matchDate
-        ? `?waitingId=${matchId}&date=${matchDate}`
-        : `?waitingId=${matchId}`;
-      router.push(`${ROUTES.MATCH_APPLICATION}${params}`);
-    },
-    []
-  );
+  const handleMatchPress = useCallback((matchDate?: string) => {
+    if (matchDate) {
+      router.push(`/(tabs)/match-info?date=${encodeURIComponent(matchDate)}`);
+    } else {
+      router.push('/(tabs)/match-info');
+    }
+  }, []);
 
   if (isLoading) {
     return (

@@ -12,8 +12,6 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import { Dropdown } from '@/src/components/dropdown';
-import { EMAIL_DOMAINS } from '@/src/constants/email_domains';
 import { EXTERNAL_LINKS } from '@/src/constants/external_links';
 import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 import {
@@ -42,8 +40,6 @@ export function AccountSetup({
 }: Props) {
   const { width } = useWindowDimensions();
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const [emailId, setEmailId] = useState<string>('');
-  const [emailDomain, setEmailDomain] = useState<string>('naver.com');
   const { errors, validateField } = useRegisterValidation(
     accountValidationRules
   );
@@ -64,24 +60,6 @@ export function AccountSetup({
       fontSize: Math.max(14, width * 0.04),
       color: theme.colors.text.main,
       backgroundColor: theme.colors.background.input,
-    },
-    emailInput: {
-      flex: 1.2,
-      borderWidth: 1,
-      borderColor: theme.colors.border.input,
-      borderRadius: Math.max(8, width * 0.02),
-      paddingHorizontal: Math.max(16, width * 0.04),
-      paddingVertical: Math.max(12, width * 0.03),
-      fontSize: Math.max(14, width * 0.04),
-      color: theme.colors.text.main,
-      backgroundColor: theme.colors.background.input,
-      height: Math.max(48, width * 0.12),
-    },
-    atSymbol: {
-      fontSize: Math.max(14, width * 0.04),
-      color: theme.colors.text.main,
-      fontWeight: 'bold',
-      paddingHorizontal: Math.max(8, width * 0.02),
     },
     errorText: {
       color: theme.colors.red[500],
@@ -111,20 +89,6 @@ export function AccountSetup({
     },
   });
 
-  const handleEmailIdChange = (value: string) => {
-    setEmailId(value);
-    const fullEmail = value && emailDomain ? `${value}@${emailDomain}` : '';
-    onChange('email', fullEmail);
-    validateField('email', fullEmail, data);
-  };
-
-  const handleEmailDomainChange = (value: string) => {
-    setEmailDomain(value);
-    const fullEmail = emailId && value ? `${emailId}@${value}` : '';
-    onChange('email', fullEmail);
-    validateField('email', fullEmail, data);
-  };
-
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
     onChange(field, value);
     const updatedData = { ...data, [field]: value };
@@ -136,9 +100,6 @@ export function AccountSetup({
   };
 
   const isValid = useMemo(() => {
-    const emailValid =
-      data.email &&
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(data.email);
     const passwordValid = !errors.password && data.password;
     const confirmPasswordValid =
       !errors.confirmPassword && data.confirmPassword;
@@ -146,11 +107,7 @@ export function AccountSetup({
     const privacyAgreed = data.privacyAgreed;
 
     return (
-      emailValid &&
-      passwordValid &&
-      confirmPasswordValid &&
-      termsAgreed &&
-      privacyAgreed
+      passwordValid && confirmPasswordValid && termsAgreed && privacyAgreed
     );
   }, [data, errors]);
 
@@ -164,39 +121,6 @@ export function AccountSetup({
           keyboardShouldPersistTaps="handled"
           enableOnAndroid={true}
         >
-          <View style={styles.inputGroup}>
-            <Text style={dynamicStyles.label}>이메일</Text>
-            <View style={styles.emailContainer}>
-              <TextInput
-                style={[
-                  dynamicStyles.emailInput,
-                  (focusedField === 'emailId' || emailId) && styles.inputFilled,
-                  errors.email && styles.inputError,
-                ]}
-                placeholder="아이디"
-                value={emailId}
-                onChangeText={handleEmailIdChange}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                onFocus={() => setFocusedField('emailId')}
-                onBlur={() => setFocusedField(null)}
-              />
-              <Text style={dynamicStyles.atSymbol}>@</Text>
-              <View style={styles.domainDropdown}>
-                <Dropdown
-                  items={EMAIL_DOMAINS}
-                  value={emailDomain}
-                  onChange={handleEmailDomainChange}
-                  placeholder="도메인"
-                />
-              </View>
-            </View>
-            {errors.email && (
-              <Text style={dynamicStyles.errorText}>{errors.email}</Text>
-            )}
-          </View>
-
           <View style={styles.inputGroup}>
             <Text style={dynamicStyles.label}>비밀번호</Text>
             <TextInput
@@ -354,33 +278,6 @@ const styles = StyleSheet.create({
   },
   inputError: {
     borderColor: theme.colors.red[500],
-  },
-  emailContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.spacing1,
-  },
-  emailInput: {
-    flex: 1.2,
-    borderWidth: 1,
-    borderColor: theme.colors.border.input,
-    borderRadius: 8,
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    backgroundColor: theme.colors.background.input,
-    height: 48,
-  },
-  atSymbol: {
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    fontWeight: theme.typography.fontWeight.bold,
-    paddingHorizontal: theme.spacing.spacing2,
-  },
-  domainDropdown: {
-    flex: 1.8,
-    height: 48,
   },
   errorText: {
     color: theme.colors.red[500],
