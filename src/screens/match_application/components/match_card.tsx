@@ -231,7 +231,6 @@ export default function MatchCard({
               styles.requestButton,
               (disabled || isAlreadyApplied) && styles.requestButtonDisabled,
               isCancellable && { backgroundColor: theme.colors.red[600] },
-              isAlreadyApplied && { backgroundColor: theme.colors.gray[400] },
             ]}
           >
             <Text style={styles.requestButtonText}>
