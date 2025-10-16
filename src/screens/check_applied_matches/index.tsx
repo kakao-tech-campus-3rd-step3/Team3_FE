@@ -7,6 +7,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   Alert,
+  Modal,
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
@@ -19,6 +20,7 @@ import { styles } from '@/src/screens/match_application/match_application_style'
 
 export default function CheckAppliedMatchesScreen() {
   const [refreshing, setRefreshing] = useState(false);
+  const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const [selectedMatchId, setSelectedMatchId] = useState<number | null>(null);
 
   const { refetch: refetchProfile } = useUserProfile();
@@ -38,45 +40,40 @@ export default function CheckAppliedMatchesScreen() {
     setSelectedMatchId(null);
   }, [refetchProfile, refetchMatches]);
 
-  const handleSelect = (id: number) => {
-    setSelectedMatchId(prev => (prev === id ? null : id));
+  const handleCancelPress = (id: number) => {
+    setSelectedMatchId(id);
+    setCancelModalVisible(true);
   };
 
-  // ✅ 취소 버튼 클릭 핸들러
-  const handleCancel = () => {
-    if (!selectedMatchId) return;
-
-    Alert.alert(
-      '매치 요청 취소',
-      '이 매치 요청을 정말 취소하시겠습니까?',
-      [
-        { text: '아니요', style: 'cancel' },
-        {
-          text: '예',
-          style: 'destructive',
-          onPress: () => {
-            cancelRequest(selectedMatchId, {
-              onSuccess: () => {
-                Alert.alert('✅ 성공', '매치 요청이 취소되었습니다.');
-                refetchMatches();
-                setSelectedMatchId(null);
-              },
-              onError: () => {
-                Alert.alert('❌ 실패', '요청 취소 중 오류가 발생했습니다.');
-              },
-            });
-          },
+  const handleCancelConfirm = () => {
+    if (selectedMatchId) {
+      cancelRequest(selectedMatchId, {
+        onSuccess: () => {
+          Alert.alert('성공', '매치 요청이 취소되었습니다.');
+          setCancelModalVisible(false);
+          setSelectedMatchId(null);
+          refetchMatches();
         },
-      ],
-      { cancelable: true }
-    );
+        onError: error => {
+          Alert.alert(
+            '오류',
+            error.message || '매치 요청 취소 중 문제가 발생했습니다.'
+          );
+        },
+      });
+    }
+  };
+
+  const handleCancelModalClose = () => {
+    setCancelModalVisible(false);
+    setSelectedMatchId(null);
   };
 
   const renderMatchCard = ({ item }: { item: any }) => (
     <AppliedMatchCard
       match={item}
-      onSelect={handleSelect}
-      isSelected={selectedMatchId === item.requestId}
+      onCancel={handleCancelPress}
+      isCanceling={isPending && selectedMatchId === item.requestId}
     />
   );
 
@@ -122,19 +119,38 @@ export default function CheckAppliedMatchesScreen() {
         )}
       </ScrollView>
 
-      {selectedMatchId && (
-        <View style={checkAppliedMatchesStyles.footer}>
-          <TouchableOpacity
-            style={checkAppliedMatchesStyles.cancelButton}
-            onPress={handleCancel}
-            disabled={isPending}
-          >
-            <Text style={checkAppliedMatchesStyles.cancelText}>
-              {isPending ? '취소 중...' : '매치 요청 취소하기'}
+      <Modal
+        visible={cancelModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={handleCancelModalClose}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>매치 요청 취소</Text>
+            <Text style={styles.modalMessage}>
+              이 매치 요청을 정말 취소하시겠습니까?
             </Text>
-          </TouchableOpacity>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelModalButton]}
+                onPress={handleCancelModalClose}
+              >
+                <Text style={styles.cancelModalButtonText}>아니요</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.confirmModalButton]}
+                onPress={handleCancelConfirm}
+                disabled={isPending}
+              >
+                <Text style={styles.confirmModalButtonText}>
+                  {isPending ? '취소 중...' : '예'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      )}
+      </Modal>
     </View>
   );
 }

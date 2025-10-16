@@ -369,4 +369,70 @@ export const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.font2,
     fontWeight: theme.typography.fontWeight.semibold,
   },
+
+  // 모달 스타일
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.spacing4,
+  },
+  modalContent: {
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.spacing.spacing4,
+    padding: theme.spacing.spacing6,
+    width: '100%',
+    maxWidth: 400,
+    alignItems: 'center',
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  modalTitle: {
+    fontSize: theme.typography.fontSize.font5,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.gray[900],
+    textAlign: 'center',
+    marginBottom: theme.spacing.spacing3,
+  },
+  modalMessage: {
+    fontSize: theme.typography.fontSize.font3,
+    color: theme.colors.gray[600],
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: theme.spacing.spacing5,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    gap: theme.spacing.spacing3,
+    width: '100%',
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: theme.spacing.spacing4,
+    borderRadius: theme.spacing.spacing3,
+    alignItems: 'center',
+  },
+  cancelModalButton: {
+    backgroundColor: theme.colors.gray[200],
+  },
+  confirmModalButton: {
+    backgroundColor: theme.colors.red[600],
+  },
+  cancelModalButtonText: {
+    color: theme.colors.gray[700],
+    fontSize: theme.typography.fontSize.font4,
+    fontWeight: theme.typography.fontWeight.semibold,
+  },
+  confirmModalButtonText: {
+    color: theme.colors.white,
+    fontSize: theme.typography.fontSize.font4,
+    fontWeight: theme.typography.fontWeight.semibold,
+  },
 });

@@ -159,7 +159,13 @@ export default function MatchInfoScreen() {
               }}
             >
               <Text style={style.dateTimeLabel}>날짜</Text>
-              <Text style={style.dateTimeValue}>{formatKoreanDate(date)}</Text>
+              <Text style={style.dateTimeValue} numberOfLines={1}>
+                {date.toLocaleDateString('ko-KR', {
+                  month: 'short',
+                  day: 'numeric',
+                  weekday: 'short',
+                })}
+              </Text>
             </TouchableOpacity>
 
             <View style={style.timeRow}>
@@ -168,9 +174,9 @@ export default function MatchInfoScreen() {
                 onPress={() => setShowTimeStartPicker(true)}
               >
                 <Text style={style.timeLabel}>시작</Text>
-                <Text style={style.timeValue}>
+                <Text style={style.timeValue} numberOfLines={1}>
                   {timeStart.toLocaleTimeString('ko-KR', {
-                    hour: '2-digit',
+                    hour: 'numeric',
                     minute: '2-digit',
                     hour12: false,
                   })}
@@ -182,9 +188,9 @@ export default function MatchInfoScreen() {
                 onPress={() => setShowTimeEndPicker(true)}
               >
                 <Text style={style.timeLabel}>종료</Text>
-                <Text style={style.timeValue}>
+                <Text style={style.timeValue} numberOfLines={1}>
                   {timeEnd.toLocaleTimeString('ko-KR', {
-                    hour: '2-digit',
+                    hour: 'numeric',
                     minute: '2-digit',
                     hour12: false,
                   })}
@@ -232,22 +238,25 @@ export default function MatchInfoScreen() {
           <Message value={message} onChange={setMessage} />
         </View>
 
+        <View style={style.submitButtonContainer}>
+          <TouchableOpacity
+            style={[
+              style.submitButton,
+              isPending && style.submitButtonDisabled,
+            ]}
+            onPress={onSubmit}
+            disabled={isPending}
+          >
+            <Text style={style.submitButtonText}>
+              {isPending ? '등록 중...' : '매치 등록하기'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={style.bottomSpacing} />
       </ScrollView>
 
-      <View style={style.fixedBottomBar}>
-        <TouchableOpacity
-          style={[style.submitButton, isPending && style.submitButtonDisabled]}
-          onPress={onSubmit}
-          disabled={isPending}
-        >
-          <Text style={style.submitButtonText}>
-            {isPending ? '등록 중...' : '매치 등록하기'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <Modal visible={stadiumModalVisible} transparent animationType="slide">
+      <Modal visible={stadiumModalVisible} transparent animationType="fade">
         <TouchableOpacity
           style={style.modalWrap}
           activeOpacity={1}
@@ -285,6 +294,8 @@ export default function MatchInfoScreen() {
                     </Text>
                   </TouchableOpacity>
                 )}
+                style={{ maxHeight: 300 }}
+                showsVerticalScrollIndicator={true}
               />
             )}
             <TouchableOpacity
