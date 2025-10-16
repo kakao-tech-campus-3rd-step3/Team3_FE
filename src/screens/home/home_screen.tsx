@@ -71,10 +71,8 @@ export default function HomeScreen() {
 
   const handleMatchPress = useCallback(
     (matchId: number, matchDate?: string) => {
-      const params = matchDate
-        ? `?waitingId=${matchId}&date=${matchDate}`
-        : `?waitingId=${matchId}`;
-      router.push(`${ROUTES.MATCH_APPLICATION}${params}`);
+      // 매치 정보 탭으로 이동
+      router.push('/(tabs)/match-info');
     },
     []
   );
