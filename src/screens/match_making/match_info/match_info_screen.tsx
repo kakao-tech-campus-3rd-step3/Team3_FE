@@ -28,6 +28,7 @@ import {
   formatDateForAPI,
   formatTimeForAPI,
 } from '@/src/utils/date';
+import { convertKSTToUTCTime } from '@/src/utils/timezone';
 
 import { style } from './match_info_style';
 
@@ -107,24 +108,11 @@ export default function MatchInfoScreen() {
       return;
     }
 
-    const convertKSTToUTC = (kstTime: Date): string => {
-      const hours = kstTime.getHours();
-      const minutes = kstTime.getMinutes();
-      const seconds = kstTime.getSeconds();
-
-      let utcHours = hours - 9;
-      if (utcHours < 0) {
-        utcHours += 24;
-      }
-
-      return `${String(utcHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    };
-
     const payload: MatchCreateRequestDto = {
       teamId: numericTeamId,
       preferredDate: formatDateForAPI(date),
-      preferredTimeStart: convertKSTToUTC(timeStart),
-      preferredTimeEnd: convertKSTToUTC(timeEnd),
+      preferredTimeStart: convertKSTToUTCTime(timeStart),
+      preferredTimeEnd: convertKSTToUTCTime(timeEnd),
       preferredVenueId: selectedStadium.venueId || 1,
       skillLevelMin: skillMin,
       skillLevelMax: skillMax,
