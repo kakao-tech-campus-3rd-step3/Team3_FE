@@ -14,6 +14,7 @@ type MatchCardProps = {
   disabled?: boolean;
   showStatus?: boolean;
   isCancellable?: boolean;
+  isAlreadyApplied?: boolean;
 };
 
 export default function MatchCard({
@@ -22,6 +23,7 @@ export default function MatchCard({
   disabled,
   showStatus = false,
   isCancellable = false,
+  isAlreadyApplied = false,
 }: MatchCardProps) {
   const [venueMap, setVenueMap] = useState<Record<number, string>>({});
 
@@ -224,19 +226,21 @@ export default function MatchCard({
         {!['CANCELED'].includes(match?.status?.toUpperCase?.() || '') && (
           <TouchableOpacity
             onPress={onPressRequest}
-            disabled={disabled}
+            disabled={disabled || isAlreadyApplied}
             style={[
               styles.requestButton,
-              disabled && styles.requestButtonDisabled,
+              (disabled || isAlreadyApplied) && styles.requestButtonDisabled,
               isCancellable && { backgroundColor: theme.colors.red[600] },
             ]}
           >
             <Text style={styles.requestButtonText}>
               {disabled
                 ? '요청 중...'
-                : isCancellable
-                  ? '취소하기'
-                  : '신청하기'}
+                : isAlreadyApplied
+                  ? '신청됨'
+                  : isCancellable
+                    ? '취소하기'
+                    : '신청하기'}
             </Text>
           </TouchableOpacity>
         )}
