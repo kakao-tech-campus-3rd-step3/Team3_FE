@@ -60,7 +60,7 @@ export default function MatchInfoScreen() {
   const { data: appliedMatches, refetch: refetchAppliedMatches } =
     useMyAppliedMatches();
 
-  const isAlreadyApplied = (waitingId: number, teamId: number) => {
+  const isAlreadyApplied = (teamId: number) => {
     if (!appliedMatches) return false;
 
     return appliedMatches.some(
@@ -122,7 +122,7 @@ export default function MatchInfoScreen() {
       match={item}
       onPressRequest={() => handlePressRequest(item.waitingId)}
       disabled={isPending}
-      isAlreadyApplied={isAlreadyApplied(item.waitingId, item.teamId)}
+      isAlreadyApplied={isAlreadyApplied(item.teamId)}
     />
   );
 
