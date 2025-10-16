@@ -14,7 +14,6 @@ import { CustomHeader } from '@/src/components/ui/custom_header';
 import { useUserProfile } from '@/src/hooks/queries';
 import { useCancelMatchRequest } from '@/src/hooks/useCancelMatchRequest';
 import { useMyAppliedMatches } from '@/src/hooks/useMyAppliedMatches';
-import { checkAppliedMatchesStyles } from '@/src/screens/check_applied_matches/check_applied_matches_style';
 import AppliedMatchCard from '@/src/screens/check_applied_matches/components/applied_match_card';
 import { styles } from '@/src/screens/match_application/match_application_style';
 
