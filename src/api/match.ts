@@ -1,5 +1,3 @@
-import { fromZonedTime } from 'date-fns-tz';
-
 import {
   TEAM_MATCH_API,
   MATCH_CREATE_API,
@@ -21,6 +19,7 @@ import {
   MatchWaitingHistoryResponseDto,
   EnemyTeamResponseDto,
 } from '@/src/types/match';
+import { convertKSTToUTCTime } from '@/src/utils/timezone';
 
 export const teamMatchApi = {
   getTeamMatches: (teamId: string | number) => {
@@ -101,15 +100,11 @@ export async function getMatchWaitingList(
   queryParams.append('selectDate', params.selectDate);
 
   if (params.startTime && params.startTime.trim() !== '') {
-    const kstTime = params.startTime;
-    const [hours, minutes, seconds] = kstTime.split(':').map(Number);
+    const kstTime = new Date();
+    const [hours, minutes, seconds] = params.startTime.split(':').map(Number);
+    kstTime.setHours(hours, minutes, seconds, 0);
 
-    let utcHours = hours - 9;
-    if (utcHours < 0) {
-      utcHours += 24;
-    }
-
-    const utcTime = `${String(utcHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const utcTime = convertKSTToUTCTime(kstTime);
     queryParams.append('startTime', utcTime);
   } else {
     queryParams.append('startTime', '00:00:00');
