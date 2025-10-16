@@ -36,7 +36,6 @@ export default function MatchInfoScreen() {
   const { mutate: createMatch, isPending } = useCreateMatch();
   const { data: venues, isLoading, error } = useVenues();
 
-  const [stadiumQuery, setStadiumQuery] = useState('');
   const [stadiumModalVisible, setStadiumModalVisible] = useState(false);
   const [selectedStadium, setSelectedStadium] = useState<Venue | null>(null);
 
@@ -63,10 +62,6 @@ export default function MatchInfoScreen() {
   const [universityOnly, setUniversityOnly] = useState(false);
   const [message, setMessage] = useState('');
   const [successModalVisible, setSuccessModalVisible] = useState(false);
-
-  const filteredStadiums = (venues ?? []).filter(s =>
-    s.venueName.toLowerCase().includes(stadiumQuery.toLowerCase())
-  );
 
   const onSelectStadium = (venue: Venue) => {
     setSelectedStadium(venue);
@@ -268,20 +263,13 @@ export default function MatchInfoScreen() {
             onPress={e => e.stopPropagation()}
           >
             <Text style={style.modalTitle}>경기장 선택</Text>
-            <TextInput
-              style={style.searchInput}
-              placeholder="경기장 검색"
-              placeholderTextColor="#9CA3AF"
-              value={stadiumQuery}
-              onChangeText={setStadiumQuery}
-            />
             {isLoading ? (
               <Text>불러오는 중...</Text>
             ) : error ? (
               <Text>에러 발생: {error.message}</Text>
             ) : (
               <FlatList
-                data={filteredStadiums}
+                data={venues ?? []}
                 keyExtractor={item => String(item.venueId)}
                 renderItem={({ item }) => (
                   <TouchableOpacity
