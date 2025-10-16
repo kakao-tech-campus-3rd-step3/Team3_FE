@@ -2,6 +2,7 @@ import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React, { Suspense } from 'react';
 import { ActivityIndicator, View } from 'react-native';
@@ -11,6 +12,8 @@ import 'react-native-reanimated';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { AuthProvider, useAuth } from '@/src/contexts/auth_context';
 import { queryClient } from '@/src/lib/query_client';
+
+SplashScreen.preventAutoHideAsync();
 
 function AppContent() {
   const [loaded] = useFonts({

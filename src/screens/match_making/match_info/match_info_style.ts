@@ -13,7 +13,7 @@ export const style = StyleSheet.create({
   },
   scrollContent: {
     padding: theme.spacing.spacing4,
-    paddingBottom: 60,
+    paddingBottom: 20,
   },
 
   card: {
@@ -82,7 +82,7 @@ export const style = StyleSheet.create({
     marginBottom: theme.spacing.spacing1,
   },
   dateTimeValue: {
-    fontSize: theme.typography.fontSize.font3,
+    fontSize: theme.typography.fontSize.font2,
     color: theme.colors.gray[800],
     fontWeight: theme.typography.fontWeight.semibold,
   },
@@ -93,13 +93,14 @@ export const style = StyleSheet.create({
   },
   timeButton: {
     flex: 1,
-    paddingVertical: theme.spacing.spacing3,
-    paddingHorizontal: theme.spacing.spacing3,
+    paddingVertical: theme.spacing.spacing2,
+    paddingHorizontal: theme.spacing.spacing2,
     backgroundColor: theme.colors.gray[50],
     borderRadius: theme.spacing.spacing3,
     borderWidth: 1,
     borderColor: theme.colors.gray[200],
     alignItems: 'center',
+    minHeight: 60,
   },
   timeButtonLeft: {
     borderTopRightRadius: 0,
@@ -116,7 +117,7 @@ export const style = StyleSheet.create({
     marginBottom: theme.spacing.spacing1,
   },
   timeValue: {
-    fontSize: theme.typography.fontSize.font3,
+    fontSize: theme.typography.fontSize.font2,
     color: theme.colors.gray[800],
     fontWeight: theme.typography.fontWeight.semibold,
   },
@@ -189,31 +190,18 @@ export const style = StyleSheet.create({
     height: theme.spacing.spacing6,
   },
 
-  fixedBottomBar: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    paddingHorizontal: theme.spacing.spacing4,
+  submitButtonContainer: {
     paddingVertical: theme.spacing.spacing4,
-    backgroundColor: theme.colors.white,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.gray[200],
-    shadowColor: theme.colors.gray[900],
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
+    marginBottom: theme.spacing.spacing4,
   },
+
   submitButton: {
     height: 56,
     borderRadius: theme.spacing.spacing4,
     backgroundColor: theme.colors.blue[600],
     alignItems: 'center',
     justifyContent: 'center',
+    marginHorizontal: theme.spacing.spacing1,
     shadowColor: theme.colors.blue[600],
     shadowOffset: {
       width: 0,
@@ -237,14 +225,25 @@ export const style = StyleSheet.create({
   modalWrap: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.spacing4,
   },
   modalContent: {
     backgroundColor: theme.colors.white,
-    borderTopLeftRadius: theme.spacing.spacing4,
-    borderTopRightRadius: theme.spacing.spacing4,
+    borderRadius: theme.spacing.spacing4,
     padding: theme.spacing.spacing4,
+    width: '100%',
+    maxWidth: 400,
     maxHeight: '80%',
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
   modalTitle: {
     fontSize: theme.typography.fontSize.font5,

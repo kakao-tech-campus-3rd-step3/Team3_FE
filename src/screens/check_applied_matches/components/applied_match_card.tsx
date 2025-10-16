@@ -8,12 +8,16 @@ interface AppliedMatchCardProps {
   match: MatchWaitingHistoryResponseDto;
   onSelect?: (id: number) => void;
   isSelected?: boolean;
+  onCancel?: (id: number) => void;
+  isCanceling?: boolean;
 }
 
 export default function AppliedMatchCard({
   match,
   onSelect,
   isSelected = false,
+  onCancel,
+  isCanceling = false,
 }: AppliedMatchCardProps) {
   const getName = (nameField: string | { name: string }) => {
     if (!nameField) return '알 수 없음';
@@ -86,6 +90,20 @@ export default function AppliedMatchCard({
           <Text style={styles.message}>{match.requestMessage}</Text>
         </View>
       </View>
+
+      {status === 'PENDING' && onCancel && (
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => onCancel(match.requestId)}
+            disabled={isCanceling}
+          >
+            <Text style={styles.cancelButtonText}>
+              {isCanceling ? '취소 중...' : '매치 요청 취소하기'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </TouchableOpacity>
   );
 }
@@ -145,5 +163,23 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: theme.colors.gray[700],
     lineHeight: 18,
+  },
+  footer: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.gray[200],
+  },
+  cancelButton: {
+    backgroundColor: theme.colors.red[600],
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: theme.colors.white,
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
