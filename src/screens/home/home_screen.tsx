@@ -70,10 +70,15 @@ export default function HomeScreen() {
 
   const handleMatchPress = useCallback(
     (matchId: number, matchDate?: string) => {
-      // 매치 정보 탭으로 이동
-      router.push('/(tabs)/match-info');
+      // 매치 정보 탭으로 이동하면서 날짜 파라미터 전달
+      if (matchDate) {
+        // preferredDate 형식 (YYYY-MM-DD)을 그대로 전달
+        router.push(`/(tabs)/match-info?date=${encodeURIComponent(matchDate)}`);
+      } else {
+        router.push('/(tabs)/match-info');
+      }
     },
-    []
+    [router]
   );
 
   if (isLoading) {
