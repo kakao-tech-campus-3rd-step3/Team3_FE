@@ -97,49 +97,25 @@ export async function rejectMatchRequestApi(
 export async function getMatchWaitingList(
   params: MatchWaitingListRequestDto
 ): Promise<MatchWaitingResponseDto[]> {
-  console.log('🌐 [API] getMatchWaitingList 파라미터:', params);
-
   const queryParams = new URLSearchParams();
   queryParams.append('selectDate', params.selectDate);
 
-  // DB에 UTC로 저장되어 있으므로 KST 시간을 UTC로 변환하여 전송
   if (params.startTime && params.startTime.trim() !== '') {
-    // KST 시간을 UTC로 변환
     const kstTime = params.startTime;
     const [hours, minutes, seconds] = kstTime.split(':').map(Number);
 
-    // KST에서 UTC로 변환 (KST = UTC + 9시간, 따라서 UTC = KST - 9시간)
     let utcHours = hours - 9;
     if (utcHours < 0) {
-      utcHours += 24; // 음수가 되면 24시간을 더함
+      utcHours += 24;
     }
 
     const utcTime = `${String(utcHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     queryParams.append('startTime', utcTime);
-    console.log('🌍 [시간대 변환] KST:', kstTime, '→ UTC:', utcTime);
   } else {
-    // 시간을 선택하지 않았을 때는 UTC 00:00:00 (KST 09:00:00)
     queryParams.append('startTime', '00:00:00');
-    console.log('🌍 [시간대 변환] 시간 미선택 시 UTC 00:00:00 사용');
   }
 
   const url = `${MATCH_WAITING_API.GET_WAITING_LIST}?${queryParams.toString()}`;
-  console.log('🌐 [API] 요청 URL:', url);
-
-  // 디버깅을 위해 다른 시간들도 테스트해보기
-  console.log('🔍 [디버깅] 다른 시간들로 테스트 요청:');
-  const testTimes = [
-    '00:00:00',
-    '01:00:00',
-    '12:00:00',
-    '14:00:00',
-    '15:00:00',
-    '20:00:00',
-  ];
-  for (const testTime of testTimes) {
-    const testUrl = `${MATCH_WAITING_API.GET_WAITING_LIST}?selectDate=${params.selectDate}&startTime=${testTime}`;
-    console.log(`  테스트 URL: ${testUrl}`);
-  }
 
   interface PageResponse {
     content: MatchWaitingResponseDto[];
@@ -155,25 +131,6 @@ export async function getMatchWaitingList(
 
   try {
     const response = await apiClient.get<PageResponse>(url);
-    console.log(
-      '🌐 [API] 응답 데이터:',
-      response.content?.length || 0,
-      '개 매치'
-    );
-    console.log('🌐 [API] 전체 응답:', JSON.stringify(response, null, 2));
-
-    if (response.content && response.content.length > 0) {
-      console.log('🌐 [API] 매치 상세 정보:');
-      response.content.forEach((match, index) => {
-        console.log(`  매치 ${index + 1}:`, {
-          preferredDate: match.preferredDate,
-          preferredTimeStart: match.preferredTimeStart,
-          preferredTimeEnd: match.preferredTimeEnd,
-          teamName: match.teamName,
-        });
-      });
-    }
-
     return response.content || [];
   } catch (error) {
     console.error('🌐 [API] getMatchWaitingList 에러:', error);
