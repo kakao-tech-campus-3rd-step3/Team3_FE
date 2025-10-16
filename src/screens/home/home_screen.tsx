@@ -68,16 +68,13 @@ export default function HomeScreen() {
     }
   }, [error, handleErrorAlert]);
 
-  const handleMatchPress = useCallback(
-    (matchId: number, matchDate?: string) => {
-      if (matchDate) {
-        router.push(`/(tabs)/match-info?date=${encodeURIComponent(matchDate)}`);
-      } else {
-        router.push('/(tabs)/match-info');
-      }
-    },
-    []
-  );
+  const handleMatchPress = useCallback((matchDate?: string) => {
+    if (matchDate) {
+      router.push(`/(tabs)/match-info?date=${encodeURIComponent(matchDate)}`);
+    } else {
+      router.push('/(tabs)/match-info');
+    }
+  }, []);
 
   if (isLoading) {
     return (
