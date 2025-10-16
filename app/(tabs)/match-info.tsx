@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import { ROUTES } from '@/src/constants/routes';
 import { useUserProfile } from '@/src/hooks/queries';
 import { useMatchRequest } from '@/src/hooks/useMatchRequest';
 import { useMatchWaitingList } from '@/src/hooks/useMatchWaitingList';
+import { useMyAppliedMatches } from '@/src/hooks/useMyAppliedMatches';
 import FilterCard from '@/src/screens/match_application/components/filter_card';
 import MatchCard from '@/src/screens/match_application/components/match_card';
 import { styles } from '@/src/screens/match_application/match_application_style';
@@ -25,11 +26,21 @@ import { formatDateForAPI, formatTimeForAPI } from '@/src/utils/date';
 
 export default function MatchInfoScreen() {
   const router = useRouter();
+  const { date } = useLocalSearchParams<{ date?: string }>();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   const { data: userProfile, error: profileError, refetch } = useUserProfile();
+
+  useEffect(() => {
+    if (date) {
+      const parsedDate = new Date(date);
+      if (!isNaN(parsedDate.getTime())) {
+        setSelectedDate(parsedDate);
+      }
+    }
+  }, [date]);
 
   const params: MatchWaitingListRequestDto = {
     selectDate: selectedDate
@@ -46,14 +57,27 @@ export default function MatchInfoScreen() {
   } = useMatchWaitingList(params);
   const { mutate: requestMatch, isPending } = useMatchRequest();
 
+  const { data: appliedMatches, refetch: refetchAppliedMatches } =
+    useMyAppliedMatches();
+
+  const isAlreadyApplied = (waitingId: number, teamId: number) => {
+    if (!appliedMatches) return false;
+
+    return appliedMatches.some(
+      appliedMatch =>
+        appliedMatch.targetTeamId === teamId &&
+        appliedMatch.status !== 'CANCELED'
+    );
+  };
+
   const handleRefresh = async () => {
     setRefreshing(true);
-    await Promise.all([refetch(), refetchData()]);
+    await Promise.all([refetch(), refetchData(), refetchAppliedMatches()]);
     setRefreshing(false);
   };
 
   const handlePressRequest = async (waitingId: number) => {
-    await refetch();
+    await Promise.all([refetch(), refetchAppliedMatches()]);
 
     const rawTeamId = userProfile?.teamId;
 
@@ -77,17 +101,14 @@ export default function MatchInfoScreen() {
       { waitingId, payload },
       {
         onSuccess: res => {
-          Alert.alert(
-            '신청 완료',
-            `매치 요청이 전송되었습니다.\n상태: ${res.status}`,
-            [
-              {
-                text: '확인',
-                style: 'default',
-                onPress: () => router.push(ROUTES.HOME),
-              },
-            ]
-          );
+          refetchAppliedMatches();
+          Alert.alert('신청 완료', '매치 요청이 전송되었습니다.', [
+            {
+              text: '확인',
+              style: 'default',
+              onPress: () => router.push(ROUTES.HOME),
+            },
+          ]);
         },
         onError: () => {
           Alert.alert('오류', '매치 요청 중 문제가 발생했습니다.');
@@ -101,6 +122,7 @@ export default function MatchInfoScreen() {
       match={item}
       onPressRequest={() => handlePressRequest(item.waitingId)}
       disabled={isPending}
+      isAlreadyApplied={isAlreadyApplied(item.waitingId, item.teamId)}
     />
   );
 
