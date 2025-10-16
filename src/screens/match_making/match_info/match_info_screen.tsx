@@ -23,7 +23,11 @@ import Message from '@/src/screens/match_making/match_info/component/message/mes
 import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
 import { MatchCreateRequestDto } from '@/src/types/match';
 import type { Venue } from '@/src/types/venue';
-import { formatKoreanDate } from '@/src/utils/date';
+import {
+  formatKoreanDate,
+  formatDateForAPI,
+  formatTimeForAPI,
+} from '@/src/utils/date';
 
 import { style } from './match_info_style';
 
@@ -103,11 +107,24 @@ export default function MatchInfoScreen() {
       return;
     }
 
+    const convertKSTToUTC = (kstTime: Date): string => {
+      const hours = kstTime.getHours();
+      const minutes = kstTime.getMinutes();
+      const seconds = kstTime.getSeconds();
+
+      let utcHours = hours - 9;
+      if (utcHours < 0) {
+        utcHours += 24;
+      }
+
+      return `${String(utcHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    };
+
     const payload: MatchCreateRequestDto = {
       teamId: numericTeamId,
-      preferredDate: fmtDate(date),
-      preferredTimeStart: fmtTime(timeStart),
-      preferredTimeEnd: fmtTime(timeEnd),
+      preferredDate: formatDateForAPI(date),
+      preferredTimeStart: convertKSTToUTC(timeStart),
+      preferredTimeEnd: convertKSTToUTC(timeEnd),
       preferredVenueId: selectedStadium.venueId || 1,
       skillLevelMin: skillMin,
       skillLevelMax: skillMax,
