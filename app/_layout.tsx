@@ -5,6 +5,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React, { Suspense } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import ErrorBoundary from 'react-native-error-boundary';
 import 'react-native-reanimated';
 
@@ -65,7 +66,20 @@ export default function RootLayout() {
     <ErrorBoundary FallbackComponent={GlobalErrorFallback}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <Suspense fallback={null}>
+          <Suspense
+            fallback={
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: '#2D5016',
+                }}
+              >
+                <ActivityIndicator size="large" color="white" />
+              </View>
+            }
+          >
             <AppContent />
           </Suspense>
         </AuthProvider>
