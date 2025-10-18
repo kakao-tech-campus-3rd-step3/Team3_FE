@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { View, FlatList, StatusBar } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { ROUTES } from '@/src/constants/routes';
 import { UNIVERSITIES } from '@/src/constants/universities';
 import { theme } from '@/src/theme';
 
@@ -22,7 +23,7 @@ export default function UniversityListScreen() {
   const handleConnect = () => {
     if (selectedUniversity) {
       router.push({
-        pathname: '/team/join-list',
+        pathname: ROUTES.TEAM_JOIN_LIST,
         params: { university: selectedUniversity },
       });
     }

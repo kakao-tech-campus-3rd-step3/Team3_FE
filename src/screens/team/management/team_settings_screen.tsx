@@ -12,7 +12,7 @@ import ManageSection from '@/src/components/team/sections/manage_section';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { LoadingState } from '@/src/components/ui/loading_state';
-import { ROUTES } from '@/src/constants/routes';
+import { ROUTES, getTeamManagementUrl } from '@/src/constants/routes';
 import {
   useTeamJoinWaitingList,
   useTeamMembers,
@@ -81,7 +81,7 @@ export default function TeamSettingsScreen({
             text: '확인',
             onPress: () => {
               router.dismissAll();
-              router.replace(`/team/management/${numericTeamId}`);
+              router.replace(getTeamManagementUrl(numericTeamId));
             },
           },
         ]
@@ -245,7 +245,7 @@ export default function TeamSettingsScreen({
                   {
                     text: '확인',
                     onPress: () => {
-                      router.replace('/team/guide');
+                      router.replace(ROUTES.TEAM_GUIDE);
                     },
                   },
                 ]);

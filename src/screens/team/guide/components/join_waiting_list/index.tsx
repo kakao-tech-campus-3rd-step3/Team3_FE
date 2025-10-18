@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
+import { getTeamManagementUrl } from '@/src/constants/routes';
 import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
 import { colors } from '@/src/theme';
 import type { UserJoinWaitingItem } from '@/src/types/team';
@@ -31,7 +32,7 @@ export default function JoinWaitingList({ onClose }: JoinWaitingListProps) {
   const { data, isLoading, error, refetch } = useMyJoinWaitingList(page, 10);
 
   const handleViewTeam = (teamId: number) => {
-    router.push(`/team/management/${teamId}`);
+    router.push(getTeamManagementUrl(teamId));
     onClose();
   };
 

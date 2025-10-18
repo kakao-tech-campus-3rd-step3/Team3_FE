@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { ROUTES } from '@/src/constants/routes';
+import { ROUTES, getTeamManagementUrl } from '@/src/constants/routes';
 import { useEnemyTeam } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 
@@ -102,7 +102,7 @@ export default function MatchSetScreen() {
               marginTop: theme.spacing.spacing3,
             },
           ]}
-          onPress={() => router.push(`/team/management/${enemyTeam.teamId}`)}
+          onPress={() => router.push(getTeamManagementUrl(enemyTeam.teamId))}
         >
           <Text style={styles.homeButtonText}>팀 정보 보기</Text>
         </TouchableOpacity>

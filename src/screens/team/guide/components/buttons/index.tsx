@@ -11,6 +11,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
+import { ROUTES } from '@/src/constants/routes';
 import { useUserProfile } from '@/src/hooks/queries';
 import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
 import { colors } from '@/src/theme';
@@ -91,7 +92,7 @@ export default memo(function Buttons() {
       setShowJoinWaitingList(true);
     } else {
       router.push({
-        pathname: '/team/join-university',
+        pathname: ROUTES.TEAM_JOIN_UNIVERSITY,
         params: { university: userProfile?.university || '' },
       });
     }
@@ -144,7 +145,7 @@ export default memo(function Buttons() {
           style={dynamicStyles.createButton}
           onPress={() =>
             router.push({
-              pathname: '/team/creation',
+              pathname: ROUTES.TEAM_CREATION,
               params: { university: userProfile?.university || '' },
             })
           }
