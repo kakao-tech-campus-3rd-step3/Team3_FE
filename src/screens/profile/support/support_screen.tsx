@@ -7,7 +7,7 @@ import {
   Alert,
 } from 'react-native';
 
-import styles from '@/src/screens/profile/support/support_style';
+import { styles } from '@/src/screens/profile/support/support_style';
 
 export default function SupportScreen() {
   const handleEmailPress = () => {

@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 
 import Card from '@/src/components/card/card';
 import Badge from '@/src/screens/profile/components/badge/badge';
-import styles from '@/src/screens/profile/profile_style';
+import { styles } from '@/src/screens/profile/profile_style';
 import { ReviewStatsType } from '@/src/types';
 
 export default memo(function ReviewCard({

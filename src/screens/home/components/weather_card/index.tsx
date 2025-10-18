@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { Text, View } from 'react-native';
 
 import Card from '@/src/components/card/card';
-import styles from '@/src/screens/home/home_style';
+import { styles } from '@/src/screens/home/home_style';
 import { theme } from '@/src/theme';
 
 export default memo(function WeatherSection() {

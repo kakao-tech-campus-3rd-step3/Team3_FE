@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { Image, Text, TouchableOpacity, View, Alert } from 'react-native';
 
 import { useAuth } from '@/src/contexts/auth_context';
-import styles from '@/src/screens/home/home_style';
+import { styles } from '@/src/screens/home/home_style';
 import { theme } from '@/src/theme';
 
 export default memo(function HomeHeader() {

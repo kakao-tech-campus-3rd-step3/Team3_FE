@@ -9,7 +9,7 @@ import { useUserProfile } from '@/src/hooks/queries';
 import ProfileHeader from '@/src/screens/profile/components/profileHeader';
 import SettingCard from '@/src/screens/profile/components/settingTab/setting_card';
 import { getDefaultSettingsItems } from '@/src/screens/profile/components/settingTab/setting_items';
-import styles from '@/src/screens/profile/profile_style';
+import { styles } from '@/src/screens/profile/profile_style';
 import { theme } from '@/src/theme';
 
 function ProfileScreen() {

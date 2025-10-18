@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Text, View } from 'react-native';
 
-import styles from '@/src/screens/home/home_style';
+import { styles } from '@/src/screens/home/home_style';
 import { HomeData } from '@/src/types/home';
 
 interface MatchStatusCardProps {

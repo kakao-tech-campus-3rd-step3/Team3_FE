@@ -3,7 +3,7 @@ import { memo, useMemo } from 'react';
 import { View, Text } from 'react-native';
 
 import Card from '@/src/components/card/card';
-import styles from '@/src/screens/profile/profile_style';
+import { styles } from '@/src/screens/profile/profile_style';
 import { theme } from '@/src/theme';
 
 export default memo(function MannerCard({
