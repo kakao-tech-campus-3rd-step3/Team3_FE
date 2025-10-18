@@ -15,6 +15,7 @@ import {
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ModalDatePicker } from '@/src/components/ui/modal_date_picker';
 import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
+import { ROUTES } from '@/src/constants/routes';
 import { useUserProfile } from '@/src/hooks/queries';
 import { useCreateMatch } from '@/src/hooks/useCreateMatch';
 import { useVenues } from '@/src/hooks/useVenues';
@@ -22,10 +23,9 @@ import Message from '@/src/screens/match_making/match_info/components/message/me
 import SkillLevelSelector from '@/src/screens/match_making/match_info/components/skill_level_selector/skill_level_selector';
 import { MatchCreateRequestDto } from '@/src/types/match';
 import type { Venue } from '@/src/types/venue';
-import { formatKoreanDate, formatDateForAPI } from '@/src/utils/date';
+import { formatDateForAPI } from '@/src/utils/date';
 import { convertKSTToUTCTime } from '@/src/utils/timezone';
 
-import MatchMakingSuccessModal from './components/match_making_success_modal/match_making_success_modal';
 import { style } from './match_info_style';
 
 type SkillLevel = 'AMATEUR' | 'SEMI_PRO' | 'PRO';
@@ -61,7 +61,6 @@ export default function MatchInfoScreen() {
 
   const [universityOnly, setUniversityOnly] = useState(false);
   const [message, setMessage] = useState('');
-  const [successModalVisible, setSuccessModalVisible] = useState(false);
 
   const onSelectStadium = (venue: Venue) => {
     setSelectedStadium(venue);
@@ -104,7 +103,7 @@ export default function MatchInfoScreen() {
 
     createMatch(payload, {
       onSuccess: data => {
-        setSuccessModalVisible(true);
+        router.push(ROUTES.TEAMMATE_REGISTER);
       },
       onError: err => {
         Alert.alert('매치 생성 실패', err.message ?? '다시 시도해주세요.');
@@ -336,17 +335,6 @@ export default function MatchInfoScreen() {
         }}
         onClose={() => setShowTimeEndPicker(false)}
         title="종료 시간 선택"
-      />
-
-      <MatchMakingSuccessModal
-        visible={successModalVisible}
-        onClose={() => setSuccessModalVisible(false)}
-        stadiumName={selectedStadium?.venueName}
-        date={date}
-        timeStart={timeStart}
-        timeEnd={timeEnd}
-        skillMin={skillMin}
-        skillMax={skillMax}
       />
     </KeyboardAvoidingView>
   );

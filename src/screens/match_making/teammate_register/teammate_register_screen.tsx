@@ -10,6 +10,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { ROUTES } from '@/src/constants/routes';
 
 import { style } from './teammate_register_style';
 
@@ -92,7 +93,7 @@ export default function TeammateRegisterScreen() {
     const selectedMembers = MOCK_MEMBERS.filter(m => selected.includes(m.id));
 
     router.push({
-      pathname: '/match_making/team_formation',
+      pathname: ROUTES.TEAM_FORMATION,
       params: {
         members: JSON.stringify(selectedMembers),
       },
