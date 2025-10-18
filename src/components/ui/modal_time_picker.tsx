@@ -54,12 +54,11 @@ export const ModalTimePicker: React.FC<ModalTimePickerProps> = ({
     onClose();
   };
 
-  // 뒤로가기 버튼 활성화화
   useEffect(() => {
     const backAction = () => {
       if (visible) {
         onClose();
-        return true; // 뒤로가기 버튼 이벤트 막기
+        return true;
       }
       return false;
     };

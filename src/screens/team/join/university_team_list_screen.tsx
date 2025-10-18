@@ -37,7 +37,6 @@ export default function UniversityTeamListScreen() {
   const { university } = useLocalSearchParams<{ university: string }>();
   const { data: userProfile } = useUserProfile();
 
-  // 사용자의 대학 정보를 사용하여 팀 목록 조회
   const userUniversity = userProfile?.university || university;
 
   const [showFilterModal, setShowFilterModal] = useState(false);

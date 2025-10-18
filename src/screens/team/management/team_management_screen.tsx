@@ -193,17 +193,14 @@ export default function TeamManagementScreen({
           />
           <TeamMembersSection
             teamMembers={teamMembers.sort((a, b) => {
-              // 역할 우선순위: 회장(1) > 부회장(2) > 일반멤버(3)
               const roleOrder = { LEADER: 1, VICE_LEADER: 2, MEMBER: 3 };
               const aOrder = roleOrder[a.role] || 3;
               const bOrder = roleOrder[b.role] || 3;
 
-              // 역할이 다르면 역할 순서로 정렬
               if (aOrder !== bOrder) {
                 return aOrder - bOrder;
               }
 
-              // 같은 역할이면 이름순으로 정렬
               return a.name.localeCompare(b.name);
             })}
             membersLoading={membersLoading}

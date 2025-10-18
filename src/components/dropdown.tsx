@@ -34,7 +34,6 @@ export function Dropdown<T extends string | number>({
 
   return (
     <View>
-      {/* Dropdown 버튼 */}
       <TouchableOpacity
         style={styles.dropdownButton}
         onPress={() => setIsOpen(true)}

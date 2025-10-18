@@ -106,7 +106,6 @@ export default function MemberManagementScreen({
       return;
     }
 
-    // 회장/부회장만 역할 변경 가능
     if (
       currentUserMember.role !== 'LEADER' &&
       currentUserMember.role !== 'VICE_LEADER'
@@ -118,7 +117,6 @@ export default function MemberManagementScreen({
       return;
     }
 
-    // 자기 자신의 역할은 변경할 수 없음
     if (member.userId === currentUserMember.userId) {
       Alert.alert(
         '알림',
@@ -414,17 +412,14 @@ export default function MemberManagementScreen({
           <MemberInfoCard />
           <MemberListSection
             teamMembers={teamMembers.content.sort((a, b) => {
-              // 역할 우선순위: 회장(1) > 부회장(2) > 일반멤버(3)
               const roleOrder = { LEADER: 1, VICE_LEADER: 2, MEMBER: 3 };
               const aOrder = roleOrder[a.role] || 3;
               const bOrder = roleOrder[b.role] || 3;
 
-              // 역할이 다르면 역할 순서로 정렬
               if (aOrder !== bOrder) {
                 return aOrder - bOrder;
               }
 
-              // 같은 역할이면 이름순으로 정렬
               return a.name.localeCompare(b.name);
             })}
             currentUserMember={teamMembers.content.find(

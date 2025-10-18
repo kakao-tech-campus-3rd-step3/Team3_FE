@@ -46,7 +46,6 @@ export default StyleSheet.create({
     paddingBottom: theme.spacing.spacing1,
   },
 
-  // 새로운 섹션 스타일들
   mainSection: {
     marginHorizontal: theme.spacing.spacing4,
     marginBottom: theme.spacing.spacing6,

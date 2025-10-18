@@ -57,19 +57,14 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
     onClose();
   };
 
-  // 해당 월의 일수 계산
   const getDaysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate();
   };
 
-  // 월 범위 (0-11) - JavaScript Date 객체와 일치
   const months = Array.from({ length: 12 }, (_, i) => i);
 
-  // 일 범위 (해당 월의 일수에 따라 동적)
   const daysInSelectedMonth = getDaysInMonth(currentYear, selectedMonth);
   const days = Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1);
-
-  // 월이 변경될 때 일이 유효하지 않으면 조정
   useEffect(() => {
     const daysInNewMonth = getDaysInMonth(currentYear, selectedMonth);
     if (selectedDay > daysInNewMonth) {
@@ -77,12 +72,11 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
     }
   }, [selectedMonth, selectedDay, currentYear]);
 
-  // 뒤로가기 버튼 활성화화
   useEffect(() => {
     const backAction = () => {
       if (visible) {
         onClose();
-        return true; // 뒤로가기 버튼 이벤트 막기
+        return true;
       }
       return false;
     };
@@ -131,7 +125,7 @@ export const ModalDatePicker: React.FC<ModalDatePickerProps> = ({
                     values={months}
                     selectedValue={selectedMonth}
                     onSelect={setSelectedMonth}
-                    displayValue={value => value + 1} // 0-11을 1-12로 표시
+                    displayValue={value => value + 1}
                   />
                 </View>
               </View>
@@ -167,14 +161,14 @@ interface ScrollColumnProps {
   values: number[];
   selectedValue: number;
   onSelect: (value: number) => void;
-  displayValue?: (value: number) => number; // 표시용 변환 함수
+  displayValue?: (value: number) => number;
 }
 
 const ScrollColumn: React.FC<ScrollColumnProps> = ({
   values,
   selectedValue,
   onSelect,
-  displayValue = value => value, // 기본값: 그대로 표시
+  displayValue = value => value,
 }) => {
   return (
     <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -202,7 +196,6 @@ const ScrollColumn: React.FC<ScrollColumnProps> = ({
 };
 
 const styles = StyleSheet.create({
-  // Modal Layout
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -227,7 +220,6 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
 
-  // Header Styles
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -251,7 +243,6 @@ const styles = StyleSheet.create({
     color: theme.colors.text.sub,
   },
 
-  // Picker Styles
   pickerContainer: {
     paddingHorizontal: theme.spacing.spacing5,
     paddingVertical: theme.spacing.spacing4,
@@ -279,7 +270,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 
-  // ScrollView Styles
   scrollView: {
     maxHeight: 200,
   },
@@ -301,7 +291,6 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.semibold,
   },
 
-  // Footer Styles
   footer: {
     paddingTop: theme.spacing.spacing4,
     marginTop: theme.spacing.spacing4,

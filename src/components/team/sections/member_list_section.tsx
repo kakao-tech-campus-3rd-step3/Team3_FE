@@ -84,7 +84,6 @@ export default memo(function MemberListSection({
 
             {currentUserMember && (
               <View style={styles.memberActions}>
-                {/* 회장만 보이는 리더십 위임 버튼 */}
                 {currentUserMember.role === 'LEADER' &&
                   member.role !== 'LEADER' && (
                     <TouchableOpacity
@@ -104,7 +103,6 @@ export default memo(function MemberListSection({
                     </TouchableOpacity>
                   )}
 
-                {/* 역할 변경 버튼 */}
                 {member.role !== 'LEADER' &&
                   (currentUserMember.role === 'LEADER' ||
                     (currentUserMember.role === 'VICE_LEADER' &&
@@ -128,7 +126,6 @@ export default memo(function MemberListSection({
                     </TouchableOpacity>
                   )}
 
-                {/* 강퇴 버튼 */}
                 {member.role !== 'LEADER' &&
                   (currentUserMember.role === 'LEADER' ||
                     (currentUserMember.role === 'VICE_LEADER' &&

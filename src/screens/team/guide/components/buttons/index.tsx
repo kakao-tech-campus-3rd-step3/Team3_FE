@@ -90,7 +90,6 @@ export default memo(function Buttons() {
     if (hasJoinWaiting) {
       setShowJoinWaitingList(true);
     } else {
-      // 사용자 대학 정보를 파라미터로 전달하여 바로 팀 목록으로 이동
       router.push({
         pathname: '/team/join-university',
         params: { university: userProfile?.university || '' },
@@ -98,7 +97,6 @@ export default memo(function Buttons() {
     }
   };
 
-  // 로딩 중일 때는 버튼들을 숨김
   if (isJoinWaitingLoading) {
     return (
       <View style={styles.buttonContainer}>

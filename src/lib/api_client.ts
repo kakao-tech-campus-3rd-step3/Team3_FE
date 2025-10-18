@@ -9,7 +9,6 @@ import axios, {
 import config from '@/src/config/environment';
 
 function extractErrorMessage(response: unknown): string {
-  // AxiosError 또는 일반 객체인지 확인
   const isAxiosResponse = (
     obj: unknown
   ): obj is { data?: unknown; statusText?: string } => {

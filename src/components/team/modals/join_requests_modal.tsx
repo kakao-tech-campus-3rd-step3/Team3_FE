@@ -29,7 +29,6 @@ export default function JoinRequestsModal({
   onClose,
   onJoinRequest,
 }: JoinRequestsModalProps) {
-  // 모달 뒤로가기 버튼 활성화
   useEffect(() => {
     const backAction = () => {
       if (visible) {

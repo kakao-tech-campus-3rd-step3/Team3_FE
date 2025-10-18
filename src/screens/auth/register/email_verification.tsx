@@ -149,7 +149,6 @@ export function EmailVerification({ data, onChange, handleNext }: Props) {
     !!errors.universityEmail ||
     !data.isEmailVerified;
 
-  // 버튼 비활성화 상태 변수들
   const isSendCodeButtonDisabled =
     !data.universityEmail ||
     !!errors.universityEmail ||

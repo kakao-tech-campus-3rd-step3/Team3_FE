@@ -62,7 +62,6 @@ export default function JoinWaitingList({ onClose }: JoinWaitingListProps) {
 
     return (
       <View style={styles.joinWaitingItem}>
-        {/* 헤더 섹션 */}
         <View style={styles.cardHeader}>
           <View style={styles.teamInfoSection}>
             <View style={styles.teamIconContainer}>
@@ -84,7 +83,6 @@ export default function JoinWaitingList({ onClose }: JoinWaitingListProps) {
           </View>
         </View>
 
-        {/* 신청자 정보 섹션 */}
         <View style={styles.applicantSection}>
           <View style={styles.applicantHeader}>
             <Ionicons
@@ -104,7 +102,6 @@ export default function JoinWaitingList({ onClose }: JoinWaitingListProps) {
           </View>
         </View>
 
-        {/* 상태별 메시지 */}
         <View style={styles.statusMessageSection}>
           <View
             style={[styles.statusMessage, getStatusMessageStyle(item.status)]}
@@ -125,7 +122,6 @@ export default function JoinWaitingList({ onClose }: JoinWaitingListProps) {
           </View>
         </View>
 
-        {/* 액션 버튼 */}
         {item.status === 'APPROVED' && (
           <View style={styles.actionSection}>
             <TouchableOpacity

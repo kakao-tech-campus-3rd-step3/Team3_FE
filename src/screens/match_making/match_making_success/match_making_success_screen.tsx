@@ -38,10 +38,9 @@ export default function MatchMakingSuccessScreen() {
   const parsedTimeStart: Date | null = timeStart ? new Date(timeStart) : null;
   const parsedTimeEnd: Date | null = timeEnd ? new Date(timeEnd) : null;
 
-  // 뒤로가기 버튼 완전히 비활성화
   useEffect(() => {
     const backAction = () => {
-      return true; // 뒤로가기 동작 완전히 차단
+      return true;
     };
 
     const backHandler = BackHandler.addEventListener(
@@ -102,7 +101,6 @@ export default function MatchMakingSuccessScreen() {
         </View>
       </View>
 
-      {/* 하단 버튼 */}
       <View style={style.bottomBar}>
         <TouchableOpacity
           style={style.homeButton}

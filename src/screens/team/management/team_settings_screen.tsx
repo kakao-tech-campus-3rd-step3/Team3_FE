@@ -71,7 +71,6 @@ export default function TeamSettingsScreen({
     currentUserMember?.role === 'LEADER' ||
     currentUserMember?.role === 'VICE_LEADER';
 
-  // 권한 체크: 회장/부회장이 아니면 알림 표시하고 팀 정보로 이동
   useEffect(() => {
     if (currentUserMember && !canManageTeam) {
       Alert.alert(
@@ -81,7 +80,6 @@ export default function TeamSettingsScreen({
           {
             text: '확인',
             onPress: () => {
-              // 네비게이션 스택을 완전히 초기화하고 팀 정보 화면으로 이동
               router.dismissAll();
               router.replace(`/team/management/${numericTeamId}`);
             },
@@ -91,10 +89,8 @@ export default function TeamSettingsScreen({
     }
   }, [currentUserMember, canManageTeam, numericTeamId]);
 
-  // 모달 닫힌 후 alert 실행행
   useEffect(() => {
     if (!showMatchRequestsModal && matchAccepted && acceptedMatchId) {
-      // 모달이 실제로 언마운트된 이후 실행
       requestAnimationFrame(() => {
         Alert.alert('성공', '매치가 성사되었습니다!', [
           {
@@ -213,11 +209,9 @@ export default function TeamSettingsScreen({
         onPress: async () => {
           try {
             if (status === 'approved') {
-              // ✅ 1️⃣ 매치 요청 수락 API 호출 → matchId 반환
               const response = await acceptMatchRequestApi(requestId);
               const { matchId } = response;
 
-              // ✅ 2️⃣ matchId 저장 → 모달 닫힘 트리거
               setAcceptedMatchId(matchId);
               setMatchAccepted(true);
               setShowMatchRequestsModal(false);
