@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { View, Text } from 'react-native';
 
-import { Badge } from '@/src/screens/profile/components/badge/badge';
+import Badge from '@/src/screens/profile/components/badge/badge';
 import { theme } from '@/src/theme';
 import { UserProfile } from '@/src/types/profile';
 import { formatDate } from '@/src/utils/date';

@@ -28,7 +28,12 @@ interface Props {
   handleNext: () => void;
 }
 
-export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
+export default function ProfileInfo({
+  data,
+  onChange,
+  handlePrev,
+  handleNext,
+}: Props) {
   const { width } = useWindowDimensions();
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const { errors, validateField } = useRegisterValidation(

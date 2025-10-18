@@ -13,9 +13,9 @@ import { useRegisterForm } from '@/src/hooks/useRegisterForm';
 import { useStep } from '@/src/hooks/useStep';
 import { theme } from '@/src/theme';
 
-import { AccountSetup } from './account_setup';
-import { EmailVerification } from './email_verification';
-import { ProfileInfo } from './profile_info';
+import AccountSetup from './account_setup';
+import EmailVerification from './email_verification';
+import ProfileInfo from './profile_info';
 type Step = 1 | 2 | 3;
 
 export default function RegisterScreen() {

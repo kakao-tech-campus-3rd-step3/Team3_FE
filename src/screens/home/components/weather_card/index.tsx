@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { Text, View } from 'react-native';
 
-import { Card } from '@/src/components/card/card';
+import Card from '@/src/components/card/card';
 import { theme } from '@/src/theme';
 
 import styles from '../../home_style';

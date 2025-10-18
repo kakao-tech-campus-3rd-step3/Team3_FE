@@ -15,7 +15,7 @@ import { useLoginMutation } from '@/src/hooks/queries';
 import { useLoginForm } from '@/src/hooks/useLoginForm';
 import { theme } from '@/src/theme';
 
-function LoginForm() {
+export default function LoginForm() {
   const { formData, errors, updateField, validateForm } = useLoginForm();
   const loginMutation = useLoginMutation();
   const [showPassword, setShowPassword] = useState(false);
@@ -135,8 +135,6 @@ function LoginForm() {
     </View>
   );
 }
-
-export default LoginForm;
 
 const styles = StyleSheet.create({
   container: {

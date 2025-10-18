@@ -4,13 +4,13 @@ import { Text, View, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Card } from '@/src/components/card/card';
+import Card from '@/src/components/card/card';
 import { useUserProfile, useUpdateProfileMutation } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import { UpdateProfileRequest } from '@/src/types/profile';
 
 import { styles } from './edit_profile_style';
-import { ProfileForm } from './profile_form';
+import ProfileForm from './profile_form';
 
 export default function EditProfileScreen() {
   const insets = useSafeAreaInsets();

@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import { Dropdown } from '@/src/components/dropdown';
+import Dropdown from '@/src/components/dropdown';
 import { UNIVERSITIES } from '@/src/constants/universities';
 import {
   useSendCodeMutation,
@@ -33,7 +33,11 @@ interface Props {
   ) => void;
   handleNext: () => void;
 }
-export function EmailVerification({ data, onChange, handleNext }: Props) {
+export default function EmailVerification({
+  data,
+  onChange,
+  handleNext,
+}: Props) {
   const { width } = useWindowDimensions();
   const { errors, validateField } = useRegisterValidation(emailValidationRules);
 

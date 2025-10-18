@@ -19,7 +19,7 @@ interface DropdownProps<T> {
   placeholder?: string;
 }
 
-export function Dropdown<T extends string | number>({
+export default function Dropdown<T extends string | number>({
   items,
   value,
   onChange,

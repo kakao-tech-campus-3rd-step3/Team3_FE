@@ -17,11 +17,11 @@ interface BadgeProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-export const Badge = ({
+export default function Badge({
   text,
   variant = 'primary',
   size = 'medium',
-}: BadgeProps) => {
+}: BadgeProps) {
   const getSizeStyle = () => {
     switch (size) {
       case 'small':
@@ -70,4 +70,4 @@ export const Badge = ({
       <Text style={getTextStyle()}>{text}</Text>
     </View>
   );
-};
+}

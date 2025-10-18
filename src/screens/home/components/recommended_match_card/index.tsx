@@ -13,7 +13,9 @@ interface SafeMatchPreviewProps {
   onMatchPress?: (matchDate?: string) => void;
 }
 
-function SafeMatchPreview({ onMatchPress }: SafeMatchPreviewProps) {
+export default function SafeMatchPreview({
+  onMatchPress,
+}: SafeMatchPreviewProps) {
   const { data: userProfile } = useUserProfile();
   const { data: matches = [], isLoading } = useRecommendedMatches();
 
@@ -140,5 +142,3 @@ function SafeMatchPreview({ onMatchPress }: SafeMatchPreviewProps) {
     </View>
   );
 }
-
-export default SafeMatchPreview;

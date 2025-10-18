@@ -1,8 +1,8 @@
 import { memo } from 'react';
 import { View, Text } from 'react-native';
 
-import { Card } from '@/src/components/card/card';
-import { Badge } from '@/src/screens/profile/components/badge/badge';
+import Card from '@/src/components/card/card';
+import Badge from '@/src/screens/profile/components/badge/badge';
 import { ReviewStatsType } from '@/src/types';
 
 import styles from '../../profile_style';

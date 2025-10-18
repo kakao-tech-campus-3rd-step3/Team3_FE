@@ -7,7 +7,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
-import { Dropdown } from '@/src/components/dropdown';
+import Dropdown from '@/src/components/dropdown';
 import { UserProfile, UpdateProfileRequest } from '@/src/types/profile';
 
 import { styles } from './profile_form_style';
@@ -18,7 +18,7 @@ interface ProfileFormProps {
   isLoading: boolean;
 }
 
-export function ProfileForm({
+export default function ProfileForm({
   initialData,
   onSave,
   isLoading,
