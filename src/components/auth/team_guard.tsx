@@ -11,7 +11,10 @@ interface TeamGuardProps {
   fallbackMessage?: string;
 }
 
-export function TeamGuard({ children, fallbackMessage }: TeamGuardProps) {
+export default function TeamGuard({
+  children,
+  fallbackMessage,
+}: TeamGuardProps) {
   const router = useRouter();
   const { token } = useAuth();
   const isAuthenticated = !!token;

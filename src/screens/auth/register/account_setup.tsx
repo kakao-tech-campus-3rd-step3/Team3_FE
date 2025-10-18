@@ -31,7 +31,7 @@ interface Props {
   handlePrev: () => void;
 }
 
-export function AccountSetup({
+export default function AccountSetup({
   data,
   onChange,
   onSubmit,

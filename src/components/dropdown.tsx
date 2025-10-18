@@ -19,7 +19,7 @@ interface DropdownProps<T> {
   placeholder?: string;
 }
 
-export function Dropdown<T extends string | number>({
+export default function Dropdown<T extends string | number>({
   items,
   value,
   onChange,
@@ -34,7 +34,6 @@ export function Dropdown<T extends string | number>({
 
   return (
     <View>
-      {/* Dropdown 버튼 */}
       <TouchableOpacity
         style={styles.dropdownButton}
         onPress={() => setIsOpen(true)}

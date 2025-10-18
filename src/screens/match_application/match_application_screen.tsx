@@ -11,18 +11,19 @@ import {
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ROUTES } from '@/src/constants/routes';
-import { useUserProfile } from '@/src/hooks/queries';
-import { useMatchRequest } from '@/src/hooks/useMatchRequest';
-import { useMatchWaitingList } from '@/src/hooks/useMatchWaitingList';
+import {
+  useUserProfile,
+  useMatchWaitingList,
+  useMatchRequestMutation,
+} from '@/src/hooks/queries';
+import FilterCard from '@/src/screens/match_application/components/filter_card';
+import MatchCard from '@/src/screens/match_application/components/match_card';
+import { styles } from '@/src/screens/match_application/match_application_style';
 import type {
   MatchWaitingListRequestDto,
   MatchRequestRequestDto,
 } from '@/src/types/match';
 import { formatDateForAPI, formatTimeForAPI } from '@/src/utils/date';
-
-import FilterCard from './components/filter_card';
-import MatchCard from './components/match_card';
-import { styles } from './match_application_style';
 
 interface MatchApplicationScreenProps {
   teamId?: number;
@@ -56,7 +57,7 @@ export default function MatchApplicationScreen({
     error,
     refetch: refetchData,
   } = useMatchWaitingList(params);
-  const { mutate: requestMatch, isPending } = useMatchRequest();
+  const { mutate: requestMatch, isPending } = useMatchRequestMutation();
 
   const handleRefresh = async () => {
     setRefreshing(true);

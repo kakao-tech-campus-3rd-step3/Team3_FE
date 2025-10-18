@@ -16,24 +16,25 @@ import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ModalDatePicker } from '@/src/components/ui/modal_date_picker';
 import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
 import { ROUTES } from '@/src/constants/routes';
-import { useUserProfile } from '@/src/hooks/queries';
-import { useCreateMatch } from '@/src/hooks/useCreateMatch';
-import { useVenues } from '@/src/hooks/useVenues';
+import {
+  useUserProfile,
+  useVenues,
+  useCreateMatchMutation,
+} from '@/src/hooks/queries';
 import Message from '@/src/screens/match_making/match_info/components/message/message';
 import SkillLevelSelector from '@/src/screens/match_making/match_info/components/skill_level_selector/skill_level_selector';
+import { style } from '@/src/screens/match_making/match_info/match_info_style';
 import { MatchCreateRequestDto } from '@/src/types/match';
 import type { Venue } from '@/src/types/venue';
 import { formatDateForAPI } from '@/src/utils/date';
 import { convertKSTToUTCTime } from '@/src/utils/timezone';
-
-import { style } from './match_info_style';
 
 type SkillLevel = 'AMATEUR' | 'SEMI_PRO' | 'PRO';
 
 export default function MatchInfoScreen() {
   const router = useRouter();
   const { data: userProfile, refetch } = useUserProfile();
-  const { mutate: createMatch, isPending } = useCreateMatch();
+  const { mutate: createMatch, isPending } = useCreateMatchMutation();
   const { data: venues, isLoading, error } = useVenues();
 
   const [stadiumModalVisible, setStadiumModalVisible] = useState(false);
@@ -106,7 +107,9 @@ export default function MatchInfoScreen() {
         router.push(ROUTES.TEAMMATE_REGISTER);
       },
       onError: err => {
-        Alert.alert('매치 생성 실패', err.message ?? '다시 시도해주세요.');
+        const errorMessage =
+          err instanceof Error ? err.message : '다시 시도해주세요.';
+        Alert.alert('매치 생성 실패', errorMessage);
       },
     });
   };

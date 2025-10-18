@@ -1,15 +1,14 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal, Animated } from 'react-native';
 
+import { styles } from '@/src/components/team/filters/filter_modal_styles';
+import MemberCountSlider from '@/src/components/team/filters/member_count_slider';
 import {
   SkillLevel,
   TeamType,
   SKILL_LEVELS,
   TEAM_TYPES,
 } from '@/src/types/team';
-
-import { styles } from './filter_modal_styles';
-import MemberCountSlider from './member_count_slider';
 
 interface FilterOptions {
   skillLevel: SkillLevel[];

@@ -2,12 +2,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { View, StyleSheet, useWindowDimensions } from 'react-native';
 
+import Buttons from '@/src/screens/team/guide/components/buttons';
+import Cards from '@/src/screens/team/guide/components/cards';
+import Header from '@/src/screens/team/guide/components/header';
+import { styles } from '@/src/screens/team/guide/team_guide_styles';
 import { colors } from '@/src/theme';
-
-import Buttons from './components/buttons';
-import Cards from './components/cards';
-import Header from './components/header';
-import { styles } from './team_guide_styles';
 
 const TeamGuideScreen = () => {
   const { width } = useWindowDimensions();

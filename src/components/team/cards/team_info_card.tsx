@@ -31,33 +31,32 @@ export default memo(function TeamInfoCard({
 }: TeamInfoCardProps) {
   const { width } = useWindowDimensions();
 
-  // 화면 크기에 비례한 동적 스타일 생성
   const dynamicStyles = StyleSheet.create({
     statCard: {
       flex: 1,
       alignItems: 'center',
       backgroundColor: colors.gray[50],
-      borderRadius: Math.max(12, width * 0.04), // 화면 너비의 4% 또는 최소 12
-      padding: Math.max(8, width * 0.03), // 화면 너비의 3% 또는 최소 8
-      marginHorizontal: Math.max(2, width * 0.01), // 화면 너비의 1% 또는 최소 2
+      borderRadius: Math.max(12, width * 0.04),
+      padding: Math.max(8, width * 0.03),
+      marginHorizontal: Math.max(2, width * 0.01),
     },
     statIconContainer: {
-      width: Math.max(36, width * 0.12), // 화면 너비의 12% 또는 최소 36
+      width: Math.max(36, width * 0.12),
       height: Math.max(36, width * 0.12),
       borderRadius: Math.max(18, width * 0.06),
       justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: Math.max(6, width * 0.02), // 화면 너비의 2% 또는 최소 6
+      marginBottom: Math.max(6, width * 0.02),
     },
     statValue: {
-      fontSize: Math.max(10, width * 0.032), // 화면 너비의 3.2% 또는 최소 10
+      fontSize: Math.max(10, width * 0.032),
       fontWeight: 'bold',
       color: colors.gray[900],
-      marginBottom: Math.max(2, width * 0.005), // 화면 너비의 0.5% 또는 최소 2
+      marginBottom: Math.max(2, width * 0.005),
       textAlign: 'center',
     },
     statLabel: {
-      fontSize: Math.max(9, width * 0.03), // 화면 너비의 3% 또는 최소 9
+      fontSize: Math.max(9, width * 0.03),
       color: colors.gray[500],
       fontWeight: '500',
       textAlign: 'center',
@@ -81,7 +80,6 @@ export default memo(function TeamInfoCard({
             <Text style={styles.teamSubtitle}>{team.university}</Text>
           </View>
           <View style={styles.headerButtonsContainer}>
-            {/* 팀장이 아닌 경우에만 팀 탈퇴 버튼 표시 */}
             {onExitTeam && !isTeamLeader && (
               <TouchableOpacity
                 style={styles.headerExitButton}

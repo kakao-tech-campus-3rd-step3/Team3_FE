@@ -3,9 +3,8 @@ import { memo } from 'react';
 import { Image, Text, TouchableOpacity, View, Alert } from 'react-native';
 
 import { useAuth } from '@/src/contexts/auth_context';
+import { styles } from '@/src/screens/home/home_style';
 import { theme } from '@/src/theme';
-
-import styles from '../../home_style';
 
 export default memo(function HomeHeader() {
   const { logout } = useAuth();

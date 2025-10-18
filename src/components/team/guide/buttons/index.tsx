@@ -3,10 +3,10 @@ import { useRouter } from 'expo-router';
 import { memo } from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
 
+import { styles } from '@/src/components/team/guide/buttons_styles';
+import { ROUTES } from '@/src/constants/routes';
 import { useUserProfile } from '@/src/hooks/queries';
 import { colors } from '@/src/theme';
-
-import { styles } from '../buttons_styles';
 
 export default memo(function Buttons() {
   const router = useRouter();
@@ -18,7 +18,7 @@ export default memo(function Buttons() {
         style={styles.joinButton}
         onPress={() =>
           router.push({
-            pathname: '/team/join-university',
+            pathname: ROUTES.TEAM_JOIN_UNIVERSITY,
             params: { university: userProfile?.university || '' },
           })
         }
@@ -31,7 +31,7 @@ export default memo(function Buttons() {
         style={styles.createButton}
         onPress={() =>
           router.push({
-            pathname: '/team/creation',
+            pathname: ROUTES.TEAM_CREATION,
             params: { university: userProfile?.university || '' },
           })
         }
