@@ -15,9 +15,8 @@ import {
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ModalDatePicker } from '@/src/components/ui/modal_date_picker';
 import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
-import { useUserProfile } from '@/src/hooks/queries';
+import { useUserProfile, useVenues } from '@/src/hooks/queries';
 import { useCreateMatch } from '@/src/hooks/useCreateMatch';
-import { useVenues } from '@/src/hooks/useVenues';
 import Message from '@/src/screens/match_making/match_info/component/message/message';
 import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
 import { MatchCreateRequestDto } from '@/src/types/match';

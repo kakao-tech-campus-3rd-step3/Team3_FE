@@ -11,9 +11,8 @@ import {
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ROUTES } from '@/src/constants/routes';
-import { useUserProfile } from '@/src/hooks/queries';
+import { useUserProfile, useMatchWaitingList } from '@/src/hooks/queries';
 import { useMatchRequest } from '@/src/hooks/useMatchRequest';
-import { useMatchWaitingList } from '@/src/hooks/useMatchWaitingList';
 import type {
   MatchWaitingListRequestDto,
   MatchRequestRequestDto,

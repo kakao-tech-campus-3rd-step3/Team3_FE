@@ -11,7 +11,7 @@ import {
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ROUTES } from '@/src/constants/routes';
-import { useEnemyTeam } from '@/src/hooks/useEnemyTeam';
+import { useEnemyTeam } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 
 import { styles } from './match_set_style';

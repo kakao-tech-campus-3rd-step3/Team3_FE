@@ -92,7 +92,5 @@ export const useRecommendedMatches = () => {
     queryFn: fetchWaitingMatches,
     select: getRecommendedMatches,
     enabled: !!userProfile?.teamId,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
   });
 };

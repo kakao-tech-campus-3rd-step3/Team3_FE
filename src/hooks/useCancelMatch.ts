@@ -14,9 +14,8 @@ export const useCancelMatch = () => {
     mutationFn: (waitingId: number) => cancelCreatedMatchApi(waitingId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['my-created-matches'], // ✅ v5 호환 문법
+        queryKey: ['my-created-matches'],
       });
-      // 사용자 프로필도 갱신 (팀 정보가 변경될 수 있음)
       queryClient.invalidateQueries({ queryKey: ['user', 'profile'] });
     },
   });

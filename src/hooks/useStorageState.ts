@@ -7,7 +7,7 @@ interface StorageOptions<T> {
   deserialize?: (value: string) => T;
 }
 
-const promiseCache = new Map<string, Promise<any>>();
+const promiseCache = new Map<string, Promise<unknown>>();
 
 export function useStorageState<T>(
   key: string,
@@ -30,10 +30,10 @@ export function useStorageState<T>(
     isMounted.current = true;
 
     if (promiseCache.has(key)) {
-      promiseCache.get(key)!.then(stored => {
+      promiseCache.get(key)!.then((stored: unknown) => {
         if (!isMounted.current) return;
 
-        if (stored !== null) {
+        if (stored !== null && typeof stored === 'string') {
           try {
             const parsed = deserialize(stored);
             setState(parsed);

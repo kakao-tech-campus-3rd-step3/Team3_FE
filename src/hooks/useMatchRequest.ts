@@ -17,7 +17,6 @@ export function useMatchRequest() {
   return useMutation<MatchRequestResponseDto, unknown, Vars>({
     mutationFn: ({ waitingId, payload }) => requestMatchApi(waitingId, payload),
     onSuccess: () => {
-      // ✅ 신청 성공 시 관련 데이터 갱신
       qc.invalidateQueries({ queryKey: ['match-waiting-list'] });
     },
   });

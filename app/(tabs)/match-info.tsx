@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 
 import { ROUTES } from '@/src/constants/routes';
-import { useUserProfile } from '@/src/hooks/queries';
+import {
+  useUserProfile,
+  useMyAppliedMatches,
+  useMatchWaitingList,
+} from '@/src/hooks/queries';
 import { useMatchRequest } from '@/src/hooks/useMatchRequest';
-import { useMatchWaitingList } from '@/src/hooks/useMatchWaitingList';
-import { useMyAppliedMatches } from '@/src/hooks/useMyAppliedMatches';
 import FilterCard from '@/src/screens/match_application/components/filter_card';
 import MatchCard from '@/src/screens/match_application/components/match_card';
 import { styles } from '@/src/screens/match_application/match_application_style';

@@ -11,9 +11,8 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { useUserProfile } from '@/src/hooks/queries';
+import { useUserProfile, useMyAppliedMatches } from '@/src/hooks/queries';
 import { useCancelMatchRequest } from '@/src/hooks/useCancelMatchRequest';
-import { useMyAppliedMatches } from '@/src/hooks/useMyAppliedMatches';
 import AppliedMatchCard from '@/src/screens/check_applied_matches/components/applied_match_card';
 import { styles } from '@/src/screens/match_application/match_application_style';
 

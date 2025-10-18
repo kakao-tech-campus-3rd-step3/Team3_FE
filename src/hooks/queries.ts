@@ -3,6 +3,7 @@ import {
   useMutation,
   keepPreviousData,
   useInfiniteQuery,
+  UseQueryOptions,
 } from '@tanstack/react-query';
 import { router } from 'expo-router';
 
@@ -27,6 +28,11 @@ import type {
   VerifyCodeRequest,
   ResetPasswordRequest,
   VerifyCodeRequestSignup,
+  MatchWaitingHistoryResponseDto,
+  MatchWaitingResponseDto,
+  MatchWaitingListRequestDto,
+  EnemyTeamResponseDto,
+  TeamListPageResponse,
 } from '@/src/types';
 
 export const queries = {
@@ -139,6 +145,27 @@ export const queries = {
       return response.content;
     },
   },
+  myAppliedMatches: {
+    key: ['my-applied-matches'] as const,
+    fn: () => api.getMyAppliedMatches(),
+  },
+  myCreatedMatches: {
+    key: ['my-created-matches'] as const,
+    fn: () => api.getMyCreatedMatches(),
+  },
+  matchWaitingList: {
+    key: (params: MatchWaitingListRequestDto) =>
+      ['match-waiting-list', params] as const,
+    fn: (params: MatchWaitingListRequestDto) => api.getMatchWaitingList(params),
+  },
+  venues: {
+    key: ['venues'] as const,
+    fn: () => api.getVenues(),
+  },
+  enemyTeam: {
+    key: (matchId: number | string) => ['enemy-team', matchId] as const,
+    fn: (matchId: number | string) => api.getEnemyTeam(matchId),
+  },
 } as const;
 
 export function useUserProfile() {
@@ -185,9 +212,6 @@ export function useTeamsByUniversity(
     queryFn: () => queries.teamsByUniversity.fn(university, page, size),
     enabled: !!university,
     placeholderData: keepPreviousData,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: true,
   });
 }
 
@@ -199,15 +223,12 @@ export function useTeamsByUniversityInfinite(
     queryKey: [...queries.teamsByUniversity.key, university, 'infinite'],
     queryFn: ({ pageParam = 0 }) =>
       queries.teamsByUniversity.fn(university, pageParam as number, size),
-    getNextPageParam: (lastPage: any, allPages) => {
+    getNextPageParam: (lastPage: TeamListPageResponse, allPages) => {
       if (lastPage.last) return undefined;
       return allPages.length;
     },
     initialPageParam: 0,
     enabled: !!university,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
   });
 }
 
@@ -277,9 +298,52 @@ export function useTeamJoinWaitingList(
     queryFn: () => queries.teamJoinWaitingList.fn(teamId, status, page, size),
     enabled: !!teamId,
     placeholderData: keepPreviousData,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: true,
+  });
+}
+
+export function useMyAppliedMatches(
+  options?: UseQueryOptions<MatchWaitingHistoryResponseDto[], Error>
+) {
+  return useQuery<MatchWaitingHistoryResponseDto[], Error>({
+    queryKey: queries.myAppliedMatches.key,
+    queryFn: queries.myAppliedMatches.fn,
+    ...options,
+  });
+}
+
+export function useMyCreatedMatches(
+  options?: UseQueryOptions<MatchWaitingResponseDto[], Error>
+) {
+  return useQuery<MatchWaitingResponseDto[], Error>({
+    queryKey: queries.myCreatedMatches.key,
+    queryFn: queries.myCreatedMatches.fn,
+    ...options,
+  });
+}
+
+export function useMatchWaitingList(
+  params: MatchWaitingListRequestDto,
+  options?: UseQueryOptions<MatchWaitingResponseDto[], Error>
+) {
+  return useQuery<MatchWaitingResponseDto[], Error>({
+    queryKey: queries.matchWaitingList.key(params),
+    queryFn: () => queries.matchWaitingList.fn(params),
+    ...options,
+  });
+}
+
+export function useVenues() {
+  return useQuery({
+    queryKey: queries.venues.key,
+    queryFn: queries.venues.fn,
+  });
+}
+
+export function useEnemyTeam(matchId: number | string | undefined) {
+  return useQuery<EnemyTeamResponseDto>({
+    queryKey: queries.enemyTeam.key(matchId!),
+    queryFn: () => queries.enemyTeam.fn(matchId!),
+    enabled: !!matchId,
   });
 }
 
@@ -404,7 +468,6 @@ export function useResetPasswordMutation() {
   });
 }
 
-// 회원가입 이메일 인증 관련 훅
 export function useSendCodeMutation() {
   return useMutation({
     mutationFn: queries.sendCode.fn,
