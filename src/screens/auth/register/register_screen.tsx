@@ -11,11 +11,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRegisterMutation } from '@/src/hooks/queries';
 import { useRegisterForm } from '@/src/hooks/useRegisterForm';
 import { useStep } from '@/src/hooks/useStep';
+import AccountSetup from '@/src/screens/auth/register/account_setup';
+import EmailVerification from '@/src/screens/auth/register/email_verification';
+import ProfileInfo from '@/src/screens/auth/register/profile_info';
 import { theme } from '@/src/theme';
-
-import AccountSetup from './account_setup';
-import EmailVerification from './email_verification';
-import ProfileInfo from './profile_info';
 type Step = 1 | 2 | 3;
 
 export default function RegisterScreen() {

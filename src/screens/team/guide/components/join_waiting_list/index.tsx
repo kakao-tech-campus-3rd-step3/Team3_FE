@@ -11,12 +11,11 @@ import {
 
 import { getTeamManagementUrl } from '@/src/constants/routes';
 import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
+import CancelModal from '@/src/screens/team/guide/components/join_waiting_list/cancel_modal';
+import { styles } from '@/src/screens/team/guide/components/join_waiting_list/styles';
 import { colors } from '@/src/theme';
 import type { UserJoinWaitingItem } from '@/src/types/team';
 import { getUserJoinWaitingStatusDisplayName } from '@/src/utils/team';
-
-import CancelModal from './cancel_modal';
-import { styles } from './styles';
 
 interface JoinWaitingListProps {
   onClose: () => void;

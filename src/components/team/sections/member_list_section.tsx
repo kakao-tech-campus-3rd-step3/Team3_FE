@@ -2,11 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
+import { styles } from '@/src/components/team/sections/member_list_section_styles';
 import { theme } from '@/src/theme';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
 import { getRoleDisplayName } from '@/src/utils/team';
-
-import { styles } from './member_list_section_styles';
 
 interface MemberListSectionProps {
   teamMembers: TeamMember[];

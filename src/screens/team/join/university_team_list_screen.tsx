@@ -17,15 +17,14 @@ import {
   useUserProfile,
 } from '@/src/hooks/queries';
 import { useTeamJoinRequest } from '@/src/hooks/useTeamJoinRequest';
+import FilterModal from '@/src/screens/team/join/components/filter_modal';
+import JoinConfirmationModal from '@/src/screens/team/join/components/join_confirmation_modal';
+import TeamCard from '@/src/screens/team/join/components/team_card';
+import TeamListHeader from '@/src/screens/team/join/components/team_list_header';
+import { styles } from '@/src/screens/team/join/university_team_list_style';
 import { theme } from '@/src/theme';
 import type { TeamListItem } from '@/src/types';
 import { SkillLevel, TeamType } from '@/src/types/team';
-
-import FilterModal from './components/filter_modal';
-import JoinConfirmationModal from './components/join_confirmation_modal';
-import TeamCard from './components/team_card';
-import TeamListHeader from './components/team_list_header';
-import { styles } from './university_team_list_style';
 
 interface FilterOptions {
   skillLevel: SkillLevel[];

@@ -13,9 +13,8 @@ import {
   useUserProfile,
   useTeamExitMutation,
 } from '@/src/hooks/queries';
+import { styles } from '@/src/screens/team/management/team_management_styles';
 import type { TeamMember } from '@/src/types/team';
-
-import { styles } from './team_management_styles';
 
 interface TeamManagementScreenProps {
   teamId: string | number;

@@ -8,9 +8,8 @@ import {
 } from 'react-native';
 
 import Dropdown from '@/src/components/dropdown';
+import { styles } from '@/src/screens/profile/edit/profile_form_style';
 import { UserProfile, UpdateProfileRequest } from '@/src/types/profile';
-
-import { styles } from './profile_form_style';
 
 interface ProfileFormProps {
   initialData: UserProfile;

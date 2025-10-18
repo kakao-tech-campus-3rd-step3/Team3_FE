@@ -21,9 +21,9 @@ import {
   useTeam,
   useTeamMatchRequests,
 } from '@/src/hooks/queries';
+import { styles } from '@/src/screens/team/management/team_settings_styles';
 import { colors } from '@/src/theme';
 
-import { styles } from './team_settings_styles';
 interface TeamSettingsScreenProps {
   teamId: string | number;
 }

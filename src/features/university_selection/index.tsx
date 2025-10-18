@@ -8,9 +8,8 @@ import UniversityItem from '@/src/components/team/filters/university_item';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ROUTES } from '@/src/constants/routes';
 import { UNIVERSITIES } from '@/src/constants/universities';
+import { styles } from '@/src/features/university_selection/styles';
 import { theme } from '@/src/theme';
-
-import { styles } from './styles';
 
 export default function UniversityListScreen() {
   const router = useRouter();

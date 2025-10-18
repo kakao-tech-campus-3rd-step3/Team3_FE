@@ -14,10 +14,9 @@ import {
 import { ROUTES } from '@/src/constants/routes';
 import { useUserProfile } from '@/src/hooks/queries';
 import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
+import JoinWaitingList from '@/src/screens/team/guide/components/join_waiting_list';
+import { styles } from '@/src/screens/team/guide/team_guide_styles';
 import { colors } from '@/src/theme';
-
-import { styles } from '../../team_guide_styles';
-import JoinWaitingList from '../join_waiting_list';
 
 export default memo(function Buttons() {
   const router = useRouter();

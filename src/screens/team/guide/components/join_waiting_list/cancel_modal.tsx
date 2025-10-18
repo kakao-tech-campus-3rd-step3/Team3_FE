@@ -15,10 +15,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTeamJoinRequest } from '@/src/hooks/useTeamJoinRequest';
+import { styles } from '@/src/screens/team/guide/components/join_waiting_list/styles';
 import { colors } from '@/src/theme';
 import type { UserJoinWaitingItem } from '@/src/types/team';
-
-import { styles } from './styles';
 
 interface CancelModalProps {
   visible: boolean;

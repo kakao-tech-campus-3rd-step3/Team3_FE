@@ -10,11 +10,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { styles } from '@/src/components/team/modals/join_requests_modal_styles';
 import { colors } from '@/src/theme';
 import type { TeamJoinRequest } from '@/src/types/team';
 import { getJoinRequestStatusDisplayName } from '@/src/utils/team';
-
-import { styles } from './join_requests_modal_styles';
 
 interface JoinRequestsModalProps {
   visible: boolean;

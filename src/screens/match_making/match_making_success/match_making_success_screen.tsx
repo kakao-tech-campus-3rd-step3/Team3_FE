@@ -3,8 +3,7 @@ import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, BackHandler } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-
-import { style } from './match_making_success_style';
+import { style } from '@/src/screens/match_making/match_making_success/match_making_success_style';
 
 type Stadium = {
   id: string;

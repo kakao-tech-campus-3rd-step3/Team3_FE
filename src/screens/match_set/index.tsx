@@ -12,9 +12,8 @@ import {
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ROUTES, getTeamManagementUrl } from '@/src/constants/routes';
 import { useEnemyTeam } from '@/src/hooks/queries';
+import { styles } from '@/src/screens/match_set/match_set_style';
 import { theme } from '@/src/theme';
-
-import { styles } from './match_set_style';
 
 export default function MatchSetScreen() {
   const { matchId } = useLocalSearchParams<{ matchId?: string }>();

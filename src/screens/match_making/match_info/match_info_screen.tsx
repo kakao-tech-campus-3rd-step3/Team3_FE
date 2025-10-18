@@ -19,12 +19,11 @@ import { useUserProfile, useVenues } from '@/src/hooks/queries';
 import { useCreateMatch } from '@/src/hooks/useCreateMatch';
 import Message from '@/src/screens/match_making/match_info/component/message/message';
 import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
+import { style } from '@/src/screens/match_making/match_info/match_info_style';
 import { MatchCreateRequestDto } from '@/src/types/match';
 import type { Venue } from '@/src/types/venue';
 import { formatKoreanDate, formatDateForAPI } from '@/src/utils/date';
 import { convertKSTToUTCTime } from '@/src/utils/timezone';
-
-import { style } from './match_info_style';
 
 type SkillLevel = 'AMATEUR' | 'SEMI_PRO' | 'PRO';
 

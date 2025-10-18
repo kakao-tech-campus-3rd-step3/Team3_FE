@@ -15,10 +15,9 @@ import {
   useDelegateLeadershipMutation,
   useUserProfile,
 } from '@/src/hooks/queries';
+import { styles } from '@/src/screens/team/management/team_member_style';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
 import { getRoleDisplayName } from '@/src/utils/team';
-
-import { styles } from './team_member_style';
 
 interface MemberManagementScreenProps {
   teamId: string | number;

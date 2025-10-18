@@ -5,12 +5,11 @@ import { View, FlatList, StatusBar } from 'react-native';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ROUTES } from '@/src/constants/routes';
 import { UNIVERSITIES } from '@/src/constants/universities';
+import ConnectButton from '@/src/screens/team/university_filter/components/connect_button';
+import UniversityHeader from '@/src/screens/team/university_filter/components/university_header';
+import UniversityItem from '@/src/screens/team/university_filter/components/university_item';
+import { styles } from '@/src/screens/team/university_filter/university_list_style';
 import { theme } from '@/src/theme';
-
-import ConnectButton from './components/connect_button';
-import UniversityHeader from './components/university_header';
-import UniversityItem from './components/university_item';
-import { styles } from './university_list_style';
 
 export default function UniversityListScreen() {
   const router = useRouter();

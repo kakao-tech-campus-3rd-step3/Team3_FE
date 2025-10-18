@@ -16,6 +16,7 @@ import TeamCard from '@/src/components/team/filters/team_card';
 import TeamListHeader from '@/src/components/team/filters/team_list_header';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { styles } from '@/src/features/team_join/styles';
 import {
   useTeamsByUniversityInfinite,
   useUserProfile,
@@ -23,8 +24,6 @@ import {
 import { theme } from '@/src/theme';
 import type { TeamListItem } from '@/src/types';
 import { SkillLevel, TeamType } from '@/src/types/team';
-
-import { styles } from './styles';
 
 interface FilterOptions {
   skillLevel: SkillLevel[];

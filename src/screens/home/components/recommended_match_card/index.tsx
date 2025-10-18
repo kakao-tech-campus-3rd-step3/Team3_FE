@@ -4,10 +4,9 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 import { useUserProfile } from '@/src/hooks/queries';
 import { useRecommendedMatches } from '@/src/hooks/useRecommendedMatches';
+import { styles } from '@/src/screens/home/components/recommended_match_card/styles';
 import { theme } from '@/src/theme';
 import { RecommendedMatch } from '@/src/types/home';
-
-import { styles } from './styles';
 
 interface SafeMatchPreviewProps {
   onMatchPress?: (matchDate?: string) => void;

@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import { getVenues } from '@/src/api/venue';
+import { styles } from '@/src/screens/match_application/match_application_style';
 import { theme } from '@/src/theme';
 import { MatchWaitingResponseDto } from '@/src/types/match';
 import { convertUTCToKSTTime } from '@/src/utils/timezone';
-
-import { styles } from '../match_application_style';
 
 type MatchCardProps = {
   match: MatchWaitingResponseDto;
