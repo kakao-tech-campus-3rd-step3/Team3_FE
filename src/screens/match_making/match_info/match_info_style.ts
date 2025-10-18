@@ -61,7 +61,6 @@ export const style = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.bold,
   },
 
-  // 날짜/시간 컨테이너
   dateTimeContainer: {
     paddingHorizontal: theme.spacing.spacing4,
     paddingBottom: theme.spacing.spacing4,

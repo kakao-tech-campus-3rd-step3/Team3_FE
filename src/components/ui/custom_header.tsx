@@ -3,9 +3,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { IconSymbol } from '@/src/components/ui/icon_symbol';
 import { theme } from '@/src/theme';
-
-import { IconSymbol } from './icon_symbol';
 
 interface CustomHeaderProps {
   title: string;

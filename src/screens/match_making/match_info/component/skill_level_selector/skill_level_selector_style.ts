@@ -6,9 +6,7 @@ const { width: screenWidth } = Dimensions.get('window');
 const isTablet = screenWidth >= 768;
 
 export const style = StyleSheet.create({
-  section: {
-    // 카드 내부에서 사용되므로 패딩 제거
-  },
+  section: {},
   label: {
     fontSize: theme.typography.fontSize.font4,
     fontWeight: theme.typography.fontWeight.bold,
@@ -36,7 +34,6 @@ export const style = StyleSheet.create({
   sliderContainer: {
     padding: theme.spacing.spacing2,
   },
-  // 드롭다운 기반 레벨 선택 스타일
   dropdownContainer: {
     marginVertical: theme.spacing.spacing4,
     paddingHorizontal: theme.spacing.spacing4,

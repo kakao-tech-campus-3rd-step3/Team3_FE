@@ -1,17 +1,16 @@
 import { ScrollView, Text, View, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Card } from '@/src/components/card/card';
+import Card from '@/src/components/card/card';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { useAuth } from '@/src/contexts/auth_context';
 import { useUserProfile } from '@/src/hooks/queries';
+import ProfileHeader from '@/src/screens/profile/components/profileHeader';
+import SettingCard from '@/src/screens/profile/components/settingTab/setting_card';
+import { getDefaultSettingsItems } from '@/src/screens/profile/components/settingTab/setting_items';
+import { styles } from '@/src/screens/profile/profile_style';
 import { theme } from '@/src/theme';
-
-import ProfileHeader from './components/profileHeader';
-import SettingCard from './components/settingTab/setting_card';
-import { getDefaultSettingsItems } from './components/settingTab/setting_items';
-import styles from './profile_style';
 
 function ProfileScreen() {
   const insets = useSafeAreaInsets();

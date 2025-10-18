@@ -2,10 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo, useMemo } from 'react';
 import { View, Text } from 'react-native';
 
-import { Card } from '@/src/components/card/card';
+import Card from '@/src/components/card/card';
+import { styles } from '@/src/screens/profile/profile_style';
 import { theme } from '@/src/theme';
-
-import styles from '../../profile_style';
 
 export default memo(function MannerCard({
   mannerScore,

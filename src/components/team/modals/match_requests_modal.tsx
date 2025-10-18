@@ -34,7 +34,6 @@ export default function MatchRequestsModal({
   onClose,
   onMatchRequest,
 }: MatchRequestsModalProps) {
-  // MatchRequest를 RequestItem으로 변환
   const requests: RequestItem[] = matchRequests.map(request => ({
     id: request.requestId,
     status: request.status,
@@ -48,7 +47,6 @@ export default function MatchRequestsModal({
     createdAt: new Date().toISOString(),
   }));
 
-  // 매치 요청 전용 상세 정보 렌더링
   const renderMatchRequestDetails = (request: RequestItem) => {
     const matchRequest = matchRequests.find(mr => mr.requestId === request.id);
 
@@ -148,7 +146,6 @@ export default function MatchRequestsModal({
     );
   };
 
-  // 뒤로가기 버튼 활성화
   useEffect(() => {
     const backAction = () => {
       if (visible) {

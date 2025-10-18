@@ -2,12 +2,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { View, Text } from 'react-native';
 
-import { Badge } from '@/src/screens/profile/components/badge/badge';
+import Badge from '@/src/screens/profile/components/badge/badge';
+import { styles } from '@/src/screens/profile/profile_style';
 import { theme } from '@/src/theme';
 import { UserProfile } from '@/src/types/profile';
 import { formatDate } from '@/src/utils/date';
-
-import styles from '../../profile_style';
 
 export default memo(function ProfileHeader({ user }: { user: UserProfile }) {
   const getSkillLevelBadge = (skillLevel: string) => {
