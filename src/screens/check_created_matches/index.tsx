@@ -9,8 +9,11 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { useUserProfile, useMyCreatedMatches } from '@/src/hooks/queries';
-import { useCancelMatch } from '@/src/hooks/useCancelMatch';
+import {
+  useUserProfile,
+  useMyCreatedMatches,
+  useCancelMatchMutation,
+} from '@/src/hooks/queries';
 import MatchCard from '@/src/screens/match_application/components/match_card';
 import { styles } from '@/src/screens/match_application/match_application_style';
 
@@ -25,8 +28,7 @@ export default function CheckCreatedMatchesScreen() {
     refetch: refetchMatches,
   } = useMyCreatedMatches();
 
-  // ✅ 취소 API 훅
-  const { mutate: cancelMatch, isPending } = useCancelMatch();
+  const { mutate: cancelMatch, isPending } = useCancelMatchMutation();
 
   // ✅ 매치 취소 함수
   const handleCancelMatch = (waitingId: number) => {

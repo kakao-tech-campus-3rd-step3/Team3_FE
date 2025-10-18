@@ -2,8 +2,6 @@ import { router } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
-import { acceptMatchRequestApi, rejectMatchRequestApi } from '@/src/api/match';
-import { teamJoinRequestApi } from '@/src/api/team';
 import JoinRequestsModal from '@/src/components/team/modals/join_requests_modal';
 import MatchRequestsModal, {
   type MatchRequest,
@@ -20,6 +18,10 @@ import {
   useDeleteTeamMutation,
   useTeam,
   useTeamMatchRequests,
+  useAcceptMatchRequestMutation,
+  useRejectMatchRequestMutation,
+  useApproveJoinRequestMutation,
+  useRejectJoinRequestMutation,
 } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/team/management/team_settings_styles';
 import { colors } from '@/src/theme';
@@ -38,6 +40,10 @@ export default function TeamSettingsScreen({
   const { data: userProfile } = useUserProfile();
 
   const deleteTeamMutation = useDeleteTeamMutation();
+  const acceptMatchRequestMutation = useAcceptMatchRequestMutation();
+  const rejectMatchRequestMutation = useRejectMatchRequestMutation();
+  const approveJoinRequestMutation = useApproveJoinRequestMutation();
+  const rejectJoinRequestMutation = useRejectJoinRequestMutation();
 
   const numericTeamId = teamId ? Number(teamId) : 0;
   const {
@@ -169,26 +175,43 @@ export default function TeamSettingsScreen({
       {
         text: action,
         style: status === 'rejected' ? 'destructive' : 'default',
-        onPress: async () => {
-          try {
-            if (status === 'approved') {
-              await teamJoinRequestApi.approveJoinRequest(teamId, requestId, {
+        onPress: () => {
+          if (status === 'approved') {
+            approveJoinRequestMutation.mutate(
+              {
+                teamId,
+                requestId,
                 role: '일반멤버',
-              });
-            } else {
-              await teamJoinRequestApi.rejectJoinRequest(teamId, requestId, {
+              },
+              {
+                onSuccess: () => {
+                  Alert.alert('성공', `가입을 ${action}했습니다.`);
+                  refetch();
+                  refetchMembers();
+                  refetchTeam();
+                },
+                onError: () => {
+                  Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
+                },
+              }
+            );
+          } else {
+            rejectJoinRequestMutation.mutate(
+              {
+                teamId,
+                requestId,
                 reason: '가입 거절',
-              });
-            }
-
-            Alert.alert('성공', `가입을 ${action}했습니다.`);
-            refetch();
-            if (status === 'approved') {
-              refetchMembers();
-              refetchTeam();
-            }
-          } catch {
-            Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
+              },
+              {
+                onSuccess: () => {
+                  Alert.alert('성공', `가입을 ${action}했습니다.`);
+                  refetch();
+                },
+                onError: () => {
+                  Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
+                },
+              }
+            );
           }
         },
       },
@@ -206,23 +229,30 @@ export default function TeamSettingsScreen({
       {
         text: action,
         style: status === 'rejected' ? 'destructive' : 'default',
-        onPress: async () => {
-          try {
-            if (status === 'approved') {
-              const response = await acceptMatchRequestApi(requestId);
-              const { matchId } = response;
-
-              setAcceptedMatchId(matchId);
-              setMatchAccepted(true);
-              setShowMatchRequestsModal(false);
-            } else {
-              await rejectMatchRequestApi(requestId);
-              Alert.alert('성공', `매치 요청을 ${action}했습니다.`);
-            }
-
-            refetchMatchRequests();
-          } catch {
-            Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
+        onPress: () => {
+          if (status === 'approved') {
+            acceptMatchRequestMutation.mutate(requestId, {
+              onSuccess: response => {
+                const { matchId } = response;
+                setAcceptedMatchId(matchId);
+                setMatchAccepted(true);
+                setShowMatchRequestsModal(false);
+                refetchMatchRequests();
+              },
+              onError: () => {
+                Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
+              },
+            });
+          } else {
+            rejectMatchRequestMutation.mutate(requestId, {
+              onSuccess: () => {
+                Alert.alert('성공', `매치 요청을 ${action}했습니다.`);
+                refetchMatchRequests();
+              },
+              onError: () => {
+                Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
+              },
+            });
           }
         },
       },

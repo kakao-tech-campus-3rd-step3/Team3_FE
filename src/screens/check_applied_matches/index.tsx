@@ -11,8 +11,11 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { useUserProfile, useMyAppliedMatches } from '@/src/hooks/queries';
-import { useCancelMatchRequest } from '@/src/hooks/useCancelMatchRequest';
+import {
+  useUserProfile,
+  useMyAppliedMatches,
+  useCancelMatchRequestMutation,
+} from '@/src/hooks/queries';
 import AppliedMatchCard from '@/src/screens/check_applied_matches/components/applied_match_card';
 import { styles } from '@/src/screens/match_application/match_application_style';
 
@@ -29,7 +32,7 @@ export default function CheckAppliedMatchesScreen() {
     refetch: refetchMatches,
   } = useMyAppliedMatches();
 
-  const { mutate: cancelRequest, isPending } = useCancelMatchRequest();
+  const { mutate: cancelRequest, isPending } = useCancelMatchRequestMutation();
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -53,10 +56,11 @@ export default function CheckAppliedMatchesScreen() {
           refetchMatches();
         },
         onError: error => {
-          Alert.alert(
-            '오류',
-            error.message || '매치 요청 취소 중 문제가 발생했습니다.'
-          );
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : '매치 요청 취소 중 문제가 발생했습니다.';
+          Alert.alert('오류', errorMessage);
         },
       });
     }

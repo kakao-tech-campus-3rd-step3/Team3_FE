@@ -12,8 +12,7 @@ import {
 } from 'react-native';
 
 import { ROUTES } from '@/src/constants/routes';
-import { useUserProfile } from '@/src/hooks/queries';
-import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
+import { useUserProfile, useMyJoinWaitingList } from '@/src/hooks/queries';
 import JoinWaitingList from '@/src/screens/team/guide/components/join_waiting_list';
 import { styles } from '@/src/screens/team/guide/team_guide_styles';
 import { colors } from '@/src/theme';

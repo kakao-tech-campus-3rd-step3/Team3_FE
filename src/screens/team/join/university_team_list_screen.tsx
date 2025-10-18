@@ -15,8 +15,8 @@ import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import {
   useTeamsByUniversityInfinite,
   useUserProfile,
+  useTeamJoinRequestMutation,
 } from '@/src/hooks/queries';
-import { useTeamJoinRequest } from '@/src/hooks/useTeamJoinRequest';
 import FilterModal from '@/src/screens/team/join/components/filter_modal';
 import JoinConfirmationModal from '@/src/screens/team/join/components/join_confirmation_modal';
 import TeamCard from '@/src/screens/team/join/components/team_card';
@@ -49,7 +49,7 @@ export default function UniversityTeamListScreen() {
   const slideAnim = useState(new Animated.Value(0))[0];
   const joinModalAnim = useState(new Animated.Value(0))[0];
 
-  const { joinWaiting } = useTeamJoinRequest();
+  const { joinWaiting } = useTeamJoinRequestMutation();
 
   const {
     data,

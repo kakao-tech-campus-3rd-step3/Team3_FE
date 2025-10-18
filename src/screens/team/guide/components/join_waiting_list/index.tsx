@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import { getTeamManagementUrl } from '@/src/constants/routes';
-import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
+import { useMyJoinWaitingList } from '@/src/hooks/queries';
 import CancelModal from '@/src/screens/team/guide/components/join_waiting_list/cancel_modal';
 import { styles } from '@/src/screens/team/guide/components/join_waiting_list/styles';
 import { colors } from '@/src/theme';

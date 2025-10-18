@@ -33,7 +33,13 @@ import type {
   MatchWaitingListRequestDto,
   EnemyTeamResponseDto,
   TeamListPageResponse,
+  MatchCreateRequestDto,
+  MatchRequestRequestDto,
+  RecommendedMatch,
+  JoinWaitingRequest,
+  JoinWaitingCancelRequest,
 } from '@/src/types';
+import { formatDateForAPI } from '@/src/utils/date';
 
 export const queries = {
   login: {
@@ -626,5 +632,306 @@ export function useDelegateLeadershipMutation() {
     onError: (error: unknown) => {
       console.error('리더십 위임 실패:', error);
     },
+  });
+}
+
+export function useAcceptMatchRequestMutation() {
+  return useMutation({
+    mutationFn: (requestId: number | string) =>
+      api.acceptMatchRequestApi(requestId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queries.teamMatchRequests.key,
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('매치 요청 승인 실패:', error);
+    },
+  });
+}
+
+export function useRejectMatchRequestMutation() {
+  return useMutation({
+    mutationFn: (requestId: number | string) =>
+      api.rejectMatchRequestApi(requestId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queries.teamMatchRequests.key,
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('매치 요청 거절 실패:', error);
+    },
+  });
+}
+
+export function useApproveJoinRequestMutation() {
+  return useMutation({
+    mutationFn: ({
+      teamId,
+      requestId,
+      role,
+    }: {
+      teamId: string | number;
+      requestId: string | number;
+      role: '회장' | '부회장' | '일반멤버';
+    }) =>
+      api.teamJoinRequestApi.approveJoinRequest(teamId, requestId, { role }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.teamMembers.key(variables.teamId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.team.key(variables.teamId),
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('가입 요청 승인 실패:', error);
+    },
+  });
+}
+
+export function useRejectJoinRequestMutation() {
+  return useMutation({
+    mutationFn: ({
+      teamId,
+      requestId,
+      reason,
+    }: {
+      teamId: string | number;
+      requestId: string | number;
+      reason: string;
+    }) =>
+      api.teamJoinRequestApi.rejectJoinRequest(teamId, requestId, { reason }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('가입 요청 거절 실패:', error);
+    },
+  });
+}
+
+export function useCreateMatchMutation() {
+  return useMutation({
+    mutationFn: (payload: MatchCreateRequestDto) => api.createMatch(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queries.myCreatedMatches.key });
+    },
+    onError: (error: unknown) => {
+      console.error('매치 생성 실패:', error);
+    },
+  });
+}
+
+export function useMatchRequestMutation() {
+  return useMutation({
+    mutationFn: ({
+      waitingId,
+      payload,
+    }: {
+      waitingId: number | string;
+      payload: MatchRequestRequestDto;
+    }) => api.requestMatchApi(waitingId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['match-waiting-list'] });
+    },
+    onError: (error: unknown) => {
+      console.error('매치 요청 실패:', error);
+    },
+  });
+}
+
+export function useCancelMatchMutation() {
+  return useMutation({
+    mutationFn: (waitingId: number) => api.cancelCreatedMatchApi(waitingId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queries.myCreatedMatches.key });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+    },
+    onError: (error: unknown) => {
+      console.error('매치 취소 실패:', error);
+    },
+  });
+}
+
+export function useCancelMatchRequestMutation() {
+  return useMutation({
+    mutationFn: (requestId: number | string) =>
+      api.cancelMatchRequestById(requestId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queries.myAppliedMatches.key });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
+    },
+    onError: (error: unknown) => {
+      console.error('매치 요청 취소 실패:', error);
+    },
+  });
+}
+
+const fetchWaitingMatches = async (): Promise<MatchWaitingResponseDto[]> => {
+  const today = new Date();
+  const todayString = formatDateForAPI(today);
+
+  try {
+    let result = await api.getMatchWaitingList({
+      selectDate: todayString,
+      startTime: '00:00:00',
+    });
+
+    if (result.length === 0) {
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      const tomorrowString = formatDateForAPI(tomorrow);
+
+      const tomorrowResult = await api.getMatchWaitingList({
+        selectDate: tomorrowString,
+        startTime: '00:00:00',
+      });
+
+      result = [...result, ...tomorrowResult];
+
+      if (tomorrowResult.length === 0) {
+        const dayAfterTomorrow = new Date(today);
+        dayAfterTomorrow.setDate(today.getDate() + 2);
+        const dayAfterTomorrowString = formatDateForAPI(dayAfterTomorrow);
+
+        const dayAfterTomorrowResult = await api.getMatchWaitingList({
+          selectDate: dayAfterTomorrowString,
+          startTime: '00:00:00',
+        });
+
+        result = [...result, ...dayAfterTomorrowResult];
+      }
+    }
+
+    return result;
+  } catch (error) {
+    console.error('[추천매치] API 호출 실패:', error);
+    throw error;
+  }
+};
+
+const transformToRecommendedMatch = (
+  match: MatchWaitingResponseDto
+): RecommendedMatch => {
+  const teamName =
+    typeof match.teamName === 'string' ? match.teamName : match.teamName.name;
+
+  return {
+    id: match.waitingId,
+    teamName,
+    university: '',
+    skillLevel: `${match.skillLevelMin} - ${match.skillLevelMax}`,
+    matchDate: match.preferredDate,
+    location: `장소 ID: ${match.preferredVenueId}`,
+  };
+};
+
+const getRecommendedMatches = (
+  matches: MatchWaitingResponseDto[]
+): RecommendedMatch[] => {
+  const today = new Date();
+  const threeDaysLater = new Date(today);
+  threeDaysLater.setDate(today.getDate() + 3);
+
+  const upcomingMatches = matches.filter(match => {
+    const matchDate = new Date(match.preferredDate);
+    return matchDate >= today && matchDate <= threeDaysLater;
+  });
+
+  const shuffled = [...upcomingMatches].sort(() => 0.5 - Math.random());
+  const selectedMatches = shuffled.slice(0, 1);
+
+  return selectedMatches.map(transformToRecommendedMatch);
+};
+
+export function useRecommendedMatches() {
+  const { data: userProfile } = useUserProfile();
+
+  return useQuery({
+    queryKey: ['recommendedMatches'],
+    queryFn: fetchWaitingMatches,
+    select: getRecommendedMatches,
+    enabled: !!userProfile?.teamId,
+  });
+}
+
+export function useTeamJoinRequestMutation() {
+  const joinWaitingMutation = useMutation({
+    mutationFn: ({
+      teamId,
+      data,
+    }: {
+      teamId: string | number;
+      data: JoinWaitingRequest;
+    }) => api.teamJoinRequestApi.joinWaiting(teamId, data),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['myJoinWaitingList'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.team.key(variables.teamId),
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 가입 요청 실패:', error);
+    },
+  });
+
+  const cancelJoinRequestMutation = useMutation({
+    mutationFn: ({
+      teamId,
+      joinWaitingId,
+      data,
+    }: {
+      teamId: string | number;
+      joinWaitingId: string | number;
+      data: JoinWaitingCancelRequest;
+    }) => api.teamJoinRequestApi.cancelJoinRequest(teamId, joinWaitingId, data),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['myJoinWaitingList'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 가입 요청 취소 실패:', error);
+    },
+  });
+
+  return {
+    joinWaiting: joinWaitingMutation.mutate,
+    isJoining: joinWaitingMutation.isPending,
+    joinError: joinWaitingMutation.error,
+    joinSuccess: joinWaitingMutation.isSuccess,
+    resetJoinState: joinWaitingMutation.reset,
+    cancelJoinRequest: cancelJoinRequestMutation.mutate,
+    isCanceling: cancelJoinRequestMutation.isPending,
+    cancelError: cancelJoinRequestMutation.error,
+    cancelSuccess: cancelJoinRequestMutation.isSuccess,
+    resetCancelState: cancelJoinRequestMutation.reset,
+  };
+}
+
+export function useMyJoinWaitingList(
+  page: number = 0,
+  size: number = 10,
+  sort: string = 'createdAt,desc'
+) {
+  return useQuery({
+    queryKey: ['myJoinWaitingList', page, size, sort],
+    queryFn: () =>
+      api.userJoinWaitingApi.getMyJoinWaitingList(page, size, sort),
   });
 }
