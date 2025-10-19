@@ -39,7 +39,7 @@ export default memo(function EnvelopeSection({ teamId }: EnvelopeSectionProps) {
 
   const handleMatchCreation = () => {
     if (!checkTeamMembership()) return;
-    router.push(ROUTES.MATCH_MAKING);
+    router.push(ROUTES.MEMBER_READY);
   };
 
   const handleCheckCreatedMatches = () => {
