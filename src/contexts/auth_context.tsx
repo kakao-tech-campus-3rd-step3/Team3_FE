@@ -1,3 +1,4 @@
+import * as SplashScreen from 'expo-splash-screen';
 import React, {
   createContext,
   useContext,
@@ -127,6 +128,7 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       setTokenState(null);
       setRefreshTokenState(null);
       queryClient.clear();
+      SplashScreen.hideAsync();
     }
   }, [refreshTokenState]);
 
