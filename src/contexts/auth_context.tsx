@@ -123,6 +123,10 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       refreshTimeoutRef.current = setTimeout(refreshAccessToken, delayMs);
     } catch (error) {
       console.warn('토큰 갱신 실패:', error);
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+        refreshTimeoutRef.current = null;
+      }
       deleteSecureStoreResource('authToken');
       deleteSecureStoreResource('refreshToken');
       setTokenState(null);
