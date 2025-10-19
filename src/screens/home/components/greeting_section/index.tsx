@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Text, View } from 'react-native';
 
-import { styles } from '@/src/screens/home/home_style';
+import styles from '../../home_style';
 
 export default memo(function GreetingSection() {
   return (

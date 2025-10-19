@@ -3,9 +3,10 @@ import { router } from 'expo-router';
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-import { styles } from '@/src/components/team/sections/manage_section_styles';
 import { colors } from '@/src/theme';
 import type { TeamJoinRequest } from '@/src/types/team';
+
+import { styles } from './manage_section_styles';
 
 interface ManageSectionProps {
   teamId: string | number;

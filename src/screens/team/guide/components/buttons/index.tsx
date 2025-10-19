@@ -11,11 +11,12 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
-import { ROUTES } from '@/src/constants/routes';
-import { useUserProfile, useMyJoinWaitingList } from '@/src/hooks/queries';
-import JoinWaitingList from '@/src/screens/team/guide/components/join_waiting_list';
-import { styles } from '@/src/screens/team/guide/team_guide_styles';
+import { useUserProfile } from '@/src/hooks/queries';
+import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
 import { colors } from '@/src/theme';
+
+import { styles } from '../../team_guide_styles';
+import JoinWaitingList from '../join_waiting_list';
 
 export default memo(function Buttons() {
   const router = useRouter();
@@ -89,13 +90,15 @@ export default memo(function Buttons() {
     if (hasJoinWaiting) {
       setShowJoinWaitingList(true);
     } else {
+      // 사용자 대학 정보를 파라미터로 전달하여 바로 팀 목록으로 이동
       router.push({
-        pathname: ROUTES.TEAM_JOIN_UNIVERSITY,
+        pathname: '/team/join-university',
         params: { university: userProfile?.university || '' },
       });
     }
   };
 
+  // 로딩 중일 때는 버튼들을 숨김
   if (isJoinWaitingLoading) {
     return (
       <View style={styles.buttonContainer}>
@@ -143,7 +146,7 @@ export default memo(function Buttons() {
           style={dynamicStyles.createButton}
           onPress={() =>
             router.push({
-              pathname: ROUTES.TEAM_CREATION,
+              pathname: '/team/creation',
               params: { university: userProfile?.university || '' },
             })
           }

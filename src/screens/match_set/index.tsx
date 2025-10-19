@@ -10,15 +10,19 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { ROUTES, getTeamManagementUrl } from '@/src/constants/routes';
-import { useEnemyTeam } from '@/src/hooks/queries';
-import { styles } from '@/src/screens/match_set/match_set_style';
+import { ROUTES } from '@/src/constants/routes';
+import { useEnemyTeam } from '@/src/hooks/useEnemyTeam';
 import { theme } from '@/src/theme';
+
+import { styles } from './match_set_style';
 
 export default function MatchSetScreen() {
   const { matchId } = useLocalSearchParams<{ matchId?: string }>();
 
+  // ✅ 커스텀 훅 호출 (React Query)
   const { data: enemyTeam, isLoading, error } = useEnemyTeam(matchId);
+
+  // ✅ 로딩 상태
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -31,6 +35,7 @@ export default function MatchSetScreen() {
     );
   }
 
+  // ✅ 에러 상태
   if (error || !enemyTeam) {
     return (
       <View style={styles.container}>
@@ -44,6 +49,7 @@ export default function MatchSetScreen() {
           <Text style={styles.infoText}>
             상대 팀 정보를 불러올 수 없습니다.
           </Text>
+          {/* ❗ 디버깅용 출력 (개발 중에만) */}
           <Text style={[styles.infoText, { marginTop: 10 }]}>
             matchId: {matchId ?? 'undefined'}
           </Text>
@@ -57,6 +63,7 @@ export default function MatchSetScreen() {
     );
   }
 
+  // ✅ 정상 데이터 렌더링
   return (
     <View style={styles.container}>
       <CustomHeader title="매치 생성 완료" />
@@ -101,7 +108,7 @@ export default function MatchSetScreen() {
               marginTop: theme.spacing.spacing3,
             },
           ]}
-          onPress={() => router.push(getTeamManagementUrl(enemyTeam.teamId))}
+          onPress={() => router.push(`/team/management/${enemyTeam.teamId}`)}
         >
           <Text style={styles.homeButtonText}>팀 정보 보기</Text>
         </TouchableOpacity>
@@ -110,6 +117,7 @@ export default function MatchSetScreen() {
   );
 }
 
+/* ✅ Enum 한글 변환 함수 */
 function getTeamTypeLabel(type: string) {
   switch (type) {
     case 'CENTRAL_CLUB':

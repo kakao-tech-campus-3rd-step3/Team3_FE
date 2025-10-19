@@ -15,7 +15,6 @@ import InfoSection from '@/src/components/team/sections/info_section';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { useTeam, useUpdateTeamMutation } from '@/src/hooks/queries';
-import { styles } from '@/src/screens/team/management/team_edit_styles';
 import { colors } from '@/src/theme';
 import {
   DEFAULT_SKILL_LEVEL,
@@ -24,6 +23,8 @@ import {
   TEAM_TYPES,
 } from '@/src/types/team';
 import type { SkillLevel, TeamType } from '@/src/types/team';
+
+import { styles } from './team_edit_styles';
 
 interface TeamEditScreenProps {
   teamId: string | number;

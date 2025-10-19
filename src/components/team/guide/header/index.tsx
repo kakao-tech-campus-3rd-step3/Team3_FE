@@ -3,8 +3,9 @@ import { useRouter } from 'expo-router';
 import { memo } from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 
-import { styles } from '@/src/components/team/guide/header_styles';
 import { colors } from '@/src/theme';
+
+import { styles } from '../header_styles';
 
 export default memo(function Header() {
   const router = useRouter();

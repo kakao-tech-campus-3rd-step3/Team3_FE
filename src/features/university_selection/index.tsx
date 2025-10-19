@@ -6,10 +6,10 @@ import ConnectButton from '@/src/components/team/filters/connect_button';
 import UniversityHeader from '@/src/components/team/filters/university_header';
 import UniversityItem from '@/src/components/team/filters/university_item';
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { ROUTES } from '@/src/constants/routes';
 import { UNIVERSITIES } from '@/src/constants/universities';
-import { styles } from '@/src/features/university_selection/styles';
 import { theme } from '@/src/theme';
+
+import { styles } from './styles';
 
 export default function UniversityListScreen() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function UniversityListScreen() {
   const handleConnect = () => {
     if (selectedUniversity) {
       router.push({
-        pathname: ROUTES.TEAM_JOIN_LIST,
+        pathname: '/team/join-list',
         params: { university: selectedUniversity },
       });
     }

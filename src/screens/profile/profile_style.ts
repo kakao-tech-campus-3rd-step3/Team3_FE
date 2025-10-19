@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { theme } from '@/src/theme';
 
-export const styles = StyleSheet.create({
+export default StyleSheet.create({
   container: {
     flex: 1,
     minHeight: '100%',

@@ -8,8 +8,9 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
-import { styles } from '@/src/screens/team/guide/team_guide_styles';
 import { colors } from '@/src/theme';
+
+import { styles } from '../../team_guide_styles';
 
 export default memo(function Header() {
   const router = useRouter();

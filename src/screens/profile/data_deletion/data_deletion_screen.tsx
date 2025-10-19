@@ -4,7 +4,8 @@ import { ScrollView, Text, View, TouchableOpacity, Alert } from 'react-native';
 
 import { useAuth } from '@/src/contexts/auth_context';
 import { useDeleteProfileMutation } from '@/src/hooks/queries';
-import { styles } from '@/src/screens/profile/data_deletion/data_deletion_style';
+
+import styles from './data_deletion_style';
 
 export default function DataDeletionScreen() {
   const { token, logout } = useAuth();

@@ -1,6 +1,5 @@
 import {
   TEAM_API,
-  TEAM_MATCH_API,
   TEAM_MEMBER_API,
   USER_JOIN_WAITING_API,
 } from '@/src/constants/endpoints';
@@ -254,18 +253,14 @@ export const teamDeleteApi = {
     try {
       let matchRequests = null;
       try {
-        matchRequests = await apiClient.get(
-          TEAM_MATCH_API.GET_TEAM_MATCH_REQUESTS()
-        );
+        matchRequests = await apiClient.get('/api/matches/receive/me/pending');
       } catch (error) {
         console.log('[팀 삭제 API] 매치 요청 조회 실패:', error);
       }
 
       let recentMatches = null;
       try {
-        recentMatches = await apiClient.get(
-          TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES()
-        );
+        recentMatches = await apiClient.get('/api/teams/me/matches');
       } catch (error) {
         console.log('[팀 삭제 API] 최근 매치 조회 실패:', error);
       }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-import { styles } from '@/src/screens/team/university_filter/university_list_style';
+import { styles } from '../university_list_style';
 
 export default function UniversityHeader() {
   return (

@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-import { styles } from '@/src/components/team/filters/team_card_styles';
 import type { TeamListItem } from '@/src/types';
+
+import { styles } from './team_card_styles';
 
 interface TeamCardProps {
   team: TeamListItem;

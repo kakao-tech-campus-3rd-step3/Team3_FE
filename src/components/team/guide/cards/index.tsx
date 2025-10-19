@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { View, TouchableOpacity, Text, Animated } from 'react-native';
 
-import { styles } from '@/src/components/team/guide/cards_styles';
 import { colors } from '@/src/theme';
+
+import { styles } from '../cards_styles';
 
 const cards = [
   {

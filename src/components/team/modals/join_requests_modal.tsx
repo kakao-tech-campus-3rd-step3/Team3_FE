@@ -10,10 +10,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { styles } from '@/src/components/team/modals/join_requests_modal_styles';
 import { colors } from '@/src/theme';
 import type { TeamJoinRequest } from '@/src/types/team';
 import { getJoinRequestStatusDisplayName } from '@/src/utils/team';
+
+import { styles } from './join_requests_modal_styles';
 
 interface JoinRequestsModalProps {
   visible: boolean;
@@ -28,6 +29,7 @@ export default function JoinRequestsModal({
   onClose,
   onJoinRequest,
 }: JoinRequestsModalProps) {
+  // 모달 뒤로가기 버튼 활성화
   useEffect(() => {
     const backAction = () => {
       if (visible) {

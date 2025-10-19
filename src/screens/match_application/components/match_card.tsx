@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-import { useVenues } from '@/src/hooks/queries';
-import { styles } from '@/src/screens/match_application/match_application_style';
+import { getVenues } from '@/src/api/venue';
 import { theme } from '@/src/theme';
 import { MatchWaitingResponseDto } from '@/src/types/match';
 import { convertUTCToKSTTime } from '@/src/utils/timezone';
+
+import { styles } from '../match_application_style';
 
 type MatchCardProps = {
   match: MatchWaitingResponseDto;
@@ -24,18 +25,21 @@ export default function MatchCard({
   isCancellable = false,
   isAlreadyApplied = false,
 }: MatchCardProps) {
-  const { data: venuesData } = useVenues();
   const [venueMap, setVenueMap] = useState<Record<number, string>>({});
 
   useEffect(() => {
-    if (venuesData) {
-      const map: Record<number, string> = {};
-      venuesData.forEach(venue => {
-        map[venue.venueId] = venue.venueName;
-      });
-      setVenueMap(map);
-    }
-  }, [venuesData]);
+    const loadVenues = async () => {
+      try {
+        const venuesData = await getVenues();
+        const map: Record<number, string> = {};
+        venuesData.forEach(venue => {
+          map[venue.venueId] = venue.venueName;
+        });
+        setVenueMap(map);
+      } catch {}
+    };
+    loadVenues();
+  }, []);
 
   const formatTime = (timeStart: string, timeEnd: string) => {
     if (!match.preferredDate) {

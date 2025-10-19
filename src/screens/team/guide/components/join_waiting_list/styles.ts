@@ -42,6 +42,7 @@ export const styles = StyleSheet.create({
     borderColor: colors.gray[100],
   },
 
+  // 카드 헤더 섹션
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -88,6 +89,7 @@ export const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
   },
 
+  // 신청자 정보 섹션
   applicantSection: {
     backgroundColor: colors.gray[50],
     borderRadius: spacing.spacing3,
@@ -123,6 +125,7 @@ export const styles = StyleSheet.create({
     color: colors.gray[600],
   },
 
+  // 상태 메시지 섹션
   statusMessageSection: {
     marginBottom: spacing.spacing4,
   },
@@ -139,6 +142,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
 
+  // 액션 섹션
   actionSection: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
@@ -241,6 +245,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
+  // 취소 모달 스타일
   modalContainer: {
     flex: 1,
     backgroundColor: colors.white,

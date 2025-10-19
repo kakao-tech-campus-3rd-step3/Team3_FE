@@ -5,8 +5,9 @@ import { View } from 'react-native';
 import Buttons from '@/src/components/team/guide/buttons';
 import Cards from '@/src/components/team/guide/cards';
 import Header from '@/src/components/team/guide/header';
-import { styles } from '@/src/features/team_guide/styles';
 import { colors } from '@/src/theme';
+
+import { styles } from './styles';
 
 const TeamGuideScreen = () => {
   return (

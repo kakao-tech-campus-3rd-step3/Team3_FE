@@ -7,9 +7,10 @@ import TeamMembersSection from '@/src/components/team/sections/team_members_sect
 import EmptyState from '@/src/components/team/states/empty_state';
 import LoadingState from '@/src/components/team/states/loading_state';
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { styles } from '@/src/features/team_management/styles';
 import { useTeam, useTeamMembers, useUserProfile } from '@/src/hooks/queries';
 import type { TeamMember } from '@/src/types/team';
+
+import { styles } from './styles';
 
 interface TeamManagementScreenProps {
   teamId: string | number;

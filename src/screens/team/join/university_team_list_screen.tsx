@@ -15,16 +15,17 @@ import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import {
   useTeamsByUniversityInfinite,
   useUserProfile,
-  useTeamJoinRequestMutation,
 } from '@/src/hooks/queries';
-import FilterModal from '@/src/screens/team/join/components/filter_modal';
-import JoinConfirmationModal from '@/src/screens/team/join/components/join_confirmation_modal';
-import TeamCard from '@/src/screens/team/join/components/team_card';
-import TeamListHeader from '@/src/screens/team/join/components/team_list_header';
-import { styles } from '@/src/screens/team/join/university_team_list_style';
+import { useTeamJoinRequest } from '@/src/hooks/useTeamJoinRequest';
 import { theme } from '@/src/theme';
 import type { TeamListItem } from '@/src/types';
 import { SkillLevel, TeamType } from '@/src/types/team';
+
+import FilterModal from './components/filter_modal';
+import JoinConfirmationModal from './components/join_confirmation_modal';
+import TeamCard from './components/team_card';
+import TeamListHeader from './components/team_list_header';
+import { styles } from './university_team_list_style';
 
 interface FilterOptions {
   skillLevel: SkillLevel[];
@@ -36,6 +37,7 @@ export default function UniversityTeamListScreen() {
   const { university } = useLocalSearchParams<{ university: string }>();
   const { data: userProfile } = useUserProfile();
 
+  // 사용자의 대학 정보를 사용하여 팀 목록 조회
   const userUniversity = userProfile?.university || university;
 
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -49,7 +51,7 @@ export default function UniversityTeamListScreen() {
   const slideAnim = useState(new Animated.Value(0))[0];
   const joinModalAnim = useState(new Animated.Value(0))[0];
 
-  const { joinWaiting } = useTeamJoinRequestMutation();
+  const { joinWaiting } = useTeamJoinRequest();
 
   const {
     data,

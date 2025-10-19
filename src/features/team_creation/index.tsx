@@ -12,7 +12,6 @@ import {
 import TeamBasicInfo from '@/src/components/team/steps/team_basic_info';
 import TeamDetails from '@/src/components/team/steps/team_details';
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { styles } from '@/src/features/team_creation/styles';
 import { useCreateTeamMutation } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import {
@@ -21,6 +20,8 @@ import {
   DEFAULT_TEAM_TYPE,
   DEFAULT_SKILL_LEVEL,
 } from '@/src/types/team';
+
+import { styles } from './styles';
 
 interface TeamFormData {
   name: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import TeamGuard from '@/src/components/auth/team_guard';
+import { TeamGuard } from '@/src/components/auth/team_guard';
 import CheckCreatedMatchesScreen from '@/src/screens/check_created_matches';
 
 export default function CheckCreatedMatchesRoute() {

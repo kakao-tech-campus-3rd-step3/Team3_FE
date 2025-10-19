@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 
-import { style } from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector_style';
+import { style } from './skill_level_selector_style';
 
+// 실력 레벨 정의
 const LEVELS = [
   { key: 'AMATEUR', label: '아마추어', description: '초보자' },
   { key: 'SEMI_PRO', label: '세미프로', description: '중급자' },
   { key: 'PRO', label: '프로', description: '고급자' },
 ] as const;
 
+// 드롭다운용 데이터
 const DROPDOWN_DATA = LEVELS.map((level, index) => ({
   label: level.label,
   value: index,
@@ -26,6 +28,7 @@ export default function SkillLevelSelector({ onChange }: Props) {
   const [maxLevel, setMaxLevel] = useState<number>(2);
 
   const handleMinLevelChange = (item: { label: string; value: number }) => {
+    // 최소 레벨이 최대 레벨보다 높아지면 최대 레벨도 함께 조정
     if (item.value > maxLevel) {
       setMaxLevel(item.value);
       setMinLevel(item.value);
@@ -37,6 +40,7 @@ export default function SkillLevelSelector({ onChange }: Props) {
   };
 
   const handleMaxLevelChange = (item: { label: string; value: number }) => {
+    // 최대 레벨이 최소 레벨보다 낮아지면 최소 레벨도 함께 조정
     if (item.value < minLevel) {
       setMinLevel(item.value);
       setMaxLevel(item.value);
@@ -57,6 +61,7 @@ export default function SkillLevelSelector({ onChange }: Props) {
       </View>
 
       <View style={style.sliderContainer}>
+        {/* 드롭다운 기반 레벨 선택 */}
         <View style={style.dropdownContainer}>
           <View style={style.dropdownRow}>
             <View style={style.dropdownItem}>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import TeamGuard from '@/src/components/auth/team_guard';
+import { TeamGuard } from '@/src/components/auth/team_guard';
 import CheckAppliedMatchesScreen from '@/src/screens/check_applied_matches';
 
 export default function CheckAppliedMatchesRoute() {

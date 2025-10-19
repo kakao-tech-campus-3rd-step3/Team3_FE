@@ -3,8 +3,9 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 import { ModalDatePicker } from '@/src/components/ui/modal_date_picker';
 import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
-import { styles } from '@/src/screens/match_application/match_application_style';
 import { formatKoreanDate, formatKoreanTime } from '@/src/utils/date';
+
+import { styles } from '../match_application_style';
 
 interface FilterCardProps {
   selectedDate: Date | null;

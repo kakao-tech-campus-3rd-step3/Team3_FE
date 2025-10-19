@@ -14,10 +14,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useTeamJoinRequestMutation } from '@/src/hooks/queries';
-import { styles } from '@/src/screens/team/guide/components/join_waiting_list/styles';
+import { useTeamJoinRequest } from '@/src/hooks/useTeamJoinRequest';
 import { colors } from '@/src/theme';
 import type { UserJoinWaitingItem } from '@/src/types/team';
+
+import { styles } from './styles';
 
 interface CancelModalProps {
   visible: boolean;
@@ -35,7 +36,7 @@ export default function CancelModal({
   onOuterModalClose,
 }: CancelModalProps) {
   const router = useRouter();
-  const { cancelJoinRequest, isCanceling } = useTeamJoinRequestMutation();
+  const { cancelJoinRequest, isCanceling } = useTeamJoinRequest();
 
   const handleCancel = () => {
     if (!joinWaitingItem) return;
@@ -73,11 +74,10 @@ export default function CancelModal({
                   ]);
                 },
                 onError: error => {
-                  const errorMessage =
-                    error instanceof Error
-                      ? error.message
-                      : '팀 가입 신청 취소에 실패했습니다.';
-                  Alert.alert('취소 실패', errorMessage);
+                  Alert.alert(
+                    '취소 실패',
+                    error?.message || '팀 가입 신청 취소에 실패했습니다.'
+                  );
                 },
               }
             );

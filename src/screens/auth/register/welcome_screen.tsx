@@ -25,7 +25,7 @@ interface WelcomeScreenProps {
   onSwitchToLogin: () => void;
 }
 
-export default function WelcomeScreen({ onSwitchToLogin }: WelcomeScreenProps) {
+export function WelcomeScreen({ onSwitchToLogin }: WelcomeScreenProps) {
   const { width } = useWindowDimensions();
   const logoScale = useSharedValue(0);
   const logoOpacity = useSharedValue(0);

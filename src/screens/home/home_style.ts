@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { theme } from '@/src/theme';
 
-export const styles = StyleSheet.create({
+export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background.sub,
@@ -46,6 +46,7 @@ export const styles = StyleSheet.create({
     paddingBottom: theme.spacing.spacing1,
   },
 
+  // 새로운 섹션 스타일들
   mainSection: {
     marginHorizontal: theme.spacing.spacing4,
     marginBottom: theme.spacing.spacing6,

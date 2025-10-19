@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { View, Text } from 'react-native';
 
-import { styles } from '@/src/components/team/states/loading_state_styles';
+import { styles } from './loading_state_styles';
 
 interface LoadingStateProps {
   message?: string;

@@ -3,7 +3,8 @@ import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, BackHandler } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { style } from '@/src/screens/match_making/match_making_success/match_making_success_style';
+
+import { style } from './match_making_success_style';
 
 type Stadium = {
   id: string;
@@ -37,9 +38,10 @@ export default function MatchMakingSuccessScreen() {
   const parsedTimeStart: Date | null = timeStart ? new Date(timeStart) : null;
   const parsedTimeEnd: Date | null = timeEnd ? new Date(timeEnd) : null;
 
+  // 뒤로가기 버튼 완전히 비활성화
   useEffect(() => {
     const backAction = () => {
-      return true;
+      return true; // 뒤로가기 동작 완전히 차단
     };
 
     const backHandler = BackHandler.addEventListener(
@@ -100,6 +102,7 @@ export default function MatchMakingSuccessScreen() {
         </View>
       </View>
 
+      {/* 하단 버튼 */}
       <View style={style.bottomBar}>
         <TouchableOpacity
           style={style.homeButton}

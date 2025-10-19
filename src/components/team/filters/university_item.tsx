@@ -2,8 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-import { styles } from '@/src/components/team/filters/university_item_styles';
 import { colors } from '@/src/theme';
+
+import { styles } from './university_item_styles';
 
 interface UniversityItemProps {
   university: string;

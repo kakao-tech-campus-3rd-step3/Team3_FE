@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-import { styles } from '@/src/screens/team/join/university_team_list_style';
+import { styles } from '../university_team_list_style';
 
 interface MemberCountSliderProps {
   value: number;

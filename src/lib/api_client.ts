@@ -8,49 +8,22 @@ import axios, {
 
 import config from '@/src/config/environment';
 
-function extractErrorMessage(response: unknown): string {
-  const isAxiosResponse = (
-    obj: unknown
-  ): obj is { data?: unknown; statusText?: string } => {
-    return typeof obj === 'object' && obj !== null;
-  };
+function extractErrorMessage(response: any): string {
+  const data = response?.data ?? response;
 
-  if (!isAxiosResponse(response)) {
-    return 'Unknown error';
-  }
-
-  const data = response.data ?? response;
-
-  if (
-    data &&
-    typeof data === 'object' &&
-    'data' in data &&
-    typeof data.data === 'object' &&
-    data.data !== null &&
-    'message' in data.data
-  ) {
+  if (data?.data && typeof data.data === 'object' && 'message' in data.data) {
     return String(data.data.message);
   }
 
-  if (
-    data &&
-    typeof data === 'object' &&
-    'message' in data &&
-    typeof data.message === 'string'
-  ) {
+  if (typeof data?.message === 'string') {
     return data.message;
   }
 
-  if (
-    data &&
-    typeof data === 'object' &&
-    'error' in data &&
-    typeof data.error === 'string'
-  ) {
+  if (typeof data?.error === 'string') {
     return data.error;
   }
 
-  if (typeof response.statusText === 'string') {
+  if (typeof response?.statusText === 'string') {
     return response.statusText;
   }
 

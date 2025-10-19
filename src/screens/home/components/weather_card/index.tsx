@@ -2,9 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { Text, View } from 'react-native';
 
-import Card from '@/src/components/card/card';
-import { styles } from '@/src/screens/home/home_style';
+import { Card } from '@/src/components/card/card';
 import { theme } from '@/src/theme';
+
+import styles from '../../home_style';
 
 export default memo(function WeatherSection() {
   return (
