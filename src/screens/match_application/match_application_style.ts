@@ -370,6 +370,7 @@ export const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.semibold,
   },
 
+  // 모달 스타일
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

@@ -6,13 +6,14 @@ import { ScrollView, View, ActivityIndicator, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useUserProfile, useLogout } from '@/src/hooks/queries';
-import BenefitsSection from '@/src/screens/home/components/benefit_section';
-import EnvelopeSection from '@/src/screens/home/components/envelope_section';
-import GreetingSection from '@/src/screens/home/components/greeting_section';
-import HomeHeader from '@/src/screens/home/components/home_header';
-import RecommendedMatchCard from '@/src/screens/home/components/recommended_match_card';
-import { styles } from '@/src/screens/home/home_style';
 import { theme } from '@/src/theme';
+
+import BenefitsSection from './components/benefit_section';
+import EnvelopeSection from './components/envelope_section';
+import GreetingSection from './components/greeting_section';
+import HomeHeader from './components/home_header';
+import RecommendedMatchCard from './components/recommended_match_card';
+import styles from './home_style';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
