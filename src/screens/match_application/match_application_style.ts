@@ -72,7 +72,6 @@ export const styles = StyleSheet.create({
     color: theme.colors.blue[600],
     fontWeight: theme.typography.fontWeight.medium,
     textAlign: 'center',
-    lineHeight: theme.typography.fontSize.font2 * 1.2,
   },
 
   filterButtonTextActive: {
