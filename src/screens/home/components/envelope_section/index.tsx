@@ -5,9 +5,8 @@ import { Alert, Image, Text, TouchableOpacity, View } from 'react-native';
 
 import { ROUTES } from '@/src/constants/routes';
 import { useAuth } from '@/src/contexts/auth_context';
+import { styles } from '@/src/screens/home/home_style';
 import { theme } from '@/src/theme';
-
-import styles from '../../home_style';
 
 interface EnvelopeSectionProps {
   teamId?: number | null;

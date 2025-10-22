@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 
 import { ROUTES } from '@/src/constants/routes';
-import { useUserProfile } from '@/src/hooks/queries';
-import { useMatchRequest } from '@/src/hooks/useMatchRequest';
-import { useMatchWaitingList } from '@/src/hooks/useMatchWaitingList';
-import { useMyAppliedMatches } from '@/src/hooks/useMyAppliedMatches';
+import {
+  useUserProfile,
+  useMyAppliedMatches,
+  useMatchWaitingList,
+  useMatchRequestMutation,
+} from '@/src/hooks/queries';
 import FilterCard from '@/src/screens/match_application/components/filter_card';
 import MatchCard from '@/src/screens/match_application/components/match_card';
 import { styles } from '@/src/screens/match_application/match_application_style';
@@ -55,7 +57,7 @@ export default function MatchInfoScreen() {
     error,
     refetch: refetchData,
   } = useMatchWaitingList(params);
-  const { mutate: requestMatch, isPending } = useMatchRequest();
+  const { mutate: requestMatch, isPending } = useMatchRequestMutation();
 
   const { data: appliedMatches, refetch: refetchAppliedMatches } =
     useMyAppliedMatches();

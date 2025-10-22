@@ -3,9 +3,7 @@ import { StyleSheet } from 'react-native';
 import { theme } from '@/src/theme';
 
 export const style = StyleSheet.create({
-  section: {
-    // 카드 내부에서 사용되므로 마진 제거
-  },
+  section: {},
   label: {
     fontSize: theme.typography.fontSize.font4,
     fontWeight: theme.typography.fontWeight.bold,

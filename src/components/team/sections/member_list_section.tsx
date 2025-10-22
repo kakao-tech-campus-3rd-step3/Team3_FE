@@ -2,11 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
+import { styles } from '@/src/components/team/sections/member_list_section_styles';
 import { theme } from '@/src/theme';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
 import { getRoleDisplayName } from '@/src/utils/team';
-
-import { styles } from './member_list_section_styles';
 
 interface MemberListSectionProps {
   teamMembers: TeamMember[];
@@ -84,7 +83,6 @@ export default memo(function MemberListSection({
 
             {currentUserMember && (
               <View style={styles.memberActions}>
-                {/* 회장만 보이는 리더십 위임 버튼 */}
                 {currentUserMember.role === 'LEADER' &&
                   member.role !== 'LEADER' && (
                     <TouchableOpacity
@@ -104,7 +102,6 @@ export default memo(function MemberListSection({
                     </TouchableOpacity>
                   )}
 
-                {/* 역할 변경 버튼 */}
                 {member.role !== 'LEADER' &&
                   (currentUserMember.role === 'LEADER' ||
                     (currentUserMember.role === 'VICE_LEADER' &&
@@ -128,7 +125,6 @@ export default memo(function MemberListSection({
                     </TouchableOpacity>
                   )}
 
-                {/* 강퇴 버튼 */}
                 {member.role !== 'LEADER' &&
                   (currentUserMember.role === 'LEADER' ||
                     (currentUserMember.role === 'VICE_LEADER' &&
