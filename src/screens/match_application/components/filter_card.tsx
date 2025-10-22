@@ -42,6 +42,9 @@ export default function FilterCard({
                 styles.filterButtonText,
                 selectedDate && styles.filterButtonTextActive,
               ]}
+              numberOfLines={1}
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.7}
             >
               {selectedDate
                 ? formatKoreanDate(selectedDate)
@@ -61,6 +64,9 @@ export default function FilterCard({
                 styles.filterButtonText,
                 selectedTime && styles.filterButtonTextActive,
               ]}
+              numberOfLines={1}
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.7}
             >
               {selectedTime ? formatKoreanTime(selectedTime) : '시간 선택'}
             </Text>
