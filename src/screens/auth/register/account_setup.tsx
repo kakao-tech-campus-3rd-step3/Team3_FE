@@ -257,32 +257,11 @@ const styles = StyleSheet.create({
   inputGroup: {
     marginBottom: theme.spacing.spacing6,
   },
-  label: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing2,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.colors.border.input,
-    borderRadius: 8,
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    backgroundColor: theme.colors.background.input,
-  },
   inputFilled: {
     borderColor: theme.colors.brand.main,
   },
   inputError: {
     borderColor: theme.colors.red[500],
-  },
-  errorText: {
-    color: theme.colors.red[500],
-    fontSize: theme.typography.fontSize.font3,
-    marginTop: theme.spacing.spacing2,
   },
   agreementContainer: {
     marginBottom: theme.spacing.spacing8,
@@ -293,8 +272,8 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.spacing4,
   },
   checkbox: {
-    width: 20,
-    height: 20,
+    width: 22,
+    height: 22,
     borderWidth: 1,
     borderColor: theme.colors.gray[400],
     borderRadius: 4,
@@ -302,6 +281,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 2,
+    textAlignVertical: 'center',
   },
   checkboxChecked: {
     backgroundColor: theme.colors.gray[400],
@@ -311,20 +291,12 @@ const styles = StyleSheet.create({
     color: theme.colors.white,
     fontSize: theme.typography.fontSize.font3,
     fontWeight: theme.typography.fontWeight.bold,
+    textAlignVertical: 'center',
+    includeFontPadding: false,
+    lineHeight: theme.typography.fontSize.font3,
   },
   checkboxTextContainer: {
     flex: 1,
-  },
-  checkboxText: {
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    lineHeight: 20,
-  },
-  linkText: {
-    fontSize: theme.typography.fontSize.font3,
-    color: theme.colors.brand.main,
-    marginTop: theme.spacing.spacing1,
-    textDecorationLine: 'underline',
   },
   buttonContainer: {
     flexDirection: 'row',
