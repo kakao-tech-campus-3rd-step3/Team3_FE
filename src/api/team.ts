@@ -258,7 +258,7 @@ export const teamDeleteApi = {
           TEAM_MATCH_API.GET_TEAM_MATCH_REQUESTS()
         );
       } catch (error) {
-        console.log('[팀 삭제 API] 매치 요청 조회 실패:', error);
+        // 매치 요청 조회 실패
       }
 
       let recentMatches = null;
@@ -267,7 +267,7 @@ export const teamDeleteApi = {
           TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES()
         );
       } catch (error) {
-        console.log('[팀 삭제 API] 최근 매치 조회 실패:', error);
+        // 최근 매치 조회 실패
       }
 
       let matchWaiting = null;
@@ -276,7 +276,7 @@ export const teamDeleteApi = {
           `/api/matches/waiting?teamId=${teamId}`
         );
       } catch (error) {
-        console.log('[팀 삭제 API] 매치 대기 목록 조회 실패:', error);
+        // 매치 대기 목록 조회 실패
       }
 
       const result = {
