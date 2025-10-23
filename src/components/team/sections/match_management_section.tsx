@@ -15,21 +15,21 @@ interface MatchManagementSectionProps {
 const matchActions = [
   {
     id: 'create',
-    title: '매치 생성하기',
-    icon: 'add-circle' as const,
+    title: '매치 생성',
+    icon: 'add-circle-outline' as const,
     color: theme.colors.green[500],
     route: ROUTES.MATCH_MAKING,
   },
   {
     id: 'created',
-    title: '생성한 매치 보기',
-    icon: 'eye' as const,
+    title: '생성한 매치',
+    icon: 'create-outline' as const,
     color: theme.colors.blue[500],
     route: ROUTES.CHECK_CREATED_MATCHES,
   },
   {
     id: 'applied',
-    title: '신청한 매치 보기',
+    title: '신청한 매치',
     icon: 'list' as const,
     color: theme.colors.purple[500],
     route: ROUTES.CHECK_APPLIED_MATCHES,
@@ -79,20 +79,10 @@ export default memo(function MatchManagementSection({
             style={styles.matchManagementItem}
             activeOpacity={0.7}
           >
-            <Ionicons
-              name={action.icon}
-              size={24}
-              color={action.color}
-              style={{ marginRight: 12 }}
-            />
+            <Ionicons name={action.icon} size={32} color={action.color} />
             <View style={styles.matchManagementInfo}>
               <Text style={styles.matchManagementTitle}>{action.title}</Text>
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color={theme.colors.gray[500]}
-            />
           </TouchableOpacity>
         ))}
       </View>
