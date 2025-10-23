@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { ROUTES, getTeamManagementUrl } from '@/src/constants/routes';
+import { ROUTES } from '@/src/constants/routes';
 import { useEnemyTeam } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/match_set/match_set_style';
 import { theme } from '@/src/theme';
