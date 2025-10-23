@@ -1,6 +1,8 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 import { colors, spacing, typography } from '@/src/theme';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   container: {
@@ -349,21 +351,32 @@ export const styles = StyleSheet.create({
   },
 
   matchManagementList: {
-    gap: spacing.spacing3,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: screenWidth < 375 ? spacing.spacing2 : spacing.spacing3,
+    justifyContent: 'space-between',
   },
   matchManagementItem: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
-    padding: spacing.spacing3,
+    padding: screenWidth < 375 ? spacing.spacing3 : spacing.spacing4,
     backgroundColor: colors.gray[50],
-    borderRadius: spacing.spacing2,
+    borderRadius: spacing.spacing3,
+    minWidth: screenWidth < 375 ? 90 : 100,
+    flex: 1,
+    maxWidth: '30%',
   },
   matchManagementInfo: {
-    flex: 1,
+    alignItems: 'center',
+    marginTop: spacing.spacing2,
   },
   matchManagementTitle: {
-    fontSize: typography.fontSize.font4,
+    fontSize:
+      screenWidth < 375 ? typography.fontSize.font2 : typography.fontSize.font3,
     fontWeight: typography.fontWeight.semibold,
     color: colors.gray[900],
+    textAlign: 'center',
+    lineHeight: screenWidth < 375 ? 18 : typography.lineHeight.line4,
+    flexShrink: 1,
   },
 });
