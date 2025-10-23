@@ -7,10 +7,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useUserProfile, useLogout } from '@/src/hooks/queries';
 import BenefitsSection from '@/src/screens/home/components/benefit_section';
-import EnvelopeSection from '@/src/screens/home/components/envelope_section';
-import GreetingSection from '@/src/screens/home/components/greeting_section';
 import HomeHeader from '@/src/screens/home/components/home_header';
 import RecommendedMatchCard from '@/src/screens/home/components/recommended_match_card';
+import TodayMatchStatus from '@/src/screens/home/components/today_match_status';
 import { styles } from '@/src/screens/home/home_style';
 import { theme } from '@/src/theme';
 
@@ -108,16 +107,13 @@ export default function HomeScreen() {
           { paddingBottom: insets.bottom + theme.spacing.spacing1 },
         ]}
       >
-        <View style={styles.mainSection}>
-          <GreetingSection />
-        </View>
+        <TodayMatchStatus teamId={userProfile?.teamId || null} />
 
         <View style={styles.matchSection}>
           <RecommendedMatchCard onMatchPress={handleMatchPress} />
         </View>
 
         <View style={styles.serviceSection}>
-          <EnvelopeSection teamId={userProfile?.teamId || null} />
           <BenefitsSection teamId={userProfile?.teamId || null} />
         </View>
       </ScrollView>

@@ -160,39 +160,6 @@ export const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.medium,
   },
 
-  envelopeSection: {
-    backgroundColor: theme.colors.background.main,
-    borderRadius: theme.spacing.spacing5,
-    padding: theme.spacing.spacing6,
-    shadowColor: theme.colors.gray[900],
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  envelopeHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  envelopeIcon: {
-    width: theme.spacing.spacing10,
-    height: theme.spacing.spacing10,
-    backgroundColor: theme.colors.blue[50],
-    borderRadius: theme.spacing.spacing5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: theme.spacing.spacing3,
-  },
-  envelopeTitle: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.main,
-    flex: 1,
-  },
-
   benefitsSection: {
     backgroundColor: theme.colors.background.main,
     borderRadius: theme.spacing.spacing5,
