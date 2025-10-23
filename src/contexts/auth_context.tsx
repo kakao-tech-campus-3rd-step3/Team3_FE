@@ -94,7 +94,6 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       setTokenState(null);
       setRefreshTokenState(null);
       queryClient.clear();
-      setIsInitialized(false);
       refreshAttemptCountRef.current = 0;
       return;
     }
@@ -105,7 +104,6 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       setTokenState(null);
       setRefreshTokenState(null);
       queryClient.clear();
-      setIsInitialized(false);
       refreshAttemptCountRef.current = 0;
       return;
     }
@@ -153,8 +151,6 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       setTokenState(null);
       setRefreshTokenState(null);
       queryClient.clear();
-
-      setIsInitialized(false);
 
       refreshAttemptCountRef.current = 0;
 
