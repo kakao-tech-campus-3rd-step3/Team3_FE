@@ -347,4 +347,23 @@ export const styles = StyleSheet.create({
     color: colors.gray[400],
     textAlign: 'right',
   },
+
+  matchManagementList: {
+    gap: spacing.spacing3,
+  },
+  matchManagementItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.spacing3,
+    backgroundColor: colors.gray[50],
+    borderRadius: spacing.spacing2,
+  },
+  matchManagementInfo: {
+    flex: 1,
+  },
+  matchManagementTitle: {
+    fontSize: typography.fontSize.font4,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.gray[900],
+  },
 });

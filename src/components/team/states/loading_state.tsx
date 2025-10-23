@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 
 import { styles } from '@/src/components/team/states/loading_state_styles';
 
@@ -12,7 +12,7 @@ export default memo(function LoadingState({
 }: LoadingStateProps) {
   return (
     <View style={styles.loadingContainer}>
-      <Text style={styles.stateIcon}>⏳</Text>
+      <ActivityIndicator size="large" color="#3B82F6" />
       <Text style={styles.loadingText}>{message}</Text>
     </View>
   );
