@@ -148,7 +148,7 @@ export default memo(function TeamRecentMatchesScreen({
           </View>
         ) : (
           <View style={styles.matchesList}>
-            {currentTeamMatches.map(match => {
+            {currentTeamMatches.map((match: RecentMatchResponse) => {
               const opponentName = getOpponentTeamName(match, team?.name || '');
               const result = getResultIcon(match);
 
