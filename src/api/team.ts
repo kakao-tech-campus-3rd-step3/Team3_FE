@@ -187,7 +187,7 @@ export const teamJoinRequestApi = {
     status: string = 'PENDING',
     page: number = 0,
     size: number = 10,
-    sort: string = 'createdAt,desc'
+    sort: string = 'audit.createdAt,desc'
   ): Promise<TeamJoinRequestPageResponse> => {
     const params = new URLSearchParams({
       status,
@@ -295,7 +295,7 @@ export const userJoinWaitingApi = {
   getMyJoinWaitingList: async (
     page: number = 0,
     size: number = 10,
-    sort: string = 'createdAt,desc'
+    sort: string = 'audit.createdAt,desc'
   ): Promise<UserJoinWaitingPageResponse> => {
     const apiResponse = await apiClient.get<ApiUserJoinWaitingPageResponse>(
       USER_JOIN_WAITING_API.GET_MY_JOIN_WAITING(page, size, sort)

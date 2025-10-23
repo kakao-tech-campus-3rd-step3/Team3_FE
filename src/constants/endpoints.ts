@@ -106,6 +106,6 @@ export const USER_JOIN_WAITING_API = {
   GET_MY_JOIN_WAITING: (
     page: number = 0,
     size: number = 10,
-    sort: string = 'createdAt,desc'
+    sort: string = 'audit.createdAt,desc'
   ) => `/api/users/me/join-waiting?page=${page}&size=${size}&sort=${sort}`,
 };
