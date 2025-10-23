@@ -1,6 +1,8 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 import { theme } from '@/src/theme';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   container: {
@@ -10,7 +12,8 @@ export const styles = StyleSheet.create({
   },
   statusCard: {
     borderRadius: theme.spacing.spacing4,
-    padding: theme.spacing.spacing5,
+    padding:
+      screenWidth < 375 ? theme.spacing.spacing4 : theme.spacing.spacing5,
     shadowColor: theme.colors.gray[900],
     shadowOffset: {
       width: 0,
@@ -23,7 +26,7 @@ export const styles = StyleSheet.create({
   statusContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.spacing3,
+    gap: screenWidth < 375 ? theme.spacing.spacing2 : theme.spacing.spacing3,
   },
   statusText: {
     flex: 1,
@@ -35,9 +38,14 @@ export const styles = StyleSheet.create({
     color: theme.colors.gray[900],
   },
   statusSubtitle: {
-    fontSize: theme.typography.fontSize.font3,
+    fontSize:
+      screenWidth < 375
+        ? theme.typography.fontSize.font2
+        : theme.typography.fontSize.font3,
     color: theme.colors.gray[600],
     fontWeight: theme.typography.fontWeight.medium,
+    lineHeight: screenWidth < 375 ? 18 : 20,
+    flexShrink: 1,
   },
 
   matchScheduledCard: {
@@ -54,5 +62,9 @@ export const styles = StyleSheet.create({
 
   loadingCard: {
     backgroundColor: theme.colors.blue[50],
+  },
+
+  errorCard: {
+    backgroundColor: theme.colors.orange[50],
   },
 });
