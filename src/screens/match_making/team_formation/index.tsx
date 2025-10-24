@@ -10,11 +10,7 @@ import {
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { TeamMemberSelectModal } from '@/src/components/ui/team_member_select_modal';
-import {
-  FORMATIONS,
-  FormationType,
-  generateFormation,
-} from '@/src/constants/formations';
+import { FormationType, generateFormation } from '@/src/constants/formations';
 import { useTeamMembers } from '@/src/hooks/queries';
 
 import { style } from './team_formation_style';
@@ -36,6 +32,8 @@ export default function TeamFormationScreen() {
   >({});
   const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+
+  const JERSEY_SIZE = 50;
 
   const handleSelectPosition = (pos: string) => {
     setSelectedPosition(pos);
@@ -61,13 +59,11 @@ export default function TeamFormationScreen() {
     });
   };
 
-  const JERSEY_SIZE = 40;
-
   return (
     <View style={style.container}>
       <CustomHeader title="팀 포메이션 구성" />
 
-      {/* 포메이션 선택 */}
+      {/* 포메이션 선택 버튼 */}
       <View style={style.formationSelector}>
         {(
           ['4-3-3', '4-4-2', '3-5-2', '4-1-4-1', '4-2-3-1'] as FormationType[]
@@ -92,7 +88,7 @@ export default function TeamFormationScreen() {
         ))}
       </View>
 
-      {/* 필드 */}
+      {/* 축구장 */}
       <ImageBackground
         source={require('@/assets/images/field.png')}
         style={style.field}
@@ -106,19 +102,26 @@ export default function TeamFormationScreen() {
             <TouchableOpacity
               key={pos.id}
               style={[
-                style.playerCircle,
                 {
                   position: 'absolute',
+                  width: JERSEY_SIZE,
+                  height: JERSEY_SIZE,
                   left: `${pos.x}%`,
                   top: `${pos.y}%`,
+                  justifyContent: 'center',
+                  alignItems: 'center',
                   transform: [
                     { translateX: -JERSEY_SIZE / 2 },
                     { translateY: -JERSEY_SIZE / 2 },
+                    { scale: isSelected ? 1.15 : 1 },
                   ],
                 },
-                isSelected && style.playerCircleSelected,
+                isSelected
+                  ? style.playerCircleSelected
+                  : style.playerCircleUnselected,
               ]}
               onPress={() => handleSelectPosition(pos.id)}
+              activeOpacity={0.8}
             >
               <Image
                 source={require('@/assets/images/jersey.png')}
@@ -134,10 +137,12 @@ export default function TeamFormationScreen() {
         })}
       </ImageBackground>
 
+      {/* 다음 버튼 */}
       <TouchableOpacity style={style.nextButton} onPress={handleNext}>
         <Text style={style.nextButtonText}>다음으로</Text>
       </TouchableOpacity>
 
+      {/* 팀원 선택 모달 */}
       {showModal && (
         <TeamMemberSelectModal
           visible={showModal}

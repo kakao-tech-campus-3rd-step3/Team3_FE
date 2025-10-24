@@ -1,6 +1,8 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 import { theme } from '@/src/theme';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export const style = StyleSheet.create({
   container: {
@@ -10,12 +12,12 @@ export const style = StyleSheet.create({
   formationSelector: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: theme.spacing.spacing4,
+    marginVertical: theme.spacing.spacing4,
   },
   formationButton: {
-    backgroundColor: theme.colors.gray[200],
-    paddingVertical: theme.spacing.spacing2,
     paddingHorizontal: theme.spacing.spacing4,
+    paddingVertical: theme.spacing.spacing3,
+    backgroundColor: theme.colors.gray[200],
     borderRadius: theme.spacing.spacing3,
     marginHorizontal: theme.spacing.spacing2,
   },
@@ -23,50 +25,58 @@ export const style = StyleSheet.create({
     backgroundColor: theme.colors.blue[600],
   },
   formationButtonText: {
-    color: theme.colors.gray[700],
+    color: theme.colors.gray[800],
     fontWeight: theme.typography.fontWeight.medium,
   },
   formationButtonTextActive: {
     color: theme.colors.white,
     fontWeight: theme.typography.fontWeight.bold,
   },
+
+  /** ✅ 배경 필드 수정 */
   field: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
+    width: SCREEN_WIDTH,
+    height: SCREEN_WIDTH * 1.5, // 세로 길이 = 가로의 1.5배 (9:16보다 살짝 짧게)
+    alignSelf: 'center',
     alignItems: 'center',
-    marginTop: theme.spacing.spacing3,
+    justifyContent: 'center',
   },
-  playerCircle: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
+
+  /** ✅ 선수 선택 영역 */
+  playerCircleUnselected: {
+    borderWidth: 0,
   },
   playerCircleSelected: {
-    transform: [{ scale: 1.1 }],
+    borderWidth: 2,
+    borderColor: theme.colors.blue[500],
+    borderRadius: 50,
+    shadowColor: theme.colors.blue[700],
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   jersey: {
-    width: 40,
-    height: 40,
+    width: '100%',
+    height: '100%',
   },
   playerName: {
-    marginTop: 2,
+    position: 'absolute',
+    bottom: -16,
     color: theme.colors.gray[900],
     fontSize: theme.typography.fontSize.font2,
-    fontWeight: theme.typography.fontWeight.bold,
     textAlign: 'center',
   },
   nextButton: {
-    backgroundColor: theme.colors.background.main,
-    paddingVertical: theme.spacing.spacing4,
-    borderRadius: theme.spacing.spacing4,
-    marginHorizontal: theme.spacing.spacing6,
-    marginVertical: theme.spacing.spacing5,
+    backgroundColor: theme.colors.blue[600],
+    margin: theme.spacing.spacing4,
+    borderRadius: theme.spacing.spacing3,
     alignItems: 'center',
+    justifyContent: 'center',
+    height: 52,
   },
   nextButtonText: {
     color: theme.colors.white,
-    fontWeight: theme.typography.fontWeight.bold,
     fontSize: theme.typography.fontSize.font4,
+    fontWeight: theme.typography.fontWeight.bold,
   },
 });
