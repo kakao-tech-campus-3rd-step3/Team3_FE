@@ -61,10 +61,15 @@ export const style = StyleSheet.create({
   },
   playerName: {
     position: 'absolute',
-    bottom: -16,
-    color: theme.colors.gray[900],
-    fontSize: theme.typography.fontSize.font2,
+    top: '100%', // 셔츠 바로 밑
+    width: '100%',
     textAlign: 'center',
+    color: theme.colors.white, // ✅ 흰색으로 변경
+    fontWeight: '700', // ✅ 굵게 표시
+    fontSize: theme.typography.fontSize.font3,
+    textShadowColor: 'rgba(0, 0, 0, 0.4)', // ✅ 가독성 향상
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   nextButton: {
     backgroundColor: theme.colors.blue[600],
