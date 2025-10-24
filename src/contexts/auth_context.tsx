@@ -1,3 +1,4 @@
+import * as SplashScreen from 'expo-splash-screen';
 import React, {
   createContext,
   useContext,
@@ -122,11 +123,16 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       refreshTimeoutRef.current = setTimeout(refreshAccessToken, delayMs);
     } catch (error) {
       console.warn('토큰 갱신 실패:', error);
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+        refreshTimeoutRef.current = null;
+      }
       deleteSecureStoreResource('authToken');
       deleteSecureStoreResource('refreshToken');
       setTokenState(null);
       setRefreshTokenState(null);
       queryClient.clear();
+      SplashScreen.hideAsync();
     }
   }, [refreshTokenState]);
 

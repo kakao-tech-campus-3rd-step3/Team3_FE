@@ -33,6 +33,7 @@ interface Props {
   ) => void;
   handleNext: () => void;
 }
+
 export default function EmailVerification({
   data,
   onChange,
@@ -51,9 +52,7 @@ export default function EmailVerification({
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (timer > 0) {
-      interval = setInterval(() => {
-        setTimer(prev => prev - 1);
-      }, 1000);
+      interval = setInterval(() => setTimer(prev => prev - 1), 1000);
     }
     return () => clearInterval(interval);
   }, [timer]);
@@ -122,10 +121,11 @@ export default function EmailVerification({
       borderColor: theme.colors.border.input,
       borderRadius: Math.max(8, width * 0.02),
       paddingHorizontal: Math.max(16, width * 0.04),
-      paddingVertical: Math.max(12, width * 0.03),
       fontSize: Math.max(14, width * 0.04),
       color: theme.colors.text.main,
       backgroundColor: theme.colors.background.input,
+      textAlignVertical: 'center',
+      minHeight: 50,
     },
     errorText: {
       color: theme.colors.red[500],
@@ -184,6 +184,7 @@ export default function EmailVerification({
     }
     handleNext();
   };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAwareScrollView
@@ -202,6 +203,7 @@ export default function EmailVerification({
             placeholder="대학교를 선택하세요"
           />
         </View>
+
         <View style={styles.inputGroup}>
           <Text style={dynamicStyles.label}>대학교 이메일</Text>
           <View style={styles.emailContainer}>
@@ -213,12 +215,13 @@ export default function EmailVerification({
                   styles.inputFilled,
                 errors.universityEmail && styles.inputError,
               ]}
-              placeholder="대학교 이메일을 입력하세요"
+              placeholder="이메일 입력"
               value={data.universityEmail}
               onChangeText={text => handleFieldChange('universityEmail', text)}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              multiline={false} // ✅ 추가
               onFocus={() => setFocusedField('universityEmail')}
               onBlur={() => setFocusedField(null)}
             />
@@ -240,7 +243,7 @@ export default function EmailVerification({
                   ? '전송 중...'
                   : isCodeSent
                     ? '재전송'
-                    : '인증번호 전송'}
+                    : '전송'}
               </Text>
             </TouchableOpacity>
           </View>
@@ -272,6 +275,7 @@ export default function EmailVerification({
                 }}
                 keyboardType="number-pad"
                 maxLength={6}
+                multiline={false}
                 onFocus={() => setFocusedField('verificationCode')}
                 onBlur={() => setFocusedField(null)}
               />
@@ -331,6 +335,7 @@ export default function EmailVerification({
     </TouchableWithoutFeedback>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -343,25 +348,8 @@ const styles = StyleSheet.create({
   inputGroup: { marginBottom: theme.spacing.spacing6 },
   inputFilled: { borderColor: theme.colors.brand.main },
   inputError: { borderColor: theme.colors.red[500] },
-  nextButton: {
-    backgroundColor: theme.colors.brand.main,
-    paddingVertical: theme.spacing.spacing4,
-    paddingHorizontal: theme.spacing.spacing6,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: theme.spacing.spacing6,
-  },
-  nextButtonDisabled: {
-    backgroundColor: theme.colors.gray[300],
-  },
-  nextButtonText: {
-    color: theme.colors.white,
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.medium,
-  },
-  nextButtonTextDisabled: {
-    color: theme.colors.gray[500],
-  },
+  nextButtonDisabled: { backgroundColor: theme.colors.gray[300] },
+  nextButtonTextDisabled: { color: theme.colors.gray[500] },
   emailContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -369,6 +357,8 @@ const styles = StyleSheet.create({
   },
   emailInput: {
     flex: 4,
+    textAlignVertical: 'center',
+    minHeight: 50,
   },
   sendCodeButton: {
     backgroundColor: theme.colors.brand.main,
@@ -380,18 +370,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: 48,
   },
-  sendCodeButtonDisabled: {
-    backgroundColor: theme.colors.gray[300],
-  },
+  sendCodeButtonDisabled: { backgroundColor: theme.colors.gray[300] },
   sendCodeButtonText: {
     color: theme.colors.white,
     fontSize: theme.typography.fontSize.font3,
     fontWeight: theme.typography.fontWeight.medium,
     textAlign: 'center',
   },
-  sendCodeButtonTextDisabled: {
-    color: theme.colors.gray[500],
-  },
+  sendCodeButtonTextDisabled: { color: theme.colors.gray[500] },
   verificationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -399,6 +385,8 @@ const styles = StyleSheet.create({
   },
   verificationInput: {
     flex: 4,
+    textAlignVertical: 'center',
+    minHeight: 50,
   },
   verifyButton: {
     backgroundColor: theme.colors.brand.main,
@@ -410,18 +398,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: 48,
   },
-  verifyButtonDisabled: {
-    backgroundColor: theme.colors.gray[300],
-  },
+  verifyButtonDisabled: { backgroundColor: theme.colors.gray[300] },
   verifyButtonText: {
     color: theme.colors.white,
     fontSize: theme.typography.fontSize.font3,
     fontWeight: theme.typography.fontWeight.medium,
     textAlign: 'center',
   },
-  verifyButtonTextDisabled: {
-    color: theme.colors.gray[500],
-  },
+  verifyButtonTextDisabled: { color: theme.colors.gray[500] },
   verifiedText: {
     color: theme.colors.green[600],
     fontSize: theme.typography.fontSize.font3,

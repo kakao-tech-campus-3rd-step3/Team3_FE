@@ -12,8 +12,8 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.colors.gray[50],
   },
   scrollContent: {
-    padding: theme.spacing.spacing4,
-    paddingBottom: 20,
+    padding: theme.spacing.spacing3,
+    paddingBottom: theme.spacing.spacing5,
   },
 
   filterCard: {
@@ -32,8 +32,8 @@ export const styles = StyleSheet.create({
   },
 
   filterCardHeader: {
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingTop: theme.spacing.spacing4,
+    paddingHorizontal: theme.spacing.spacing3,
+    paddingTop: theme.spacing.spacing3,
     paddingBottom: theme.spacing.spacing2,
   },
 
@@ -45,20 +45,22 @@ export const styles = StyleSheet.create({
 
   filterRow: {
     flexDirection: 'row',
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingBottom: theme.spacing.spacing4,
+    paddingHorizontal: theme.spacing.spacing3,
+    paddingBottom: theme.spacing.spacing3,
     gap: theme.spacing.spacing2,
   },
 
   filterButton: {
     flex: 1,
-    paddingVertical: theme.spacing.spacing4,
-    paddingHorizontal: theme.spacing.spacing3,
+    paddingVertical: theme.spacing.spacing3,
+    paddingHorizontal: theme.spacing.spacing2,
     backgroundColor: theme.colors.blue[50],
     borderRadius: theme.spacing.spacing3,
     borderWidth: 1,
     borderColor: theme.colors.blue[200],
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 40,
   },
 
   filterButtonActive: {
@@ -69,6 +71,7 @@ export const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.font2,
     color: theme.colors.blue[600],
     fontWeight: theme.typography.fontWeight.medium,
+    textAlign: 'center',
   },
 
   filterButtonTextActive: {
@@ -97,6 +100,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    flexWrap: 'wrap',
   },
 
   teamName: {
@@ -104,6 +108,7 @@ export const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.gray[900],
     flex: 1,
+    flexShrink: 1,
   },
 
   matchCardTitle: {
@@ -111,6 +116,7 @@ export const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.gray[900],
     flex: 1,
+    flexShrink: 1,
   },
 
   matchBadge: {
@@ -134,10 +140,12 @@ export const styles = StyleSheet.create({
 
   infoRowContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 
   infoItemHalf: {
     flex: 1,
+    minWidth: '45%',
     marginBottom: theme.spacing.spacing3,
     marginRight: theme.spacing.spacing2,
   },
@@ -250,10 +258,11 @@ export const styles = StyleSheet.create({
   requestButton: {
     backgroundColor: theme.colors.blue[600],
     paddingVertical: theme.spacing.spacing3,
-    paddingHorizontal: theme.spacing.spacing6,
+    paddingHorizontal: theme.spacing.spacing4,
     borderRadius: theme.spacing.spacing2,
     alignItems: 'center',
-    minHeight: 44,
+    justifyContent: 'center',
+    minHeight: 40,
     shadowColor: theme.colors.blue[600],
     shadowOffset: {
       width: 0,
@@ -274,6 +283,7 @@ export const styles = StyleSheet.create({
     color: theme.colors.white,
     fontSize: theme.typography.fontSize.font3,
     fontWeight: theme.typography.fontWeight.semibold,
+    textAlign: 'center',
   },
 
   emptyState: {
