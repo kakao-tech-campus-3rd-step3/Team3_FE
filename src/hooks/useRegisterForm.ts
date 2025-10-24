@@ -55,7 +55,7 @@ export const useRegisterForm = () => {
     email: formData.universityEmail,
     password: formData.password,
     kakaoTalkId: formData.kakaoTalkId,
-    position: '공격수',
+    position: 'MF',
     university: formData.university,
     department: formData.department,
     studentYear: formData.studentYear,
