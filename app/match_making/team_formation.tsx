@@ -1,7 +1,7 @@
 import React from 'react';
 
-import TeamFormationScreen from '@/src/screens/match_making/team_formation/team_formation_screen';
+import TeamFormationScreen from '@/src/screens/match_making/team_formation';
 
-export default function TeammateRegisterRoute() {
+export default function TeamFormationRoute() {
   return <TeamFormationScreen />;
 }

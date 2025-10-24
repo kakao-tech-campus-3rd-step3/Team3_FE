@@ -3,14 +3,15 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { ROUTES } from '@/src/constants/routes';
 import { style } from '@/src/screens/member_ready/member_ready_style';
 
 export default function MemberReadyScreen() {
   const router = useRouter();
 
   const handleEnoughMembers = () => {
-    // 인원이 충분할 때: match_info로 이동
-    router.push('/match_making/match_info');
+    // 인원이 충분할 때: TEAM_FORMATION으으로 이동
+    router.push(ROUTES.TEAM_FORMATION);
   };
 
   const handleNotEnoughMembers = () => {

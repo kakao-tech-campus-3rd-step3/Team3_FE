@@ -38,6 +38,7 @@ import type {
   RecommendedMatch,
   JoinWaitingRequest,
   JoinWaitingCancelRequest,
+  TeamMember,
 } from '@/src/types';
 import { formatDateForAPI } from '@/src/utils/date';
 
@@ -251,11 +252,14 @@ export function useTeamMembers(
   page: number = 0,
   size: number = 10
 ) {
-  return useQuery({
+  const query = useQuery({
     queryKey: queries.teamMembers.key(teamId, page, size),
     queryFn: () => queries.teamMembers.fn(teamId, page, size),
     enabled: !!teamId,
   });
+  /*********************************/
+  const members = query.data?.content ?? []; // 🔹 항상 배열만 보장
+  return { ...query, members };
 }
 
 export function useTeamMember(

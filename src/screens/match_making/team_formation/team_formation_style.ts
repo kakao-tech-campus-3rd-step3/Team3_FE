@@ -1,102 +1,72 @@
 import { StyleSheet } from 'react-native';
 
+import { theme } from '@/src/theme';
+
 export const style = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
-    padding: 16,
+    backgroundColor: theme.colors.gray[50],
   },
-
-  dropdownWrap: {
-    marginBottom: 16,
+  formationSelector: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: theme.spacing.spacing4,
   },
-  dropdownLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 4,
+  formationButton: {
+    backgroundColor: theme.colors.gray[200],
+    paddingVertical: theme.spacing.spacing2,
+    paddingHorizontal: theme.spacing.spacing4,
+    borderRadius: theme.spacing.spacing3,
+    marginHorizontal: theme.spacing.spacing2,
   },
-  dropdown: {
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 6,
+  formationButtonActive: {
+    backgroundColor: theme.colors.blue[600],
   },
-
+  formationButtonText: {
+    color: theme.colors.gray[700],
+    fontWeight: theme.typography.fontWeight.medium,
+  },
+  formationButtonTextActive: {
+    color: theme.colors.white,
+    fontWeight: theme.typography.fontWeight.bold,
+  },
   field: {
     flex: 1,
-    justifyContent: 'space-around',
-    borderRadius: 16,
-    overflow: 'hidden',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: theme.spacing.spacing3,
   },
-
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginVertical: 6,
-  },
-
-  slot: {
-    backgroundColor: '#93c5fdcc',
+  playerCircle: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  slotText: {
-    color: '#1e3a8a',
-    fontWeight: '600',
-  },
-
-  modalWrap: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  modalContent: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
-    maxHeight: '70%',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 12,
-  },
-  memberItem: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  closeButton: {
-    backgroundColor: '#ef4444',
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 12,
-    alignItems: 'center',
-  },
-  bottomBar: {
     position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    padding: 16,
-    backgroundColor: '#ffffff',
-    borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
+  },
+  playerCircleSelected: {
+    transform: [{ scale: 1.1 }],
+  },
+  jersey: {
+    width: 40,
+    height: 40,
+  },
+  playerName: {
+    marginTop: 2,
+    color: theme.colors.gray[900],
+    fontSize: theme.typography.fontSize.font2,
+    fontWeight: theme.typography.fontWeight.bold,
+    textAlign: 'center',
   },
   nextButton: {
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: '#2563eb',
+    backgroundColor: theme.colors.background.main,
+    paddingVertical: theme.spacing.spacing4,
+    borderRadius: theme.spacing.spacing4,
+    marginHorizontal: theme.spacing.spacing6,
+    marginVertical: theme.spacing.spacing5,
     alignItems: 'center',
-    justifyContent: 'center',
   },
   nextButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  gkRow: {
-    marginBottom: 48,
+    color: theme.colors.white,
+    fontWeight: theme.typography.fontWeight.bold,
+    fontSize: theme.typography.fontSize.font4,
   },
 });
