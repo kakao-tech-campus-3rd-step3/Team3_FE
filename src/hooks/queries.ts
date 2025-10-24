@@ -931,7 +931,7 @@ export function useTeamJoinRequestMutation() {
 export function useMyJoinWaitingList(
   page: number = 0,
   size: number = 10,
-  sort: string = 'createdAt,desc'
+  sort: string = 'audit.createdAt,desc'
 ) {
   return useQuery({
     queryKey: ['myJoinWaitingList', page, size, sort],

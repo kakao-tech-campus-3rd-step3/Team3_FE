@@ -94,6 +94,7 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       setTokenState(null);
       setRefreshTokenState(null);
       queryClient.clear();
+
       refreshAttemptCountRef.current = 0;
       return;
     }
@@ -104,6 +105,7 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       setTokenState(null);
       setRefreshTokenState(null);
       queryClient.clear();
+
       refreshAttemptCountRef.current = 0;
       return;
     }
