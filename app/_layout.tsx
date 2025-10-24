@@ -52,7 +52,10 @@ function AppContent() {
             />,
             <Stack.Screen key="match_set" name="match_set/index" />,
             <Stack.Screen key="member_ready" name="member_ready/index" />,
-            <Stack.Screen key="team_formation" name="team_formation/index" />,
+            <Stack.Screen
+              key="team_formation"
+              name="match_making/team_formation"
+            />,
           ]
         ) : (
           <Stack.Screen name="(auth)" />
