@@ -135,7 +135,6 @@ export default function ProfileInfo({
             )}
           </View>
 
-          {/* 카카오톡 아이디 */}
           <View style={styles.inputGroup}>
             <Text style={dynamicStyles.label}>카카오 아이디</Text>
             <TextInput
@@ -152,14 +151,13 @@ export default function ProfileInfo({
               onBlur={() => setFocusedField(null)}
               autoCapitalize="none"
               autoCorrect={false}
-              multiline={false} // ✅ 추가
+              multiline={false}
             />
             {errors.kakaoTalkId && (
               <Text style={dynamicStyles.errorText}>{errors.kakaoTalkId}</Text>
             )}
           </View>
 
-          {/* 입학년도 */}
           <View style={styles.inputGroup}>
             <Text style={dynamicStyles.label}>입학년도</Text>
             <TextInput

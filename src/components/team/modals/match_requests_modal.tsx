@@ -50,6 +50,10 @@ export default function MatchRequestsModal({
   const renderMatchRequestDetails = (request: RequestItem) => {
     const matchRequest = matchRequests.find(mr => mr.requestId === request.id);
 
+    const cleanMessage = (message: string) => {
+      return message.replace(/\([0-9]+\)\s*팀이/, '팀이');
+    };
+
     return (
       <View style={{ marginBottom: 12 }}>
         {matchRequest && (
@@ -138,7 +142,7 @@ export default function MatchRequestsModal({
                 textAlign: 'right',
               }}
             >
-              {request.message}
+              {cleanMessage(request.message)}
             </Text>
           </View>
         )}

@@ -5,8 +5,8 @@ import { theme } from '@/src/theme';
 export const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.background.main,
-    borderRadius: theme.spacing.spacing5,
-    padding: theme.spacing.spacing6,
+    borderRadius: theme.spacing.spacing4,
+    padding: theme.spacing.spacing4,
     shadowColor: theme.colors.gray[900],
     shadowOffset: {
       width: 0,
@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.spacing4,
+    marginBottom: theme.spacing.spacing3,
   },
   title: {
     fontSize: theme.typography.fontSize.font5,
@@ -43,31 +43,31 @@ export const styles = StyleSheet.create({
 
   cardTouchable: {
     width: '100%',
-    maxWidth: 320,
+    maxWidth: 280,
     alignSelf: 'center',
   },
 
   card: {
     backgroundColor: theme.colors.background.main,
-    borderRadius: theme.spacing.spacing6,
-    padding: theme.spacing.spacing4,
-    minHeight: 120,
+    borderRadius: theme.spacing.spacing4,
+    padding: theme.spacing.spacing3,
+    minHeight: 100,
     borderWidth: 1,
     borderColor: theme.colors.border.light,
     shadowColor: theme.colors.black,
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 2,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
 
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.spacing3,
+    marginBottom: theme.spacing.spacing2,
   },
 
   badgeContainer: {
@@ -137,17 +137,17 @@ export const styles = StyleSheet.create({
   emptyStateContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: theme.spacing.spacing8,
-    paddingHorizontal: theme.spacing.spacing4,
-    minHeight: 160,
+    paddingVertical: theme.spacing.spacing4,
+    paddingHorizontal: theme.spacing.spacing3,
+    minHeight: 120,
   },
 
   emptyStateCard: {
     width: '100%',
-    maxWidth: 320,
+    maxWidth: 280,
     backgroundColor: theme.colors.background.main,
-    borderRadius: theme.spacing.spacing6,
-    padding: theme.spacing.spacing6,
+    borderRadius: theme.spacing.spacing4,
+    padding: theme.spacing.spacing4,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,

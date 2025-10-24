@@ -1,6 +1,8 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 import { theme } from '@/src/theme';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   container: {
@@ -160,39 +162,6 @@ export const styles = StyleSheet.create({
     fontWeight: theme.typography.fontWeight.medium,
   },
 
-  envelopeSection: {
-    backgroundColor: theme.colors.background.main,
-    borderRadius: theme.spacing.spacing5,
-    padding: theme.spacing.spacing6,
-    shadowColor: theme.colors.gray[900],
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  envelopeHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  envelopeIcon: {
-    width: theme.spacing.spacing10,
-    height: theme.spacing.spacing10,
-    backgroundColor: theme.colors.blue[50],
-    borderRadius: theme.spacing.spacing5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: theme.spacing.spacing3,
-  },
-  envelopeTitle: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.main,
-    flex: 1,
-  },
-
   benefitsSection: {
     backgroundColor: theme.colors.background.main,
     borderRadius: theme.spacing.spacing5,
@@ -221,17 +190,18 @@ export const styles = StyleSheet.create({
   benefitsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: theme.spacing.spacing3,
+    gap: screenWidth < 375 ? theme.spacing.spacing2 : theme.spacing.spacing3,
   },
   benefitCard: {
     flex: 1,
-    padding: theme.spacing.spacing5,
+    padding:
+      screenWidth < 375 ? theme.spacing.spacing4 : theme.spacing.spacing5,
     borderRadius: theme.spacing.spacing4,
     alignItems: 'center',
     backgroundColor: theme.colors.background.sub,
     borderWidth: 1,
     borderColor: theme.colors.gray[200],
-    minHeight: 120,
+    minHeight: screenWidth < 375 ? 110 : 120,
     justifyContent: 'center',
   },
   benefitTitle: {
@@ -242,10 +212,15 @@ export const styles = StyleSheet.create({
     marginBottom: theme.spacing.spacing1,
   },
   benefitSubtitle: {
-    fontSize: theme.typography.fontSize.font2,
+    fontSize:
+      screenWidth < 375
+        ? theme.typography.fontSize.font1
+        : theme.typography.fontSize.font2,
     color: theme.colors.text.sub,
     textAlign: 'center',
     marginBottom: theme.spacing.spacing2,
+    lineHeight: screenWidth < 375 ? 16 : 18,
+    flexShrink: 1,
   },
   benefitIcon: {
     fontSize: theme.typography.fontSize.font7,

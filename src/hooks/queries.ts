@@ -285,11 +285,15 @@ export function useTeamMatches(teamId: string | number) {
   });
 }
 
-export function useTeamRecentMatches(status?: string) {
+export function useTeamRecentMatches(
+  status?: string,
+  options?: UseQueryOptions<any, Error>
+) {
   return useQuery({
     queryKey: queries.teamRecentMatches.key(status),
     queryFn: () => queries.teamRecentMatches.fn(status),
     enabled: true,
+    ...options,
   });
 }
 
