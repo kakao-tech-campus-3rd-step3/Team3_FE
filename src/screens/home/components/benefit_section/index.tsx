@@ -28,6 +28,7 @@ export default memo(function BenefitsSection({ teamId }: BenefitsSectionProps) {
     }
 
     if (serviceId === 'mercenary') {
+      router.push(ROUTES.MERCENARY);
       return;
     }
 

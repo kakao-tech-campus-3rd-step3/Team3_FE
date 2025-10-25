@@ -11,7 +11,6 @@ import {
 
 import { useTeamMember } from '@/src/hooks/queries';
 import { colors, spacing, typography } from '@/src/theme';
-import { formatDate } from '@/src/utils/date';
 import { getRoleDisplayName } from '@/src/utils/team';
 
 interface MemberDetailModalProps {
