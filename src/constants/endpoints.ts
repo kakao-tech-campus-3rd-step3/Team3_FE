@@ -109,3 +109,11 @@ export const USER_JOIN_WAITING_API = {
     sort: string = 'audit.createdAt,desc'
   ) => `/api/users/me/join-waiting?page=${page}&size=${size}&sort=${sort}`,
 };
+
+export const MERCENARY_API = {
+  GET_RECRUITMENTS: '/api/mercenaries/recruitments',
+  GET_RECRUITMENT_BY_ID: (id: number) => `/api/mercenaries/recruitments/${id}`,
+  CREATE_RECRUITMENT: '/api/mercenaries/recruitments',
+  UPDATE_RECRUITMENT: (id: number) => `/api/mercenaries/recruitments/${id}`,
+  DELETE_RECRUITMENT: (id: number) => `/api/mercenaries/recruitments/${id}`,
+};
