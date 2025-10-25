@@ -126,7 +126,7 @@ export default function MercenaryHistoryScreen() {
               <Ionicons
                 name="people-outline"
                 size={64}
-                color={theme.colors.text.sub}
+                color={theme.colors.text.sub + '60'}
               />
               <Text style={styles.emptyText}>신청한 용병 기록이 없습니다.</Text>
             </View>
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: '600',
-    color: theme.colors.text.main,
+    color: theme.colors.text.sub,
     marginTop: theme.spacing.spacing4,
     marginBottom: theme.spacing.spacing2,
   },
