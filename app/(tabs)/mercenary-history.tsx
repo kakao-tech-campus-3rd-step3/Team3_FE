@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -30,13 +30,7 @@ export default function MercenaryHistoryScreen() {
 
   const applicationsData = joinWaitingData?.content || [];
 
-  useEffect(() => {
-    if (activeTab === 'reviews' && reviews.length === 0) {
-      loadReviews();
-    }
-  }, [activeTab]);
-
-  const loadReviews = async () => {
+  const loadReviews = useCallback(async () => {
     const userId = 1;
 
     setReviewsLoading(true);
@@ -48,7 +42,13 @@ export default function MercenaryHistoryScreen() {
     } finally {
       setReviewsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'reviews' && reviews.length === 0) {
+      loadReviews();
+    }
+  }, [activeTab, reviews.length, loadReviews]);
 
   const tabs = [
     { key: 'applications', label: '신청 기록' },

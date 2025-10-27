@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import { getTeamReviews } from '@/src/api/mercenary';
@@ -16,13 +16,7 @@ export default function TeamReviewsSection({
   const [reviews, setReviews] = useState<MercenaryTeamReview[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
 
-  useEffect(() => {
-    if (reviews.length === 0) {
-      loadReviews();
-    }
-  }, []);
-
-  const loadReviews = async () => {
+  const loadReviews = useCallback(async () => {
     setReviewsLoading(true);
     try {
       const reviewsData = await getTeamReviews(teamId);
@@ -32,7 +26,13 @@ export default function TeamReviewsSection({
     } finally {
       setReviewsLoading(false);
     }
-  };
+  }, [teamId]);
+
+  useEffect(() => {
+    if (reviews.length === 0) {
+      loadReviews();
+    }
+  }, [reviews.length, loadReviews]);
 
   return (
     <View style={styles.reviewsSection}>
