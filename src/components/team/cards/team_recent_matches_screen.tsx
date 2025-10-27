@@ -65,13 +65,22 @@ export default memo(function TeamRecentMatchesScreen({
     );
   }
 
+  const getOpponentTeamId = (
+    match: RecentMatchResponse,
+    currentTeamId: number
+  ) => {
+    return match.createTeamId === currentTeamId
+      ? match.requestTeamId
+      : match.createTeamId;
+  };
+
   const getOpponentTeamName = (
     match: RecentMatchResponse,
     currentTeamName: string
   ) => {
-    return match.team1Name === currentTeamName
-      ? match.team2Name
-      : match.team1Name;
+    return match.createTeamName === currentTeamName
+      ? match.requestTeamName
+      : match.createTeamName;
   };
 
   const getResultIcon = (match: RecentMatchResponse) => {
@@ -119,8 +128,12 @@ export default memo(function TeamRecentMatchesScreen({
     );
   }
 
-  const handleReviewRedirect = (matchId: number) => {
-    router.push(`${ROUTES.TEAM_REVIEW}?matchId=${matchId}`);
+  const handleReviewRedirect = (match: RecentMatchResponse) => {
+    if (!team?.id) return;
+    const reviewedTeamId = getOpponentTeamId(match, team.id);
+    router.push(
+      `${ROUTES.TEAM_REVIEW}?matchId=${match.matchId}&reviewedTeamId=${reviewedTeamId}`
+    );
   };
 
   return (
@@ -219,7 +232,7 @@ export default memo(function TeamRecentMatchesScreen({
 
                   <TouchableOpacity
                     style={styles.reviewButton}
-                    onPress={() => handleReviewRedirect(match.matchId)}
+                    onPress={() => handleReviewRedirect(match)}
                   >
                     <Text style={styles.reviewButtonText}>리뷰 남기기</Text>
                   </TouchableOpacity>
@@ -286,11 +299,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: spacing.spacing15,
-  },
-  loadingText: {
-    fontSize: typography.fontSize.font4,
-    color: colors.gray[600],
-    fontWeight: typography.fontWeight.medium,
   },
   matchesList: {
     gap: spacing.spacing4,

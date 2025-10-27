@@ -32,8 +32,10 @@ export interface Match {
 
 export interface RecentMatchResponse {
   matchId: number;
-  team1Name: string;
-  team2Name: string;
+  createTeamId: number;
+  createTeamName: string;
+  requestTeamId: number;
+  requestTeamName: string;
   matchDate: string;
   matchTime: string;
   venueName: string;

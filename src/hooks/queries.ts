@@ -40,6 +40,7 @@ import type {
   JoinWaitingCancelRequest,
   RecruitmentCreateRequest,
   RecruitmentUpdateRequest,
+  TeamReviewRequest,
 } from '@/src/types';
 import { formatDateForAPI } from '@/src/utils/date';
 
@@ -1051,4 +1052,17 @@ export function useDeleteMercenaryRecruitment() {
     deleteSuccess: deleteRecruitmentMutation.isSuccess,
     resetDeleteState: deleteRecruitmentMutation.reset,
   };
+}
+
+export function useCreateTeamReviewMutation() {
+  return useMutation({
+    mutationFn: (data: TeamReviewRequest) =>
+      api.teamReviewApi.createReview(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teamRecentMatches'] });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 리뷰 등록 실패:', error);
+    },
+  });
 }

@@ -71,6 +71,13 @@ export const TEAM_MATCH_API = {
     `/api/teams/${teamId}/match-requests/${requestId}`,
 };
 
+export const TEAM_REVIEW_API = {
+  CREATE: '/api/team-reviews',
+  DETAIL: (id: number | string) => `/api/team-reviews/${id}`,
+  LIST: (profileId: number | string) =>
+    `/api/team-reviews?profileId=${profileId}`,
+};
+
 export const MATCH_CREATE_API = {
   CREATE: '/api/matches',
 };
