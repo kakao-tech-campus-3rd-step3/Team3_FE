@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { memo } from 'react';
 import {
   View,
@@ -6,10 +7,12 @@ import {
   ScrollView,
   StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { ROUTES } from '@/src/constants/routes';
 import { useTeamRecentMatches, useTeam } from '@/src/hooks/queries';
 import { colors, spacing, typography, theme } from '@/src/theme';
 import type { RecentMatchResponse } from '@/src/types/match';
@@ -116,6 +119,10 @@ export default memo(function TeamRecentMatchesScreen({
     );
   }
 
+  const handleReviewRedirect = (matchId: number) => {
+    router.push(`${ROUTES.TEAM_REVIEW}?matchId=${matchId}`);
+  };
+
   return (
     <View style={styles.container}>
       <CustomHeader title="최근 경기" />
@@ -209,6 +216,13 @@ export default memo(function TeamRecentMatchesScreen({
                       </View>
                     </View>
                   </View>
+
+                  <TouchableOpacity
+                    style={styles.reviewButton}
+                    onPress={() => handleReviewRedirect(match.matchId)}
+                  >
+                    <Text style={styles.reviewButtonText}>리뷰 남기기</Text>
+                  </TouchableOpacity>
                 </View>
               );
             })}
@@ -348,5 +362,17 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.font3,
     color: colors.gray[600],
     flex: 1,
+  },
+  reviewButton: {
+    backgroundColor: colors.blue[500],
+    paddingVertical: 12,
+    borderRadius: 20,
+    marginTop: spacing.spacing4,
+    alignItems: 'center',
+  },
+  reviewButtonText: {
+    color: 'white',
+    fontSize: typography.fontSize.font4,
+    fontWeight: typography.fontWeight.bold,
   },
 });
