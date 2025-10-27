@@ -52,6 +52,7 @@ function AppContent() {
             />,
             <Stack.Screen key="match_set" name="match_set/index" />,
             <Stack.Screen key="team_review" name="review/team_review" />,
+            <Stack.Screen key="mercenary" name="mercenary" />,
           ]
         ) : (
           <Stack.Screen name="(auth)" />

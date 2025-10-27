@@ -21,6 +21,9 @@ export const ROUTES = {
   CHECK_APPLIED_MATCHES: '/check_applied_matches',
   MATCH_SET: '/match_set',
 
+  MERCENARY: '/mercenary',
+  MERCENARY_CREATE: '/mercenary/create',
+
   TEAM_REVIEW: '/review/team_review',
   TOURNAMENT: '/tournament',
 } as const;
