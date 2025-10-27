@@ -16,20 +16,27 @@ export default function TeamReviewScreen() {
     null
   );
   const [skillLevelReview, setSkillLevelReview] = useState<string | null>(null);
+  const [missingFields, setMissingFields] = useState<string[]>([]); // 🚨 누락 항목 추적
 
   const handleSubmitReview = () => {
-    if (
-      rating === 0 ||
-      !punctualityReview ||
-      !sportsmanshipReview ||
-      !skillLevelReview
-    ) {
+    const missing: string[] = [];
+
+    if (rating === 0) missing.push('rating');
+    if (!punctualityReview) missing.push('punctualityReview');
+    if (!sportsmanshipReview) missing.push('sportsmanshipReview');
+    if (!skillLevelReview) missing.push('skillLevelReview');
+
+    if (missing.length > 0) {
+      setMissingFields(missing);
       Alert.alert('모든 항목을 작성해 주세요.');
       return;
     }
 
+    setMissingFields([]);
     Alert.alert('리뷰가 성공적으로 등록되었습니다.');
   };
+
+  const isMissing = (field: string) => missingFields.includes(field);
 
   return (
     <View style={styles.container}>
@@ -44,6 +51,7 @@ export default function TeamReviewScreen() {
         <Card
           title="⚡ 경기 종합 점수"
           subtitle="경기 전반적인 만족도를 평가해주세요."
+          style={isMissing('rating') && styles.errorCard} // 🚨 누락된 항목 빨간 표시
         >
           <View style={styles.starContainer}>
             {[1, 2, 3, 4, 5].map(value => (
@@ -63,82 +71,62 @@ export default function TeamReviewScreen() {
         </Card>
 
         {/* ⏰ 시간 엄수 */}
-        <Card title="⏰ 시간 엄수" subtitle="약속된 시간에 맞춰 도착했나요?">
+        <Card
+          title="⏰ 시간 엄수"
+          subtitle="약속된 시간에 맞춰 도착했나요?"
+          style={isMissing('punctualityReview') && styles.errorCard}
+        >
           <View style={styles.optionRow}>
-            <TouchableOpacity
-              style={
-                punctualityReview === 'GOOD'
-                  ? styles.selectedButton
-                  : styles.button
-              }
-              onPress={() => setPunctualityReview('GOOD')}
-            >
-              <Text
-                style={[
-                  styles.buttonText,
-                  punctualityReview === 'GOOD' && styles.selectedButtonText,
-                ]}
+            {['GOOD', 'BAD'].map(option => (
+              <TouchableOpacity
+                key={option}
+                style={
+                  punctualityReview === option
+                    ? styles.selectedButton
+                    : styles.button
+                }
+                onPress={() => setPunctualityReview(option)}
               >
-                GOOD
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={
-                punctualityReview === 'BAD'
-                  ? styles.selectedButton
-                  : styles.button
-              }
-              onPress={() => setPunctualityReview('BAD')}
-            >
-              <Text
-                style={[
-                  styles.buttonText,
-                  punctualityReview === 'BAD' && styles.selectedButtonText,
-                ]}
-              >
-                BAD
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    punctualityReview === option && styles.selectedButtonText,
+                  ]}
+                >
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </Card>
 
         {/* 🤝 매너 */}
-        <Card title="🤝 매너" subtitle="상대팀의 스포츠맨십은 어땠나요?">
+        <Card
+          title="🤝 매너"
+          subtitle="상대팀의 스포츠맨십은 어땠나요?"
+          style={isMissing('sportsmanshipReview') && styles.errorCard}
+        >
           <View style={styles.optionRow}>
-            <TouchableOpacity
-              style={
-                sportsmanshipReview === 'GOOD'
-                  ? styles.selectedButton
-                  : styles.button
-              }
-              onPress={() => setSportsmanshipReview('GOOD')}
-            >
-              <Text
-                style={[
-                  styles.buttonText,
-                  sportsmanshipReview === 'GOOD' && styles.selectedButtonText,
-                ]}
+            {['GOOD', 'BAD'].map(option => (
+              <TouchableOpacity
+                key={option}
+                style={
+                  sportsmanshipReview === option
+                    ? styles.selectedButton
+                    : styles.button
+                }
+                onPress={() => setSportsmanshipReview(option)}
               >
-                GOOD
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={
-                sportsmanshipReview === 'BAD'
-                  ? styles.selectedButton
-                  : styles.button
-              }
-              onPress={() => setSportsmanshipReview('BAD')}
-            >
-              <Text
-                style={[
-                  styles.buttonText,
-                  sportsmanshipReview === 'BAD' && styles.selectedButtonText,
-                ]}
-              >
-                BAD
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    sportsmanshipReview === option && styles.selectedButtonText,
+                  ]}
+                >
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </Card>
 
@@ -146,59 +134,29 @@ export default function TeamReviewScreen() {
         <Card
           title="📊 실력 일치도"
           subtitle="팀의 실제 실력은 표시된 수준과 비슷했나요?"
+          style={isMissing('skillLevelReview') && styles.errorCard}
         >
           <View style={styles.optionRow}>
-            <TouchableOpacity
-              style={
-                skillLevelReview === 'LOWER'
-                  ? styles.selectedButton
-                  : styles.button
-              }
-              onPress={() => setSkillLevelReview('LOWER')}
-            >
-              <Text
-                style={[
-                  styles.buttonText,
-                  skillLevelReview === 'LOWER' && styles.selectedButtonText,
-                ]}
+            {['LOWER', 'SIMILAR', 'HIGHER'].map(option => (
+              <TouchableOpacity
+                key={option}
+                style={
+                  skillLevelReview === option
+                    ? styles.selectedButton
+                    : styles.button
+                }
+                onPress={() => setSkillLevelReview(option)}
               >
-                LOWER
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={
-                skillLevelReview === 'SIMILAR'
-                  ? styles.selectedButton
-                  : styles.button
-              }
-              onPress={() => setSkillLevelReview('SIMILAR')}
-            >
-              <Text
-                style={[
-                  styles.buttonText,
-                  skillLevelReview === 'SIMILAR' && styles.selectedButtonText,
-                ]}
-              >
-                SIMILAR
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={
-                skillLevelReview === 'HIGHER'
-                  ? styles.selectedButton
-                  : styles.button
-              }
-              onPress={() => setSkillLevelReview('HIGHER')}
-            >
-              <Text
-                style={[
-                  styles.buttonText,
-                  skillLevelReview === 'HIGHER' && styles.selectedButtonText,
-                ]}
-              >
-                HIGHER
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    skillLevelReview === option && styles.selectedButtonText,
+                  ]}
+                >
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </Card>
 

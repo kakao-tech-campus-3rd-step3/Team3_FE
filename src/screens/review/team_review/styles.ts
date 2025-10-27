@@ -97,4 +97,8 @@ export const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.font4,
     fontWeight: theme.typography.fontWeight.bold,
   },
+  errorCard: {
+    borderWidth: 1.5,
+    borderColor: theme.colors.red[500],
+  },
 });
