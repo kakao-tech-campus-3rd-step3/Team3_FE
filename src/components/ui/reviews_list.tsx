@@ -4,11 +4,22 @@ import { View, Text, StyleSheet } from 'react-native';
 
 import Card from '@/src/components/card/card';
 import { theme } from '@/src/theme';
-import { MercenaryReview } from '@/src/types/mercenary';
+import { MercenaryReview, MercenaryTeamReview } from '@/src/types/mercenary';
 
-interface MercenaryReviewsListProps {
-  reviews: MercenaryReview[];
+interface BaseReview {
+  rating: number;
+  punctualityReview: 'GOOD' | 'BAD';
+  sportmanshipReview: 'GOOD' | 'BAD';
+  skillLevelReview: 'SIMILAR' | 'LOWER' | 'HIGHER';
+}
+
+type IconName = 'chatbubbles-outline' | 'people-outline' | 'refresh-outline';
+
+interface ReviewsListProps<T extends BaseReview> {
+  reviews: T[];
   isLoading?: boolean;
+  emptyIconName?: IconName;
+  emptyMessage?: string;
 }
 
 interface ReviewStat {
@@ -20,10 +31,12 @@ interface ReviewStat {
   low?: number;
 }
 
-export const MercenaryReviewsList: React.FC<MercenaryReviewsListProps> = ({
+export function ReviewsList<T extends BaseReview>({
   reviews,
   isLoading = false,
-}) => {
+  emptyIconName = 'chatbubbles-outline',
+  emptyMessage = '받은 리뷰가 없습니다.',
+}: ReviewsListProps<T>) {
   const getScoreColor = (rating: number) => {
     if (rating >= 4) return theme.colors.success;
     if (rating >= 3) return theme.colors.warning;
@@ -160,11 +173,11 @@ export const MercenaryReviewsList: React.FC<MercenaryReviewsListProps> = ({
     return (
       <View style={styles.emptyContainer}>
         <Ionicons
-          name="chatbubbles-outline"
+          name={emptyIconName}
           size={64}
           color={theme.colors.text.sub + '60'}
         />
-        <Text style={styles.emptyText}>받은 리뷰가 없습니다.</Text>
+        <Text style={styles.emptyText}>{emptyMessage}</Text>
       </View>
     );
   }
@@ -208,7 +221,31 @@ export const MercenaryReviewsList: React.FC<MercenaryReviewsListProps> = ({
       )}
     </View>
   );
-};
+}
+
+export const MercenaryReviewsList: React.FC<{
+  reviews: MercenaryReview[];
+  isLoading?: boolean;
+}> = ({ reviews, isLoading }) => (
+  <ReviewsList
+    reviews={reviews}
+    isLoading={isLoading}
+    emptyIconName="chatbubbles-outline"
+    emptyMessage="받은 리뷰가 없습니다."
+  />
+);
+
+export const TeamReviewsList: React.FC<{
+  reviews: MercenaryTeamReview[];
+  isLoading?: boolean;
+}> = ({ reviews, isLoading }) => (
+  <ReviewsList
+    reviews={reviews}
+    isLoading={isLoading}
+    emptyIconName="people-outline"
+    emptyMessage="받은 팀 리뷰가 없습니다."
+  />
+);
 
 const styles = StyleSheet.create({
   container: {

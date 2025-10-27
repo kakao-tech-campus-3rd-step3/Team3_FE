@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getMercenaryReviews } from '@/src/api/mercenary';
 import Card from '@/src/components/card/card';
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { MercenaryReviewsList } from '@/src/components/ui/mercenary_reviews_list';
+import { MercenaryReviewsList } from '@/src/components/ui/reviews_list';
 import { TabSelector } from '@/src/components/ui/tab_selector';
 import { useMyJoinWaitingList } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import { getTeamReviews } from '@/src/api/mercenary';
-import { TeamReviewsList } from '@/src/components/ui/team_reviews_list';
+import { TeamReviewsList } from '@/src/components/ui/reviews_list';
 import { theme } from '@/src/theme';
 import { MercenaryTeamReview } from '@/src/types/mercenary';
 
