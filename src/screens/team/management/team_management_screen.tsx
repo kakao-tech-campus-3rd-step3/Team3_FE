@@ -5,6 +5,7 @@ import TeamInfoCard from '@/src/components/team/cards/team_info_card';
 import MemberDetailModal from '@/src/components/team/modals/member_detail_modal';
 import MatchManagementSection from '@/src/components/team/sections/match_management_section';
 import TeamMembersSection from '@/src/components/team/sections/team_members_section';
+import TeamReviewsSection from '@/src/components/team/sections/team_reviews_section';
 import EmptyState from '@/src/components/team/states/empty_state';
 import LoadingState from '@/src/components/team/states/loading_state';
 import { CustomHeader } from '@/src/components/ui/custom_header';
@@ -192,6 +193,7 @@ export default function TeamManagementScreen({
             isTeamLeader={currentUserMember?.role === 'LEADER'}
           />
           <MatchManagementSection teamId={numericTeamId} />
+          <TeamReviewsSection teamId={numericTeamId} />
           <TeamMembersSection
             teamMembers={teamMembers.sort((a, b) => {
               const roleOrder = { LEADER: 1, VICE_LEADER: 2, MEMBER: 3 };
