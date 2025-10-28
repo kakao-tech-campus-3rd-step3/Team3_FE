@@ -8,6 +8,7 @@ import {
   Image,
 } from 'react-native';
 
+import Dropdown from '@/src/components/dropdown';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { TeamMemberSelectModal } from '@/src/components/ui/team_member_select_modal';
 import { FormationType, generateFormation } from '@/src/constants/formations';
@@ -63,29 +64,30 @@ export default function TeamFormationScreen() {
     <View style={style.container}>
       <CustomHeader title="팀 포메이션 구성" />
 
-      {/* 포메이션 선택 버튼 */}
-      <View style={style.formationSelector}>
-        {(
-          ['4-3-3', '4-4-2', '3-5-2', '4-1-4-1', '4-2-3-1'] as FormationType[]
-        ).map(type => (
-          <TouchableOpacity
-            key={type}
-            style={[
-              style.formationButton,
-              selectedFormation === type && style.formationButtonActive,
-            ]}
-            onPress={() => setSelectedFormation(type)}
-          >
-            <Text
-              style={[
-                style.formationButtonText,
-                selectedFormation === type && style.formationButtonTextActive,
-              ]}
-            >
-              {type}
-            </Text>
-          </TouchableOpacity>
-        ))}
+      <View style={[style.cardContainer]}>
+        <View style={style.card}>
+          <View style={style.cardHeader}>
+            <Text style={style.cardTitle}>📋 포메이션 선택</Text>
+          </View>
+          <View style={style.cardContent}>
+            <Dropdown
+              items={
+                [
+                  '4-3-3',
+                  '4-4-2',
+                  '3-5-2',
+                  '4-1-4-1',
+                  '4-2-3-1',
+                  '3-4-2-1',
+                  '5-3-2',
+                ] as const
+              }
+              value={selectedFormation}
+              onChange={v => setSelectedFormation(v as FormationType)}
+              placeholder="포메이션 선택"
+            />
+          </View>
+        </View>
       </View>
 
       {/* 축구장 */}

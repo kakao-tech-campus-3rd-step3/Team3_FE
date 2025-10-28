@@ -13,6 +13,8 @@ export const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginVertical: theme.spacing.spacing4,
+    width: '100%',
+    paddingHorizontal: theme.spacing.spacing4,
   },
   formationButton: {
     paddingHorizontal: theme.spacing.spacing4,
@@ -64,10 +66,10 @@ export const style = StyleSheet.create({
     top: '100%', // 셔츠 바로 밑
     width: '100%',
     textAlign: 'center',
-    color: theme.colors.white, // ✅ 흰색으로 변경
-    fontWeight: '700', // ✅ 굵게 표시
+    color: theme.colors.white,
+    fontWeight: '700',
     fontSize: theme.typography.fontSize.font3,
-    textShadowColor: 'rgba(0, 0, 0, 0.4)', // ✅ 가독성 향상
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
@@ -83,5 +85,33 @@ export const style = StyleSheet.create({
     color: theme.colors.white,
     fontSize: theme.typography.fontSize.font4,
     fontWeight: theme.typography.fontWeight.bold,
+  },
+  card: {
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.spacing.spacing4,
+    marginHorizontal: theme.spacing.spacing4,
+    marginBottom: theme.spacing.spacing4,
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  cardHeader: {
+    paddingHorizontal: theme.spacing.spacing4,
+    paddingTop: theme.spacing.spacing4,
+    paddingBottom: theme.spacing.spacing2,
+  },
+  cardTitle: {
+    fontSize: theme.typography.fontSize.font4,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.gray[900],
+  },
+  cardContent: {
+    paddingHorizontal: theme.spacing.spacing4,
+    paddingBottom: theme.spacing.spacing4,
+  },
+  cardContainer: {
+    marginTop: theme.spacing.spacing4, // ✅ 헤더 아래 여백
   },
 });
