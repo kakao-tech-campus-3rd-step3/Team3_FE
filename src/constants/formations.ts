@@ -4,7 +4,7 @@ export type FormationType =
   | '3-5-2'
   | '4-1-4-1'
   | '4-2-3-1'
-  | '3-4-2-1'
+  | '4-1-2-3'
   | '5-3-2';
 
 export interface FormationPosition {
@@ -20,12 +20,18 @@ export interface FormationPosition {
 const getSymmetricXPositions = (count: number, isForward = false): number[] => {
   if (count === 1) return [50];
 
-  // 전체 폭: 기본은 60%, 공격수는 약간 더 좁게
-  const totalWidth = isForward
-    ? count === 2
-      ? 40 // 투톱이면 중앙쪽에 딱 붙음
-      : 50 // 스리톱은 살짝 여유 있게
-    : 60; // 기본 폭
+  // 전체 폭 조정
+  let totalWidth: number;
+
+  if (isForward) {
+    // 공격수 라인
+    totalWidth = count === 2 ? 40 : 50;
+  } else {
+    // 미드필더나 수비 라인
+    if (count === 2)
+      totalWidth = 35; // ✅ 2선의 미드필더 간격 좁힘 (기존 60 → 35)
+    else totalWidth = 60;
+  }
 
   const gap = totalWidth / (count - 1);
   const start = 50 - totalWidth / 2;
@@ -111,6 +117,6 @@ export const FORMATIONS: Record<FormationType, FormationPosition[]> = {
   '3-5-2': generateFormation('3-5-2'),
   '4-1-4-1': generateFormation('4-1-4-1'),
   '4-2-3-1': generateFormation('4-2-3-1'),
-  '3-4-2-1': generateFormation('3-4-2-1'),
+  '4-1-2-3': generateFormation('4-1-2-3'),
   '5-3-2': generateFormation('5-3-2'),
 };
