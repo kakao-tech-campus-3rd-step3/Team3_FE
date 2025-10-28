@@ -83,12 +83,21 @@ export const generateFormation = (pattern: string): FormationPosition[] => {
   lines.forEach((count, idx) => {
     const y = yPositions[idx];
     const isLastLine = idx === lineCount - 1; // 마지막 줄 = 공격수
-    const xPositions = getSymmetricXPositions(count, isLastLine);
 
-    const prefix = idx === 0 ? 'DF' : isLastLine ? 'FW' : 'MF';
+    let prefix = 'MF';
+    if (idx === 0) prefix = 'DF';
+    else if (isLastLine) prefix = 'FW';
+    else prefix = `MF${idx}`; // ✅ 고유 prefix 부여
+
+    let xPositions = getSymmetricXPositions(count, isLastLine);
+
+    // ✅ 4-2-3-1 포메이션의 두 번째 라인(MF2명) 간격 좁히기
+    if (pattern === '4-2-3-1' && count === 2 && prefix.startsWith('MF')) {
+      xPositions = [40, 60]; // 중앙쪽으로 이동 (기존 25,75 → 40,60)
+    }
 
     xPositions.forEach((x, i) => {
-      positions.push({ id: `${prefix}${i + 1}`, x, y });
+      positions.push({ id: `${prefix}_${i + 1}`, x, y });
     });
   });
 
