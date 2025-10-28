@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   ImageBackground,
   Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 
 import Dropdown from '@/src/components/dropdown';
@@ -18,7 +21,7 @@ import { style } from './team_formation_style';
 
 export default function TeamFormationScreen() {
   const router = useRouter();
-  const { data: teamMembersResponse } = useTeamMembers(1); // TODO: 실제 팀 ID로 교체
+  const { data: teamMembersResponse } = useTeamMembers(1);
   const teamMembers = teamMembersResponse?.content ?? [];
 
   const [selectedFormation, setSelectedFormation] =
@@ -61,88 +64,102 @@ export default function TeamFormationScreen() {
   };
 
   return (
-    <View style={style.container}>
+    <KeyboardAvoidingView
+      style={style.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
       <CustomHeader title="팀 포메이션 구성" />
 
-      <View style={[style.cardContainer]}>
-        <View style={style.card}>
-          <View style={style.cardHeader}>
-            <Text style={style.cardTitle}>📋 포메이션 선택</Text>
-          </View>
-          <View style={style.cardContent}>
-            <Dropdown
-              items={
-                [
-                  '4-3-3',
-                  '4-4-2',
-                  '3-5-2',
-                  '4-1-4-1',
-                  '4-2-3-1',
-                  '3-4-2-1',
-                  '5-3-2',
-                ] as const
-              }
-              value={selectedFormation}
-              onChange={v => setSelectedFormation(v as FormationType)}
-              placeholder="포메이션 선택"
-            />
+      <ScrollView
+        style={style.scrollContainer}
+        contentContainerStyle={style.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* 📋 포메이션 선택 카드 */}
+        <View style={style.cardContainer}>
+          <View style={style.card}>
+            <View style={style.cardHeader}>
+              <Text style={style.cardTitle}>📋 포메이션 선택</Text>
+            </View>
+            <View style={style.cardContent}>
+              <Dropdown
+                items={
+                  [
+                    '4-3-3',
+                    '4-4-2',
+                    '3-5-2',
+                    '4-1-4-1',
+                    '4-2-3-1',
+                    '3-4-2-1',
+                    '5-3-2',
+                  ] as const
+                }
+                value={selectedFormation}
+                onChange={v => setSelectedFormation(v as FormationType)}
+                placeholder="포메이션 선택"
+              />
+            </View>
           </View>
         </View>
-      </View>
 
-      {/* 축구장 */}
-      <ImageBackground
-        source={require('@/assets/images/field.png')}
-        style={style.field}
-        resizeMode="cover"
-      >
-        {positions.map(pos => {
-          const isSelected = selectedPosition === pos.id;
-          const assigned = formationAssignments[pos.id];
+        {/* ⚽ 축구장 카드 */}
+        <View style={style.fieldCard}>
+          <ImageBackground
+            source={require('@/assets/images/field.png')}
+            style={style.field}
+            resizeMode="cover"
+          >
+            {positions.map(pos => {
+              const isSelected = selectedPosition === pos.id;
+              const assigned = formationAssignments[pos.id];
 
-          return (
-            <TouchableOpacity
-              key={pos.id}
-              style={[
-                {
-                  position: 'absolute',
-                  width: JERSEY_SIZE,
-                  height: JERSEY_SIZE,
-                  left: `${pos.x}%`,
-                  top: `${pos.y}%`,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  transform: [
-                    { translateX: -JERSEY_SIZE / 2 },
-                    { translateY: -JERSEY_SIZE / 2 },
-                    { scale: isSelected ? 1.15 : 1 },
-                  ],
-                },
-                isSelected
-                  ? style.playerCircleSelected
-                  : style.playerCircleUnselected,
-              ]}
-              onPress={() => handleSelectPosition(pos.id)}
-              activeOpacity={0.8}
-            >
-              <Image
-                source={require('@/assets/images/jersey.png')}
-                style={[
-                  style.jersey,
-                  { width: JERSEY_SIZE, height: JERSEY_SIZE },
-                ]}
-                resizeMode="contain"
-              />
-              <Text style={style.playerName}>{assigned || pos.id}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ImageBackground>
+              return (
+                <TouchableOpacity
+                  key={pos.id}
+                  style={[
+                    {
+                      position: 'absolute',
+                      width: JERSEY_SIZE,
+                      height: JERSEY_SIZE,
+                      left: `${pos.x}%`,
+                      top: `${pos.y}%`,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      transform: [
+                        { translateX: -JERSEY_SIZE / 2 },
+                        { translateY: -JERSEY_SIZE / 2 },
+                        { scale: isSelected ? 1.15 : 1 },
+                      ],
+                    },
+                    isSelected
+                      ? style.playerCircleSelected
+                      : style.playerCircleUnselected,
+                  ]}
+                  onPress={() => handleSelectPosition(pos.id)}
+                  activeOpacity={0.8}
+                >
+                  <Image
+                    source={require('@/assets/images/jersey.png')}
+                    style={[
+                      style.jersey,
+                      { width: JERSEY_SIZE, height: JERSEY_SIZE },
+                    ]}
+                    resizeMode="contain"
+                  />
+                  <Text style={style.playerName}>{assigned || pos.id}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ImageBackground>
+        </View>
 
-      {/* 다음 버튼 */}
-      <TouchableOpacity style={style.nextButton} onPress={handleNext}>
-        <Text style={style.nextButtonText}>다음으로</Text>
-      </TouchableOpacity>
+        {/* ✅ 다음 버튼 카드 */}
+        <View style={style.nextButtonCard}>
+          <TouchableOpacity style={style.nextButton} onPress={handleNext}>
+            <Text style={style.nextButtonText}>다음으로</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
 
       {/* 팀원 선택 모달 */}
       {showModal && (
@@ -154,6 +171,6 @@ export default function TeamFormationScreen() {
           onSelect={handleMemberSelect}
         />
       )}
-    </View>
+    </KeyboardAvoidingView>
   );
 }

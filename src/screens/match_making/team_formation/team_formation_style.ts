@@ -75,11 +75,10 @@ export const style = StyleSheet.create({
   },
   nextButton: {
     backgroundColor: theme.colors.blue[600],
-    margin: theme.spacing.spacing4,
-    borderRadius: theme.spacing.spacing3,
+    borderRadius: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 52,
+    height: 56,
   },
   nextButtonText: {
     color: theme.colors.white,
@@ -112,6 +111,37 @@ export const style = StyleSheet.create({
     paddingBottom: theme.spacing.spacing4,
   },
   cardContainer: {
-    marginTop: theme.spacing.spacing4, // ✅ 헤더 아래 여백
+    marginTop: theme.spacing.spacing4,
+  },
+  fieldCard: {
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.spacing.spacing4,
+    marginHorizontal: theme.spacing.spacing4,
+    marginBottom: theme.spacing.spacing4,
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    overflow: 'hidden',
+  },
+  scrollContainer: {
+    flex: 1,
+    backgroundColor: theme.colors.gray[50],
+  },
+  scrollContent: {
+    paddingBottom: theme.spacing.spacing6,
+  },
+  nextButtonCard: {
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.spacing.spacing4,
+    marginHorizontal: theme.spacing.spacing4,
+    marginBottom: theme.spacing.spacing8,
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    overflow: 'hidden',
   },
 });
