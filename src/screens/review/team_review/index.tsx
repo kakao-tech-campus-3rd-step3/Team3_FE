@@ -57,6 +57,32 @@ export default function TeamReviewScreen() {
 
   const isMissing = (field: string) => missingFields.includes(field);
 
+  // ✅ missingFields에서 특정 필드를 제거하는 헬퍼
+  const clearMissingField = (field: string) => {
+    setMissingFields(prev => prev.filter(f => f !== field));
+  };
+
+  // ✅ 각 setter 래핑 (입력 시 missingField 해제)
+  const handleSetRating = (value: number) => {
+    setRating(value);
+    clearMissingField('rating');
+  };
+
+  const handleSetPunctualityReview = (value: GoodBad) => {
+    setPunctualityReview(value);
+    clearMissingField('punctualityReview');
+  };
+
+  const handleSetSportsmanshipReview = (value: GoodBad) => {
+    setSportsmanshipReview(value);
+    clearMissingField('sportsmanshipReview');
+  };
+
+  const handleSetSkillLevelReview = (value: Skill) => {
+    setSkillLevelReview(value);
+    clearMissingField('skillLevelReview');
+  };
+
   const handleSubmitReview = () => {
     const missing: string[] = [];
     if (rating === 0) missing.push('rating');
@@ -121,7 +147,10 @@ export default function TeamReviewScreen() {
         >
           <View style={styles.starContainer}>
             {[1, 2, 3, 4, 5].map(value => (
-              <TouchableOpacity key={value} onPress={() => setRating(value)}>
+              <TouchableOpacity
+                key={value}
+                onPress={() => handleSetRating(value)}
+              >
                 <Ionicons
                   name={value <= rating ? 'star' : 'star-outline'}
                   size={34}
@@ -150,7 +179,7 @@ export default function TeamReviewScreen() {
                     ? styles.selectedButton
                     : styles.button
                 }
-                onPress={() => setPunctualityReview(option)}
+                onPress={() => handleSetPunctualityReview(option)}
               >
                 <Text
                   style={[
@@ -179,7 +208,7 @@ export default function TeamReviewScreen() {
                     ? styles.selectedButton
                     : styles.button
                 }
-                onPress={() => setSportsmanshipReview(option)}
+                onPress={() => handleSetSportsmanshipReview(option)}
               >
                 <Text
                   style={[
@@ -208,7 +237,7 @@ export default function TeamReviewScreen() {
                     ? styles.selectedButton
                     : styles.button
                 }
-                onPress={() => setSkillLevelReview(option)}
+                onPress={() => handleSetSkillLevelReview(option)}
               >
                 <Text
                   style={[
