@@ -27,6 +27,14 @@ const isGoodBad = (v: unknown): v is GoodBad => v === 'GOOD' || v === 'BAD';
 const isSkill = (v: unknown): v is Skill =>
   v === 'LOWER' || v === 'SIMILAR' || v === 'HIGHER';
 
+const LABELS = {
+  GOOD: '좋음',
+  BAD: '나쁨',
+  LOWER: '약함',
+  SIMILAR: '비슷함',
+  HIGHER: '강함',
+};
+
 export default function TeamReviewScreen() {
   const { matchId, reviewedTeamId } = useLocalSearchParams<{
     matchId: string;
@@ -150,7 +158,7 @@ export default function TeamReviewScreen() {
                     punctualityReview === option && styles.selectedButtonText,
                   ]}
                 >
-                  {option}
+                  {LABELS[option]}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -179,7 +187,7 @@ export default function TeamReviewScreen() {
                     sportsmanshipReview === option && styles.selectedButtonText,
                   ]}
                 >
-                  {option}
+                  {LABELS[option]}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -208,7 +216,7 @@ export default function TeamReviewScreen() {
                     skillLevelReview === option && styles.selectedButtonText,
                   ]}
                 >
-                  {option}
+                  {LABELS[option]}
                 </Text>
               </TouchableOpacity>
             ))}
