@@ -7,6 +7,7 @@ import {
   FlatList,
   StyleSheet,
   BackHandler,
+  Alert,
 } from 'react-native';
 
 import { theme } from '@/src/theme';
@@ -21,6 +22,18 @@ interface TeamMemberSelectModalProps {
   multiple?: boolean;
   onMultiSelect?: (members: { id: number; name: string }[]) => void;
   preselected?: { id: number; name: string }[];
+
+  /** ✅ 이미 선발에 배정된 선수 (포지션: 이름 매핑) */
+  assignedMembers?: Record<string, string | null>;
+
+  /** ✅ 후보 명단 */
+  benchMembers?: { id: number; name: string }[];
+
+  /** ✅ 후보 추가 시 선발 중복 제거 */
+  onRemoveFromFormation?: (memberName: string) => void;
+
+  /** ✅ 선발 추가 시 후보 중복 제거 */
+  onRemoveFromBench?: (memberName: string) => void;
 }
 
 export const TeamMemberSelectModal = ({
@@ -32,10 +45,13 @@ export const TeamMemberSelectModal = ({
   multiple = false,
   onMultiSelect,
   preselected = [],
+  assignedMembers = {},
+  benchMembers = [],
+  onRemoveFromFormation,
+  onRemoveFromBench,
 }: TeamMemberSelectModalProps) => {
   const [selected, setSelected] = useState<Record<number, boolean>>({});
 
-  // ✅ preselected 초기화
   useEffect(() => {
     if (visible && multiple) {
       const initial = Object.fromEntries(preselected.map(m => [m.id, true]));
@@ -43,27 +59,53 @@ export const TeamMemberSelectModal = ({
     }
   }, [visible, multiple, preselected]);
 
-  // ✅ 안드로이드 뒤로가기 처리
   useEffect(() => {
     if (!visible) return;
 
     const handleBackPress = () => {
       onClose();
-      return true; // 기본 앱 종료 방지
+      return true;
     };
-
     const subscription = BackHandler.addEventListener(
       'hardwareBackPress',
       handleBackPress
     );
-
-    // 모달이 닫히면 이벤트 제거
-    return () => {
-      subscription.remove();
-    };
+    return () => subscription.remove();
   }, [visible, onClose]);
 
-  const toggleSelect = (id: number) => {
+  const toggleSelect = (id: number, name: string) => {
+    const isAssigned = Object.values(assignedMembers).includes(name);
+    const isBench = benchMembers.some(b => b.name === name);
+
+    // 이미 선발 or 후보에 있는 경우
+    if (isAssigned && !multiple) {
+      Alert.alert(
+        '중복 선택 불가',
+        `${name} 선수는 이미 다른 포지션에 배정되어 있습니다.`
+      );
+      return;
+    }
+
+    if (multiple && isAssigned) {
+      Alert.alert(
+        '선발 선수 추가',
+        `${name} 선수는 현재 선발 라인업에 포함되어 있습니다.\n후보로 등록 시 선발에서 제외됩니다.`,
+        [
+          {
+            text: '예',
+            onPress: () => onRemoveFromFormation?.(name),
+          },
+          { text: '아니오', style: 'cancel' },
+        ]
+      );
+    }
+
+    // 후보 중복 방지
+    if (multiple && isBench && !selected[id]) {
+      Alert.alert('중복 선택', `${name} 선수는 이미 후보로 등록되어 있습니다.`);
+      return;
+    }
+
     setSelected(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
@@ -91,24 +133,59 @@ export const TeamMemberSelectModal = ({
           <FlatList
             data={members}
             keyExtractor={item => item.id.toString()}
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={{ paddingBottom: theme.spacing.spacing6 }}
             renderItem={({ item }) => {
               const isSelected = !!selected[item.id];
+              const isAssigned = Object.values(assignedMembers).includes(
+                item.name
+              );
+              const assignedPosition = Object.keys(assignedMembers).find(
+                k => assignedMembers[k] === item.name
+              );
+              const isBench = benchMembers.some(b => b.name === item.name);
+
               return (
                 <TouchableOpacity
+                  // ✅ 이제 비활성화하지 않는다.
                   style={[
                     styles.memberItem,
                     isSelected && { backgroundColor: theme.colors.gray[100] },
                   ]}
-                  onPress={() =>
-                    multiple
-                      ? toggleSelect(item.id)
-                      : onSelect?.(item.id, item.name)
-                  }
+                  onPress={() => {
+                    if (multiple) {
+                      toggleSelect(item.id, item.name);
+                    } else {
+                      // ✅ 이미 다른 포지션에 있던 선수라면, 이동 처리
+                      if (isAssigned && assignedPosition !== position) {
+                        onRemoveFromFormation?.(item.name);
+                      }
+
+                      // ✅ 후보에도 있던 선수면 후보 명단에서 제거
+                      if (isBench) {
+                        onRemoveFromBench?.(item.name);
+                      }
+
+                      onSelect?.(item.id, item.name);
+                    }
+                  }}
                 >
-                  <Text style={styles.memberText}>
-                    {item.name}
-                    {multiple && isSelected ? ' ✓' : ''}
-                  </Text>
+                  <View style={styles.memberRow}>
+                    <Text style={styles.memberText}>
+                      {item.name}
+                      {multiple && isSelected ? ' ✓' : ''}
+                    </Text>
+
+                    {/* ✅ 상태 배지 */}
+                    {isAssigned && (
+                      <Text style={styles.assignedTag}>
+                        선발 ({assignedPosition || '?'})
+                      </Text>
+                    )}
+                    {isBench && !isAssigned && (
+                      <Text style={styles.benchTag}>후보</Text>
+                    )}
+                  </View>
                 </TouchableOpacity>
               );
             }}
@@ -166,9 +243,24 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.gray[100],
   },
+  memberRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   memberText: {
     fontSize: theme.typography.fontSize.font3,
     color: theme.colors.gray[800],
+  },
+  assignedTag: {
+    fontSize: theme.typography.fontSize.font2,
+    color: theme.colors.blue[600],
+    fontWeight: theme.typography.fontWeight.semibold,
+  },
+  benchTag: {
+    fontSize: theme.typography.fontSize.font2,
+    color: theme.colors.orange[600],
+    fontWeight: theme.typography.fontWeight.semibold,
   },
   modalCloseButton: {
     marginTop: theme.spacing.spacing5,

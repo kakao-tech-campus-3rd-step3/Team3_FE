@@ -52,11 +52,34 @@ export default function TeamFormationScreen() {
 
   const handleMemberSelect = (memberId: number, memberName: string) => {
     if (!selectedPosition) return;
-    setFormationAssignments(prev => ({
-      ...prev,
-      [selectedPosition]: memberName,
-    }));
+
+    // 이미 이 선수가 다른 포지션에 등록되어 있는지 확인
+    const existingPosition = Object.keys(formationAssignments).find(
+      key => formationAssignments[key] === memberName
+    );
+
+    setFormationAssignments(prev => {
+      const updated = { ...prev };
+
+      // 기존 포지션에 있던 선수면 제거
+      if (existingPosition && existingPosition !== selectedPosition) {
+        updated[existingPosition] = null;
+        Alert.alert(
+          '포지션 변경',
+          `${memberName} 선수가 ${existingPosition}에서 ${selectedPosition}으로 이동되었습니다.`
+        );
+      }
+
+      // 새 포지션에 등록
+      updated[selectedPosition] = memberName;
+      return updated;
+    });
+
     setShowModal(false);
+  };
+
+  const handleRemoveFromBench = (name: string) => {
+    setBenchMembers(prev => prev.filter(m => m.name !== name));
   };
 
   const filledCount = Object.keys(formationAssignments).length;
@@ -249,6 +272,19 @@ export default function TeamFormationScreen() {
           position={selectedPosition}
           onClose={() => setShowModal(false)}
           onSelect={handleMemberSelect}
+          assignedMembers={formationAssignments}
+          benchMembers={benchMembers}
+          onRemoveFromFormation={name => {
+            // 기존 포지션 비우기
+            setFormationAssignments(prev => {
+              const updated = { ...prev };
+              Object.keys(updated).forEach(key => {
+                if (updated[key] === name) updated[key] = null;
+              });
+              return updated;
+            });
+          }}
+          onRemoveFromBench={handleRemoveFromBench}
         />
       )}
 
@@ -260,10 +296,21 @@ export default function TeamFormationScreen() {
           position={null}
           multiple={true}
           preselected={benchMembers}
+          assignedMembers={formationAssignments}
+          benchMembers={benchMembers}
           onClose={() => setShowBenchModal(false)}
           onMultiSelect={members => {
             setBenchMembers(members);
             setShowBenchModal(false);
+          }}
+          onRemoveFromFormation={name => {
+            setFormationAssignments(prev => {
+              const updated = { ...prev };
+              Object.keys(updated).forEach(key => {
+                if (updated[key] === name) delete updated[key];
+              });
+              return updated;
+            });
           }}
         />
       )}
