@@ -38,7 +38,7 @@ import type {
   RecommendedMatch,
   JoinWaitingRequest,
   JoinWaitingCancelRequest,
-  TeamMember,
+  TeamMember, // 사용하지 않음음
   RecruitmentCreateRequest,
   RecruitmentUpdateRequest,
   TeamReviewRequest,

@@ -18,7 +18,7 @@ const matchActions = [
     title: '매치 생성',
     icon: 'add-circle-outline' as const,
     color: theme.colors.green[500],
-    route: ROUTES.MATCH_MAKING,
+    route: ROUTES.MEMBER_READY,
   },
   {
     id: 'created',
