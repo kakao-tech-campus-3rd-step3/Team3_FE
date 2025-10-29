@@ -1,16 +1,25 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { getMercenaryReviews } from '@/src/api/mercenary';
 import Card from '@/src/components/card/card';
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { MercenaryReviewsList } from '@/src/components/ui/reviews_list';
+import { TabSelector } from '@/src/components/ui/tab_selector';
 import { useMyJoinWaitingList } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
+import { MercenaryReview } from '@/src/types/mercenary';
 import { UserJoinWaitingItem } from '@/src/types/team';
 
 export default function MercenaryHistoryScreen() {
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<'applications' | 'reviews'>(
+    'applications'
+  );
+  const [reviews, setReviews] = useState<MercenaryReview[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
   const pageSize = 10;
 
   const { data: joinWaitingData, isLoading } = useMyJoinWaitingList(
@@ -19,7 +28,32 @@ export default function MercenaryHistoryScreen() {
     'audit.createdAt,desc'
   );
 
-  const applications = joinWaitingData?.content || [];
+  const applicationsData = joinWaitingData?.content || [];
+
+  const loadReviews = useCallback(async () => {
+    const userId = 1;
+
+    setReviewsLoading(true);
+    try {
+      const reviewsData = await getMercenaryReviews(userId);
+      setReviews(reviewsData);
+    } catch (error) {
+      console.error('리뷰 로드 실패:', error);
+    } finally {
+      setReviewsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'reviews' && reviews.length === 0) {
+      loadReviews();
+    }
+  }, [activeTab, reviews.length, loadReviews]);
+
+  const tabs = [
+    { key: 'applications', label: '신청 기록' },
+    { key: 'reviews', label: '받은 리뷰' },
+  ];
 
   const renderApplicationCard = ({ item }: { item: UserJoinWaitingItem }) => (
     <Card style={styles.applicationCard}>
@@ -64,7 +98,7 @@ export default function MercenaryHistoryScreen() {
         </View>
 
         <View style={styles.applicationInfo}>
-          {item.decidedAt && (
+          {item.decidedAt ? (
             <View style={styles.infoRow}>
               <Ionicons
                 name="checkmark-circle-outline"
@@ -74,6 +108,15 @@ export default function MercenaryHistoryScreen() {
               <Text style={styles.infoText}>
                 처리일: {new Date(item.decidedAt).toLocaleDateString('ko-KR')}
               </Text>
+            </View>
+          ) : (
+            <View style={styles.infoRow}>
+              <Ionicons
+                name="time-outline"
+                size={16}
+                color={theme.colors.text.sub}
+              />
+              <Text style={styles.infoText}>신청 대기중</Text>
             </View>
           )}
           {item.decisionReason && (
@@ -89,7 +132,6 @@ export default function MercenaryHistoryScreen() {
         </View>
 
         <View style={styles.cardFooter}>
-          <Text style={styles.applicationId}>신청 ID: {item.id}</Text>
           <Ionicons
             name="chevron-forward"
             size={20}
@@ -104,24 +146,17 @@ export default function MercenaryHistoryScreen() {
     <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
       <CustomHeader title="용병 기록" showBackButton={false} />
 
+      <TabSelector
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={tabKey =>
+          setActiveTab(tabKey as 'applications' | 'reviews')
+        }
+      />
+
       <View style={styles.content}>
-        <FlatList
-          data={applications}
-          renderItem={renderApplicationCard}
-          keyExtractor={item => item.id.toString()}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-          onEndReached={() => {
-            if (joinWaitingData && !joinWaitingData.last) {
-              setCurrentPage(prev => prev + 1);
-            }
-          }}
-          onEndReachedThreshold={0.5}
-          onRefresh={() => {
-            setCurrentPage(0);
-          }}
-          refreshing={isLoading}
-          ListEmptyComponent={() => (
+        {activeTab === 'applications' ? (
+          applicationsData.length === 0 ? (
             <View style={styles.emptyContainer}>
               <Ionicons
                 name="people-outline"
@@ -130,8 +165,28 @@ export default function MercenaryHistoryScreen() {
               />
               <Text style={styles.emptyText}>신청한 용병 기록이 없습니다.</Text>
             </View>
-          )}
-        />
+          ) : (
+            <FlatList
+              data={applicationsData}
+              renderItem={renderApplicationCard}
+              keyExtractor={item => item.id.toString()}
+              contentContainerStyle={styles.listContainer}
+              showsVerticalScrollIndicator={false}
+              onEndReached={() => {
+                if (joinWaitingData && !joinWaitingData.last) {
+                  setCurrentPage(prev => prev + 1);
+                }
+              }}
+              onEndReachedThreshold={0.5}
+              onRefresh={() => {
+                setCurrentPage(0);
+              }}
+              refreshing={isLoading}
+            />
+          )
+        ) : (
+          <MercenaryReviewsList reviews={reviews} isLoading={reviewsLoading} />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -192,15 +247,11 @@ const styles = StyleSheet.create({
   },
   cardFooter: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     paddingTop: theme.spacing.spacing2,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.light,
-  },
-  applicationId: {
-    fontSize: 12,
-    color: theme.colors.text.sub,
   },
   emptyContainer: {
     flex: 1,

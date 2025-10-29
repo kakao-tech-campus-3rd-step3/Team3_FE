@@ -5,6 +5,8 @@ import type {
   RecruitmentResponse,
   RecruitmentListResponse,
   RecruitmentUpdateRequest,
+  MercenaryReview,
+  MercenaryTeamReview,
 } from '@/src/types';
 
 export const getMercenaryRecruitments = async (
@@ -55,10 +57,36 @@ export const deleteMercenaryRecruitment = async (id: number): Promise<void> => {
   await apiClient.delete(MERCENARY_API.DELETE_RECRUITMENT(id));
 };
 
+export const getMercenaryReviews = async (
+  profileId: number
+): Promise<MercenaryReview[]> => {
+  const response = await apiClient.get<MercenaryReview[]>(
+    '/api/mercenary-reviews',
+    {
+      params: { profileId },
+    }
+  );
+  return response;
+};
+
+export const getTeamReviews = async (
+  teamId: number
+): Promise<MercenaryTeamReview[]> => {
+  const response = await apiClient.get<MercenaryTeamReview[]>(
+    '/api/team-reviews',
+    {
+      params: { teamId },
+    }
+  );
+  return response;
+};
+
 export const mercenaryApi = {
   getMercenaryRecruitments,
   getMercenaryRecruitmentById,
   createMercenaryRecruitment,
   updateMercenaryRecruitment,
   deleteMercenaryRecruitment,
+  getMercenaryReviews,
+  getTeamReviews,
 };

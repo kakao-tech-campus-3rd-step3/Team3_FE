@@ -10,9 +10,11 @@ import {
   TextInput,
   Modal,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import MercenaryApplicationModal from '@/src/components/modals/mercenary_application_modal';
 import { convertPositionToKorean } from '@/src/constants/positions';
 import { UNIVERSITIES } from '@/src/constants/universities';
 import {
@@ -51,6 +53,9 @@ export default function MercenaryMainScreen() {
   const [selectedRecruitmentId, setSelectedRecruitmentId] = useState<
     number | null
   >(null);
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
+  const [selectedRecruitment, setSelectedRecruitment] =
+    useState<RecruitmentResponse | null>(null);
 
   const [currentPage, setCurrentPage] = useState<number>(0);
   const pageSize = 10;
@@ -73,6 +78,16 @@ export default function MercenaryMainScreen() {
 
   const formatTime = (time: string) => {
     return time.slice(0, 5);
+  };
+
+  const handleApplication = (
+    recruitmentId: number,
+    message: string,
+    shareKakaoId: boolean
+  ) => {
+    console.log('용병 신청:', { recruitmentId, message, shareKakaoId });
+    // TODO: 실제 용병 신청 API 호출
+    Alert.alert('신청 완료', '용병 신청이 완료되었습니다.');
   };
 
   const getSkillLevelBadgeStyle = (skillLevel: string) => {
@@ -173,7 +188,13 @@ export default function MercenaryMainScreen() {
               day: 'numeric',
             })}
           </Text>
-          <TouchableOpacity style={newStyles.applyButton} onPress={() => {}}>
+          <TouchableOpacity
+            style={newStyles.applyButton}
+            onPress={() => {
+              setSelectedRecruitment(item);
+              setIsApplicationModalOpen(true);
+            }}
+          >
             <Text style={newStyles.applyButtonText}>신청하기</Text>
           </TouchableOpacity>
         </View>
@@ -544,6 +565,16 @@ export default function MercenaryMainScreen() {
           }}
         />
       </View>
+
+      <MercenaryApplicationModal
+        visible={isApplicationModalOpen}
+        recruitment={selectedRecruitment}
+        onClose={() => {
+          setIsApplicationModalOpen(false);
+          setSelectedRecruitment(null);
+        }}
+        onApply={handleApplication}
+      />
     </SafeAreaView>
   );
 }
