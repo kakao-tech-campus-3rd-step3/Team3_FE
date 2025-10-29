@@ -2,86 +2,25 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 import { theme } from '@/src/theme';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export const style = StyleSheet.create({
+  // 전체 컨테이너
   container: {
     flex: 1,
     backgroundColor: theme.colors.gray[50],
   },
-  formationSelector: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginVertical: theme.spacing.spacing4,
-    width: '100%',
-    paddingHorizontal: theme.spacing.spacing4,
+
+  // Scroll 관련
+  scrollContainer: {
+    flex: 1,
+    backgroundColor: theme.colors.gray[50],
   },
-  formationButton: {
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    backgroundColor: theme.colors.gray[200],
-    borderRadius: theme.spacing.spacing3,
-    marginHorizontal: theme.spacing.spacing2,
-  },
-  formationButtonActive: {
-    backgroundColor: theme.colors.blue[600],
-  },
-  formationButtonText: {
-    color: theme.colors.gray[800],
-    fontWeight: theme.typography.fontWeight.medium,
-  },
-  formationButtonTextActive: {
-    color: theme.colors.white,
-    fontWeight: theme.typography.fontWeight.bold,
-  },
-  field: {
-    width: '100%',
-    aspectRatio: 2 / 3,
-    alignItems: 'center',
-    justifyContent: 'center',
+  scrollContent: {
+    paddingBottom: theme.spacing.spacing6,
   },
 
-  /** ✅ 선수 선택 영역 */
-  playerCircleUnselected: {
-    borderWidth: 0,
-  },
-  playerCircleSelected: {
-    borderWidth: 2,
-    borderColor: theme.colors.blue[500],
-    borderRadius: 50,
-    shadowColor: theme.colors.blue[700],
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  jersey: {
-    width: '100%',
-    height: '100%',
-  },
-  playerName: {
-    position: 'absolute',
-    top: '100%', // 셔츠 바로 밑
-    width: '100%',
-    textAlign: 'center',
-    color: theme.colors.white,
-    fontWeight: '700',
-    fontSize: theme.typography.fontSize.font3,
-    textShadowColor: 'rgba(0, 0, 0, 0.4)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-  nextButton: {
-    backgroundColor: theme.colors.blue[600],
-    borderRadius: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 56,
-  },
-  nextButtonText: {
-    color: theme.colors.white,
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.bold,
-  },
+  // 카드 공통
   card: {
     backgroundColor: theme.colors.white,
     borderRadius: theme.spacing.spacing4,
@@ -110,6 +49,8 @@ export const style = StyleSheet.create({
   cardContainer: {
     marginTop: theme.spacing.spacing4,
   },
+
+  // 필드 카드 (축구장)
   fieldCard: {
     backgroundColor: theme.colors.white,
     borderRadius: theme.spacing.spacing4,
@@ -122,37 +63,53 @@ export const style = StyleSheet.create({
     elevation: 4,
     overflow: 'hidden',
   },
-  scrollContainer: {
-    flex: 1,
-    backgroundColor: theme.colors.gray[50],
+  field: {
+    width: SCREEN_WIDTH - theme.spacing.spacing8,
+    aspectRatio: 2 / 3,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  scrollContent: {
-    paddingBottom: theme.spacing.spacing6,
+
+  // 선수 셔츠 / 이름
+  playerCircleUnselected: {
+    borderWidth: 0,
   },
-  nextButtonCard: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.spacing.spacing4,
-    marginHorizontal: theme.spacing.spacing4,
-    marginBottom: theme.spacing.spacing8,
-    shadowColor: theme.colors.gray[900],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+  playerCircleSelected: {
+    borderWidth: 2,
+    borderColor: theme.colors.blue[500],
+    borderRadius: 50,
+    shadowColor: theme.colors.blue[700],
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
     elevation: 4,
-    overflow: 'hidden',
   },
-  sectionTitle: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.gray[900],
-    marginLeft: theme.spacing.spacing5,
-    marginBottom: theme.spacing.spacing2,
+  jersey: {
+    width: '100%',
+    height: '100%',
   },
-  memberText: {
+  playerName: {
+    position: 'absolute',
+    top: '100%',
+    width: '100%',
+    textAlign: 'center',
+    color: theme.colors.white,
+    fontWeight: '700',
     fontSize: theme.typography.fontSize.font3,
-    color: theme.colors.gray[800],
-    marginBottom: theme.spacing.spacing2,
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
+  warningIcon: {
+    position: 'absolute',
+    top: -8,
+    right: -6,
+    fontSize: 14,
+    color: theme.colors.red[500],
+    fontWeight: 'bold',
+  },
+
+  // 후보 라인업
   placeholderText: {
     fontSize: theme.typography.fontSize.font3,
     color: theme.colors.gray[500],
@@ -175,7 +132,6 @@ export const style = StyleSheet.create({
     paddingHorizontal: theme.spacing.spacing4,
     paddingBottom: theme.spacing.spacing4,
   },
-
   benchItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -184,19 +140,16 @@ export const style = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.gray[100],
   },
-
   benchName: {
     fontSize: theme.typography.fontSize.font3,
     color: theme.colors.gray[900],
     fontWeight: theme.typography.fontWeight.medium,
   },
-
   benchPosition: {
     fontSize: theme.typography.fontSize.font3,
     color: theme.colors.blue[600],
     fontWeight: theme.typography.fontWeight.semibold,
   },
-
   addMoreButton: {
     marginTop: theme.spacing.spacing3,
     alignItems: 'center',
@@ -207,10 +160,38 @@ export const style = StyleSheet.create({
     borderRadius: theme.spacing.spacing3,
     backgroundColor: theme.colors.blue[50],
   },
-
   addMoreButtonText: {
     color: theme.colors.blue[600],
     fontWeight: theme.typography.fontWeight.bold,
     fontSize: theme.typography.fontSize.font3,
+  },
+
+  // 다음 버튼 카드
+  nextButtonCard: {
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.spacing.spacing4,
+    marginHorizontal: theme.spacing.spacing4,
+    marginBottom: theme.spacing.spacing8,
+    shadowColor: theme.colors.gray[900],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    overflow: 'hidden',
+  },
+  nextButton: {
+    backgroundColor: theme.colors.blue[600],
+    borderRadius: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 56,
+  },
+  nextButtonDisabled: {
+    backgroundColor: theme.colors.gray[400],
+  },
+  nextButtonText: {
+    color: theme.colors.white,
+    fontSize: theme.typography.fontSize.font4,
+    fontWeight: theme.typography.fontWeight.bold,
   },
 });

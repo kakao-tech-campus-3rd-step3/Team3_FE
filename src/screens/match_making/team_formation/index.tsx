@@ -9,6 +9,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 
 import Dropdown from '@/src/components/dropdown';
@@ -58,7 +59,18 @@ export default function TeamFormationScreen() {
     setShowModal(false);
   };
 
+  const filledCount = Object.keys(formationAssignments).length;
+  const isFormationComplete = filledCount >= 11;
+
   const handleNext = () => {
+    if (!isFormationComplete) {
+      Alert.alert(
+        '라인업 미완성',
+        `현재 ${filledCount}/11명만 배정되었습니다.\n모든 포지션을 채워주세요.`
+      );
+      return;
+    }
+
     router.push({
       pathname: '/match_making/match_info',
       params: {
@@ -122,6 +134,7 @@ export default function TeamFormationScreen() {
             {positions.map(pos => {
               const isSelected = selectedPosition === pos.id;
               const assigned = formationAssignments[pos.id];
+              const isEmpty = !assigned;
 
               return (
                 <TouchableOpacity
@@ -157,6 +170,7 @@ export default function TeamFormationScreen() {
                     resizeMode="contain"
                   />
                   <Text style={style.playerName}>{assigned || pos.id}</Text>
+                  {isEmpty && <Text style={style.warningIcon}>❗</Text>}
                 </TouchableOpacity>
               );
             })}
@@ -210,8 +224,19 @@ export default function TeamFormationScreen() {
 
         {/* ✅ 다음 버튼 카드 */}
         <View style={style.nextButtonCard}>
-          <TouchableOpacity style={style.nextButton} onPress={handleNext}>
-            <Text style={style.nextButtonText}>다음으로</Text>
+          <TouchableOpacity
+            style={[
+              style.nextButton,
+              !isFormationComplete && style.nextButtonDisabled,
+            ]}
+            onPress={handleNext}
+            disabled={!isFormationComplete}
+          >
+            <Text style={style.nextButtonText}>
+              {isFormationComplete
+                ? '다음으로'
+                : `(${filledCount}/11) 포지션 배정`}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
