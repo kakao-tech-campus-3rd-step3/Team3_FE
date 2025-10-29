@@ -34,12 +34,9 @@ export const style = StyleSheet.create({
     color: theme.colors.white,
     fontWeight: theme.typography.fontWeight.bold,
   },
-
-  /** ✅ 배경 필드 수정 */
   field: {
-    width: SCREEN_WIDTH,
-    height: SCREEN_WIDTH * 1.5, // 세로 길이 = 가로의 1.5배 (9:16보다 살짝 짧게)
-    alignSelf: 'center',
+    width: '100%',
+    aspectRatio: 2 / 3,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -143,5 +140,77 @@ export const style = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
     overflow: 'hidden',
+  },
+  sectionTitle: {
+    fontSize: theme.typography.fontSize.font4,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.gray[900],
+    marginLeft: theme.spacing.spacing5,
+    marginBottom: theme.spacing.spacing2,
+  },
+  memberText: {
+    fontSize: theme.typography.fontSize.font3,
+    color: theme.colors.gray[800],
+    marginBottom: theme.spacing.spacing2,
+  },
+  placeholderText: {
+    fontSize: theme.typography.fontSize.font3,
+    color: theme.colors.gray[500],
+    textAlign: 'center',
+    marginBottom: theme.spacing.spacing3,
+  },
+  addButton: {
+    marginTop: theme.spacing.spacing3,
+    backgroundColor: theme.colors.blue[600],
+    paddingVertical: theme.spacing.spacing3,
+    borderRadius: theme.spacing.spacing3,
+    alignItems: 'center',
+  },
+  addButtonText: {
+    color: theme.colors.white,
+    fontSize: theme.typography.fontSize.font3,
+    fontWeight: theme.typography.fontWeight.bold,
+  },
+  benchListContainer: {
+    paddingHorizontal: theme.spacing.spacing4,
+    paddingBottom: theme.spacing.spacing4,
+  },
+
+  benchItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: theme.spacing.spacing3,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.gray[100],
+  },
+
+  benchName: {
+    fontSize: theme.typography.fontSize.font3,
+    color: theme.colors.gray[900],
+    fontWeight: theme.typography.fontWeight.medium,
+  },
+
+  benchPosition: {
+    fontSize: theme.typography.fontSize.font3,
+    color: theme.colors.blue[600],
+    fontWeight: theme.typography.fontWeight.semibold,
+  },
+
+  addMoreButton: {
+    marginTop: theme.spacing.spacing3,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: theme.spacing.spacing3,
+    borderWidth: 1,
+    borderColor: theme.colors.blue[400],
+    borderRadius: theme.spacing.spacing3,
+    backgroundColor: theme.colors.blue[50],
+  },
+
+  addMoreButtonText: {
+    color: theme.colors.blue[600],
+    fontWeight: theme.typography.fontWeight.bold,
+    fontSize: theme.typography.fontSize.font3,
   },
 });

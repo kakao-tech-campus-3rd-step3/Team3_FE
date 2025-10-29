@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   Modal,
   FlatList,
   StyleSheet,
+  BackHandler,
 } from 'react-native';
 
 import { theme } from '@/src/theme';
@@ -16,7 +17,10 @@ interface TeamMemberSelectModalProps {
   members: TeamMember[];
   position: string | null;
   onClose: () => void;
-  onSelect: (memberName: string) => void;
+  onSelect?: (memberId: number, memberName: string) => void;
+  multiple?: boolean;
+  onMultiSelect?: (members: { id: number; name: string }[]) => void;
+  preselected?: { id: number; name: string }[];
 }
 
 export const TeamMemberSelectModal = ({
@@ -25,9 +29,59 @@ export const TeamMemberSelectModal = ({
   position,
   onClose,
   onSelect,
+  multiple = false,
+  onMultiSelect,
+  preselected = [],
 }: TeamMemberSelectModalProps) => {
+  const [selected, setSelected] = useState<Record<number, boolean>>({});
+
+  // ✅ preselected 초기화
+  useEffect(() => {
+    if (visible && multiple) {
+      const initial = Object.fromEntries(preselected.map(m => [m.id, true]));
+      setSelected(initial);
+    }
+  }, [visible, multiple, preselected]);
+
+  // ✅ 안드로이드 뒤로가기 처리
+  useEffect(() => {
+    if (!visible) return;
+
+    const handleBackPress = () => {
+      onClose();
+      return true; // 기본 앱 종료 방지
+    };
+
+    const subscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackPress
+    );
+
+    // 모달이 닫히면 이벤트 제거
+    return () => {
+      subscription.remove();
+    };
+  }, [visible, onClose]);
+
+  const toggleSelect = (id: number) => {
+    setSelected(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const confirmSelection = () => {
+    const selectedList = members
+      .filter(m => selected[m.id])
+      .map(m => ({ id: m.id, name: m.name }));
+    onMultiSelect?.(selectedList);
+    onClose();
+  };
+
   return (
-    <Modal visible={visible} transparent animationType="fade">
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>
@@ -37,19 +91,41 @@ export const TeamMemberSelectModal = ({
           <FlatList
             data={members}
             keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.memberItem}
-                onPress={() => onSelect(item.name)}
-              >
-                <Text style={styles.memberText}>{item.name}</Text>
-              </TouchableOpacity>
-            )}
+            renderItem={({ item }) => {
+              const isSelected = !!selected[item.id];
+              return (
+                <TouchableOpacity
+                  style={[
+                    styles.memberItem,
+                    isSelected && { backgroundColor: theme.colors.gray[100] },
+                  ]}
+                  onPress={() =>
+                    multiple
+                      ? toggleSelect(item.id)
+                      : onSelect?.(item.id, item.name)
+                  }
+                >
+                  <Text style={styles.memberText}>
+                    {item.name}
+                    {multiple && isSelected ? ' ✓' : ''}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
           />
 
-          <TouchableOpacity style={styles.modalCloseButton} onPress={onClose}>
-            <Text style={styles.modalCloseText}>닫기</Text>
-          </TouchableOpacity>
+          {multiple ? (
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={confirmSelection}
+            >
+              <Text style={styles.modalCloseText}>선택 완료</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.modalCloseButton} onPress={onClose}>
+              <Text style={styles.modalCloseText}>닫기</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </Modal>

@@ -37,6 +37,11 @@ export default function TeamFormationScreen() {
   const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
+  const [benchMembers, setBenchMembers] = useState<
+    { id: number; name: string }[]
+  >([]);
+  const [showBenchModal, setShowBenchModal] = useState(false);
+
   const JERSEY_SIZE = 50;
 
   const handleSelectPosition = (pos: string) => {
@@ -44,7 +49,7 @@ export default function TeamFormationScreen() {
     setShowModal(true);
   };
 
-  const handleMemberSelect = (memberName: string) => {
+  const handleMemberSelect = (memberId: number, memberName: string) => {
     if (!selectedPosition) return;
     setFormationAssignments(prev => ({
       ...prev,
@@ -68,7 +73,7 @@ export default function TeamFormationScreen() {
       style={style.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <CustomHeader title="팀 포메이션 구성" />
+      <CustomHeader title="라인업 구성" />
 
       <ScrollView
         style={style.scrollContainer}
@@ -102,8 +107,13 @@ export default function TeamFormationScreen() {
           </View>
         </View>
 
-        {/* ⚽ 축구장 카드 */}
+        {/* ⚽ 선발 라인업 카드 */}
         <View style={style.fieldCard}>
+          <View style={style.cardHeader}>
+            <Text style={style.cardTitle}>⚽ 선발 라인업</Text>
+          </View>
+
+          {/* cardContent로 한번 더 감싸지 말고 바로 배경 이미지를 둔다 */}
           <ImageBackground
             source={require('@/assets/images/field.png')}
             style={style.field}
@@ -153,6 +163,51 @@ export default function TeamFormationScreen() {
           </ImageBackground>
         </View>
 
+        {/* 🧢 후보 라인업 카드 */}
+        <View style={style.fieldCard}>
+          <View style={style.cardHeader}>
+            <Text style={style.cardTitle}>↔️ 후보 라인업</Text>
+          </View>
+
+          <View style={style.cardContent}>
+            {benchMembers.length > 0 ? (
+              <View style={style.benchListContainer}>
+                {benchMembers.map(member => {
+                  // teamMembers에서 상세 정보 찾아오기
+                  const info = teamMembers.find(m => m.id === member.id);
+                  return (
+                    <View key={member.id} style={style.benchItem}>
+                      <Text style={style.benchName}>{member.name}</Text>
+                      <Text style={style.benchPosition}>
+                        {info?.position || '포지션 미등록'}
+                      </Text>
+                    </View>
+                  );
+                })}
+
+                <TouchableOpacity
+                  style={style.addMoreButton}
+                  onPress={() => setShowBenchModal(true)}
+                >
+                  <Text style={style.addMoreButtonText}>＋ 추가하기</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <>
+                <Text style={style.placeholderText}>
+                  후보 선수를 선택해주세요
+                </Text>
+                <TouchableOpacity
+                  style={style.addButton}
+                  onPress={() => setShowBenchModal(true)}
+                >
+                  <Text style={style.addButtonText}>＋ 후보 추가</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
+
         {/* ✅ 다음 버튼 카드 */}
         <View style={style.nextButtonCard}>
           <TouchableOpacity style={style.nextButton} onPress={handleNext}>
@@ -169,6 +224,22 @@ export default function TeamFormationScreen() {
           position={selectedPosition}
           onClose={() => setShowModal(false)}
           onSelect={handleMemberSelect}
+        />
+      )}
+
+      {/* 후보선수 모달 */}
+      {showBenchModal && (
+        <TeamMemberSelectModal
+          visible={showBenchModal}
+          members={teamMembers}
+          position={null}
+          multiple={true}
+          preselected={benchMembers}
+          onClose={() => setShowBenchModal(false)}
+          onMultiSelect={members => {
+            setBenchMembers(members);
+            setShowBenchModal(false);
+          }}
         />
       )}
     </KeyboardAvoidingView>
