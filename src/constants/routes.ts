@@ -24,6 +24,7 @@ export const ROUTES = {
   MERCENARY: '/mercenary',
   MERCENARY_CREATE: '/mercenary/create',
 
+  TEAM_REVIEW: '/review/team_review',
   TOURNAMENT: '/tournament',
 } as const;
 
