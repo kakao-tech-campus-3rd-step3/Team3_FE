@@ -14,7 +14,7 @@ import {
 import Dropdown from '@/src/components/dropdown';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { TeamMemberSelectModal } from '@/src/components/ui/team_member_select_modal';
-import { FormationType, generateFormation } from '@/src/constants/formations';
+import { FORMATION_POSITIONS, FormationType } from '@/src/constants/formations';
 import { useTeamMembers } from '@/src/hooks/queries';
 
 import { style } from './team_formation_style';
@@ -27,7 +27,7 @@ export default function TeamFormationScreen() {
   const [selectedFormation, setSelectedFormation] =
     useState<FormationType>('4-3-3');
   const positions = useMemo(
-    () => generateFormation(selectedFormation),
+    () => FORMATION_POSITIONS[selectedFormation],
     [selectedFormation]
   );
 
