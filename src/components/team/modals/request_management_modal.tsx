@@ -106,16 +106,7 @@ export default function RequestManagementModal({
               {requests.map(request => (
                 <View key={request.id} style={styles.requestCard}>
                   <View style={styles.requestHeader}>
-                    <View style={styles.applicantInfo}>
-                      {request.applicantId && (
-                        <Text style={styles.applicantName}>
-                          신청자 ID: {request.applicantId}
-                        </Text>
-                      )}
-                      <Text style={styles.applicantEmail}>
-                        신청 ID: {request.id}
-                      </Text>
-                    </View>
+                    <View style={styles.applicantInfo}></View>
                     <View style={styles.requestStatus}>
                       <View
                         style={[

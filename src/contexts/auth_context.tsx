@@ -39,6 +39,7 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
   );
   const [isInitialized, setIsInitialized] = useState(false);
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const refreshAttemptCountRef = useRef(0);
 
   const initializeAuth = useCallback(async () => {
     const handleTokenInitialization = (
@@ -87,17 +88,32 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
   }, []);
 
   const refreshAccessToken = useCallback(async () => {
+    if (refreshAttemptCountRef.current >= 3) {
+      deleteSecureStoreResource('authToken');
+      deleteSecureStoreResource('refreshToken');
+      setTokenState(null);
+      setRefreshTokenState(null);
+      queryClient.clear();
+
+      refreshAttemptCountRef.current = 0;
+      return;
+    }
+
     if (!refreshTokenState) {
       deleteSecureStoreResource('authToken');
       deleteSecureStoreResource('refreshToken');
       setTokenState(null);
       setRefreshTokenState(null);
       queryClient.clear();
+
+      refreshAttemptCountRef.current = 0;
       return;
     }
 
     try {
+      refreshAttemptCountRef.current += 1;
       const response = await authApi.refreshToken(refreshTokenState);
+
       const {
         accessToken,
         refreshToken: newRefreshToken,
@@ -114,24 +130,32 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       setRefreshTokenState(newRefreshToken);
       apiClient.setToken(accessToken);
 
+      refreshAttemptCountRef.current = 0;
+
       const MIN_LEAD_SECONDS = 10;
       const delayMs =
         Math.max(accessTokenExpiresIn - 300, MIN_LEAD_SECONDS) * 1000;
+
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
       }
       refreshTimeoutRef.current = setTimeout(refreshAccessToken, delayMs);
     } catch (error) {
       console.warn('토큰 갱신 실패:', error);
+
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
         refreshTimeoutRef.current = null;
       }
+
       deleteSecureStoreResource('authToken');
       deleteSecureStoreResource('refreshToken');
       setTokenState(null);
       setRefreshTokenState(null);
       queryClient.clear();
+
+      refreshAttemptCountRef.current = 0;
+
       SplashScreen.hideAsync();
     }
   }, [refreshTokenState]);
@@ -165,6 +189,8 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
     newRefreshToken: string,
     accessTokenExpiresIn?: number
   ) => {
+    refreshAttemptCountRef.current = 0;
+
     apiClient.setToken(newToken);
     updateSecureStoreResource('authToken', newToken, value => value ?? '');
     updateSecureStoreResource(
@@ -179,6 +205,7 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
       const MIN_LEAD_SECONDS = 10;
       const delayMs =
         Math.max(accessTokenExpiresIn - 300, MIN_LEAD_SECONDS) * 1000;
+
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
       }

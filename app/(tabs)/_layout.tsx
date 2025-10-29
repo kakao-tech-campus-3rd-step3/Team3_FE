@@ -67,6 +67,20 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="mercenary-history"
+        options={{
+          title: '용병 기록',
+          headerShown: false,
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'clipboard' : 'clipboard-outline'}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: '프로필',

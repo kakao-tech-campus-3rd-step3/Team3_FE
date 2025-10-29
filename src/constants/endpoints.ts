@@ -71,12 +71,21 @@ export const TEAM_MATCH_API = {
     `/api/teams/${teamId}/match-requests/${requestId}`,
 };
 
+export const TEAM_REVIEW_API = {
+  CREATE: '/api/team-reviews',
+  DETAIL: (id: number | string) => `/api/team-reviews/${id}`,
+  LIST: (profileId: number | string) =>
+    `/api/team-reviews?profileId=${profileId}`,
+};
+
 export const MATCH_CREATE_API = {
   CREATE: '/api/matches',
 };
 
 export const MATCH_WAITING_API = {
   GET_WAITING_LIST: '/api/matches/waiting',
+  GET_WAITING_LIST_BY_TEAM: (teamId: string | number) =>
+    `/api/matches/waiting?teamId=${teamId}`,
   GET_MY_CREATED_MATCHES: '/api/matches/waiting/me',
   CANCEL_WAITING: (waitingId: string | number) =>
     `/api/matches/waiting/${waitingId}/cancel`,
@@ -104,6 +113,14 @@ export const USER_JOIN_WAITING_API = {
   GET_MY_JOIN_WAITING: (
     page: number = 0,
     size: number = 10,
-    sort: string = 'createdAt,desc'
+    sort: string = 'audit.createdAt,desc'
   ) => `/api/users/me/join-waiting?page=${page}&size=${size}&sort=${sort}`,
+};
+
+export const MERCENARY_API = {
+  GET_RECRUITMENTS: '/api/mercenaries/recruitments',
+  GET_RECRUITMENT_BY_ID: (id: number) => `/api/mercenaries/recruitments/${id}`,
+  CREATE_RECRUITMENT: '/api/mercenaries/recruitments',
+  UPDATE_RECRUITMENT: (id: number) => `/api/mercenaries/recruitments/${id}`,
+  DELETE_RECRUITMENT: (id: number) => `/api/mercenaries/recruitments/${id}`,
 };

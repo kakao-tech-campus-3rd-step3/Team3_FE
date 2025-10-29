@@ -36,9 +36,10 @@ export default function LoginForm() {
         errorMessage.includes('비밀번호') ||
         errorMessage.includes('password') ||
         errorMessage.includes('인증') ||
-        errorMessage.includes('credentials')
+        errorMessage.includes('credentials') ||
+        errorMessage.includes('access')
       ) {
-        setPasswordError('비밀번호가 올바르지 않습니다.');
+        setPasswordError('이메일 또는 비밀번호가 올바르지 않습니다.');
       } else {
         Alert.alert('로그인 실패', errorMessage);
       }

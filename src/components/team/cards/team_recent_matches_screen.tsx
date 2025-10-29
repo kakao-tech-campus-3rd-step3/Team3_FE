@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { memo } from 'react';
 import {
   View,
@@ -6,10 +7,12 @@ import {
   ScrollView,
   StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { ROUTES } from '@/src/constants/routes';
 import { useTeamRecentMatches, useTeam } from '@/src/hooks/queries';
 import { colors, spacing, typography, theme } from '@/src/theme';
 import type { RecentMatchResponse } from '@/src/types/match';
@@ -62,13 +65,22 @@ export default memo(function TeamRecentMatchesScreen({
     );
   }
 
+  const getOpponentTeamId = (
+    match: RecentMatchResponse,
+    currentTeamId: number
+  ) => {
+    return match.createTeamId === currentTeamId
+      ? match.requestTeamId
+      : match.createTeamId;
+  };
+
   const getOpponentTeamName = (
     match: RecentMatchResponse,
     currentTeamName: string
   ) => {
-    return match.team1Name === currentTeamName
-      ? match.team2Name
-      : match.team1Name;
+    return match.createTeamName === currentTeamName
+      ? match.requestTeamName
+      : match.createTeamName;
   };
 
   const getResultIcon = (match: RecentMatchResponse) => {
@@ -116,6 +128,14 @@ export default memo(function TeamRecentMatchesScreen({
     );
   }
 
+  const handleReviewRedirect = (match: RecentMatchResponse) => {
+    if (!team?.id) return;
+    const reviewedTeamId = getOpponentTeamId(match, team.id);
+    router.push(
+      `${ROUTES.TEAM_REVIEW}?matchId=${match.matchId}&reviewedTeamId=${reviewedTeamId}`
+    );
+  };
+
   return (
     <View style={styles.container}>
       <CustomHeader title="최근 경기" />
@@ -148,7 +168,7 @@ export default memo(function TeamRecentMatchesScreen({
           </View>
         ) : (
           <View style={styles.matchesList}>
-            {currentTeamMatches.map(match => {
+            {currentTeamMatches.map((match: RecentMatchResponse) => {
               const opponentName = getOpponentTeamName(match, team?.name || '');
               const result = getResultIcon(match);
 
@@ -209,6 +229,13 @@ export default memo(function TeamRecentMatchesScreen({
                       </View>
                     </View>
                   </View>
+
+                  <TouchableOpacity
+                    style={styles.reviewButton}
+                    onPress={() => handleReviewRedirect(match)}
+                  >
+                    <Text style={styles.reviewButtonText}>리뷰 남기기</Text>
+                  </TouchableOpacity>
                 </View>
               );
             })}
@@ -272,11 +299,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: spacing.spacing15,
-  },
-  loadingText: {
-    fontSize: typography.fontSize.font4,
-    color: colors.gray[600],
-    fontWeight: typography.fontWeight.medium,
   },
   matchesList: {
     gap: spacing.spacing4,
@@ -348,5 +370,17 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.font3,
     color: colors.gray[600],
     flex: 1,
+  },
+  reviewButton: {
+    backgroundColor: colors.blue[500],
+    paddingVertical: 12,
+    borderRadius: 20,
+    marginTop: spacing.spacing4,
+    alignItems: 'center',
+  },
+  reviewButtonText: {
+    color: 'white',
+    fontSize: typography.fontSize.font4,
+    fontWeight: typography.fontWeight.bold,
   },
 });

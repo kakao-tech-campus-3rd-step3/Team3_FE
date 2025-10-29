@@ -3,6 +3,7 @@ import {
   TEAM_MATCH_API,
   TEAM_MEMBER_API,
   USER_JOIN_WAITING_API,
+  MATCH_WAITING_API,
 } from '@/src/constants/endpoints';
 import { apiClient } from '@/src/lib/api_client';
 import type {
@@ -186,7 +187,7 @@ export const teamJoinRequestApi = {
     status: string = 'PENDING',
     page: number = 0,
     size: number = 10,
-    sort: string = 'createdAt,desc'
+    sort: string = 'audit.createdAt,desc'
   ): Promise<TeamJoinRequestPageResponse> => {
     const params = new URLSearchParams({
       status,
@@ -257,27 +258,21 @@ export const teamDeleteApi = {
         matchRequests = await apiClient.get(
           TEAM_MATCH_API.GET_TEAM_MATCH_REQUESTS()
         );
-      } catch (error) {
-        console.log('[팀 삭제 API] 매치 요청 조회 실패:', error);
-      }
+      } catch {}
 
       let recentMatches = null;
       try {
         recentMatches = await apiClient.get(
           TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES()
         );
-      } catch (error) {
-        console.log('[팀 삭제 API] 최근 매치 조회 실패:', error);
-      }
+      } catch {}
 
       let matchWaiting = null;
       try {
         matchWaiting = await apiClient.get(
-          `/api/matches/waiting?teamId=${teamId}`
+          MATCH_WAITING_API.GET_WAITING_LIST_BY_TEAM(teamId)
         );
-      } catch (error) {
-        console.log('[팀 삭제 API] 매치 대기 목록 조회 실패:', error);
-      }
+      } catch {}
 
       const result = {
         matchRequests,
@@ -300,7 +295,7 @@ export const userJoinWaitingApi = {
   getMyJoinWaitingList: async (
     page: number = 0,
     size: number = 10,
-    sort: string = 'createdAt,desc'
+    sort: string = 'audit.createdAt,desc'
   ): Promise<UserJoinWaitingPageResponse> => {
     const apiResponse = await apiClient.get<ApiUserJoinWaitingPageResponse>(
       USER_JOIN_WAITING_API.GET_MY_JOIN_WAITING(page, size, sort)

@@ -74,10 +74,6 @@ export default memo(function MemberListSection({
                 </View>
                 <Text style={styles.memberEmail}>{member.email || ''}</Text>
                 <Text style={styles.memberUniversity}>{member.position}</Text>
-                <Text style={styles.joinDate}>
-                  가입일:{' '}
-                  {new Date(member.joinedAt).toLocaleDateString('ko-KR')}
-                </Text>
               </View>
             </View>
 

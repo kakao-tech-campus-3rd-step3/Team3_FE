@@ -39,6 +39,9 @@ import type {
   JoinWaitingRequest,
   JoinWaitingCancelRequest,
   TeamMember,
+  RecruitmentCreateRequest,
+  RecruitmentUpdateRequest,
+  TeamReviewRequest,
 } from '@/src/types';
 import { formatDateForAPI } from '@/src/utils/date';
 
@@ -173,6 +176,19 @@ export const queries = {
     key: (matchId: number | string) => ['enemy-team', matchId] as const,
     fn: (matchId: number | string) => api.getEnemyTeam(matchId),
   },
+  mercenaryRecruitments: {
+    key: (
+      page: number = 0,
+      size: number = 10,
+      sort: string = 'matchDate,asc'
+    ) => ['mercenaryRecruitments', page, size, sort] as const,
+    fn: (page: number = 0, size: number = 10, sort: string = 'matchDate,asc') =>
+      api.mercenaryApi.getMercenaryRecruitments(page, size, sort),
+  },
+  mercenaryRecruitment: {
+    key: (id: number) => ['mercenaryRecruitment', id] as const,
+    fn: (id: number) => api.mercenaryApi.getMercenaryRecruitmentById(id),
+  },
 } as const;
 
 export function useUserProfile() {
@@ -289,11 +305,15 @@ export function useTeamMatches(teamId: string | number) {
   });
 }
 
-export function useTeamRecentMatches(status?: string) {
+export function useTeamRecentMatches(
+  status?: string,
+  options?: UseQueryOptions<any, Error>
+) {
   return useQuery({
     queryKey: queries.teamRecentMatches.key(status),
     queryFn: () => queries.teamRecentMatches.fn(status),
     enabled: true,
+    ...options,
   });
 }
 
@@ -931,11 +951,122 @@ export function useTeamJoinRequestMutation() {
 export function useMyJoinWaitingList(
   page: number = 0,
   size: number = 10,
-  sort: string = 'createdAt,desc'
+  sort: string = 'audit.createdAt,desc'
 ) {
   return useQuery({
     queryKey: ['myJoinWaitingList', page, size, sort],
     queryFn: () =>
       api.userJoinWaitingApi.getMyJoinWaitingList(page, size, sort),
+  });
+}
+
+export function useCreateMercenaryRecruitment() {
+  const createRecruitmentMutation = useMutation({
+    mutationFn: (data: RecruitmentCreateRequest) =>
+      api.createMercenaryRecruitment(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['mercenaryRecruitments'],
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('용병 모집 게시글 생성 실패:', error);
+    },
+  });
+
+  return {
+    createRecruitment: createRecruitmentMutation.mutate,
+    isCreating: createRecruitmentMutation.isPending,
+    createError: createRecruitmentMutation.error,
+    createSuccess: createRecruitmentMutation.isSuccess,
+    resetCreateState: createRecruitmentMutation.reset,
+  };
+}
+
+export function useMercenaryRecruitments(
+  page: number = 0,
+  size: number = 10,
+  sort: string = 'matchDate,asc'
+) {
+  return useQuery({
+    queryKey: queries.mercenaryRecruitments.key(page, size, sort),
+    queryFn: () => queries.mercenaryRecruitments.fn(page, size, sort),
+  });
+}
+
+export function useMercenaryRecruitment(id: number) {
+  return useQuery({
+    queryKey: queries.mercenaryRecruitment.key(id),
+    queryFn: () => queries.mercenaryRecruitment.fn(id),
+    enabled: !!id,
+  });
+}
+
+export function useUpdateMercenaryRecruitment() {
+  const updateRecruitmentMutation = useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: RecruitmentUpdateRequest;
+    }) => api.mercenaryApi.updateMercenaryRecruitment(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['mercenaryRecruitments'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['mercenaryRecruitment'],
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('용병 모집 게시글 수정 실패:', error);
+    },
+  });
+
+  return {
+    updateRecruitment: updateRecruitmentMutation.mutate,
+    isUpdating: updateRecruitmentMutation.isPending,
+    updateError: updateRecruitmentMutation.error,
+    updateSuccess: updateRecruitmentMutation.isSuccess,
+    resetUpdateState: updateRecruitmentMutation.reset,
+  };
+}
+
+export function useDeleteMercenaryRecruitment() {
+  const deleteRecruitmentMutation = useMutation({
+    mutationFn: (id: number) => api.mercenaryApi.deleteMercenaryRecruitment(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['mercenaryRecruitments'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['mercenaryRecruitment'],
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('용병 모집 게시글 삭제 실패:', error);
+    },
+  });
+
+  return {
+    deleteRecruitment: deleteRecruitmentMutation.mutate,
+    isDeleting: deleteRecruitmentMutation.isPending,
+    deleteError: deleteRecruitmentMutation.error,
+    deleteSuccess: deleteRecruitmentMutation.isSuccess,
+    resetDeleteState: deleteRecruitmentMutation.reset,
+  };
+}
+
+export function useCreateTeamReviewMutation() {
+  return useMutation({
+    mutationFn: (data: TeamReviewRequest) =>
+      api.teamReviewApi.createReview(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teamRecentMatches'] });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 리뷰 등록 실패:', error);
+    },
   });
 }

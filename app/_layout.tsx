@@ -51,6 +51,8 @@ function AppContent() {
               name="check_applied_matches/index"
             />,
             <Stack.Screen key="match_set" name="match_set/index" />,
+            <Stack.Screen key="team_review" name="review/team_review" />,
+            <Stack.Screen key="mercenary" name="mercenary" />,
             <Stack.Screen key="member_ready" name="member_ready/index" />,
             <Stack.Screen
               key="team_formation"

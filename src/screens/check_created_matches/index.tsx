@@ -30,7 +30,6 @@ export default function CheckCreatedMatchesScreen() {
 
   const { mutate: cancelMatch, isPending } = useCancelMatchMutation();
 
-  // ✅ 매치 취소 함수
   const handleCancelMatch = (waitingId: number) => {
     Alert.alert(
       '매치 취소',

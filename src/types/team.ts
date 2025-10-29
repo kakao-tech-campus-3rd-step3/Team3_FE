@@ -341,3 +341,13 @@ export interface UserJoinWaitingPageResponse {
   sort: Sort;
   empty: boolean;
 }
+
+export interface TeamReviewRequest {
+  matchId: number;
+  reviewerTeamId: number;
+  reviewedTeamId: number;
+  rating: number;
+  punctualityReview: 'GOOD' | 'BAD';
+  sportsmanshipReview: 'GOOD' | 'BAD';
+  skillLevelReview: 'LOWER' | 'SIMILAR' | 'HIGHER';
+}

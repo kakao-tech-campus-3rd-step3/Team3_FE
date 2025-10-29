@@ -27,6 +27,11 @@ export default memo(function BenefitsSection({ teamId }: BenefitsSectionProps) {
       return;
     }
 
+    if (serviceId === 'mercenary') {
+      router.push(ROUTES.MERCENARY);
+      return;
+    }
+
     const routeMap: Record<string, string> = {
       tournament: ROUTES.TOURNAMENT,
     };
