@@ -26,6 +26,7 @@ import {
 import { theme } from '@/src/theme';
 import type { RecruitmentCreateRequest } from '@/src/types';
 import { formatDateForAPI, formatTimeForAPI } from '@/src/utils/date';
+import { translateErrorMessage } from '@/src/utils/error_messages';
 
 export default function MercenaryCreateScreen() {
   const { data: userProfile } = useUserProfile();
@@ -53,6 +54,12 @@ export default function MercenaryCreateScreen() {
 
   const SKILL_LEVEL_OPTIONS = ['아마추어', '세미프로', '프로'] as const;
 
+  const SKILL_LEVEL_REVERSE_MAP: { [key: string]: string } = {
+    프로: 'PRO',
+    세미프로: 'SEMI_PRO',
+    아마추어: 'AMATEUR',
+  };
+
   const handleCreateRecruitment = () => {
     if (
       !recruitmentForm.message ||
@@ -68,12 +75,17 @@ export default function MercenaryCreateScreen() {
       return;
     }
 
+    const formattedDate = formatDateForAPI(matchDate);
+    const formattedTime = formatTimeForAPI(matchTime);
+    const convertedPosition = convertKoreanToPosition(recruitmentForm.position);
+
     const recruitmentData: RecruitmentCreateRequest = {
       ...recruitmentForm,
       teamId: userProfile.teamId!,
-      matchDate: formatDateForAPI(matchDate),
-      matchTime: formatTimeForAPI(matchTime),
-      position: convertKoreanToPosition(recruitmentForm.position),
+      matchDate: formattedDate,
+      matchTime: formattedTime,
+      position: convertedPosition,
+      skillLevel: recruitmentForm.skillLevel,
     };
 
     createRecruitment(recruitmentData, {
@@ -86,8 +98,18 @@ export default function MercenaryCreateScreen() {
         ]);
       },
       onError: error => {
-        console.error('용병 모집 게시글 생성 실패:', error);
-        Alert.alert('오류', '용병 모집 게시글 생성에 실패했습니다.');
+        let errorMessage = '용병 모집 게시글 생성에 실패했습니다.';
+        if (error && typeof error === 'object' && 'message' in error) {
+          const message = (error as any).message;
+          if (message && typeof message === 'string') {
+            errorMessage = translateErrorMessage(message, {
+              endpoint: '/api/mercenaries/recruitments',
+              method: 'POST',
+            });
+          }
+        }
+
+        Alert.alert('오류', errorMessage);
       },
     });
   };
