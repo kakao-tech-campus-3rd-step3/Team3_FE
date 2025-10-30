@@ -488,6 +488,7 @@ export default function MercenaryMainScreen() {
           setSelectedRecruitment(null);
         }}
         onApply={handleApplication}
+        isApplying={isJoining}
       />
     </SafeAreaView>
   );
