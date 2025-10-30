@@ -57,12 +57,10 @@ export default function TeamReviewScreen() {
 
   const isMissing = (field: string) => missingFields.includes(field);
 
-  // ✅ missingFields에서 특정 필드를 제거하는 헬퍼
   const clearMissingField = (field: string) => {
     setMissingFields(prev => prev.filter(f => f !== field));
   };
 
-  // ✅ 각 setter 래핑 (입력 시 missingField 해제)
   const handleSetRating = (value: number) => {
     setRating(value);
     clearMissingField('rating');
