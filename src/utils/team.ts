@@ -153,6 +153,7 @@ export const transformTeamJoinRequestItem = (
     applicantName: apiItem.applicantName,
     teamId: apiItem.teamId,
     applicantId: apiItem.applicantId,
+    message: apiItem.message,
     status: getJoinRequestStatusInEnglish(apiItem.status),
     decisionReason: apiItem.decisionReason,
     decidedBy: apiItem.decidedBy,
