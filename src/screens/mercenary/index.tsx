@@ -1,13 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   FlatList,
   StyleSheet,
-  TextInput,
   Modal,
   ScrollView,
   Alert,
@@ -33,7 +32,6 @@ import { translateErrorMessage } from '@/src/utils/error_messages';
 export default function MercenaryMainScreen() {
   const [selectedUniversity, setSelectedUniversity] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [isDetailModalOpen, setIsDetailModalOpen] = useState<boolean>(false);
   const [selectedRecruitmentId, setSelectedRecruitmentId] = useState<
     number | null
@@ -60,9 +58,11 @@ export default function MercenaryMainScreen() {
     error: detailError,
   } = useMercenaryRecruitment(selectedRecruitmentId || 0);
 
-  const filteredUniversities = UNIVERSITIES.filter(university =>
-    university.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredRecruitments = useMemo(() => {
+    const list = recruitmentsData?.content || [];
+    if (!selectedUniversity || selectedUniversity === '전체') return list;
+    return list.filter(r => r.universityName === selectedUniversity);
+  }, [recruitmentsData?.content, selectedUniversity]);
 
   const formatTime = (time: string) => {
     return time.slice(0, 5);
@@ -212,29 +212,8 @@ export default function MercenaryMainScreen() {
             <View style={newStyles.modalHeaderRight} />
           </View>
 
-          <View style={newStyles.searchInputContainer}>
-            <Ionicons name="search" size={20} color={theme.colors.text.sub} />
-            <TextInput
-              style={newStyles.searchInput}
-              placeholder="대학교명을 입력하세요"
-              placeholderTextColor={theme.colors.text.sub}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              autoFocus
-            />
-            {searchQuery !== '' && (
-              <TouchableOpacity onPress={() => setSearchQuery('')}>
-                <Ionicons
-                  name="close-circle"
-                  size={20}
-                  color={theme.colors.text.sub}
-                />
-              </TouchableOpacity>
-            )}
-          </View>
-
           <FlatList
-            data={[{ id: 0, name: '전체' }, ...filteredUniversities]}
+            data={[{ id: 0, name: '전체' }, ...UNIVERSITIES]}
             keyExtractor={item => item.id.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -246,7 +225,6 @@ export default function MercenaryMainScreen() {
                 onPress={() => {
                   setSelectedUniversity(item.name);
                   setIsModalOpen(false);
-                  setSearchQuery('');
                 }}
               >
                 <Text
@@ -452,7 +430,7 @@ export default function MercenaryMainScreen() {
 
       <View style={newStyles.content}>
         <FlatList
-          data={recruitmentsData?.content || []}
+          data={filteredRecruitments}
           renderItem={renderRecruitmentCard}
           keyExtractor={item => item.recruitmentId.toString()}
           contentContainerStyle={newStyles.listContainer}
