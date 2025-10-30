@@ -37,7 +37,7 @@ export default function TeamManagementScreen({
     isLoading: membersLoading,
     error: membersError,
     refetch: refetchMembers,
-  } = useTeamMembers(numericTeamId);
+  } = useTeamMembers(numericTeamId, 0, 100);
 
   if (!teamId || teamId === null || teamId === undefined) {
     return (
@@ -65,11 +65,11 @@ export default function TeamManagementScreen({
     );
   }
 
-  if (isLoading || membersLoading) {
+  if (isLoading) {
     return <LoadingState />;
   }
 
-  if (error || membersError) {
+  if (error) {
     return (
       <EmptyState
         icon="❌"
@@ -82,16 +82,7 @@ export default function TeamManagementScreen({
     );
   }
 
-  const currentUserName = userProfile?.name;
-  const teamMembers = teamMembersData?.content || [];
-  const currentUserMember = teamMembers.find(
-    member => member.name === currentUserName
-  );
-  const canManageTeam =
-    currentUserMember?.role === 'LEADER' ||
-    currentUserMember?.role === 'VICE_LEADER';
-
-  if (!team || !teamMembersData) {
+  if (!team) {
     return (
       <EmptyState
         icon="🔍"
@@ -101,6 +92,15 @@ export default function TeamManagementScreen({
       />
     );
   }
+
+  const currentUserName = userProfile?.name;
+  const teamMembers = teamMembersData?.content || [];
+  const currentUserMember = teamMembers.find(
+    member => member.name === currentUserName
+  );
+  const canManageTeam =
+    currentUserMember?.role === 'LEADER' ||
+    currentUserMember?.role === 'VICE_LEADER';
 
   const handleMemberPress = (member: TeamMember) => {
     setSelectedMember(member);
@@ -177,7 +177,7 @@ export default function TeamManagementScreen({
         style={styles.scrollContainer}
         refreshControl={
           <RefreshControl
-            refreshing={isLoading || membersLoading}
+            refreshing={isLoading || (membersLoading && !teamMembersData)}
             onRefresh={() => {
               refetch();
               refetchMembers();
@@ -196,9 +196,14 @@ export default function TeamManagementScreen({
           <TeamReviewsSection teamId={numericTeamId} />
           <TeamMembersSection
             teamMembers={teamMembers.sort((a, b) => {
-              const roleOrder = { LEADER: 1, VICE_LEADER: 2, MEMBER: 3 };
-              const aOrder = roleOrder[a.role] || 3;
-              const bOrder = roleOrder[b.role] || 3;
+              const roleOrder = {
+                LEADER: 1,
+                VICE_LEADER: 2,
+                MEMBER: 3,
+                MERCENARY: 4,
+              };
+              const aOrder = roleOrder[a.role] || 4;
+              const bOrder = roleOrder[b.role] || 4;
 
               if (aOrder !== bOrder) {
                 return aOrder - bOrder;
