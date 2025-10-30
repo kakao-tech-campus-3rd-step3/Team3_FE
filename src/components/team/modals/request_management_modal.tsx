@@ -4,8 +4,9 @@ import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { styles } from '@/src/components/team/modals/join_requests_modal_styles';
+import InfoRow from '@/src/components/ui/info_row';
+import StatusBadge from '@/src/components/ui/status_badge';
 import { colors } from '@/src/theme';
-import { getJoinRequestStatusDisplayName } from '@/src/utils/team';
 
 export interface RequestItem {
   id: number;
@@ -45,32 +46,40 @@ export default function RequestManagementModal({
   const defaultRenderRequestDetails = (request: RequestItem) => (
     <View style={styles.requestDetails}>
       {request.teamId && (
-        <View style={styles.requestDetailRow}>
-          <Text style={styles.requestDetailLabel}>팀 ID:</Text>
-          <Text style={styles.requestDetailValue}>{request.teamId}</Text>
-        </View>
+        <InfoRow
+          label="팀 ID:"
+          value={String(request.teamId)}
+          containerStyle={styles.requestDetailRow}
+          labelStyle={styles.requestDetailLabel}
+          valueStyle={styles.requestDetailValue}
+        />
       )}
       {request.decisionReason && (
-        <View style={styles.requestDetailRow}>
-          <Text style={styles.requestDetailLabel}>결정 사유:</Text>
-          <Text style={styles.requestDetailValue}>
-            {request.decisionReason}
-          </Text>
-        </View>
+        <InfoRow
+          label="결정 사유:"
+          value={request.decisionReason}
+          containerStyle={styles.requestDetailRow}
+          labelStyle={styles.requestDetailLabel}
+          valueStyle={styles.requestDetailValue}
+        />
       )}
       {request.decidedBy && (
-        <View style={styles.requestDetailRow}>
-          <Text style={styles.requestDetailLabel}>결정자:</Text>
-          <Text style={styles.requestDetailValue}>{request.decidedBy}</Text>
-        </View>
+        <InfoRow
+          label="결정자:"
+          value={String(request.decidedBy)}
+          containerStyle={styles.requestDetailRow}
+          labelStyle={styles.requestDetailLabel}
+          valueStyle={styles.requestDetailValue}
+        />
       )}
       {request.decidedAt && (
-        <View style={styles.requestDetailRow}>
-          <Text style={styles.requestDetailLabel}>결정일:</Text>
-          <Text style={styles.requestDetailValue}>
-            {new Date(request.decidedAt).toLocaleDateString('ko-KR')}
-          </Text>
-        </View>
+        <InfoRow
+          label="결정일:"
+          value={new Date(request.decidedAt).toLocaleDateString('ko-KR')}
+          containerStyle={styles.requestDetailRow}
+          labelStyle={styles.requestDetailLabel}
+          valueStyle={styles.requestDetailValue}
+        />
       )}
     </View>
   );
@@ -108,30 +117,7 @@ export default function RequestManagementModal({
                   <View style={styles.requestHeader}>
                     <View style={styles.applicantInfo}></View>
                     <View style={styles.requestStatus}>
-                      <View
-                        style={[
-                          styles.statusBadge,
-                          request.status === 'PENDING' && styles.statusPending,
-                          request.status === 'APPROVED' &&
-                            styles.statusApproved,
-                          request.status === 'REJECTED' &&
-                            styles.statusRejected,
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.statusText,
-                            request.status === 'PENDING' &&
-                              styles.statusTextPending,
-                            request.status === 'APPROVED' &&
-                              styles.statusTextApproved,
-                            request.status === 'REJECTED' &&
-                              styles.statusTextRejected,
-                          ]}
-                        >
-                          {getJoinRequestStatusDisplayName(request.status)}
-                        </Text>
-                      </View>
+                      <StatusBadge status={request.status} />
                     </View>
                   </View>
 
