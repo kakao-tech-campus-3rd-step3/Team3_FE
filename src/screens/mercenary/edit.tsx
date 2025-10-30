@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import React, { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -18,33 +18,51 @@ import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
 import {
   POSITION_OPTIONS,
   convertKoreanToPosition,
+  convertPositionToKorean,
 } from '@/src/constants/positions';
 import {
-  useCreateMercenaryRecruitment,
-  useUserProfile,
+  useUpdateMercenaryRecruitment,
+  useMercenaryRecruitment,
 } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
-import type { RecruitmentCreateRequest } from '@/src/types';
-import { formatDateForAPI, formatTimeForAPI } from '@/src/utils/date';
+import type { RecruitmentUpdateRequest } from '@/src/types';
+import {
+  formatDateForAPI,
+  formatTimeForAPI,
+  parseDateFromAPI,
+  parseTimeFromAPI,
+} from '@/src/utils/date';
 import { translateErrorMessage } from '@/src/utils/error_messages';
 
-export default function MercenaryCreateScreen() {
-  const { data: userProfile } = useUserProfile();
-  const { createRecruitment, isCreating } = useCreateMercenaryRecruitment();
+const SKILL_LEVEL_MAP: { [key: string]: string } = {
+  PRO: '프로',
+  SEMI_PRO: '세미프로',
+  AMATEUR: '아마추어',
+};
+
+const SKILL_LEVEL_REVERSE_MAP: { [key: string]: string } = {
+  프로: 'PRO',
+  세미프로: 'SEMI_PRO',
+  아마추어: 'AMATEUR',
+};
+
+const SKILL_LEVEL_OPTIONS = ['아마추어', '세미프로', '프로'] as const;
+
+export default function MercenaryEditScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const recruitmentId = id ? parseInt(id, 10) : 0;
+
+  const { data: recruitment, isLoading } =
+    useMercenaryRecruitment(recruitmentId);
+  const { updateRecruitment, isUpdating } = useUpdateMercenaryRecruitment();
 
   const [matchDate, setMatchDate] = useState<Date>(new Date());
-  const [matchTime, setMatchTime] = useState<Date>(() => {
-    const now = new Date();
-    now.setMinutes(0, 0, 0);
-    now.setHours(now.getHours() + 1);
-    return now;
-  });
+  const [matchTime, setMatchTime] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
 
   const [recruitmentForm, setRecruitmentForm] =
-    useState<RecruitmentCreateRequest>({
-      teamId: userProfile?.teamId || 0,
+    useState<RecruitmentUpdateRequest>({
       matchDate: '',
       matchTime: '',
       message: '',
@@ -52,15 +70,22 @@ export default function MercenaryCreateScreen() {
       skillLevel: '',
     });
 
-  const SKILL_LEVEL_OPTIONS = ['아마추어', '세미프로', '프로'] as const;
+  useEffect(() => {
+    if (recruitment) {
+      setMatchDate(parseDateFromAPI(recruitment.matchDate));
+      setMatchTime(parseTimeFromAPI(recruitment.matchTime));
+      setRecruitmentForm({
+        matchDate: recruitment.matchDate,
+        matchTime: recruitment.matchTime,
+        message: recruitment.message,
+        position: convertPositionToKorean(recruitment.position),
+        skillLevel:
+          SKILL_LEVEL_MAP[recruitment.skillLevel] || recruitment.skillLevel,
+      });
+    }
+  }, [recruitment]);
 
-  const SKILL_LEVEL_REVERSE_MAP: { [key: string]: string } = {
-    프로: 'PRO',
-    세미프로: 'SEMI_PRO',
-    아마추어: 'AMATEUR',
-  };
-
-  const handleCreateRecruitment = () => {
+  const handleUpdateRecruitment = () => {
     if (
       !recruitmentForm.message ||
       !recruitmentForm.position ||
@@ -70,53 +95,81 @@ export default function MercenaryCreateScreen() {
       return;
     }
 
-    if (!userProfile?.teamId) {
-      Alert.alert('팀 오류', '팀에 속해있지 않습니다.');
-      return;
-    }
-
     const formattedDate = formatDateForAPI(matchDate);
     const formattedTime = formatTimeForAPI(matchTime);
     const convertedPosition = convertKoreanToPosition(recruitmentForm.position);
 
-    const recruitmentData: RecruitmentCreateRequest = {
+    const recruitmentData: RecruitmentUpdateRequest = {
       ...recruitmentForm,
-      teamId: userProfile.teamId!,
       matchDate: formattedDate,
       matchTime: formattedTime,
       position: convertedPosition,
       skillLevel: recruitmentForm.skillLevel,
     };
 
-    createRecruitment(recruitmentData, {
-      onSuccess: () => {
-        Alert.alert('성공', '용병 모집 게시글이 생성되었습니다.', [
-          {
-            text: '확인',
-            onPress: () => router.back(),
-          },
-        ]);
+    updateRecruitment(
+      {
+        id: recruitmentId,
+        data: recruitmentData,
       },
-      onError: error => {
-        let errorMessage = '용병 모집 게시글 생성에 실패했습니다.';
-        if (error && typeof error === 'object' && 'message' in error) {
-          const message = (error as any).message;
-          if (message && typeof message === 'string') {
-            errorMessage = translateErrorMessage(message, {
-              endpoint: '/api/mercenaries/recruitments',
-              method: 'POST',
-            });
+      {
+        onSuccess: () => {
+          Alert.alert('성공', '용병 모집 게시글이 수정되었습니다.', [
+            {
+              text: '확인',
+              onPress: () => router.back(),
+            },
+          ]);
+        },
+        onError: error => {
+          let errorMessage = '용병 모집 게시글 수정에 실패했습니다.';
+          if (error && typeof error === 'object' && 'message' in error) {
+            const message = (error as any).message;
+            if (message && typeof message === 'string') {
+              errorMessage = translateErrorMessage(message, {
+                endpoint: '/api/mercenaries/recruitments',
+                method: 'PUT',
+              });
+            }
           }
-        }
 
-        Alert.alert('오류', errorMessage);
-      },
-    });
+          Alert.alert('오류', errorMessage);
+        },
+      }
+    );
   };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView
+        style={styles.container}
+        edges={['left', 'right', 'bottom']}
+      >
+        <CustomHeader title="용병 모집 수정" showBackButton={true} />
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>로딩 중...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!recruitment) {
+    return (
+      <SafeAreaView
+        style={styles.container}
+        edges={['left', 'right', 'bottom']}
+      >
+        <CustomHeader title="용병 모집 수정" showBackButton={true} />
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>게시글을 불러올 수 없습니다.</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
-      <CustomHeader title="용병 모집" showBackButton={true} />
+      <CustomHeader title="용병 모집 수정" showBackButton={true} />
 
       <ScrollView
         style={styles.formContainer}
@@ -205,12 +258,12 @@ export default function MercenaryCreateScreen() {
         </View>
 
         <TouchableOpacity
-          style={[styles.createSubmitButton, isCreating && { opacity: 0.6 }]}
-          onPress={handleCreateRecruitment}
-          disabled={isCreating}
+          style={[styles.updateSubmitButton, isUpdating && { opacity: 0.6 }]}
+          onPress={handleUpdateRecruitment}
+          disabled={isUpdating}
         >
-          <Text style={styles.createSubmitButtonText}>
-            {isCreating ? '생성 중...' : '용병 모집하기'}
+          <Text style={styles.updateSubmitButtonText}>
+            {isUpdating ? '수정 중...' : '수정하기'}
           </Text>
         </TouchableOpacity>
       </ScrollView>
@@ -238,6 +291,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background.main,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: theme.spacing.spacing8,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: theme.colors.text.sub,
   },
   formContainer: {
     flex: 1,
@@ -294,7 +357,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.brand.main + '20',
     minHeight: 100,
   },
-  createSubmitButton: {
+  updateSubmitButton: {
     backgroundColor: theme.colors.brand.main,
     borderRadius: 16,
     paddingVertical: theme.spacing.spacing4,
@@ -309,7 +372,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 6,
   },
-  createSubmitButtonText: {
+  updateSubmitButtonText: {
     fontSize: 18,
     fontWeight: '700',
     color: 'white',

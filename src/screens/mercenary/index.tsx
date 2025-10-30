@@ -14,41 +14,26 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { RecruitmentCard } from '@/src/components/mercenary/recruitment_card';
 import MercenaryApplicationModal from '@/src/components/modals/mercenary_application_modal';
 import { convertPositionToKorean } from '@/src/constants/positions';
 import { UNIVERSITIES } from '@/src/constants/universities';
 import {
   useMercenaryRecruitments,
   useMercenaryRecruitment,
+  useUserProfile,
+  useTeamJoinRequestMutation,
+  useMyJoinWaitingList,
 } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import type { RecruitmentResponse } from '@/src/types';
-
-interface MercenaryProfile {
-  id: number;
-  name: string;
-  age: number;
-  position: string;
-  level: string;
-  region: string;
-  university: string;
-  experience: number;
-  noShowCount: number;
-  totalMatches: number;
-  feeCondition: string;
-  availableTime: string;
-  intro: string;
-  profileImage?: string;
-  kakaoId: string;
-  createdAt: string;
-}
+import type { JoinWaitingRequest } from '@/src/types/team';
+import { translateErrorMessage } from '@/src/utils/error_messages';
 
 export default function MercenaryMainScreen() {
   const [selectedUniversity, setSelectedUniversity] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isContactModalOpen, setIsContactModalOpen] = useState<boolean>(false);
-  const [selectedMercenary] = useState<MercenaryProfile | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState<boolean>(false);
   const [selectedRecruitmentId, setSelectedRecruitmentId] = useState<
     number | null
@@ -60,11 +45,14 @@ export default function MercenaryMainScreen() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const pageSize = 10;
 
+  const { data: userProfile } = useUserProfile();
+  const { joinWaiting, isJoining } = useTeamJoinRequestMutation();
   const { data: recruitmentsData, isLoading } = useMercenaryRecruitments(
     currentPage,
     pageSize,
     'matchDate,asc'
   );
+  const { data: myJoinWaitingData } = useMyJoinWaitingList(0, 1000);
 
   const {
     data: recruitmentDetail,
@@ -80,14 +68,44 @@ export default function MercenaryMainScreen() {
     return time.slice(0, 5);
   };
 
-  const handleApplication = (
-    recruitmentId: number,
-    message: string,
-    shareKakaoId: boolean
-  ) => {
-    console.log('용병 신청:', { recruitmentId, message, shareKakaoId });
-    // TODO: 실제 용병 신청 API 호출
-    Alert.alert('신청 완료', '용병 신청이 완료되었습니다.');
+  const handleApplication = (recruitmentId: number, message: string) => {
+    const selectedRecruitment = recruitmentsData?.content.find(
+      r => r.recruitmentId === recruitmentId
+    );
+
+    if (!selectedRecruitment) {
+      Alert.alert('오류', '모집 게시글을 찾을 수 없습니다.');
+      return;
+    }
+
+    const requestData: JoinWaitingRequest = {
+      message: message.trim() || undefined,
+      isMercenary: true,
+    };
+
+    joinWaiting(
+      {
+        teamId: selectedRecruitment.teamId,
+        data: requestData,
+      },
+      {
+        onSuccess: () => {
+          setIsApplicationModalOpen(false);
+          setSelectedRecruitment(null);
+          Alert.alert('신청 완료', '용병 신청이 완료되었습니다.');
+        },
+        onError: error => {
+          let errorMessage = '용병 신청에 실패했습니다.';
+          if (error && typeof error === 'object' && 'message' in error) {
+            const message = (error as any).message;
+            if (message && typeof message === 'string') {
+              errorMessage = translateErrorMessage(message);
+            }
+          }
+          Alert.alert('오류', errorMessage);
+        },
+      }
+    );
   };
 
   const getSkillLevelBadgeStyle = (skillLevel: string) => {
@@ -115,92 +133,28 @@ export default function MercenaryMainScreen() {
     }
   };
 
-  const renderRecruitmentCard = ({ item }: { item: RecruitmentResponse }) => (
-    <TouchableOpacity
-      style={newStyles.recruitmentCard}
-      activeOpacity={0.8}
-      onPress={() => {
-        setSelectedRecruitmentId(item.recruitmentId);
-        setIsDetailModalOpen(true);
-      }}
-    >
-      <View style={newStyles.cardContent}>
-        <View style={newStyles.recruitmentHeader}>
-          <View style={newStyles.positionSection}>
-            <Text style={newStyles.positionLabel}>선호 포지션</Text>
-            <Text style={newStyles.recruitmentTitle}>
-              {convertPositionToKorean(item.position)}
-            </Text>
-          </View>
-          <View style={newStyles.recruitmentHeaderBadges}>
-            <View
-              style={[
-                newStyles.recruitmentSkillBadge,
-                {
-                  backgroundColor: getSkillLevelBadgeStyle(item.skillLevel)
-                    .backgroundColor,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  newStyles.recruitmentSkillText,
-                  { color: getSkillLevelBadgeStyle(item.skillLevel).textColor },
-                ]}
-              >
-                {item.skillLevel}
-              </Text>
-            </View>
-            <View style={newStyles.statusBadge}>
-              <Text style={newStyles.statusText}>{item.recruitmentStatus}</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={newStyles.recruitmentInfo}>
-          <View style={newStyles.matchInfoContainer}>
-            <View style={newStyles.matchInfoItem}>
-              <Ionicons
-                name="calendar-outline"
-                size={14}
-                color={theme.colors.text.sub}
-              />
-              <Text style={newStyles.matchInfoText}>{item.matchDate}</Text>
-            </View>
-            <View style={newStyles.matchInfoItem}>
-              <Ionicons
-                name="time-outline"
-                size={14}
-                color={theme.colors.text.sub}
-              />
-              <Text style={newStyles.matchInfoText}>
-                {formatTime(item.matchTime)}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={newStyles.recruitmentFooter}>
-          <Text style={newStyles.createdAt}>
-            생성일:{' '}
-            {new Date(item.createdAt).toLocaleDateString('ko-KR', {
-              month: 'numeric',
-              day: 'numeric',
-            })}
-          </Text>
-          <TouchableOpacity
-            style={newStyles.applyButton}
-            onPress={() => {
-              setSelectedRecruitment(item);
-              setIsApplicationModalOpen(true);
-            }}
-          >
-            <Text style={newStyles.applyButtonText}>신청하기</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+  const renderRecruitmentCard = ({ item }: { item: RecruitmentResponse }) => {
+    const isMyRecruitment = userProfile?.teamId === item.teamId;
+    const hasApplied = myJoinWaitingData?.content?.some(
+      application =>
+        application.teamId === item.teamId && application.status === 'PENDING'
+    );
+    return (
+      <RecruitmentCard
+        recruitment={item}
+        onPress={() => {
+          setSelectedRecruitmentId(item.recruitmentId);
+          setIsDetailModalOpen(true);
+        }}
+        onApply={() => {
+          setSelectedRecruitment(item);
+          setIsApplicationModalOpen(true);
+        }}
+        showApplyButton={!isMyRecruitment}
+        isApplyButtonDisabled={hasApplied}
+      />
+    );
+  };
 
   return (
     <SafeAreaView style={newStyles.container} edges={['top', 'left', 'right']}>
@@ -320,70 +274,6 @@ export default function MercenaryMainScreen() {
       </Modal>
 
       <Modal
-        visible={isContactModalOpen}
-        animationType="fade"
-        transparent={true}
-        onRequestClose={() => setIsContactModalOpen(false)}
-      >
-        <View style={newStyles.contactModalOverlay}>
-          <View style={newStyles.contactModalContainer}>
-            <View style={newStyles.contactModalHeader}>
-              <Text style={newStyles.contactModalTitle}>연락처 정보</Text>
-              <TouchableOpacity
-                onPress={() => setIsContactModalOpen(false)}
-                style={newStyles.contactModalCloseButton}
-              >
-                <Ionicons
-                  name="close"
-                  size={24}
-                  color={theme.colors.text.main}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <View style={newStyles.contactModalContent}>
-              <View style={newStyles.contactModalProfile}>
-                <Text style={newStyles.contactModalName}>
-                  {selectedMercenary?.name}
-                </Text>
-                <Text style={newStyles.contactModalPosition}>
-                  {selectedMercenary?.position} • {selectedMercenary?.level}
-                </Text>
-              </View>
-
-              <View style={newStyles.contactModalKakaoSection}>
-                <Ionicons
-                  name="chatbubble"
-                  size={24}
-                  color={theme.colors.brand.main}
-                />
-                <View style={newStyles.contactModalKakaoInfo}>
-                  <Text style={newStyles.contactModalKakaoLabel}>
-                    카카오톡 ID
-                  </Text>
-                  <Text style={newStyles.contactModalKakaoId}>
-                    {selectedMercenary?.kakaoId}
-                  </Text>
-                </View>
-              </View>
-
-              <TouchableOpacity
-                style={newStyles.contactModalCopyButton}
-                onPress={() => {
-                  setIsContactModalOpen(false);
-                }}
-              >
-                <Ionicons name="copy" size={20} color="white" />
-                <Text style={newStyles.contactModalCopyButtonText}>
-                  복사하기
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
         visible={isDetailModalOpen}
         animationType="fade"
         transparent={true}
@@ -458,6 +348,30 @@ export default function MercenaryMainScreen() {
                   </View>
 
                   <View style={newStyles.detailInfoList}>
+                    <View style={newStyles.detailInfoItem}>
+                      <Ionicons
+                        name="people-outline"
+                        size={20}
+                        color={theme.colors.text.sub}
+                      />
+                      <Text style={newStyles.detailInfoLabel}>팀명</Text>
+                      <Text style={newStyles.detailInfoValue}>
+                        {recruitmentDetail.teamName}
+                      </Text>
+                    </View>
+
+                    <View style={newStyles.detailInfoItem}>
+                      <Ionicons
+                        name="school-outline"
+                        size={20}
+                        color={theme.colors.text.sub}
+                      />
+                      <Text style={newStyles.detailInfoLabel}>대학교</Text>
+                      <Text style={newStyles.detailInfoValue}>
+                        {recruitmentDetail.universityName}
+                      </Text>
+                    </View>
+
                     <View style={newStyles.detailInfoItem}>
                       <Ionicons
                         name="calendar-outline"
@@ -740,98 +654,6 @@ const newStyles = StyleSheet.create({
     color: theme.colors.brand.main,
     fontWeight: '700',
   },
-  contactModalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.spacing6,
-  },
-  contactModalContainer: {
-    backgroundColor: theme.colors.background.main,
-    borderRadius: 16,
-    width: '100%',
-    maxWidth: 320,
-    shadowColor: theme.colors.shadow.light,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  contactModalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.spacing6,
-    paddingVertical: theme.spacing.spacing4,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  contactModalTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.text.main,
-  },
-  contactModalCloseButton: {
-    padding: 4,
-  },
-  contactModalContent: {
-    padding: theme.spacing.spacing6,
-  },
-  contactModalProfile: {
-    alignItems: 'center',
-    marginBottom: theme.spacing.spacing6,
-  },
-  contactModalName: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing1,
-  },
-  contactModalPosition: {
-    fontSize: 14,
-    color: theme.colors.text.sub,
-    fontWeight: '500',
-  },
-  contactModalKakaoSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.background.sub,
-    borderRadius: 12,
-    padding: theme.spacing.spacing4,
-    marginBottom: theme.spacing.spacing6,
-    gap: theme.spacing.spacing3,
-  },
-  contactModalKakaoInfo: {
-    flex: 1,
-  },
-  contactModalKakaoLabel: {
-    fontSize: 12,
-    color: theme.colors.text.sub,
-    marginBottom: theme.spacing.spacing1,
-  },
-  contactModalKakaoId: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.text.main,
-  },
-  contactModalCopyButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.colors.brand.main,
-    borderRadius: 12,
-    paddingVertical: theme.spacing.spacing3,
-    gap: theme.spacing.spacing2,
-  },
-  contactModalCopyButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'white',
-  },
   content: {
     flex: 1,
   },
@@ -839,327 +661,6 @@ const newStyles = StyleSheet.create({
     paddingTop: theme.spacing.spacing2,
     paddingHorizontal: theme.spacing.spacing6,
     paddingBottom: theme.spacing.spacing6,
-  },
-  mercenaryCard: {
-    marginBottom: theme.spacing.spacing4,
-    backgroundColor: theme.colors.background.sub,
-    borderRadius: theme.spacing.spacing4,
-    borderWidth: 1,
-    borderColor: theme.colors.border.light,
-  },
-  cardContent: {
-    padding: theme.spacing.spacing4,
-  },
-  profileSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.spacing4,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: theme.colors.brand.main + '30',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: theme.colors.brand.main + '50',
-    marginRight: theme.spacing.spacing4,
-  },
-  avatarText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: theme.colors.brand.main,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  mercenaryName: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.text.main,
-    marginBottom: 4,
-  },
-  ageText: {
-    fontSize: 14,
-    color: theme.colors.text.sub,
-    fontWeight: '500',
-    marginBottom: 8,
-  },
-  levelRow: {
-    flexDirection: 'row',
-    gap: theme.spacing.spacing2,
-  },
-  levelBadge: {
-    backgroundColor: theme.colors.brand.main + '20',
-    paddingHorizontal: theme.spacing.spacing2,
-    paddingVertical: theme.spacing.spacing1,
-    borderRadius: theme.spacing.spacing2,
-  },
-  levelText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: theme.colors.brand.main,
-  },
-  positionBadge: {
-    backgroundColor: theme.colors.brand.main,
-    paddingHorizontal: theme.spacing.spacing2,
-    paddingVertical: theme.spacing.spacing1,
-    borderRadius: theme.spacing.spacing2,
-  },
-  positionText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: 'white',
-  },
-  experienceSection: {
-    marginBottom: theme.spacing.spacing2,
-  },
-  experienceText: {
-    fontSize: 14,
-    color: theme.colors.text.sub,
-    fontWeight: '500',
-  },
-  timeSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.spacing2,
-    gap: theme.spacing.spacing1,
-  },
-  availableTime: {
-    fontSize: 14,
-    color: theme.colors.text.sub,
-    fontWeight: '500',
-  },
-  intro: {
-    fontSize: 14,
-    color: theme.colors.text.sub,
-    lineHeight: 20,
-    marginBottom: theme.spacing.spacing4,
-  },
-  contactButton: {
-    backgroundColor: theme.colors.brand.main,
-    borderRadius: theme.spacing.spacing2,
-    paddingVertical: theme.spacing.spacing2,
-    alignItems: 'center',
-  },
-  contactButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'white',
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: theme.spacing.spacing2,
-    marginTop: theme.spacing.spacing2,
-  },
-  editButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.colors.brand.main + '10',
-    borderRadius: theme.spacing.spacing2,
-    paddingVertical: theme.spacing.spacing2,
-    gap: theme.spacing.spacing1,
-    borderWidth: 1,
-    borderColor: theme.colors.brand.main + '30',
-  },
-  editButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: theme.colors.brand.main,
-  },
-  deleteButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#ff444410',
-    borderRadius: theme.spacing.spacing2,
-    paddingVertical: theme.spacing.spacing2,
-    gap: theme.spacing.spacing1,
-    borderWidth: 1,
-    borderColor: '#ff444430',
-  },
-  deleteButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#ff4444',
-  },
-  detailsSection: {
-    marginVertical: theme.spacing.spacing4,
-    gap: theme.spacing.spacing2,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing1,
-  },
-  position: {
-    fontSize: 14,
-    color: theme.colors.text.sub,
-    fontWeight: '500',
-  },
-  applicationCard: {
-    backgroundColor: theme.colors.background.sub,
-    borderRadius: theme.spacing.spacing4,
-    padding: theme.spacing.spacing4,
-    marginBottom: theme.spacing.spacing4,
-    borderWidth: 1,
-    borderColor: theme.colors.border.light,
-  },
-  applicationHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: theme.spacing.spacing2,
-  },
-  matchTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.text.main,
-    flex: 1,
-  },
-  statusBadge: {
-    backgroundColor: theme.colors.brand.main,
-    paddingHorizontal: theme.spacing.spacing2,
-    paddingVertical: theme.spacing.spacing1,
-    borderRadius: theme.spacing.spacing2,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: 'white',
-  },
-  applicationInfo: {
-    marginBottom: theme.spacing.spacing2,
-  },
-  applicationDetailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.spacing1,
-  },
-  applicationFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: theme.spacing.spacing2,
-    paddingTop: theme.spacing.spacing2,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border.light,
-  },
-  appliedDate: {
-    fontSize: 12,
-    color: theme.colors.text.sub,
-  },
-  infoText: {
-    fontSize: 14,
-    color: theme.colors.text.sub,
-    marginLeft: theme.spacing.spacing1,
-  },
-  infoLabel: {
-    fontSize: 12,
-    color: theme.colors.text.sub,
-    marginLeft: theme.spacing.spacing2,
-    fontWeight: '500',
-  },
-  matchInfoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing2,
-  },
-  matchInfoItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    minWidth: 80,
-  },
-  matchInfoText: {
-    fontSize: 13,
-    color: theme.colors.text.main,
-    marginLeft: theme.spacing.spacing1,
-    fontWeight: '500',
-  },
-  positionSection: {
-    flex: 1,
-  },
-  positionLabel: {
-    fontSize: 12,
-    color: theme.colors.text.sub,
-    marginBottom: theme.spacing.spacing1,
-    fontWeight: '500',
-  },
-  recruitmentCard: {
-    marginBottom: theme.spacing.spacing4,
-    backgroundColor: theme.colors.background.sub,
-    borderRadius: theme.spacing.spacing4,
-    borderWidth: 1,
-    borderColor: theme.colors.border.light,
-  },
-  recruitmentHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: theme.spacing.spacing2,
-  },
-  recruitmentTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.text.main,
-    flex: 1,
-  },
-  recruitmentHeaderBadges: {
-    flexDirection: 'row',
-    gap: theme.spacing.spacing2,
-  },
-  recruitmentSkillBadge: {
-    paddingHorizontal: theme.spacing.spacing2,
-    paddingVertical: theme.spacing.spacing1,
-    borderRadius: theme.spacing.spacing2,
-  },
-  recruitmentSkillText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  recruitmentInfo: {
-    marginBottom: theme.spacing.spacing2,
-  },
-  recruitmentDetailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.spacing1,
-  },
-  recruitmentMessage: {
-    fontSize: 14,
-    color: theme.colors.text.sub,
-    lineHeight: 20,
-    marginBottom: theme.spacing.spacing4,
-  },
-  recruitmentFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: theme.spacing.spacing2,
-    paddingTop: theme.spacing.spacing2,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border.light,
-  },
-  createdAt: {
-    fontSize: 12,
-    color: theme.colors.text.sub,
-  },
-  applyButton: {
-    backgroundColor: theme.colors.brand.main,
-    paddingHorizontal: theme.spacing.spacing3,
-    paddingVertical: theme.spacing.spacing2,
-    borderRadius: theme.spacing.spacing2,
-  },
-  applyButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: 'white',
   },
   emptyContainer: {
     flex: 1,
@@ -1296,5 +797,24 @@ const newStyles = StyleSheet.create({
     fontSize: 14,
     color: theme.colors.text.main,
     lineHeight: 20,
+  },
+  teamInfoSection: {
+    marginBottom: theme.spacing.spacing3,
+    gap: theme.spacing.spacing1,
+  },
+  teamInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.spacing1,
+  },
+  teamNameText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: theme.colors.text.main,
+  },
+  universityNameText: {
+    fontSize: 13,
+    color: theme.colors.text.sub,
+    fontWeight: '500',
   },
 });

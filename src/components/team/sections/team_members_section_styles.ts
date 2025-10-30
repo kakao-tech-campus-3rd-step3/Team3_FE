@@ -141,6 +141,17 @@ export const styles = StyleSheet.create({
     fontSize: typography.fontSize.font2,
     fontWeight: typography.fontWeight.semibold,
   },
+  mercenaryBadge: {
+    backgroundColor: colors.grass[500],
+    paddingHorizontal: spacing.spacing2,
+    paddingVertical: 4,
+    borderRadius: spacing.spacing3,
+  },
+  mercenaryBadgeText: {
+    color: colors.white,
+    fontSize: typography.fontSize.font2,
+    fontWeight: typography.fontWeight.semibold,
+  },
 
   emptyState: {
     alignItems: 'center',

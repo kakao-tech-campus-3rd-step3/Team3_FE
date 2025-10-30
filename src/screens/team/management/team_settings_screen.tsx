@@ -25,6 +25,7 @@ import {
 } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/team/management/team_settings_styles';
 import { colors } from '@/src/theme';
+import { translateErrorMessage } from '@/src/utils/error_messages';
 
 interface TeamSettingsScreenProps {
   teamId: string | number;
@@ -54,13 +55,13 @@ export default function TeamSettingsScreen({
   } = useTeamMatchRequests();
 
   const matchRequests: MatchRequest[] = matchRequestsData || [];
-  const { refetch: refetchTeam } = useTeam(numericTeamId);
+  const { refetch: refetchTeam, data: teamData } = useTeam(numericTeamId);
   const {
     data: teamMembersData,
     isLoading: membersLoading,
     error: membersError,
     refetch: refetchMembers,
-  } = useTeamMembers(numericTeamId);
+  } = useTeamMembers(numericTeamId, 0, 100);
   const {
     data: joinRequestsData,
     isLoading,
@@ -70,6 +71,7 @@ export default function TeamSettingsScreen({
 
   const currentUserName = userProfile?.name;
   const teamMembers = teamMembersData?.content || [];
+
   const currentUserMember = teamMembers.find(
     member => member.name === currentUserName
   );
@@ -177,11 +179,12 @@ export default function TeamSettingsScreen({
         style: status === 'rejected' ? 'destructive' : 'default',
         onPress: () => {
           if (status === 'approved') {
+            const role: '회장' | '부회장' | '일반멤버' = '일반멤버';
             approveJoinRequestMutation.mutate(
               {
                 teamId,
                 requestId,
-                role: '일반멤버',
+                role,
               },
               {
                 onSuccess: () => {
@@ -190,8 +193,22 @@ export default function TeamSettingsScreen({
                   refetchMembers();
                   refetchTeam();
                 },
-                onError: () => {
-                  Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
+                onError: (error: unknown) => {
+                  let errorMessage = `${action} 처리 중 오류가 발생했습니다.`;
+                  if (
+                    error &&
+                    typeof error === 'object' &&
+                    'message' in error
+                  ) {
+                    const message = (error as any).message;
+                    if (message && typeof message === 'string') {
+                      errorMessage = translateErrorMessage(message, {
+                        endpoint: `/api/teams/${teamId}/join-waiting/${requestId}/approve`,
+                        method: 'POST',
+                      });
+                    }
+                  }
+                  Alert.alert('오류', errorMessage);
                 },
               }
             );

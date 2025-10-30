@@ -94,7 +94,10 @@ export const teamMemberApi = {
     const apiResponse = await apiClient.get<ApiTeamMemberPageResponse>(
       TEAM_MEMBER_API.GET_MEMBERS(teamId, page, size)
     );
-    return transformTeamMemberPageResponse(apiResponse);
+
+    const transformed = transformTeamMemberPageResponse(apiResponse);
+
+    return transformed;
   },
 
   getTeamMember: async (

@@ -37,7 +37,7 @@ export default function MemberManagementScreen({
     isLoading,
     error,
     refetch,
-  } = useTeamMembers(numericTeamId);
+  } = useTeamMembers(numericTeamId, 0, 100);
 
   const removeMemberMutation = useRemoveMemberMutation();
   const updateMemberRoleMutation = useUpdateMemberRoleMutation();
@@ -411,9 +411,14 @@ export default function MemberManagementScreen({
           <MemberInfoCard />
           <MemberListSection
             teamMembers={teamMembers.content.sort((a, b) => {
-              const roleOrder = { LEADER: 1, VICE_LEADER: 2, MEMBER: 3 };
-              const aOrder = roleOrder[a.role] || 3;
-              const bOrder = roleOrder[b.role] || 3;
+              const roleOrder = {
+                LEADER: 1,
+                VICE_LEADER: 2,
+                MEMBER: 3,
+                MERCENARY: 4,
+              };
+              const aOrder = roleOrder[a.role] || 4;
+              const bOrder = roleOrder[b.role] || 4;
 
               if (aOrder !== bOrder) {
                 return aOrder - bOrder;

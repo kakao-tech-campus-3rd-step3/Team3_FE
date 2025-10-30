@@ -110,6 +110,7 @@ export const getRoleDisplayName = (role: TeamMemberRole): string => {
     LEADER: '회장',
     VICE_LEADER: '부회장',
     MEMBER: '일반멤버',
+    MERCENARY: '용병',
   };
   return roleMapping[role] || '일반멤버';
 };
@@ -119,6 +120,7 @@ export const getRoleInKorean = (role: TeamMemberRole): string => {
     LEADER: '회장',
     VICE_LEADER: '부회장',
     MEMBER: '일반멤버',
+    MERCENARY: '용병',
   };
   return roleMapping[role] || '일반멤버';
 };
@@ -173,10 +175,10 @@ export const getJoinRequestStatusDisplayName = (
   const statusMapping: Record<TeamJoinRequest['status'] | 'ACCEPTED', string> =
     {
       PENDING: '대기중',
-      APPROVED: '승인',
-      REJECTED: '거절',
-      CANCELED: '취소',
-      ACCEPTED: '수락',
+      APPROVED: '승인됨',
+      REJECTED: '거절됨',
+      CANCELED: '취소됨',
+      ACCEPTED: '수락됨',
     };
   return statusMapping[status] || '대기중';
 };
@@ -186,9 +188,9 @@ export const USER_JOIN_WAITING_STATUS_MAPPING: Record<
   UserJoinWaitingItem['status']
 > = {
   대기중: 'PENDING',
-  승인: 'APPROVED',
-  거절: 'REJECTED',
-  취소: 'CANCELED',
+  승인됨: 'APPROVED',
+  거절됨: 'REJECTED',
+  취소됨: 'CANCELED',
 };
 
 export const getUserJoinWaitingStatusInEnglish = (
@@ -227,9 +229,9 @@ export const getUserJoinWaitingStatusDisplayName = (
 ): string => {
   const statusMapping: Record<UserJoinWaitingItem['status'], string> = {
     PENDING: '대기중',
-    APPROVED: '승인',
-    REJECTED: '거절',
-    CANCELED: '취소',
+    APPROVED: '승인됨',
+    REJECTED: '거절됨',
+    CANCELED: '취소됨',
   };
   return statusMapping[status] || '대기중';
 };

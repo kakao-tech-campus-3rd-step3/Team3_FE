@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { UseQueryOptions } from '@tanstack/react-query';
 import { memo } from 'react';
 import { Text, View } from 'react-native';
 
@@ -33,26 +32,17 @@ export default memo(function TodayMatchStatus({
     data: appliedMatches = [],
     isLoading: appliedLoading,
     error: appliedError,
-  } = useMyAppliedMatches({ enabled: !!teamId } as UseQueryOptions<
-    MatchWaitingHistoryResponseDto[],
-    Error
-  >);
+  } = useMyAppliedMatches();
   const {
     data: createdMatches = [],
     isLoading: createdLoading,
     error: createdError,
-  } = useMyCreatedMatches({ enabled: !!teamId } as UseQueryOptions<
-    MatchWaitingResponseDto[],
-    Error
-  >);
+  } = useMyCreatedMatches();
   const {
     data: recentMatches = [],
     isLoading: recentLoading,
     error: recentError,
-  } = useTeamRecentMatches('MATCHED', { enabled: !!teamId } as UseQueryOptions<
-    RecentMatchResponse[],
-    Error
-  >);
+  } = useTeamRecentMatches('MATCHED');
 
   const isLoading = appliedLoading || createdLoading || recentLoading;
   const hasError = appliedError || createdError || recentError;
@@ -99,13 +89,15 @@ export default memo(function TodayMatchStatus({
     }
   );
 
-  const todayRecentMatch = recentMatches.find((match: RecentMatchResponse) => {
-    const matchDate = new Date(match.matchDate).toISOString().split('T')[0];
-    return (
-      isMatchTodayAndNotExpired(matchDate, match.matchTime) &&
-      match.status === 'MATCHED'
-    );
-  });
+  const todayRecentMatch = (recentMatches as RecentMatchResponse[]).find(
+    (match: RecentMatchResponse) => {
+      const matchDate = new Date(match.matchDate).toISOString().split('T')[0];
+      return (
+        isMatchTodayAndNotExpired(matchDate, match.matchTime) &&
+        match.status === 'MATCHED'
+      );
+    }
+  );
 
   const todayMatch = todayRecentMatch || todayAppliedMatch || todayCreatedMatch;
 

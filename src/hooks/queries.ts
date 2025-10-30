@@ -188,6 +188,15 @@ export const queries = {
     key: (id: number) => ['mercenaryRecruitment', id] as const,
     fn: (id: number) => api.mercenaryApi.getMercenaryRecruitmentById(id),
   },
+  myMercenaryRecruitments: {
+    key: (
+      page: number = 0,
+      size: number = 10,
+      sort: string = 'matchDate,asc'
+    ) => ['myMercenaryRecruitments', page, size, sort] as const,
+    fn: (page: number = 0, size: number = 10, sort: string = 'matchDate,asc') =>
+      api.mercenaryApi.getMyMercenaryRecruitments(page, size, sort),
+  },
 } as const;
 
 export function useUserProfile() {
@@ -303,7 +312,7 @@ export function useTeamMatches(teamId: string | number) {
 
 export function useTeamRecentMatches(
   status?: string,
-  options?: UseQueryOptions<any, Error>
+  options?: UseQueryOptions<unknown, Error>
 ) {
   return useQuery({
     queryKey: queries.teamRecentMatches.key(status),
@@ -327,13 +336,13 @@ export function useTeamJoinWaitingList(
   });
 }
 
-export function useMyAppliedMatches(
-  options?: UseQueryOptions<MatchWaitingHistoryResponseDto[], Error>
-) {
+export function useMyAppliedMatches() {
+  const { data: userProfile } = useUserProfile();
+
   return useQuery<MatchWaitingHistoryResponseDto[], Error>({
     queryKey: queries.myAppliedMatches.key,
     queryFn: queries.myAppliedMatches.fn,
-    ...options,
+    enabled: !!userProfile?.teamId,
   });
 }
 
@@ -409,7 +418,7 @@ export function useLogout() {
     mutationFn: logout,
     onSuccess: async () => {
       await queryClient.clear();
-      router.replace('/(auth)/login');
+      router.replace(ROUTES.LOGIN);
     },
     onError: (error: unknown) => {
       console.error('로그아웃 실패:', error);
@@ -429,7 +438,7 @@ export function useLoginMutation() {
         data.accessTokenExpiresIn
       );
       await queryClient.clear();
-      router.replace('/(tabs)');
+      router.replace(ROUTES.HOME);
     },
     onError: (error: unknown) => {
       console.error('로그인 실패:', error);
@@ -449,7 +458,7 @@ export function useRegisterMutation() {
         data.accessTokenExpiresIn
       );
       await queryClient.clear();
-      router.replace('/(tabs)');
+      router.replace(ROUTES.HOME);
     },
     onError: (error: unknown) => {
       console.error('회원가입 실패:', error);
@@ -546,8 +555,13 @@ export function useRemoveMemberMutation() {
       teamId: string | number;
       userId: string | number;
     }) => api.teamMemberApi.removeMember(teamId, userId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queries.teamMembers.key(variables.teamId, 0, 10),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.team.key(variables.teamId),
+      });
     },
     onError: (error: unknown) => {
       console.error('멤버 삭제 실패:', error);
@@ -566,8 +580,13 @@ export function useUpdateMemberRoleMutation() {
       userId: string | number;
       role: TeamMemberRole;
     }) => api.teamMemberApi.updateMemberRole(teamId, userId, role),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queries.teamMembers.key(variables.teamId, 0, 10),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.team.key(variables.teamId),
+      });
     },
     onError: (error: unknown) => {
       console.error('멤버 역할 수정 실패:', error);
@@ -607,9 +626,11 @@ export function useDeleteTeamMutation() {
     mutationFn: (teamId: string | number) => {
       return api.teamDeleteApi.deleteTeam(teamId);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['team'] });
-      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
+    onSuccess: (_, teamId) => {
+      queryClient.invalidateQueries({ queryKey: queries.team.key(teamId) });
+      queryClient.invalidateQueries({
+        queryKey: queries.teamMembers.key(teamId, 0, 10),
+      });
     },
     onError: (error: unknown) => {
       console.error('[팀 삭제 Mutation] API 실패:', error);
@@ -620,9 +641,11 @@ export function useDeleteTeamMutation() {
 export function useTeamExitMutation() {
   return useMutation({
     mutationFn: (teamId: string | number) => api.teamExitApi.exitTeam(teamId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['team'] });
-      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
+    onSuccess: (_, teamId) => {
+      queryClient.invalidateQueries({ queryKey: queries.team.key(teamId) });
+      queryClient.invalidateQueries({
+        queryKey: queries.teamMembers.key(teamId, 0, 10),
+      });
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
       router.replace(ROUTES.TEAM_GUIDE);
     },
@@ -697,7 +720,7 @@ export function useApproveJoinRequestMutation() {
       role: '회장' | '부회장' | '일반멤버';
     }) =>
       api.teamJoinRequestApi.approveJoinRequest(teamId, requestId, { role }),
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       queryClient.invalidateQueries({
         queryKey: queries.teamJoinWaitingList.key(variables.teamId),
       });
@@ -998,6 +1021,17 @@ export function useMercenaryRecruitment(id: number) {
   });
 }
 
+export function useMyMercenaryRecruitments(
+  page: number = 0,
+  size: number = 10,
+  sort: string = 'matchDate,asc'
+) {
+  return useQuery({
+    queryKey: queries.myMercenaryRecruitments.key(page, size, sort),
+    queryFn: () => queries.myMercenaryRecruitments.fn(page, size, sort),
+  });
+}
+
 export function useUpdateMercenaryRecruitment() {
   const updateRecruitmentMutation = useMutation({
     mutationFn: ({
@@ -1013,6 +1047,9 @@ export function useUpdateMercenaryRecruitment() {
       });
       queryClient.invalidateQueries({
         queryKey: ['mercenaryRecruitment'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['myMercenaryRecruitments'],
       });
     },
     onError: (error: unknown) => {
@@ -1038,6 +1075,9 @@ export function useDeleteMercenaryRecruitment() {
       });
       queryClient.invalidateQueries({
         queryKey: ['mercenaryRecruitment'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['myMercenaryRecruitments'],
       });
     },
     onError: (error: unknown) => {

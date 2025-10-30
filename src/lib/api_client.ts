@@ -157,7 +157,20 @@ class ApiClient {
         const errorMessage = extractErrorMessage(error.response);
         const errorData = error.response.data || {};
 
-        throw new ApiError(errorMessage, error.response.status, errorData);
+        let detailedMessage = errorMessage;
+        if (errorData && typeof errorData === 'object') {
+          if ('message' in errorData && typeof errorData.message === 'string') {
+            detailedMessage = errorData.message;
+          } else if ('errors' in errorData && Array.isArray(errorData.errors)) {
+            detailedMessage = errorData.errors.join(', ');
+          }
+        }
+
+        throw new ApiError(
+          detailedMessage || errorMessage,
+          error.response.status,
+          errorData
+        );
       }
       throw error;
     }
