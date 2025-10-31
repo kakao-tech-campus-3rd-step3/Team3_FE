@@ -163,8 +163,8 @@ export const styles = StyleSheet.create({
     color: colors.red[600],
   },
   requestDetails: {
-    flexDirection: 'row',
-    gap: spacing.spacing4,
+    flexDirection: 'column',
+    gap: spacing.spacing2,
     marginBottom: spacing.spacing3,
   },
   requestDetailRow: {

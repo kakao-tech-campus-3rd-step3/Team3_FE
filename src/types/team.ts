@@ -218,6 +218,7 @@ export interface ApiTeamJoinRequest {
   applicantName: string;
   teamId: number;
   applicantId: number;
+  message?: string;
   status: string;
   decisionReason: string | null;
   decidedBy: number | null;
@@ -229,6 +230,7 @@ export interface TeamJoinRequest {
   applicantName: string;
   teamId: number;
   applicantId: number;
+  message?: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
   decisionReason: string | null;
   decidedBy: number | null;

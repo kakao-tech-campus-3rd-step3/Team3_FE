@@ -87,6 +87,10 @@ export const queries = {
     key: ['user', 'profile'] as const,
     fn: () => api.profileApi.getProfile(),
   },
+  userProfileById: {
+    key: (userId: string | number) => ['user', 'profile', userId] as const,
+    fn: (userId: string | number) => api.profileApi.getProfileById(userId),
+  },
   user: {
     key: ['user'] as const,
   },
@@ -206,6 +210,18 @@ export function useUserProfile() {
     queryKey: queries.userProfile.key,
     queryFn: queries.userProfile.fn,
     enabled: !!token && isInitialized,
+  });
+}
+
+export function useUserProfileById(userId: string | number | undefined) {
+  const { token, isInitialized } = useAuth();
+
+  return useQuery({
+    queryKey: userId
+      ? queries.userProfileById.key(userId)
+      : ['user', 'profile', 'undefined'],
+    queryFn: () => queries.userProfileById.fn(userId as string | number),
+    enabled: !!token && isInitialized && !!userId,
   });
 }
 
