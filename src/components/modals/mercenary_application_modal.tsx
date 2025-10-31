@@ -20,6 +20,7 @@ interface MercenaryApplicationModalProps {
   recruitment: RecruitmentResponse | null;
   onClose: () => void;
   onApply: (recruitmentId: number, message: string) => void;
+  isApplying?: boolean;
 }
 
 export default function MercenaryApplicationModal({
@@ -27,12 +28,14 @@ export default function MercenaryApplicationModal({
   recruitment,
   onClose,
   onApply,
+  isApplying = false,
 }: MercenaryApplicationModalProps) {
   const [applicationMessage, setApplicationMessage] = useState('');
 
   if (!recruitment) return null;
 
   const handleApply = () => {
+    if (isApplying) return;
     Alert.alert('용병 신청', '이 용병 모집에 신청하시겠습니까?', [
       { text: '취소', style: 'cancel' },
       {
@@ -190,11 +193,24 @@ export default function MercenaryApplicationModal({
           </ScrollView>
 
           <View style={styles.footer}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={onClose}
+              disabled={isApplying}
+            >
               <Text style={styles.cancelButtonText}>취소</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.applyButton} onPress={handleApply}>
-              <Text style={styles.applyButtonText}>신청하기</Text>
+            <TouchableOpacity
+              style={[
+                styles.applyButton,
+                isApplying && styles.applyButtonDisabled,
+              ]}
+              onPress={handleApply}
+              disabled={isApplying}
+            >
+              <Text style={styles.applyButtonText}>
+                {isApplying ? '신청 중' : '신청하기'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -389,6 +405,10 @@ const styles = StyleSheet.create({
     borderRadius: theme.spacing.spacing3,
     backgroundColor: theme.colors.brand.accent,
     alignItems: 'center',
+  },
+  applyButtonDisabled: {
+    backgroundColor: theme.colors.text.sub,
+    opacity: 0.7,
   },
   applyButtonText: {
     fontSize: 16,
