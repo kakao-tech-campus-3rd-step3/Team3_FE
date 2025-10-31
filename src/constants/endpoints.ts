@@ -54,6 +54,16 @@ export const TEAM_API = {
 export const TEAM_MEMBER_API = {
   GET_MEMBERS: (teamId: string | number, page: number = 0, size: number = 10) =>
     `/api/teams/${teamId}/users?page=${page}&size=${size}`,
+  GET_MEMBERS_SLICE: (
+    teamId: string | number,
+    cursorId?: number,
+    size: number = 10
+  ) => {
+    const query = new URLSearchParams();
+    if (cursorId !== undefined) query.append('cursorId', String(cursorId));
+    query.append('size', String(size));
+    return `/api/teams/${teamId}/users/slice?${query.toString()}`;
+  },
   GET_MEMBER: (teamId: string | number, userId: string | number) =>
     `/api/teams/${teamId}/users/${userId}`,
   UPDATE_ROLE: (teamId: string | number, userId: string | number) =>

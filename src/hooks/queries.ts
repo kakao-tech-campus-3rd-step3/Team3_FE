@@ -42,6 +42,7 @@ import type {
   RecruitmentCreateRequest,
   RecruitmentUpdateRequest,
   TeamReviewRequest,
+  TeamMemberSliceResponse,
 } from '@/src/types';
 import { formatDateForAPI } from '@/src/utils/date';
 
@@ -1068,5 +1069,29 @@ export function useCreateTeamReviewMutation() {
     onError: (error: unknown) => {
       console.error('팀 리뷰 등록 실패:', error);
     },
+  });
+}
+
+export function useTeamMembersInfinite(
+  teamId: string | number,
+  size: number = 10
+) {
+  return useInfiniteQuery<TeamMemberSliceResponse>({
+    queryKey: ['teamMembersSlice', teamId],
+    queryFn: ({ pageParam }) =>
+      api.teamMemberApi.getTeamMembersSlice(
+        teamId,
+        pageParam ? Number(pageParam) : undefined,
+        size
+      ),
+    getNextPageParam: lastPage => {
+      // hasNext가 true일 경우, 다음 커서 id 반환
+      if (lastPage.hasNext && lastPage.members.length > 0) {
+        return lastPage.members[lastPage.members.length - 1].id;
+      }
+      return undefined;
+    },
+    enabled: !!teamId,
+    initialPageParam: undefined, // 첫 페이지는 cursorId 없음
   });
 }

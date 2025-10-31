@@ -165,6 +165,16 @@ export interface TeamMemberPageResponse {
   empty: boolean;
 }
 
+export interface ApiTeamMemberSliceResponse {
+  members: ApiTeamMember[];
+  hasNext: boolean;
+}
+
+export interface TeamMemberSliceResponse {
+  members: TeamMember[];
+  hasNext: boolean;
+}
+
 export interface TeamManagementData {
   team: {
     id: number;

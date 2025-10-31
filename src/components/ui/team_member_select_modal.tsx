@@ -8,14 +8,16 @@ import {
   StyleSheet,
   BackHandler,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 
+import { useTeamMembersInfinite } from '@/src/hooks/queries'; // ✅ 추가
 import { theme } from '@/src/theme';
 import { TeamMember } from '@/src/types/team';
 
 interface TeamMemberSelectModalProps {
   visible: boolean;
-  members: TeamMember[];
+  members: TeamMember[]; // 기존 유지 (초기용)
   position: string | null;
   onClose: () => void;
   onSelect?: (memberId: number, memberName: string) => void;
@@ -45,24 +47,25 @@ export const TeamMemberSelectModal = ({
   const [selected, setSelected] = useState<Record<number, boolean>>({});
   const [filter, setFilter] = useState<string>('전체');
 
-  // ✅ 포지션 필터 옵션
+  // ✅ teamId는 실제 앱에서는 props나 context에서 받아야 함 (여기선 1로 고정)
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useTeamMembersInfinite(1, 10);
+
+  // ✅ 서버로부터 모든 페이지 데이터 병합
+  const allMembers = useMemo(
+    () => (data ? data.pages.flatMap(page => page.members) : members),
+    [data, members]
+  );
+
+  // ✅ 포지션 필터
   const positionFilters = ['전체', 'GK', 'DF', 'MF', 'FW'];
 
-  const [page, setPage] = useState(1);
-  const PAGE_SIZE = 15;
-
-  // ✅ 필터된 선수 목록
+  // ✅ 필터링된 리스트
   const filteredMembers = useMemo(() => {
-    const filtered =
-      filter === '전체'
-        ? members
-        : members.filter(m => m.position?.toUpperCase().startsWith(filter));
-    return filtered.slice(0, page * PAGE_SIZE);
-  }, [filter, members, page]);
-
-  const handleLoadMore = () => {
-    if (page * PAGE_SIZE < members.length) setPage(prev => prev + 1);
-  };
+    return filter === '전체'
+      ? allMembers
+      : allMembers.filter(m => m.position?.toUpperCase().startsWith(filter));
+  }, [filter, allMembers]);
 
   useEffect(() => {
     if (visible && multiple) {
@@ -116,7 +119,7 @@ export const TeamMemberSelectModal = ({
   };
 
   const confirmSelection = () => {
-    const selectedList = members
+    const selectedList = allMembers
       .filter(m => selected[m.id])
       .map(m => ({ id: m.id, name: m.name }));
     onMultiSelect?.(selectedList);
@@ -165,7 +168,11 @@ export const TeamMemberSelectModal = ({
             showsVerticalScrollIndicator
             style={{ maxHeight: '70%' }}
             contentContainerStyle={{ paddingBottom: theme.spacing.spacing6 }}
-            onEndReached={handleLoadMore}
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
+              }
+            }}
             onEndReachedThreshold={0.3}
             renderItem={({ item }) => {
               const isSelected = !!selected[item.id];
@@ -200,12 +207,10 @@ export const TeamMemberSelectModal = ({
                         {item.name}
                         {multiple && isSelected ? ' ✓' : ''}
                       </Text>
-                      {/* ✅ 포지션 표시 */}
                       <Text style={styles.memberPosition}>
                         {item.position || '포지션 미등록'}
                       </Text>
                     </View>
-
                     {isAssigned && (
                       <Text style={styles.assignedTag}>
                         선발 ({assignedPosition || '?'})
@@ -218,12 +223,25 @@ export const TeamMemberSelectModal = ({
                 </TouchableOpacity>
               );
             }}
+            ListFooterComponent={
+              isFetchingNextPage ? (
+                <ActivityIndicator
+                  style={{ marginVertical: 10 }}
+                  size="small"
+                  color={theme.colors.gray[400]}
+                />
+              ) : null
+            }
             ListEmptyComponent={
-              <View style={{ paddingVertical: theme.spacing.spacing5 }}>
-                <Text style={styles.emptyText}>
-                  선택한 포지션에 해당하는 선수가 없습니다.
-                </Text>
-              </View>
+              isLoading ? (
+                <ActivityIndicator style={{ marginTop: 20 }} />
+              ) : (
+                <View style={{ paddingVertical: 20 }}>
+                  <Text style={styles.emptyText}>
+                    선택 가능한 팀원이 없습니다.
+                  </Text>
+                </View>
+              )
             }
           />
 
