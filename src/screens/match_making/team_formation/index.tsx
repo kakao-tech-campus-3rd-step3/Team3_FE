@@ -10,20 +10,25 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 
 import Dropdown from '@/src/components/dropdown';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { TeamMemberSelectModal } from '@/src/components/ui/team_member_select_modal';
 import { FORMATION_POSITIONS, FormationType } from '@/src/constants/formations';
-import { useTeamMembers } from '@/src/hooks/queries';
+import { useTeamMembers, useUserProfile } from '@/src/hooks/queries';
 
 import { style } from './team_formation_style';
 
 export default function TeamFormationScreen() {
   const router = useRouter();
-  const { data: teamMembersResponse } = useTeamMembers(1);
-  const teamMembers = teamMembersResponse?.content ?? [];
+  // ✅ 현재 로그인한 유저 정보에서 teamId 가져오기
+  const { data: userProfile } = useUserProfile();
+  const teamId = userProfile?.teamId ?? 0; // undefined 방지 (enabled 옵션과 함께 사용)
+
+  // ✅ teamId가 유효할 때만 쿼리 실행됨
+  const { members: teamMembers, isLoading } = useTeamMembers(teamId, 0, 10);
 
   const [selectedFormation, setSelectedFormation] =
     useState<FormationType>('4-3-3');
@@ -110,159 +115,169 @@ export default function TeamFormationScreen() {
     >
       <CustomHeader title="라인업 구성" />
 
-      <ScrollView
-        style={style.scrollContainer}
-        contentContainerStyle={style.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* 📋 포메이션 선택 카드 */}
-        <View style={style.cardContainer}>
-          <View style={style.card}>
-            <View style={style.cardHeader}>
-              <Text style={style.cardTitle}>📋 포메이션 선택</Text>
-            </View>
-            <View style={style.cardContent}>
-              <Dropdown
-                items={
-                  [
-                    '4-3-3',
-                    '4-4-2',
-                    '3-5-2',
-                    '4-1-4-1',
-                    '4-2-3-1',
-                    '4-1-2-3',
-                    '5-3-2',
-                  ] as const
-                }
-                value={selectedFormation}
-                onChange={v => setSelectedFormation(v as FormationType)}
-                placeholder="포메이션 선택"
-              />
-            </View>
-          </View>
+      {isLoading ? (
+        // ✅ Hook 순서가 바뀌지 않도록, return 대신 조건부 렌더링
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <ActivityIndicator size="large" color="#007AFF" />
+          <Text>팀 정보를 불러오는 중...</Text>
         </View>
-
-        {/* ⚽ 선발 라인업 카드 */}
-        <View style={style.fieldCard}>
-          <View style={style.cardHeader}>
-            <Text style={style.cardTitle}>⚽ 선발 라인업</Text>
-          </View>
-
-          {/* cardContent로 한번 더 감싸지 말고 바로 배경 이미지를 둔다 */}
-          <ImageBackground
-            source={require('@/assets/images/field.png')}
-            style={style.field}
-            resizeMode="cover"
-          >
-            {positions.map(pos => {
-              const isSelected = selectedPosition === pos.id;
-              const assigned = formationAssignments[pos.id];
-              const isEmpty = !assigned;
-
-              return (
-                <TouchableOpacity
-                  key={pos.id}
-                  style={[
-                    {
-                      position: 'absolute',
-                      width: JERSEY_SIZE,
-                      height: JERSEY_SIZE,
-                      left: `${pos.x}%`,
-                      top: `${pos.y}%`,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      transform: [
-                        { translateX: -JERSEY_SIZE / 2 },
-                        { translateY: -JERSEY_SIZE / 2 },
-                        { scale: isSelected ? 1.15 : 1 },
-                      ],
-                    },
-                    isSelected
-                      ? style.playerCircleSelected
-                      : style.playerCircleUnselected,
-                  ]}
-                  onPress={() => handleSelectPosition(pos.id)}
-                  activeOpacity={0.8}
-                >
-                  <Image
-                    source={require('@/assets/images/jersey.png')}
-                    style={[
-                      style.jersey,
-                      { width: JERSEY_SIZE, height: JERSEY_SIZE },
-                    ]}
-                    resizeMode="contain"
-                  />
-                  <Text style={style.playerName}>{assigned || pos.id}</Text>
-                  {isEmpty && <Text style={style.warningIcon}>❗</Text>}
-                </TouchableOpacity>
-              );
-            })}
-          </ImageBackground>
-        </View>
-
-        {/* 🧢 후보 라인업 카드 */}
-        <View style={style.fieldCard}>
-          <View style={style.cardHeader}>
-            <Text style={style.cardTitle}>↔️ 후보 라인업</Text>
-          </View>
-
-          <View style={style.cardContent}>
-            {benchMembers.length > 0 ? (
-              <View style={style.benchListContainer}>
-                {benchMembers.map(member => {
-                  // teamMembers에서 상세 정보 찾아오기
-                  const info = teamMembers.find(m => m.id === member.id);
-                  return (
-                    <View key={member.id} style={style.benchItem}>
-                      <Text style={style.benchName}>{member.name}</Text>
-                      <Text style={style.benchPosition}>
-                        {info?.position || '포지션 미등록'}
-                      </Text>
-                    </View>
-                  );
-                })}
-
-                <TouchableOpacity
-                  style={style.addMoreButton}
-                  onPress={() => setShowBenchModal(true)}
-                >
-                  <Text style={style.addMoreButtonText}>＋ 추가하기</Text>
-                </TouchableOpacity>
+      ) : (
+        <ScrollView
+          style={style.scrollContainer}
+          contentContainerStyle={style.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* 📋 포메이션 선택 카드 */}
+          <View style={style.cardContainer}>
+            <View style={style.card}>
+              <View style={style.cardHeader}>
+                <Text style={style.cardTitle}>📋 포메이션 선택</Text>
               </View>
-            ) : (
-              <>
-                <Text style={style.placeholderText}>
-                  후보 선수를 선택해주세요
-                </Text>
-                <TouchableOpacity
-                  style={style.addButton}
-                  onPress={() => setShowBenchModal(true)}
-                >
-                  <Text style={style.addButtonText}>＋ 후보 추가</Text>
-                </TouchableOpacity>
-              </>
-            )}
+              <View style={style.cardContent}>
+                <Dropdown
+                  items={
+                    [
+                      '4-3-3',
+                      '4-4-2',
+                      '3-5-2',
+                      '4-1-4-1',
+                      '4-2-3-1',
+                      '4-1-2-3',
+                      '5-3-2',
+                    ] as const
+                  }
+                  value={selectedFormation}
+                  onChange={v => setSelectedFormation(v as FormationType)}
+                  placeholder="포메이션 선택"
+                />
+              </View>
+            </View>
           </View>
-        </View>
 
-        {/* ✅ 다음 버튼 카드 */}
-        <View style={style.nextButtonCard}>
-          <TouchableOpacity
-            style={[
-              style.nextButton,
-              !isFormationComplete && style.nextButtonDisabled,
-            ]}
-            onPress={handleNext}
-            disabled={!isFormationComplete}
-          >
-            <Text style={style.nextButtonText}>
-              {isFormationComplete
-                ? '다음으로'
-                : `(${filledCount}/11) 포지션 배정`}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+          {/* ⚽ 선발 라인업 카드 */}
+          <View style={style.fieldCard}>
+            <View style={style.cardHeader}>
+              <Text style={style.cardTitle}>⚽ 선발 라인업</Text>
+            </View>
+
+            {/* cardContent로 한번 더 감싸지 말고 바로 배경 이미지를 둔다 */}
+            <ImageBackground
+              source={require('@/assets/images/field.png')}
+              style={style.field}
+              resizeMode="cover"
+            >
+              {positions.map(pos => {
+                const isSelected = selectedPosition === pos.id;
+                const assigned = formationAssignments[pos.id];
+                const isEmpty = !assigned;
+
+                return (
+                  <TouchableOpacity
+                    key={pos.id}
+                    style={[
+                      {
+                        position: 'absolute',
+                        width: JERSEY_SIZE,
+                        height: JERSEY_SIZE,
+                        left: `${pos.x}%`,
+                        top: `${pos.y}%`,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        transform: [
+                          { translateX: -JERSEY_SIZE / 2 },
+                          { translateY: -JERSEY_SIZE / 2 },
+                          { scale: isSelected ? 1.15 : 1 },
+                        ],
+                      },
+                      isSelected
+                        ? style.playerCircleSelected
+                        : style.playerCircleUnselected,
+                    ]}
+                    onPress={() => handleSelectPosition(pos.id)}
+                    activeOpacity={0.8}
+                  >
+                    <Image
+                      source={require('@/assets/images/jersey.png')}
+                      style={[
+                        style.jersey,
+                        { width: JERSEY_SIZE, height: JERSEY_SIZE },
+                      ]}
+                      resizeMode="contain"
+                    />
+                    <Text style={style.playerName}>{assigned || pos.id}</Text>
+                    {isEmpty && <Text style={style.warningIcon}>❗</Text>}
+                  </TouchableOpacity>
+                );
+              })}
+            </ImageBackground>
+          </View>
+
+          {/* 🧢 후보 라인업 카드 */}
+          <View style={style.fieldCard}>
+            <View style={style.cardHeader}>
+              <Text style={style.cardTitle}>↔️ 후보 라인업</Text>
+            </View>
+
+            <View style={style.cardContent}>
+              {benchMembers.length > 0 ? (
+                <View style={style.benchListContainer}>
+                  {benchMembers.map(member => {
+                    // teamMembers에서 상세 정보 찾아오기
+                    const info = teamMembers.find(m => m.id === member.id);
+                    return (
+                      <View key={member.id} style={style.benchItem}>
+                        <Text style={style.benchName}>{member.name}</Text>
+                        <Text style={style.benchPosition}>
+                          {info?.position || '포지션 미등록'}
+                        </Text>
+                      </View>
+                    );
+                  })}
+
+                  <TouchableOpacity
+                    style={style.addMoreButton}
+                    onPress={() => setShowBenchModal(true)}
+                  >
+                    <Text style={style.addMoreButtonText}>＋ 추가하기</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <>
+                  <Text style={style.placeholderText}>
+                    후보 선수를 선택해주세요
+                  </Text>
+                  <TouchableOpacity
+                    style={style.addButton}
+                    onPress={() => setShowBenchModal(true)}
+                  >
+                    <Text style={style.addButtonText}>＋ 후보 추가</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          </View>
+
+          {/* ✅ 다음 버튼 카드 */}
+          <View style={style.nextButtonCard}>
+            <TouchableOpacity
+              style={[
+                style.nextButton,
+                !isFormationComplete && style.nextButtonDisabled,
+              ]}
+              onPress={handleNext}
+              disabled={!isFormationComplete}
+            >
+              <Text style={style.nextButtonText}>
+                {isFormationComplete
+                  ? '다음으로'
+                  : `(${filledCount}/11) 포지션 배정`}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      )}
 
       {/* 팀원 선택 모달 */}
       {showModal && (
