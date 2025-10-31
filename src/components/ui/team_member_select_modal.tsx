@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import { useTeamMembersInfinite } from '@/src/hooks/queries'; // ✅ 추가
+import { useTeamMembersInfinite, useUserProfile } from '@/src/hooks/queries'; // ✅ 추가
 import { theme } from '@/src/theme';
 import { TeamMember } from '@/src/types/team';
 
@@ -47,9 +47,13 @@ export const TeamMemberSelectModal = ({
   const [selected, setSelected] = useState<Record<number, boolean>>({});
   const [filter, setFilter] = useState<string>('전체');
 
-  // ✅ teamId는 실제 앱에서는 props나 context에서 받아야 함 (여기선 1로 고정)
+  // ✅ 현재 로그인한 사용자의 팀 ID 가져오기
+  const { data: userProfile } = useUserProfile();
+  const teamId = userProfile?.teamId ?? 0;
+
+  // ✅ 무한스크롤 훅에 teamId 적용 (하드코딩 제거)
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useTeamMembersInfinite(1, 10);
+    useTeamMembersInfinite(teamId, 10);
 
   // ✅ 서버로부터 모든 페이지 데이터 병합
   const allMembers = useMemo(
