@@ -32,6 +32,20 @@ export const getMercenaryRecruitmentById = async (
   return response;
 };
 
+export const getMyMercenaryRecruitments = async (
+  page: number = 0,
+  size: number = 10,
+  sort: string = 'matchDate,asc'
+): Promise<RecruitmentListResponse> => {
+  const response = await apiClient.get<RecruitmentListResponse>(
+    MERCENARY_API.GET_MY_RECRUITMENTS,
+    {
+      params: { page, size, sort },
+    }
+  );
+  return response;
+};
+
 export const createMercenaryRecruitment = async (
   data: RecruitmentCreateRequest
 ): Promise<RecruitmentResponse> => {
@@ -84,6 +98,7 @@ export const getTeamReviews = async (
 export const mercenaryApi = {
   getMercenaryRecruitments,
   getMercenaryRecruitmentById,
+  getMyMercenaryRecruitments,
   createMercenaryRecruitment,
   updateMercenaryRecruitment,
   deleteMercenaryRecruitment,

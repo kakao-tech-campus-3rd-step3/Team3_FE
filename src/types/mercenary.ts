@@ -19,6 +19,7 @@ export interface RecruitmentResponse {
   recruitmentId: number;
   teamId: number;
   teamName: string;
+  universityName: string;
   matchDate: string;
   matchTime: string;
   message: string;

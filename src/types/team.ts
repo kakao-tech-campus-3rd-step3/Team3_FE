@@ -1,6 +1,6 @@
 export type TeamType = '중앙동아리' | '과동아리' | '기타';
 export type SkillLevel = '아마추어' | '세미프로' | '프로';
-export type TeamMemberRole = 'LEADER' | 'VICE_LEADER' | 'MEMBER';
+export type TeamMemberRole = 'LEADER' | 'VICE_LEADER' | 'MEMBER' | 'MERCENARY';
 
 export const TEAM_TYPES: TeamType[] = ['중앙동아리', '과동아리', '기타'];
 export const SKILL_LEVELS: SkillLevel[] = ['아마추어', '세미프로', '프로'];
@@ -275,6 +275,7 @@ export interface TeamJoinRequestPageResponse {
 
 export interface JoinWaitingRequest {
   message?: string;
+  isMercenary?: boolean;
 }
 
 export interface JoinWaitingResponse {

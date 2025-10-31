@@ -130,6 +130,7 @@ export const USER_JOIN_WAITING_API = {
 export const MERCENARY_API = {
   GET_RECRUITMENTS: '/api/mercenaries/recruitments',
   GET_RECRUITMENT_BY_ID: (id: number) => `/api/mercenaries/recruitments/${id}`,
+  GET_MY_RECRUITMENTS: '/api/mercenaries/recruitments/me',
   CREATE_RECRUITMENT: '/api/mercenaries/recruitments',
   UPDATE_RECRUITMENT: (id: number) => `/api/mercenaries/recruitments/${id}`,
   DELETE_RECRUITMENT: (id: number) => `/api/mercenaries/recruitments/${id}`,

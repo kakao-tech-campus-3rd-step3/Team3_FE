@@ -118,7 +118,7 @@ export default memo(function TeamRecentMatchesScreen({
     return <GlobalErrorFallback error={error} resetError={() => refetch()} />;
   }
 
-  const currentTeamMatches = matches || [];
+  const currentTeamMatches = (matches || []) as RecentMatchResponse[];
 
   if (!matches) {
     return (

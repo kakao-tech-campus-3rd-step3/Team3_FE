@@ -4,7 +4,7 @@ import {
   MATCH_REQUEST_API,
   MATCH_WAITING_API,
 } from '@/src/constants/endpoints';
-import { apiClient } from '@/src/lib/api_client';
+import { apiClient, ApiError } from '@/src/lib/api_client';
 import {
   Match,
   MatchCreateRequestDto,
@@ -128,8 +128,7 @@ export async function getMatchWaitingList(
   try {
     const response = await apiClient.get<PageResponse>(url);
     return response.content || [];
-  } catch (error) {
-    console.error('🌐 [API] getMatchWaitingList 에러:', error);
+  } catch (error: any) {
     throw error;
   }
 }
@@ -183,6 +182,9 @@ export async function getMyAppliedMatches(): Promise<
 
     return response.content || [];
   } catch (error) {
+    if (error instanceof ApiError && error.message.includes('팀 멤버')) {
+      return [];
+    }
     console.error('getMyAppliedMatches API 에러:', error);
     throw error;
   }

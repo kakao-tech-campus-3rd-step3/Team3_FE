@@ -69,3 +69,14 @@ export const formatTimeForAPI = (date: Date): string => {
   const seconds = String(date.getSeconds()).padStart(2, '0');
   return `${hours}:${minutes}:${seconds}`;
 };
+
+export const parseDateFromAPI = (dateString: string): Date => {
+  return new Date(dateString);
+};
+
+export const parseTimeFromAPI = (timeString: string): Date => {
+  const [hours, minutes, seconds] = timeString.split(':').map(Number);
+  const date = new Date();
+  date.setHours(hours || 0, minutes || 0, seconds || 0, 0);
+  return date;
+};

@@ -32,6 +32,8 @@ export default memo(function MemberListSection({
         return theme.colors.blue[600];
       case 'MEMBER':
         return theme.colors.green[600];
+      case 'MERCENARY':
+        return theme.colors.grass[600];
       default:
         return theme.colors.gray[500];
     }

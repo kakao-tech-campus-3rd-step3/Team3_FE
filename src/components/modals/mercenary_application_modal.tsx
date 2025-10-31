@@ -11,6 +11,7 @@ import {
   Alert,
 } from 'react-native';
 
+import { convertPositionToKorean } from '@/src/constants/positions';
 import { theme } from '@/src/theme';
 import { RecruitmentResponse } from '@/src/types/mercenary';
 
@@ -18,11 +19,7 @@ interface MercenaryApplicationModalProps {
   visible: boolean;
   recruitment: RecruitmentResponse | null;
   onClose: () => void;
-  onApply: (
-    recruitmentId: number,
-    message: string,
-    shareKakaoId: boolean
-  ) => void;
+  onApply: (recruitmentId: number, message: string) => void;
 }
 
 export default function MercenaryApplicationModal({
@@ -32,49 +29,19 @@ export default function MercenaryApplicationModal({
   onApply,
 }: MercenaryApplicationModalProps) {
   const [applicationMessage, setApplicationMessage] = useState('');
-  const [shareKakaoId, setShareKakaoId] = useState(false);
 
   if (!recruitment) return null;
 
   const handleApply = () => {
-    if (!applicationMessage.trim()) {
-      Alert.alert('알림', '신청 메시지를 입력해주세요.');
-      return;
-    }
-
     Alert.alert('용병 신청', '이 용병 모집에 신청하시겠습니까?', [
       { text: '취소', style: 'cancel' },
       {
         text: '신청',
         onPress: () => {
-          onApply(recruitment.recruitmentId, applicationMessage, shareKakaoId);
-          setApplicationMessage('');
-          setShareKakaoId(false);
-          onClose();
+          onApply(recruitment.recruitmentId, applicationMessage.trim() || '');
         },
       },
     ]);
-  };
-
-  const convertPositionToKorean = (position: string) => {
-    const positionMap: { [key: string]: string } = {
-      GK: '골키퍼',
-      CB: '센터백',
-      LB: '레프트백',
-      RB: '라이트백',
-      LWB: '레프트 윙백',
-      RWB: '라이트 윙백',
-      CDM: '수비형 미드필더',
-      CM: '중앙 미드필더',
-      CAM: '공격형 미드필더',
-      LM: '레프트 미드필더',
-      RM: '라이트 미드필더',
-      LW: '레프트 윙어',
-      RW: '라이트 윙어',
-      CF: '중앙 공격수',
-      ST: '스트라이커',
-    };
-    return positionMap[position] || position;
   };
 
   const getSkillLevelBadgeStyle = (skillLevel: string) => {
@@ -186,6 +153,9 @@ export default function MercenaryApplicationModal({
 
               <View style={styles.teamInfo}>
                 <Text style={styles.teamName}>{recruitment.teamName}</Text>
+                <Text style={styles.universityName}>
+                  {recruitment.universityName}
+                </Text>
               </View>
 
               {recruitment.message && (
@@ -197,29 +167,11 @@ export default function MercenaryApplicationModal({
             </View>
 
             <View style={styles.kakaoIdSection}>
-              <Text style={styles.kakaoIdTitle}>카카오톡 아이디 공개</Text>
-              <TouchableOpacity
-                style={styles.optionRow}
-                onPress={() => setShareKakaoId(!shareKakaoId)}
-              >
-                <View style={styles.optionContent}>
-                  <Text style={styles.optionTitle}>카카오톡 아이디 공개</Text>
-                  <Text style={styles.optionDescription}>
-                    팀장이 직접 연락할 수 있습니다
-                  </Text>
-                </View>
-                <View
-                  style={[styles.toggle, shareKakaoId && styles.toggleActive]}
-                >
-                  <View
-                    style={
-                      shareKakaoId
-                        ? styles.toggleThumb
-                        : styles.toggleThumbInactive
-                    }
-                  />
-                </View>
-              </TouchableOpacity>
+              <View style={styles.infoBox}>
+                <Text style={styles.infoText}>
+                  신청 시 카카오톡 아이디가 자동으로 공개됩니다.
+                </Text>
+              </View>
             </View>
 
             <View style={styles.applicationSection}>
@@ -352,8 +304,14 @@ const styles = StyleSheet.create({
   },
   teamName: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
     color: theme.colors.text.main,
+    marginBottom: theme.spacing.spacing1,
+  },
+  universityName: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: theme.colors.text.sub,
   },
   messageSection: {
     paddingTop: theme.spacing.spacing3,
@@ -392,72 +350,18 @@ const styles = StyleSheet.create({
   kakaoIdSection: {
     marginBottom: theme.spacing.spacing4,
   },
-  kakaoIdTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing3,
-  },
-  optionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: theme.spacing.spacing3,
-    paddingHorizontal: theme.spacing.spacing3,
+  infoBox: {
     backgroundColor: theme.colors.background.sub,
     borderRadius: theme.spacing.spacing3,
-  },
-  optionContent: {
-    flex: 1,
-  },
-  optionTitle: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing1,
-  },
-  optionDescription: {
-    fontSize: 12,
-    color: theme.colors.text.sub,
-    lineHeight: 16,
-  },
-  toggle: {
-    width: 50,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: theme.colors.gray[300],
-    justifyContent: 'center',
-    paddingHorizontal: 2,
-    position: 'relative',
-  },
-  toggleActive: {
-    backgroundColor: theme.colors.blue[500],
-  },
-  toggleThumb: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: theme.colors.white,
-    shadowColor: theme.colors.gray[900],
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0,
-    shadowRadius: 3,
-    elevation: 0,
-    position: 'absolute',
-    right: 2,
-  },
-  toggleThumbInactive: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: theme.colors.white,
+    padding: theme.spacing.spacing3,
     borderWidth: 1,
-    borderColor: theme.colors.gray[400],
-    position: 'absolute',
-    left: 2,
+    borderColor: theme.colors.border.light,
+  },
+  infoText: {
+    fontSize: 13,
+    color: theme.colors.text.sub,
+    lineHeight: 18,
+    textAlign: 'center',
   },
   footer: {
     flexDirection: 'row',
