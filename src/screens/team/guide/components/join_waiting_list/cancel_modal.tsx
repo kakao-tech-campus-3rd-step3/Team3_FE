@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ROUTES } from '@/src/constants/routes';
 import { useTeamJoinRequestMutation } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/team/guide/components/join_waiting_list/styles';
 import { colors } from '@/src/theme';
@@ -67,7 +68,7 @@ export default function CancelModal({
                       text: '확인',
                       onPress: () => {
                         onOuterModalClose();
-                        router.push('/(tabs)');
+                        router.push(ROUTES.TABS);
                       },
                     },
                   ]);

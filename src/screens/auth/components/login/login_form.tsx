@@ -11,6 +11,7 @@ import {
   Alert,
 } from 'react-native';
 
+import { ROUTES } from '@/src/constants/routes';
 import { useLoginMutation } from '@/src/hooks/queries';
 import { useLoginForm } from '@/src/hooks/useLoginForm';
 import { theme } from '@/src/theme';
@@ -114,7 +115,7 @@ export default function LoginForm() {
 
       <TouchableOpacity
         style={styles.forgotPassword}
-        onPress={() => router.push('/(auth)/forgot_password')}
+        onPress={() => router.push(ROUTES.FORGOT_PASSWORD)}
       >
         <Text style={styles.forgotPasswordText}>비밀번호를 잊으셨나요?</Text>
       </TouchableOpacity>

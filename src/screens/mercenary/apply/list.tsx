@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Card from '@/src/components/card/card';
+import { ROUTES } from '@/src/constants/routes';
 import { theme } from '@/src/theme';
 import { getDateOptions } from '@/src/utils/date';
 
@@ -37,7 +38,8 @@ export default function MercenaryFindScreen() {
       { text: '취소', style: 'cancel' },
       {
         text: '신청',
-        onPress: () => router.push(`/mercenary/apply?matchId=${matchId}`),
+        onPress: () =>
+          router.push(`${ROUTES.MERCENARY_APPLY}?matchId=${matchId}`),
       },
     ]);
   };

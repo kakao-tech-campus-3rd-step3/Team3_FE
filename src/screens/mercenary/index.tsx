@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RecruitmentCard } from '@/src/components/mercenary/recruitment_card';
 import MercenaryApplicationModal from '@/src/components/modals/mercenary_application_modal';
 import { convertPositionToKorean } from '@/src/constants/positions';
+import { ROUTES } from '@/src/constants/routes';
 import { UNIVERSITIES } from '@/src/constants/universities';
 import {
   useMercenaryRecruitments,
@@ -162,7 +163,7 @@ export default function MercenaryMainScreen() {
         <Text style={newStyles.headerTitle}>용병 서비스</Text>
         <TouchableOpacity
           style={newStyles.addButton}
-          onPress={() => router.push('/mercenary/create')}
+          onPress={() => router.push(ROUTES.MERCENARY_CREATE)}
         >
           <Ionicons name="add" size={24} color={theme.colors.brand.main} />
         </TouchableOpacity>
