@@ -87,8 +87,19 @@ export default function TeamFormationScreen() {
     setBenchMembers(prev => prev.filter(m => m.name !== name));
   };
 
-  const filledCount = Object.keys(formationAssignments).length;
-  const isFormationComplete = filledCount >= 11;
+  const filledCount = Object.values(formationAssignments).filter(
+    name => name !== null
+  ).length;
+
+  const isFormationComplete = filledCount === 11;
+
+  const handleFormationChange = (newFormation: FormationType) => {
+    setSelectedFormation(newFormation);
+    setFormationAssignments({});
+    setSelectedPosition(null);
+    setShowModal(false);
+    setBenchMembers([]);
+  };
 
   const handleNext = () => {
     if (!isFormationComplete) {
@@ -149,7 +160,7 @@ export default function TeamFormationScreen() {
                     ] as const
                   }
                   value={selectedFormation}
-                  onChange={v => setSelectedFormation(v as FormationType)}
+                  onChange={v => handleFormationChange(v as FormationType)}
                   placeholder="포메이션 선택"
                 />
               </View>
