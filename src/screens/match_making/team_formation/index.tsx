@@ -333,7 +333,7 @@ export default function TeamFormationScreen() {
             setFormationAssignments(prev => {
               const updated = { ...prev };
               Object.keys(updated).forEach(key => {
-                if (updated[key] === name) delete updated[key];
+                if (updated[key] === name) updated[key] = null;
               });
               return updated;
             });
