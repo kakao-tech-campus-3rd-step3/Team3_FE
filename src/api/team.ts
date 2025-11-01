@@ -108,7 +108,7 @@ export const teamMemberApi = {
     size: number = 10
   ): Promise<TeamMemberSliceResponse> => {
     try {
-      const apiResponse = await apiClient.get<any>(
+      const apiResponse = await apiClient.get<ApiTeamMemberPageResponse>(
         TEAM_MEMBER_API.GET_MEMBERS_SLICE(teamId, cursorId, size)
       );
 
