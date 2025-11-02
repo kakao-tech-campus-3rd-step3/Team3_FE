@@ -9,6 +9,10 @@ import {
   ScrollView,
   TextInput,
   Alert,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Platform,
 } from 'react-native';
 
 import { convertPositionToKorean } from '@/src/constants/positions';
@@ -49,37 +53,34 @@ export default function MercenaryApplicationModal({
 
   const getSkillLevelBadgeStyle = (skillLevel: string) => {
     switch (skillLevel) {
-      case 'AMATEUR':
+      case 'PRO':
         return {
-          backgroundColor: theme.colors.success + '20',
-          color: theme.colors.success,
-          text: '아마추어',
+          backgroundColor: '#F4E4BC',
+          color: theme.colors.text.main,
+          text: '프로',
         };
       case 'SEMI_PRO':
         return {
-          backgroundColor: theme.colors.warning + '20',
-          color: theme.colors.warning,
+          backgroundColor: '#E8E8E8',
+          color: theme.colors.text.main,
           text: '세미프로',
         };
-      case 'PRO':
+      case 'AMATEUR':
         return {
-          backgroundColor: theme.colors.error + '20',
-          color: theme.colors.error,
-          text: '프로',
+          backgroundColor: '#E6D2B8',
+          color: theme.colors.text.main,
+          text: '아마추어',
         };
       default:
         return {
-          backgroundColor: theme.colors.text.sub + '20',
-          color: theme.colors.text.sub,
+          backgroundColor: '#E6D2B8',
+          color: theme.colors.text.main,
           text: skillLevel,
         };
     }
   };
 
-  const formatTime = (time: string) => {
-    return time.substring(0, 5);
-  };
-
+  const formatTime = (time: string) => time.substring(0, 5);
   const skillLevelStyle = getSkillLevelBadgeStyle(recruitment.skillLevel);
 
   return (
@@ -90,130 +91,150 @@ export default function MercenaryApplicationModal({
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
-          <View style={styles.header}>
-            <Text style={styles.title}>용병 신청</Text>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color={theme.colors.text.main} />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            style={styles.content}
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.recruitmentInfo}>
-              <View style={styles.recruitmentHeader}>
-                <Text style={styles.positionTitle}>
-                  {convertPositionToKorean(recruitment.position)}
-                </Text>
-                <View style={styles.badgesContainer}>
-                  <View
-                    style={[
-                      styles.skillBadge,
-                      { backgroundColor: skillLevelStyle.backgroundColor },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.skillBadgeText,
-                        { color: skillLevelStyle.color },
-                      ]}
-                    >
-                      {skillLevelStyle.text}
-                    </Text>
-                  </View>
-                  <View style={styles.statusBadge}>
-                    <Text style={styles.statusBadgeText}>
-                      {recruitment.recruitmentStatus}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-
-              <View style={styles.matchInfo}>
-                <View style={styles.matchInfoItem}>
-                  <Ionicons
-                    name="calendar-outline"
-                    size={16}
-                    color={theme.colors.text.sub}
-                  />
-                  <Text style={styles.matchInfoText}>
-                    {recruitment.matchDate}
-                  </Text>
-                </View>
-                <View style={styles.matchInfoItem}>
-                  <Ionicons
-                    name="time-outline"
-                    size={16}
-                    color={theme.colors.text.sub}
-                  />
-                  <Text style={styles.matchInfoText}>
-                    {formatTime(recruitment.matchTime)}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.teamInfo}>
-                <Text style={styles.teamName}>{recruitment.teamName}</Text>
-                <Text style={styles.universityName}>
-                  {recruitment.universityName}
-                </Text>
-              </View>
-
-              {recruitment.message && (
-                <View style={styles.messageSection}>
-                  <Text style={styles.messageTitle}>모집 메시지</Text>
-                  <Text style={styles.messageText}>{recruitment.message}</Text>
-                </View>
-              )}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.keyboardView}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.header}>
+              <Text style={styles.title}>용병 신청</Text>
+              <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                <Ionicons
+                  name="close"
+                  size={24}
+                  color={theme.colors.text.main}
+                />
+              </TouchableOpacity>
             </View>
 
-            <View style={styles.kakaoIdSection}>
-              <View style={styles.infoBox}>
-                <Text style={styles.infoText}>
-                  신청 시 카카오톡 아이디가 자동으로 공개됩니다.
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.applicationSection}>
-              <Text style={styles.applicationTitle}>신청 메시지</Text>
-              <TextInput
-                style={styles.messageInput}
-                placeholder="신청 메시지를 작성해주세요"
-                placeholderTextColor={theme.colors.text.sub}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-                value={applicationMessage}
-                onChangeText={setApplicationMessage}
-              />
-            </View>
-          </ScrollView>
-
-          <View style={styles.footer}>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={onClose}
-              disabled={isApplying}
+            <ScrollView
+              style={styles.content}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled" // ✅ 중요!
             >
-              <Text style={styles.cancelButtonText}>취소</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.applyButton,
-                isApplying && styles.applyButtonDisabled,
-              ]}
-              onPress={handleApply}
-              disabled={isApplying}
-            >
-              <Text style={styles.applyButtonText}>
-                {isApplying ? '신청 중' : '신청하기'}
-              </Text>
-            </TouchableOpacity>
+              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View>
+                  <View style={styles.recruitmentInfo}>
+                    <View style={styles.recruitmentHeader}>
+                      <Text style={styles.positionTitle}>
+                        {convertPositionToKorean(recruitment.position)}
+                      </Text>
+                      <View style={styles.badgesContainer}>
+                        <View
+                          style={[
+                            styles.skillBadge,
+                            {
+                              backgroundColor: skillLevelStyle.backgroundColor,
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.skillBadgeText,
+                              { color: skillLevelStyle.color },
+                            ]}
+                          >
+                            {skillLevelStyle.text}
+                          </Text>
+                        </View>
+                        <View style={styles.statusBadge}>
+                          <Text style={styles.statusBadgeText}>
+                            {recruitment.recruitmentStatus}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+
+                    <View style={styles.matchInfo}>
+                      <View style={styles.matchInfoItem}>
+                        <Ionicons
+                          name="calendar-outline"
+                          size={16}
+                          color={theme.colors.text.sub}
+                        />
+                        <Text style={styles.matchInfoText}>
+                          {recruitment.matchDate}
+                        </Text>
+                      </View>
+                      <View style={styles.matchInfoItem}>
+                        <Ionicons
+                          name="time-outline"
+                          size={16}
+                          color={theme.colors.text.sub}
+                        />
+                        <Text style={styles.matchInfoText}>
+                          {formatTime(recruitment.matchTime)}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.teamInfo}>
+                      <Text style={styles.teamName}>
+                        {recruitment.teamName}
+                      </Text>
+                      <Text style={styles.universityName}>
+                        {recruitment.universityName}
+                      </Text>
+                    </View>
+
+                    {recruitment.message && (
+                      <View style={styles.messageSection}>
+                        <Text style={styles.messageTitle}>모집 메시지</Text>
+                        <Text style={styles.messageText}>
+                          {recruitment.message}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+
+                  <View style={styles.kakaoIdSection}>
+                    <View style={styles.infoBox}>
+                      <Text style={styles.infoText}>
+                        신청 시 카카오톡 아이디가 자동으로 공개됩니다.
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.applicationSection}>
+                    <Text style={styles.applicationTitle}>신청 메시지</Text>
+                    <TextInput
+                      style={styles.messageInput}
+                      placeholder="신청 메시지를 작성해주세요"
+                      placeholderTextColor={theme.colors.text.sub}
+                      multiline
+                      numberOfLines={4}
+                      textAlignVertical="top"
+                      value={applicationMessage}
+                      onChangeText={setApplicationMessage}
+                    />
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
+            </ScrollView>
+
+            <View style={styles.footer}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={onClose}
+                disabled={isApplying}
+              >
+                <Text style={styles.cancelButtonText}>취소</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.applyButton,
+                  isApplying && styles.applyButtonDisabled,
+                ]}
+                onPress={handleApply}
+                disabled={isApplying}
+              >
+                <Text style={styles.applyButtonText}>
+                  {isApplying ? '신청 중' : '신청하기'}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </View>
     </Modal>
   );
@@ -222,9 +243,14 @@ export default function MercenaryApplicationModal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  keyboardView: {
+    flex: 1,
+    justifyContent: 'center',
+    width: '100%',
   },
   modalContainer: {
     backgroundColor: theme.colors.white,
@@ -362,6 +388,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: theme.colors.text.main,
     minHeight: 100,
+    marginBottom: theme.spacing.spacing4,
   },
   kakaoIdSection: {
     marginBottom: theme.spacing.spacing4,
