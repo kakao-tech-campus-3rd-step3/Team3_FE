@@ -80,3 +80,9 @@ export const parseTimeFromAPI = (timeString: string): Date => {
   date.setHours(hours || 0, minutes || 0, seconds || 0, 0);
   return date;
 };
+
+export const addDaysToDate = (baseDate: Date, days: number): Date => {
+  const result = new Date(baseDate);
+  result.setDate(baseDate.getDate() + days);
+  return result;
+};

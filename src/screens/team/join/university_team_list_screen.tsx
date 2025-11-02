@@ -12,6 +12,7 @@ import {
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { ROUTES } from '@/src/constants/routes';
 import {
   useTeamsByUniversityInfinite,
   useUserProfile,
@@ -152,7 +153,7 @@ export default function UniversityTeamListScreen() {
               {
                 text: '확인',
                 onPress: () => {
-                  router.push('/(tabs)');
+                  router.push(ROUTES.TABS);
                 },
               },
             ]

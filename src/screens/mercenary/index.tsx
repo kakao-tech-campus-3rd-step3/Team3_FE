@@ -171,7 +171,7 @@ export default function MercenaryMainScreen() {
               );
               return;
             }
-            router.push('/mercenary/create');
+            router.push(ROUTES.MERCENARY_CREATE);
           }}
         >
           <Ionicons name="add" size={24} color={theme.colors.brand.main} />

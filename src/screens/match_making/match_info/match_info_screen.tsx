@@ -15,6 +15,7 @@ import {
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ModalDatePicker } from '@/src/components/ui/modal_date_picker';
 import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
+import { ROUTES } from '@/src/constants/routes';
 import {
   useUserProfile,
   useVenues,
@@ -346,7 +347,7 @@ export default function MatchInfoScreen() {
           activeOpacity={1}
           onPress={() => {
             setSuccessModalVisible(false);
-            router.replace('/');
+            router.replace(ROUTES.HOME);
           }}
         >
           <TouchableOpacity
@@ -395,7 +396,7 @@ export default function MatchInfoScreen() {
               style={style.successButton}
               onPress={() => {
                 setSuccessModalVisible(false);
-                router.replace('/');
+                router.replace(ROUTES.HOME);
               }}
             >
               <Text style={style.successButtonText}>홈으로 돌아가기</Text>
