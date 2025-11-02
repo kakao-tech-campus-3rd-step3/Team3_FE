@@ -3,6 +3,7 @@ import { Redirect, Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
 
+import { ROUTES } from '@/src/constants/routes';
 import { useAuth } from '@/src/contexts/auth_context';
 import { theme } from '@/src/theme';
 
@@ -11,7 +12,7 @@ export default function TabLayout() {
   const isAuthenticated = !!token;
 
   if (!isAuthenticated) {
-    return <Redirect href="/(auth)/login" />;
+    return <Redirect href={ROUTES.LOGIN} />;
   }
 
   return (

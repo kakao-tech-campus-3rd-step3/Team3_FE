@@ -13,6 +13,7 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ROUTES } from '@/src/constants/routes';
 import {
   useSendPasswordResetCodeMutation,
   useVerifyCodeMutation,
@@ -119,7 +120,7 @@ function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
       Alert.alert(
         '비밀번호 변경 완료',
         '비밀번호가 성공적으로 변경되었습니다.',
-        [{ text: '확인', onPress: () => router.push('/(auth)/login') }]
+        [{ text: '확인', onPress: () => router.push(ROUTES.LOGIN) }]
       );
     } catch (error: unknown) {
       const errorMessage =
@@ -316,7 +317,7 @@ function ForgotPasswordScreen({ onBackToLogin }: ForgotPasswordScreenProps) {
 
         {currentStep === 'email' && (
           <View style={styles.backSection}>
-            <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+            <TouchableOpacity onPress={() => router.push(ROUTES.LOGIN)}>
               <Text style={styles.backText}>로그인으로 돌아가기</Text>
             </TouchableOpacity>
           </View>

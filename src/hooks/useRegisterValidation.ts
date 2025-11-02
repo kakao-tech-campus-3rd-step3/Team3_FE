@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { RegisterFormData } from './useRegisterForm';
+import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 
 const UNIVERSITY_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.ac\.kr$/;
 const KAKAO_TALK_ID_REGEX = /^[a-zA-Z0-9._-]{4,20}$/;
