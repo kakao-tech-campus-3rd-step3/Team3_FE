@@ -66,6 +66,9 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: theme.colors.text.main,
+    flex: 1,
+    flexShrink: 1,
+    minWidth: 0,
   },
   profileUniversity: {
     fontSize: 16,

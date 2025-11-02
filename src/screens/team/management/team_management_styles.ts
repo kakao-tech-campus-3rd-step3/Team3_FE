@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: spacing.spacing4,
-    paddingBottom: spacing.spacing4,
+    paddingBottom: spacing.spacing10,
   },
 
   actionButton: {
@@ -352,7 +352,7 @@ export const styles = StyleSheet.create({
 
   matchManagementList: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     gap: screenWidth < 375 ? spacing.spacing2 : spacing.spacing3,
     justifyContent: 'space-between',
   },
@@ -362,21 +362,18 @@ export const styles = StyleSheet.create({
     padding: screenWidth < 375 ? spacing.spacing3 : spacing.spacing4,
     backgroundColor: colors.gray[50],
     borderRadius: spacing.spacing3,
-    minWidth: screenWidth < 375 ? 90 : 100,
     flex: 1,
-    maxWidth: '30%',
+    minWidth: 0,
   },
   matchManagementInfo: {
     alignItems: 'center',
     marginTop: spacing.spacing2,
+    width: '100%',
   },
   matchManagementTitle: {
-    fontSize:
-      screenWidth < 375 ? typography.fontSize.font2 : typography.fontSize.font3,
     fontWeight: typography.fontWeight.semibold,
     color: colors.gray[900],
     textAlign: 'center',
-    lineHeight: screenWidth < 375 ? 18 : typography.lineHeight.line4,
     flexShrink: 1,
   },
 });

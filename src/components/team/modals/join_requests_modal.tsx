@@ -25,6 +25,7 @@ interface JoinRequestsModalProps {
   joinRequests: TeamJoinRequest[];
   onClose: () => void;
   onJoinRequest: (requestId: number, status: 'approved' | 'rejected') => void;
+  processingRequestId?: number | null;
 }
 
 export default function JoinRequestsModal({
@@ -32,6 +33,7 @@ export default function JoinRequestsModal({
   joinRequests,
   onClose,
   onJoinRequest,
+  processingRequestId = null,
 }: JoinRequestsModalProps) {
   useEffect(() => {
     const backAction = () => {
@@ -85,6 +87,7 @@ export default function JoinRequestsModal({
                   key={request.id}
                   request={request}
                   onJoinRequest={onJoinRequest}
+                  isProcessing={processingRequestId === request.id}
                 />
               ))}
             </View>
@@ -98,9 +101,11 @@ export default function JoinRequestsModal({
 function JoinRequestCard({
   request,
   onJoinRequest,
+  isProcessing = false,
 }: {
   request: TeamJoinRequest;
   onJoinRequest: (requestId: number, status: 'approved' | 'rejected') => void;
+  isProcessing?: boolean;
 }) {
   const { data: profile } = useUserProfileById(request.applicantId);
 
@@ -168,8 +173,12 @@ function JoinRequestCard({
       {request.status === 'PENDING' && (
         <View style={styles.requestActions}>
           <TouchableOpacity
-            style={styles.approveButton}
+            style={[
+              styles.approveButton,
+              isProcessing && styles.buttonDisabled,
+            ]}
             onPress={() => onJoinRequest(request.id, 'approved')}
+            disabled={isProcessing}
           >
             <Ionicons name="checkmark" size={16} color={colors.white} />
             <Text
@@ -177,12 +186,13 @@ function JoinRequestCard({
               numberOfLines={1}
               ellipsizeMode="tail"
             >
-              승인
+              {isProcessing ? '처리 중...' : '승인'}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.rejectButton}
+            style={[styles.rejectButton, isProcessing && styles.buttonDisabled]}
             onPress={() => onJoinRequest(request.id, 'rejected')}
+            disabled={isProcessing}
           >
             <Ionicons name="close" size={16} color={colors.white} />
             <Text
@@ -190,7 +200,7 @@ function JoinRequestCard({
               numberOfLines={1}
               ellipsizeMode="tail"
             >
-              거절
+              {isProcessing ? '처리 중...' : '거절'}
             </Text>
           </TouchableOpacity>
         </View>

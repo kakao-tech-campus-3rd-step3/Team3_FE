@@ -38,6 +38,9 @@ export default function TeamSettingsScreen({
   const [showMatchRequestsModal, setShowMatchRequestsModal] = useState(false);
   const [matchAccepted, setMatchAccepted] = useState(false);
   const [acceptedMatchId, setAcceptedMatchId] = useState<number | null>(null);
+  const [processingRequestId, setProcessingRequestId] = useState<number | null>(
+    null
+  );
   const { data: userProfile } = useUserProfile();
 
   const deleteTeamMutation = useDeleteTeamMutation();
@@ -178,6 +181,7 @@ export default function TeamSettingsScreen({
         text: action,
         style: status === 'rejected' ? 'destructive' : 'default',
         onPress: () => {
+          setProcessingRequestId(requestId);
           if (status === 'approved') {
             const role: '회장' | '부회장' | '일반멤버' = '일반멤버';
             approveJoinRequestMutation.mutate(
@@ -188,12 +192,14 @@ export default function TeamSettingsScreen({
               },
               {
                 onSuccess: () => {
+                  setProcessingRequestId(null);
                   Alert.alert('성공', `가입을 ${action}했습니다.`);
                   refetch();
                   refetchMembers();
                   refetchTeam();
                 },
                 onError: (error: unknown) => {
+                  setProcessingRequestId(null);
                   let errorMessage = `${action} 처리 중 오류가 발생했습니다.`;
                   if (
                     error &&
@@ -221,10 +227,12 @@ export default function TeamSettingsScreen({
               },
               {
                 onSuccess: () => {
+                  setProcessingRequestId(null);
                   Alert.alert('성공', `가입을 ${action}했습니다.`);
                   refetch();
                 },
                 onError: () => {
+                  setProcessingRequestId(null);
                   Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
                 },
               }
@@ -353,6 +361,7 @@ export default function TeamSettingsScreen({
         joinRequests={joinRequests}
         onClose={() => setShowJoinRequestsModal(false)}
         onJoinRequest={handleJoinRequest}
+        processingRequestId={processingRequestId}
       />
 
       <MatchRequestsModal
