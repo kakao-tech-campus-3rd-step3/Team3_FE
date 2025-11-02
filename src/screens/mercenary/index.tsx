@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RecruitmentCard } from '@/src/components/mercenary/recruitment_card';
 import MercenaryApplicationModal from '@/src/components/modals/mercenary_application_modal';
 import { convertPositionToKorean } from '@/src/constants/positions';
+import { ROUTES } from '@/src/constants/routes';
 import { UNIVERSITIES } from '@/src/constants/universities';
 import {
   useMercenaryRecruitments,
@@ -162,7 +163,16 @@ export default function MercenaryMainScreen() {
         <Text style={newStyles.headerTitle}>용병 서비스</Text>
         <TouchableOpacity
           style={newStyles.addButton}
-          onPress={() => router.push('/mercenary/create')}
+          onPress={() => {
+            if (!userProfile?.teamId) {
+              Alert.alert(
+                '팀 참여 필요',
+                '용병 모집을 하려면 먼저 팀에 가입해야 합니다.'
+              );
+              return;
+            }
+            router.push('/mercenary/create');
+          }}
         >
           <Ionicons name="add" size={24} color={theme.colors.brand.main} />
         </TouchableOpacity>
@@ -202,14 +212,14 @@ export default function MercenaryMainScreen() {
       >
         <SafeAreaView style={newStyles.modalContainer}>
           <View style={newStyles.modalHeader}>
+            <View style={newStyles.modalHeaderLeft} />
+            <Text style={newStyles.modalTitle}>대학교 선택</Text>
             <TouchableOpacity
               onPress={() => setIsModalOpen(false)}
               style={newStyles.modalCloseButton}
             >
               <Ionicons name="close" size={24} color={theme.colors.text.main} />
             </TouchableOpacity>
-            <Text style={newStyles.modalTitle}>대학교 선택</Text>
-            <View style={newStyles.modalHeaderRight} />
           </View>
 
           <FlatList
@@ -552,18 +562,20 @@ const newStyles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  modalCloseButton: {
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: theme.colors.background.sub,
+  modalHeaderLeft: {
+    width: 40,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: theme.colors.text.main,
+    flex: 1,
+    textAlign: 'center',
   },
-  modalHeaderRight: {
-    width: 32,
+  modalCloseButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: theme.colors.background.sub,
   },
   searchInputContainer: {
     flexDirection: 'row',
