@@ -32,7 +32,7 @@ import { translateErrorMessage } from '@/src/utils/error_messages';
 
 export default function MercenaryCreateScreen() {
   const { data: userProfile } = useUserProfile();
-  const { createRecruitment, isCreating } = useCreateMercenaryRecruitment();
+  const createRecruitmentMutation = useCreateMercenaryRecruitment();
 
   const [matchDate, setMatchDate] = useState<Date>(new Date());
   const [matchTime, setMatchTime] = useState<Date>(() => {
@@ -90,7 +90,7 @@ export default function MercenaryCreateScreen() {
       skillLevel: recruitmentForm.skillLevel,
     };
 
-    createRecruitment(recruitmentData, {
+    createRecruitmentMutation.mutate(recruitmentData, {
       onSuccess: () => {
         Alert.alert('성공', '용병 모집 게시글이 생성되었습니다.', [
           {
@@ -212,12 +212,17 @@ export default function MercenaryCreateScreen() {
           </View>
 
           <TouchableOpacity
-            style={[styles.createSubmitButton, isCreating && { opacity: 0.6 }]}
+            style={[
+              styles.createSubmitButton,
+              createRecruitmentMutation.isPending && { opacity: 0.6 },
+            ]}
             onPress={handleCreateRecruitment}
-            disabled={isCreating}
+            disabled={createRecruitmentMutation.isPending}
           >
             <Text style={styles.createSubmitButtonText}>
-              {isCreating ? '생성 중...' : '용병 모집하기'}
+              {createRecruitmentMutation.isPending
+                ? '생성 중...'
+                : '용병 모집하기'}
             </Text>
           </TouchableOpacity>
         </KeyboardAwareScrollView>

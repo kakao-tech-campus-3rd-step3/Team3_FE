@@ -22,7 +22,7 @@ import {
   useMyJoinWaitingList,
   useMyMercenaryRecruitments,
   useDeleteMercenaryRecruitment,
-  useTeamJoinRequestMutation,
+  useCancelJoinRequestMutation,
 } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import { RecruitmentResponse } from '@/src/types/mercenary';
@@ -49,8 +49,8 @@ export default function MercenaryHistoryScreen() {
   const { data: recruitmentsData, isLoading: isRecruitmentsLoading } =
     useMyMercenaryRecruitments(recruitmentsPage, pageSize, 'matchDate,asc');
 
-  const { deleteRecruitment, isDeleting } = useDeleteMercenaryRecruitment();
-  const { cancelJoinRequest, isCanceling } = useTeamJoinRequestMutation();
+  const deleteRecruitmentMutation = useDeleteMercenaryRecruitment();
+  const cancelJoinRequestMutation = useCancelJoinRequestMutation();
 
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const [selectedApplication, setSelectedApplication] =
@@ -77,7 +77,7 @@ export default function MercenaryHistoryScreen() {
           text: '삭제',
           style: 'destructive',
           onPress: () => {
-            deleteRecruitment(recruitmentId, {
+            deleteRecruitmentMutation.mutate(recruitmentId, {
               onSuccess: () => {
                 Alert.alert('성공', '용병 모집 게시글이 삭제되었습니다.');
               },
@@ -105,7 +105,7 @@ export default function MercenaryHistoryScreen() {
       decisionReason: cancelReason.trim() || undefined,
     };
 
-    cancelJoinRequest(
+    cancelJoinRequestMutation.mutate(
       {
         teamId: selectedApplication.teamId,
         joinWaitingId: selectedApplication.id,
@@ -370,20 +370,22 @@ export default function MercenaryHistoryScreen() {
                   setCancelModalVisible(false);
                   setCancelReason('');
                 }}
-                disabled={isCanceling}
+                disabled={cancelJoinRequestMutation.isPending}
               >
                 <Text style={styles.modalCancelButtonText}>돌아가기</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
                   styles.modalConfirmButton,
-                  isCanceling && styles.buttonDisabled,
+                  cancelJoinRequestMutation.isPending && styles.buttonDisabled,
                 ]}
                 onPress={confirmCancel}
-                disabled={isCanceling}
+                disabled={cancelJoinRequestMutation.isPending}
               >
                 <Text style={styles.modalConfirmButtonText}>
-                  {isCanceling ? '취소 중...' : '신청 취소'}
+                  {cancelJoinRequestMutation.isPending
+                    ? '취소 중...'
+                    : '신청 취소'}
                 </Text>
               </TouchableOpacity>
             </View>

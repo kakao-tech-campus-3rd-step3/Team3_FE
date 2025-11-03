@@ -56,7 +56,7 @@ export default function MercenaryEditScreen() {
 
   const { data: recruitment, isLoading } =
     useMercenaryRecruitment(recruitmentId);
-  const { updateRecruitment, isUpdating } = useUpdateMercenaryRecruitment();
+  const updateRecruitmentMutation = useUpdateMercenaryRecruitment();
 
   const [matchDate, setMatchDate] = useState<Date>(new Date());
   const [matchTime, setMatchTime] = useState<Date>(new Date());
@@ -109,7 +109,7 @@ export default function MercenaryEditScreen() {
       skillLevel: recruitmentForm.skillLevel,
     };
 
-    updateRecruitment(
+    updateRecruitmentMutation.mutate(
       {
         id: recruitmentId,
         data: recruitmentData,
@@ -265,12 +265,15 @@ export default function MercenaryEditScreen() {
           </View>
 
           <TouchableOpacity
-            style={[styles.updateSubmitButton, isUpdating && { opacity: 0.6 }]}
+            style={[
+              styles.updateSubmitButton,
+              updateRecruitmentMutation.isPending && { opacity: 0.6 },
+            ]}
             onPress={handleUpdateRecruitment}
-            disabled={isUpdating}
+            disabled={updateRecruitmentMutation.isPending}
           >
             <Text style={styles.updateSubmitButtonText}>
-              {isUpdating ? '수정 중...' : '수정하기'}
+              {updateRecruitmentMutation.isPending ? '수정 중...' : '수정하기'}
             </Text>
           </TouchableOpacity>
         </KeyboardAwareScrollView>

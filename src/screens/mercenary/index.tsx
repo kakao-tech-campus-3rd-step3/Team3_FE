@@ -22,7 +22,7 @@ import {
   useMercenaryRecruitments,
   useMercenaryRecruitment,
   useUserProfile,
-  useTeamJoinRequestMutation,
+  useJoinWaitingMutation,
   useMyJoinWaitingList,
 } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
@@ -45,7 +45,7 @@ export default function MercenaryMainScreen() {
   const pageSize = 10;
 
   const { data: userProfile } = useUserProfile();
-  const { joinWaiting, isJoining } = useTeamJoinRequestMutation();
+  const joinWaitingMutation = useJoinWaitingMutation();
   const { data: recruitmentsData, isLoading } = useMercenaryRecruitments(
     currentPage,
     pageSize,
@@ -84,7 +84,7 @@ export default function MercenaryMainScreen() {
       isMercenary: true,
     };
 
-    joinWaiting(
+    joinWaitingMutation.mutate(
       {
         teamId: selectedRecruitment.teamId,
         data: requestData,
@@ -476,7 +476,7 @@ export default function MercenaryMainScreen() {
           setSelectedRecruitment(null);
         }}
         onApply={handleApplication}
-        isApplying={isJoining}
+        isApplying={joinWaitingMutation.isPending}
       />
     </SafeAreaView>
   );
