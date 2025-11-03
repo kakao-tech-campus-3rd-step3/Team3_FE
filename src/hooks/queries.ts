@@ -46,6 +46,8 @@ import type {
 } from '@/src/types';
 import { formatDateForAPI } from '@/src/utils/date';
 
+import { CreateLineupRequest, CreateLineupResponse } from '../types/lineup';
+
 export const queries = {
   login: {
     key: ['login'] as const,
@@ -1133,5 +1135,23 @@ export function useTeamMembersInfinite(
     },
     enabled: !!teamId,
     initialPageParam: undefined, // 첫 페이지는 cursorId 없음
+  });
+}
+
+export function useCreateLineupsMutation() {
+  return useMutation({
+    mutationFn: (data: CreateLineupRequest): Promise<CreateLineupResponse> =>
+      api.lineupApi.createLineups(data),
+
+    onSuccess: () => {
+      // 라인업 생성 후 invalidate 처리 (팀 관련 캐시 무효화)
+      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      console.log('✅ 라인업 생성 성공');
+    },
+
+    onError: (error: unknown) => {
+      console.error('❌ 라인업 생성 실패:', error);
+    },
   });
 }

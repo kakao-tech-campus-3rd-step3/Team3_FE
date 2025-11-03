@@ -17,18 +17,23 @@ import Dropdown from '@/src/components/dropdown';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { TeamMemberSelectModal } from '@/src/components/ui/team_member_select_modal';
 import { FORMATION_POSITIONS, FormationType } from '@/src/constants/formations';
-import { useTeamMembers, useUserProfile } from '@/src/hooks/queries';
+import {
+  useCreateLineupsMutation,
+  useTeamMembers,
+  useUserProfile,
+} from '@/src/hooks/queries';
+import { AllowedPosition } from '@/src/types/lineup';
+import { buildPositionMap, createLineupPayload } from '@/src/utils/lineup';
 
 import { style } from './team_formation_style';
 
 export default function TeamFormationScreen() {
   const router = useRouter();
-  // ✅ 현재 로그인한 유저 정보에서 teamId 가져오기
   const { data: userProfile } = useUserProfile();
-  const teamId = userProfile?.teamId ?? 0; // undefined 방지 (enabled 옵션과 함께 사용)
+  const teamId = userProfile?.teamId ?? 0;
 
-  // ✅ teamId가 유효할 때만 쿼리 실행됨
   const { members: teamMembers, isLoading } = useTeamMembers(teamId, 0, 10);
+  const { mutate: createLineups, isPending } = useCreateLineupsMutation();
 
   const [selectedFormation, setSelectedFormation] =
     useState<FormationType>('4-3-3');
@@ -38,13 +43,13 @@ export default function TeamFormationScreen() {
   );
 
   const [formationAssignments, setFormationAssignments] = useState<
-    Record<string, string | null>
+    Record<string, number | null>
   >({});
   const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   const [benchMembers, setBenchMembers] = useState<
-    { id: number; name: string }[]
+    { id: number; name: string; preferredPosition?: string }[]
   >([]);
   const [showBenchModal, setShowBenchModal] = useState(false);
 
@@ -57,16 +62,12 @@ export default function TeamFormationScreen() {
 
   const handleMemberSelect = (memberId: number, memberName: string) => {
     if (!selectedPosition) return;
-
-    // 이미 이 선수가 다른 포지션에 등록되어 있는지 확인
     const existingPosition = Object.keys(formationAssignments).find(
-      key => formationAssignments[key] === memberName
+      key => formationAssignments[key] === memberId
     );
 
     setFormationAssignments(prev => {
       const updated = { ...prev };
-
-      // 기존 포지션에 있던 선수면 제거
       if (existingPosition && existingPosition !== selectedPosition) {
         updated[existingPosition] = null;
         Alert.alert(
@@ -74,12 +75,9 @@ export default function TeamFormationScreen() {
           `${memberName} 선수가 ${existingPosition}에서 ${selectedPosition}으로 이동되었습니다.`
         );
       }
-
-      // 새 포지션에 등록
-      updated[selectedPosition] = memberName;
+      updated[selectedPosition] = memberId;
       return updated;
     });
-
     setShowModal(false);
   };
 
@@ -88,9 +86,8 @@ export default function TeamFormationScreen() {
   };
 
   const filledCount = Object.values(formationAssignments).filter(
-    name => name !== null
+    v => v !== null
   ).length;
-
   const isFormationComplete = filledCount === 11;
 
   const handleFormationChange = (newFormation: FormationType) => {
@@ -101,20 +98,77 @@ export default function TeamFormationScreen() {
     setBenchMembers([]);
   };
 
-  const handleNext = () => {
-    if (!isFormationComplete) {
+  const handleConfirmLineup = () => {
+    // ✅ 1. 인원수 확인
+    if (filledCount !== 11) {
       Alert.alert(
         '라인업 미완성',
-        `현재 ${filledCount}/11명만 배정되었습니다.\n모든 포지션을 채워주세요.`
+        `⚠️ 선발 ${filledCount}/11명만 배정되었습니다. 모든 포지션을 채워주세요.`
       );
       return;
     }
 
-    router.push({
-      pathname: '/match_making/match_info',
-      params: {
-        formation: JSON.stringify(formationAssignments),
-        type: selectedFormation,
+    // ✅ 2. 중복 확인
+    const starterIds = new Set(
+      Object.values(formationAssignments).filter((v): v is number => v !== null)
+    );
+    const hasDuplicate = benchMembers.some(b => starterIds.has(b.id));
+    if (hasDuplicate) {
+      Alert.alert(
+        '중복 등록',
+        '⚠️ 같은 선수가 선발과 후보에 중복되어 있습니다.'
+      );
+      return;
+    }
+
+    // ✅ 3. Payload 생성
+    const positionMap = buildPositionMap(
+      FORMATION_POSITIONS[selectedFormation]
+    );
+    const benchWithPos = benchMembers.map(b => ({
+      id: b.id,
+      preferredPosition: (b.preferredPosition ||
+        userProfile?.position ||
+        'FW') as AllowedPosition,
+    }));
+
+    const payload = createLineupPayload(
+      formationAssignments,
+      benchWithPos,
+      positionMap
+    );
+    console.log(
+      '📦 createLineupPayload payload:',
+      JSON.stringify(payload, null, 2)
+    );
+
+    // ✅ 4. API 요청
+    createLineups(payload, {
+      onSuccess: () => {
+        Alert.alert(
+          '라인업 확정 완료',
+          '✅ 라인업이 성공적으로 등록되었습니다.',
+          [
+            {
+              text: '다음으로 이동',
+              onPress: () =>
+                router.push({
+                  pathname: '/match_making/match_info',
+                  params: {
+                    formation: JSON.stringify(formationAssignments),
+                    type: selectedFormation,
+                  },
+                }),
+            },
+          ]
+        );
+      },
+      onError: err => {
+        console.error('❌ 라인업 생성 실패:', err);
+        Alert.alert(
+          '라인업 등록 실패',
+          '❌ 라인업 생성 중 오류가 발생했습니다. 다시 시도해주세요.'
+        );
       },
     });
   };
@@ -127,7 +181,6 @@ export default function TeamFormationScreen() {
       <CustomHeader title="라인업 구성" />
 
       {isLoading ? (
-        // ✅ Hook 순서가 바뀌지 않도록, return 대신 조건부 렌더링
         <View
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
@@ -140,7 +193,7 @@ export default function TeamFormationScreen() {
           contentContainerStyle={style.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* 📋 포메이션 선택 카드 */}
+          {/* 📋 포메이션 선택 */}
           <View style={style.cardContainer}>
             <View style={style.card}>
               <View style={style.cardHeader}>
@@ -167,13 +220,12 @@ export default function TeamFormationScreen() {
             </View>
           </View>
 
-          {/* ⚽ 선발 라인업 카드 */}
+          {/* ⚽ 선발 라인업 */}
           <View style={style.fieldCard}>
             <View style={style.cardHeader}>
               <Text style={style.cardTitle}>⚽ 선발 라인업</Text>
             </View>
 
-            {/* cardContent로 한번 더 감싸지 말고 바로 배경 이미지를 둔다 */}
             <ImageBackground
               source={require('@/assets/images/field.png')}
               style={style.field}
@@ -181,8 +233,14 @@ export default function TeamFormationScreen() {
             >
               {positions.map(pos => {
                 const isSelected = selectedPosition === pos.id;
-                const assigned = formationAssignments[pos.id];
-                const isEmpty = !assigned;
+                const assignedId = formationAssignments[pos.id];
+                const assignedMember = teamMembers.find(
+                  m => m.id === assignedId
+                );
+                const displayName = assignedMember
+                  ? assignedMember.name
+                  : pos.id;
+                const isEmpty = !assignedId;
 
                 return (
                   <TouchableOpacity
@@ -217,7 +275,7 @@ export default function TeamFormationScreen() {
                       ]}
                       resizeMode="contain"
                     />
-                    <Text style={style.playerName}>{assigned || pos.id}</Text>
+                    <Text style={style.playerName}>{displayName}</Text>
                     {isEmpty && <Text style={style.warningIcon}>❗</Text>}
                   </TouchableOpacity>
                 );
@@ -225,7 +283,7 @@ export default function TeamFormationScreen() {
             </ImageBackground>
           </View>
 
-          {/* 🧢 후보 라인업 카드 */}
+          {/* 🧢 후보 라인업 */}
           <View style={style.fieldCard}>
             <View style={style.cardHeader}>
               <Text style={style.cardTitle}>↔️ 후보 라인업</Text>
@@ -235,7 +293,6 @@ export default function TeamFormationScreen() {
               {benchMembers.length > 0 ? (
                 <View style={style.benchListContainer}>
                   {benchMembers.map(member => {
-                    // teamMembers에서 상세 정보 찾아오기
                     const info = teamMembers.find(m => m.id === member.id);
                     return (
                       <View key={member.id} style={style.benchItem}>
@@ -270,21 +327,25 @@ export default function TeamFormationScreen() {
             </View>
           </View>
 
-          {/* ✅ 다음 버튼 카드 */}
-          <View style={style.nextButtonCard}>
+          {/* ✅ 통합된 버튼 */}
+          <View style={[style.nextButtonCard, { marginTop: 20 }]}>
             <TouchableOpacity
               style={[
                 style.nextButton,
-                !isFormationComplete && style.nextButtonDisabled,
+                (isPending || !isFormationComplete) && style.nextButtonDisabled,
               ]}
-              onPress={handleNext}
-              disabled={!isFormationComplete}
+              disabled={isPending || !isFormationComplete}
+              onPress={handleConfirmLineup}
             >
-              <Text style={style.nextButtonText}>
-                {isFormationComplete
-                  ? '다음으로'
-                  : `(${filledCount}/11) 포지션 배정`}
-              </Text>
+              {isPending ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text style={style.nextButtonText}>
+                  {isFormationComplete
+                    ? '✅ 라인업 확정 및 진행'
+                    : `(${filledCount}/11) 포지션 배정`}
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -300,17 +361,18 @@ export default function TeamFormationScreen() {
           onSelect={handleMemberSelect}
           assignedMembers={formationAssignments}
           benchMembers={benchMembers}
-          onRemoveFromFormation={name => {
-            // 기존 포지션 비우기
+          onRemoveFromFormation={memberId => {
             setFormationAssignments(prev => {
               const updated = { ...prev };
               Object.keys(updated).forEach(key => {
-                if (updated[key] === name) updated[key] = null;
+                if (updated[key] === memberId) updated[key] = null;
               });
               return updated;
             });
           }}
-          onRemoveFromBench={handleRemoveFromBench}
+          onRemoveFromBench={memberId =>
+            setBenchMembers(prev => prev.filter(m => m.id !== memberId))
+          }
         />
       )}
 
@@ -329,11 +391,11 @@ export default function TeamFormationScreen() {
             setBenchMembers(members);
             setShowBenchModal(false);
           }}
-          onRemoveFromFormation={name => {
+          onRemoveFromFormation={id => {
             setFormationAssignments(prev => {
               const updated = { ...prev };
               Object.keys(updated).forEach(key => {
-                if (updated[key] === name) updated[key] = null;
+                if (updated[key] === id) updated[key] = null;
               });
               return updated;
             });

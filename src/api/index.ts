@@ -6,3 +6,4 @@ export * from './auth';
 export * from './venue';
 export * from './mercenary';
 export * from './teamReview';
+export * from './lineup';

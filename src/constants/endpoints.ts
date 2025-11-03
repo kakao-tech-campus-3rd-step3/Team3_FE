@@ -135,3 +135,7 @@ export const MERCENARY_API = {
   UPDATE_RECRUITMENT: (id: number) => `/api/mercenaries/recruitments/${id}`,
   DELETE_RECRUITMENT: (id: number) => `/api/mercenaries/recruitments/${id}`,
 };
+
+export const LINEUP_API = {
+  CREATE: '/api/lineups', // POST 요청 (라인업 생성)
+};

@@ -24,10 +24,10 @@ interface TeamMemberSelectModalProps {
   multiple?: boolean;
   onMultiSelect?: (members: { id: number; name: string }[]) => void;
   preselected?: { id: number; name: string }[];
-  assignedMembers?: Record<string, string | null>;
+  assignedMembers: Record<string, number | null>;
   benchMembers?: { id: number; name: string }[];
-  onRemoveFromFormation?: (memberName: string) => void;
-  onRemoveFromBench?: (memberName: string) => void;
+  onRemoveFromFormation?: (memberId: number) => void;
+  onRemoveFromBench?: (memberId: number) => void;
 }
 
 export const TeamMemberSelectModal = ({
@@ -92,8 +92,8 @@ export const TeamMemberSelectModal = ({
   }, [visible, onClose]);
 
   const toggleSelect = (id: number, name: string) => {
-    const isAssigned = Object.values(assignedMembers).includes(name);
-    const isBench = benchMembers.some(b => b.name === name);
+    const isAssigned = Object.values(assignedMembers).includes(id);
+    const isBench = benchMembers.some(b => b.id === id);
 
     if (isAssigned && !multiple) {
       Alert.alert(
@@ -104,14 +104,22 @@ export const TeamMemberSelectModal = ({
     }
 
     if (multiple && isAssigned) {
+      // ✅ Alert에서 예를 눌렀을 때만 실제 변경
       Alert.alert(
         '선발 선수 추가',
         `${name} 선수는 현재 선발 라인업에 포함되어 있습니다.\n후보로 등록 시 선발에서 제외됩니다.`,
         [
-          { text: '예', onPress: () => onRemoveFromFormation?.(name) },
+          {
+            text: '예',
+            onPress: () => {
+              onRemoveFromFormation?.(id);
+              setSelected(prev => ({ ...prev, [id]: !prev[id] }));
+            },
+          },
           { text: '아니오', style: 'cancel' },
         ]
       );
+      return;
     }
 
     if (multiple && isBench && !selected[id]) {
@@ -119,6 +127,7 @@ export const TeamMemberSelectModal = ({
       return;
     }
 
+    // ✅ Alert가 뜨지 않은 경우에만 즉시 상태 변경
     setSelected(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
@@ -181,12 +190,12 @@ export const TeamMemberSelectModal = ({
             renderItem={({ item }) => {
               const isSelected = !!selected[item.id];
               const isAssigned = Object.values(assignedMembers).includes(
-                item.name
+                item.id
               );
               const assignedPosition = Object.keys(assignedMembers).find(
-                k => assignedMembers[k] === item.name
+                k => assignedMembers[k] === item.id
               );
-              const isBench = benchMembers.some(b => b.name === item.name);
+              const isBench = benchMembers.some(b => b.id === item.id);
 
               return (
                 <TouchableOpacity
@@ -198,9 +207,9 @@ export const TeamMemberSelectModal = ({
                     if (multiple) toggleSelect(item.id, item.name);
                     else {
                       if (isAssigned && assignedPosition !== position) {
-                        onRemoveFromFormation?.(item.name);
+                        onRemoveFromFormation?.(item.id);
                       }
-                      if (isBench) onRemoveFromBench?.(item.name);
+                      if (isBench) onRemoveFromBench?.(item.id);
                       onSelect?.(item.id, item.name);
                     }
                   }}
