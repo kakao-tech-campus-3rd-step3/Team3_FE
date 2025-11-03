@@ -18,26 +18,25 @@ export default function EditProfileScreen() {
 
   const handleSave = async (formData: UpdateProfileRequest) => {
     try {
-      const cleanData: UpdateProfileRequest = {
+      const updatedData: UpdateProfileRequest = {
         name: formData.name?.trim() || '',
         skillLevel: formData.skillLevel?.trim() || '',
         position: formData.position?.trim() || '',
         bio: formData.bio?.trim() || '',
       };
 
-      if (!cleanData.name || !cleanData.name.trim()) {
+      if (!updatedData.name || !updatedData.name.trim()) {
         Alert.alert('오류', '이름을 입력해주세요.');
         return;
       }
 
-      await updateProfileMutation.mutateAsync(cleanData);
+      await updateProfileMutation.mutateAsync(updatedData);
       Alert.alert('성공', '프로필이 수정되었습니다.', [
         {
           text: '확인',
           onPress: () => router.back(),
         },
       ]);
-      refetch();
     } catch (error) {
       console.error('프로필 수정 실패:', error);
       Alert.alert('오류', '프로필 수정에 실패했습니다.');

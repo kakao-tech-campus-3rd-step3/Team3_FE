@@ -91,6 +91,14 @@ export const queries = {
     key: (userId: string | number) => ['user', 'profile', userId] as const,
     fn: (userId: string | number) => api.profileApi.getProfileById(userId),
   },
+  updateProfile: {
+    key: ['updateProfile'] as const,
+    fn: (data: UpdateProfileRequest) => api.profileApi.updateProfile(data),
+  },
+  deleteProfile: {
+    key: ['deleteProfile'] as const,
+    fn: () => api.profileApi.deleteProfile(),
+  },
   user: {
     key: ['user'] as const,
   },
@@ -122,6 +130,16 @@ export const queries = {
       ['teamMember', teamId, userId] as const,
     fn: (teamId: string | number, userId: string | number) =>
       api.teamMemberApi.getTeamMember(teamId, userId),
+  },
+  removeMember: {
+    key: ['removeMember'] as const,
+    fn: ({
+      teamId,
+      userId,
+    }: {
+      teamId: string | number;
+      userId: string | number;
+    }) => api.teamMemberApi.removeMember(teamId, userId),
   },
   teamJoinRequests: {
     key: (teamId: string | number) => ['teamJoinRequests', teamId] as const,
@@ -432,8 +450,7 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: logout,
-    onSuccess: async () => {
-      await queryClient.clear();
+    onSuccess: () => {
       router.replace(ROUTES.LOGIN);
     },
     onError: (error: unknown) => {
@@ -453,7 +470,7 @@ export function useLoginMutation() {
         data.refreshToken,
         data.accessTokenExpiresIn
       );
-      await queryClient.clear();
+      queryClient.clear();
       router.replace(ROUTES.HOME);
     },
     onError: (error: unknown) => {
@@ -473,21 +490,11 @@ export function useRegisterMutation() {
         data.refreshToken,
         data.accessTokenExpiresIn
       );
-      await queryClient.clear();
+      queryClient.clear();
       router.replace(ROUTES.HOME);
     },
     onError: (error: unknown) => {
       console.error('회원가입 실패:', error);
-    },
-  });
-}
-
-export function useSendVerificationMutation() {
-  return useMutation({
-    mutationFn: queries.sendVerification.fn,
-    onSuccess: (data: SendVerificationResponse) => {},
-    onError: (error: unknown) => {
-      console.error('이메일 인증번호 전송 실패:', error);
     },
   });
 }
@@ -539,8 +546,7 @@ export function useVerifyCodeSignupMutation() {
 
 export function useUpdateProfileMutation() {
   return useMutation({
-    mutationFn: (data: UpdateProfileRequest) =>
-      api.profileApi.updateProfile(data),
+    mutationFn: queries.updateProfile.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
@@ -552,7 +558,7 @@ export function useUpdateProfileMutation() {
 
 export function useDeleteProfileMutation() {
   return useMutation({
-    mutationFn: () => api.profileApi.deleteProfile(),
+    mutationFn: queries.deleteProfile.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
@@ -564,13 +570,7 @@ export function useDeleteProfileMutation() {
 
 export function useRemoveMemberMutation() {
   return useMutation({
-    mutationFn: ({
-      teamId,
-      userId,
-    }: {
-      teamId: string | number;
-      userId: string | number;
-    }) => api.teamMemberApi.removeMember(teamId, userId),
+    mutationFn: queries.removeMember.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queries.teamMembers.key(variables.teamId, 0, 10),
