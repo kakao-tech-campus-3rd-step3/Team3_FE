@@ -137,14 +137,18 @@ export default function TeamFormationScreen() {
       benchWithPos,
       positionMap
     );
-    console.log(
-      '📦 createLineupPayload payload:',
-      JSON.stringify(payload, null, 2)
-    );
 
     // ✅ 4. API 요청
     createLineups(payload, {
-      onSuccess: () => {
+      onSuccess: data => {
+        // ✅ 타입이 CreateLineupResponse (즉, CreatedLineupItem[]), 배열 확정됨
+        const createdLineupId = data[0]?.lineupId ?? null;
+
+        if (!createdLineupId) {
+          Alert.alert('오류', '생성된 라인업 ID를 확인할 수 없습니다.');
+          return;
+        }
+
         Alert.alert(
           '라인업 확정 완료',
           '✅ 라인업이 성공적으로 등록되었습니다.',
@@ -157,6 +161,7 @@ export default function TeamFormationScreen() {
                   params: {
                     formation: JSON.stringify(formationAssignments),
                     type: selectedFormation,
+                    lineupId: String(createdLineupId), // ✅ 전달
                   },
                 }),
             },

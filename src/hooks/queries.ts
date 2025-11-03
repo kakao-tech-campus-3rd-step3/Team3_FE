@@ -44,9 +44,8 @@ import type {
   TeamReviewRequest,
   TeamMemberSliceResponse,
 } from '@/src/types';
+import { CreateLineupRequest, CreateLineupResponse } from '@/src/types/lineup';
 import { formatDateForAPI } from '@/src/utils/date';
-
-import { CreateLineupRequest, CreateLineupResponse } from '../types/lineup';
 
 export const queries = {
   login: {
@@ -1139,18 +1138,17 @@ export function useTeamMembersInfinite(
 }
 
 export function useCreateLineupsMutation() {
-  return useMutation({
-    mutationFn: (data: CreateLineupRequest): Promise<CreateLineupResponse> =>
-      api.lineupApi.createLineups(data),
+  return useMutation<CreateLineupResponse, Error, CreateLineupRequest>({
+    // ✅ 제네릭으로 반환/에러/인수 타입 지정
+    mutationFn: data => api.lineupApi.createLineups(data),
 
-    onSuccess: () => {
-      // 라인업 생성 후 invalidate 처리 (팀 관련 캐시 무효화)
+    onSuccess: data => {
+      console.log('✅ 라인업 생성 성공:', data);
       queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
       queryClient.invalidateQueries({ queryKey: ['team'] });
-      console.log('✅ 라인업 생성 성공');
     },
 
-    onError: (error: unknown) => {
+    onError: error => {
       console.error('❌ 라인업 생성 실패:', error);
     },
   });

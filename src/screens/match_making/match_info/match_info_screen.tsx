@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
   View,
@@ -33,6 +33,7 @@ type SkillLevel = 'AMATEUR' | 'SEMI_PRO' | 'PRO';
 
 export default function MatchInfoScreen() {
   const router = useRouter();
+  const { lineupId } = useLocalSearchParams<{ lineupId?: string }>();
   const { data: userProfile, refetch } = useUserProfile();
   const { mutate: createMatch, isPending } = useCreateMatchMutation();
   const { data: venues, isLoading, error } = useVenues();
@@ -62,6 +63,7 @@ export default function MatchInfoScreen() {
 
   const [universityOnly, setUniversityOnly] = useState(false);
   const [message, setMessage] = useState('');
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
 
   const onSelectStadium = (venue: Venue) => {
     setSelectedStadium(venue);
@@ -84,9 +86,15 @@ export default function MatchInfoScreen() {
     }
 
     const numericTeamId = Number(rawTeamId);
+    const numericLineupId = lineupId ? Number(lineupId) : undefined;
 
     if (isNaN(numericTeamId) || numericTeamId <= 0) {
       Alert.alert('안내', '유효하지 않은 팀 ID입니다. 다시 시도해주세요.');
+      return;
+    }
+
+    if (!numericLineupId || isNaN(numericLineupId)) {
+      Alert.alert('안내', '유효한 라인업 ID가 없습니다. 다시 시도해주세요.');
       return;
     }
 
@@ -100,11 +108,12 @@ export default function MatchInfoScreen() {
       skillLevelMax: skillMax,
       universityOnly,
       message,
+      lineupId: numericLineupId,
     };
 
     createMatch(payload, {
       onSuccess: data => {
-        router.push(ROUTES.TEAMMATE_REGISTER);
+        setSuccessModalVisible(true);
       },
       onError: err => {
         const errorMessage =
@@ -339,6 +348,40 @@ export default function MatchInfoScreen() {
         onClose={() => setShowTimeEndPicker(false)}
         title="종료 시간 선택"
       />
+
+      {/* ✅ 매치 등록 성공 모달 */}
+      <Modal visible={successModalVisible} transparent animationType="fade">
+        <TouchableOpacity
+          style={style.successModalOverlay}
+          activeOpacity={1}
+          onPress={() => {
+            setSuccessModalVisible(false);
+            router.replace(ROUTES.HOME);
+          }}
+        >
+          <TouchableOpacity
+            style={style.successModalContent}
+            activeOpacity={1}
+            onPress={e => e.stopPropagation()}
+          >
+            <Text style={style.successTitle}>매치 등록 완료 🎉</Text>
+            <Text style={style.successMessage}>
+              매치가 성공적으로 등록되었습니다.{'\n'}
+              상대 팀을 기다려주세요!
+            </Text>
+
+            <TouchableOpacity
+              onPress={() => {
+                setSuccessModalVisible(false);
+                router.replace(ROUTES.HOME);
+              }}
+              style={style.successButton}
+            >
+              <Text style={style.successButtonText}>홈으로 돌아가기</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }
