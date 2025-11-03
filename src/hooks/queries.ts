@@ -19,7 +19,6 @@ import type {
   LoginResponse,
   RegisterRequest,
   RegisterResponse,
-  SendVerificationResponse,
   VerifyEmailRequest,
   UpdateProfileRequest,
   TeamMemberRole,
@@ -141,6 +140,52 @@ export const queries = {
       userId: string | number;
     }) => api.teamMemberApi.removeMember(teamId, userId),
   },
+  updateMemberRole: {
+    key: ['updateMemberRole'] as const,
+    fn: ({
+      teamId,
+      userId,
+      role,
+    }: {
+      teamId: string | number;
+      userId: string | number;
+      role: TeamMemberRole;
+    }) => api.teamMemberApi.updateMemberRole(teamId, userId, role),
+  },
+  delegateLeadership: {
+    key: ['delegateLeadership'] as const,
+    fn: ({
+      teamId,
+      memberId,
+    }: {
+      teamId: string | number;
+      memberId: string | number;
+    }) => api.teamMemberApi.delegateLeadership(teamId, memberId),
+  },
+  updateTeam: {
+    key: ['updateTeam'] as const,
+    fn: ({
+      teamId,
+      data,
+    }: {
+      teamId: string | number;
+      data: {
+        name: string;
+        description: string;
+        university: string;
+        skillLevel: SkillLevel;
+        teamType: TeamType;
+      };
+    }) => api.teamEditApi.updateTeam(teamId, data),
+  },
+  deleteTeam: {
+    key: ['deleteTeam'] as const,
+    fn: (teamId: string | number) => api.teamDeleteApi.deleteTeam(teamId),
+  },
+  exitTeam: {
+    key: ['exitTeam'] as const,
+    fn: (teamId: string | number) => api.teamExitApi.exitTeam(teamId),
+  },
   teamJoinRequests: {
     key: (teamId: string | number) => ['teamJoinRequests', teamId] as const,
     fn: (teamId: string | number) =>
@@ -149,6 +194,14 @@ export const queries = {
   teamMatches: {
     key: (teamId: string | number) => ['teamMatches', teamId] as const,
     fn: (teamId: string | number) => api.teamMatchApi.getTeamMatches(teamId),
+  },
+  acceptMatchRequest: {
+    key: ['acceptMatchRequest'] as const,
+    fn: (requestId: number | string) => api.acceptMatchRequestApi(requestId),
+  },
+  rejectMatchRequest: {
+    key: ['rejectMatchRequest'] as const,
+    fn: (requestId: number | string) => api.rejectMatchRequestApi(requestId),
   },
   teamRecentMatches: {
     key: (status?: string) => ['teamRecentMatches', status] as const,
@@ -168,6 +221,54 @@ export const queries = {
       size: number = 10
     ) =>
       api.teamJoinRequestApi.getTeamJoinWaitingList(teamId, status, page, size),
+  },
+  approveJoinRequest: {
+    key: ['approveJoinRequest'] as const,
+    fn: ({
+      teamId,
+      requestId,
+      role,
+    }: {
+      teamId: string | number;
+      requestId: string | number;
+      role: '회장' | '부회장' | '일반멤버';
+    }) =>
+      api.teamJoinRequestApi.approveJoinRequest(teamId, requestId, { role }),
+  },
+  rejectJoinRequest: {
+    key: ['rejectJoinRequest'] as const,
+    fn: ({
+      teamId,
+      requestId,
+      reason,
+    }: {
+      teamId: string | number;
+      requestId: string | number;
+      reason: string;
+    }) =>
+      api.teamJoinRequestApi.rejectJoinRequest(teamId, requestId, { reason }),
+  },
+  joinWaiting: {
+    key: ['joinWaiting'] as const,
+    fn: ({
+      teamId,
+      data,
+    }: {
+      teamId: string | number;
+      data: JoinWaitingRequest;
+    }) => api.teamJoinRequestApi.joinWaiting(teamId, data),
+  },
+  cancelJoinRequest: {
+    key: ['cancelJoinRequest'] as const,
+    fn: ({
+      teamId,
+      joinWaitingId,
+      data,
+    }: {
+      teamId: string | number;
+      joinWaitingId: string | number;
+      data: JoinWaitingCancelRequest;
+    }) => api.teamJoinRequestApi.cancelJoinRequest(teamId, joinWaitingId, data),
   },
   teamMatchRequests: {
     key: ['teamMatchRequests'] as const,
@@ -218,6 +319,36 @@ export const queries = {
     ) => ['myMercenaryRecruitments', page, size, sort] as const,
     fn: (page: number = 0, size: number = 10, sort: string = 'matchDate,asc') =>
       api.mercenaryApi.getMyMercenaryRecruitments(page, size, sort),
+  },
+  myJoinWaitingList: {
+    key: (
+      page: number = 0,
+      size: number = 10,
+      sort: string = 'audit.createdAt,desc'
+    ) => ['myJoinWaitingList', page, size, sort] as const,
+    fn: (
+      page: number = 0,
+      size: number = 10,
+      sort: string = 'audit.createdAt,desc'
+    ) => api.userJoinWaitingApi.getMyJoinWaitingList(page, size, sort),
+  },
+  createMercenaryRecruitment: {
+    key: ['createMercenaryRecruitment'] as const,
+    fn: (data: RecruitmentCreateRequest) =>
+      api.createMercenaryRecruitment(data),
+  },
+  updateMercenaryRecruitment: {
+    key: ['updateMercenaryRecruitment'] as const,
+    fn: ({ id, data }: { id: number; data: RecruitmentUpdateRequest }) =>
+      api.mercenaryApi.updateMercenaryRecruitment(id, data),
+  },
+  deleteMercenaryRecruitment: {
+    key: ['deleteMercenaryRecruitment'] as const,
+    fn: (id: number) => api.mercenaryApi.deleteMercenaryRecruitment(id),
+  },
+  createTeamReview: {
+    key: ['createTeamReview'] as const,
+    fn: (data: TeamReviewRequest) => api.teamReviewApi.createReview(data),
   },
 } as const;
 
@@ -573,7 +704,7 @@ export function useRemoveMemberMutation() {
     mutationFn: queries.removeMember.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: queries.teamMembers.key(variables.teamId, 0, 10),
+        queryKey: ['teamMembers', variables.teamId],
       });
       queryClient.invalidateQueries({
         queryKey: queries.team.key(variables.teamId),
@@ -587,18 +718,10 @@ export function useRemoveMemberMutation() {
 
 export function useUpdateMemberRoleMutation() {
   return useMutation({
-    mutationFn: ({
-      teamId,
-      userId,
-      role,
-    }: {
-      teamId: string | number;
-      userId: string | number;
-      role: TeamMemberRole;
-    }) => api.teamMemberApi.updateMemberRole(teamId, userId, role),
+    mutationFn: queries.updateMemberRole.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: queries.teamMembers.key(variables.teamId, 0, 10),
+        queryKey: ['teamMembers', variables.teamId],
       });
       queryClient.invalidateQueries({
         queryKey: queries.team.key(variables.teamId),
@@ -612,24 +735,11 @@ export function useUpdateMemberRoleMutation() {
 
 export function useUpdateTeamMutation() {
   return useMutation({
-    mutationFn: ({
-      teamId,
-      data,
-    }: {
-      teamId: string | number;
-      data: {
-        name: string;
-        description: string;
-        university: string;
-        skillLevel: SkillLevel;
-        teamType: TeamType;
-      };
-    }) => api.teamEditApi.updateTeam(teamId, data),
+    mutationFn: queries.updateTeam.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queries.team.key(variables.teamId),
       });
-      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('팀 정보 수정 실패:', error);
@@ -639,14 +749,13 @@ export function useUpdateTeamMutation() {
 
 export function useDeleteTeamMutation() {
   return useMutation({
-    mutationFn: (teamId: string | number) => {
-      return api.teamDeleteApi.deleteTeam(teamId);
-    },
+    mutationFn: queries.deleteTeam.fn,
     onSuccess: (_, teamId) => {
       queryClient.invalidateQueries({ queryKey: queries.team.key(teamId) });
       queryClient.invalidateQueries({
-        queryKey: queries.teamMembers.key(teamId, 0, 10),
+        queryKey: ['teamMembers', teamId],
       });
+      queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
     onError: (error: unknown) => {
       console.error('[팀 삭제 Mutation] API 실패:', error);
@@ -656,14 +765,13 @@ export function useDeleteTeamMutation() {
 
 export function useTeamExitMutation() {
   return useMutation({
-    mutationFn: (teamId: string | number) => api.teamExitApi.exitTeam(teamId),
+    mutationFn: queries.exitTeam.fn,
     onSuccess: (_, teamId) => {
       queryClient.invalidateQueries({ queryKey: queries.team.key(teamId) });
       queryClient.invalidateQueries({
-        queryKey: queries.teamMembers.key(teamId, 0, 10),
+        queryKey: ['teamMembers', teamId],
       });
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
-      router.replace(ROUTES.TEAM_GUIDE);
     },
     onError: (error: unknown) => {
       console.error('팀 나가기 실패:', error);
@@ -673,13 +781,7 @@ export function useTeamExitMutation() {
 
 export function useDelegateLeadershipMutation() {
   return useMutation({
-    mutationFn: ({
-      teamId,
-      memberId,
-    }: {
-      teamId: string | number;
-      memberId: string | number;
-    }) => api.teamMemberApi.delegateLeadership(teamId, memberId),
+    mutationFn: queries.delegateLeadership.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['teamMembers', variables.teamId],
@@ -696,11 +798,13 @@ export function useDelegateLeadershipMutation() {
 
 export function useAcceptMatchRequestMutation() {
   return useMutation({
-    mutationFn: (requestId: number | string) =>
-      api.acceptMatchRequestApi(requestId),
+    mutationFn: queries.acceptMatchRequest.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queries.teamMatchRequests.key,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['teamRecentMatches'],
       });
     },
     onError: (error: unknown) => {
@@ -711,8 +815,7 @@ export function useAcceptMatchRequestMutation() {
 
 export function useRejectMatchRequestMutation() {
   return useMutation({
-    mutationFn: (requestId: number | string) =>
-      api.rejectMatchRequestApi(requestId),
+    mutationFn: queries.rejectMatchRequest.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queries.teamMatchRequests.key,
@@ -723,25 +826,52 @@ export function useRejectMatchRequestMutation() {
     },
   });
 }
-
-export function useApproveJoinRequestMutation() {
+export function useJoinWaitingMutation() {
   return useMutation({
-    mutationFn: ({
-      teamId,
-      requestId,
-      role,
-    }: {
-      teamId: string | number;
-      requestId: string | number;
-      role: '회장' | '부회장' | '일반멤버';
-    }) =>
-      api.teamJoinRequestApi.approveJoinRequest(teamId, requestId, { role }),
-    onSuccess: (response, variables) => {
+    mutationFn: queries.joinWaiting.fn,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['myJoinWaitingList'],
+      });
       queryClient.invalidateQueries({
         queryKey: queries.teamJoinWaitingList.key(variables.teamId),
       });
       queryClient.invalidateQueries({
-        queryKey: queries.teamMembers.key(variables.teamId),
+        queryKey: queries.team.key(variables.teamId),
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 가입 요청 실패:', error);
+    },
+  });
+}
+
+export function useCancelJoinRequestMutation() {
+  return useMutation({
+    mutationFn: queries.cancelJoinRequest.fn,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['myJoinWaitingList'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 가입 요청 취소 실패:', error);
+    },
+  });
+}
+
+export function useApproveJoinRequestMutation() {
+  return useMutation({
+    mutationFn: queries.approveJoinRequest.fn,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['teamMembers', variables.teamId],
       });
       queryClient.invalidateQueries({
         queryKey: queries.team.key(variables.teamId),
@@ -755,16 +885,7 @@ export function useApproveJoinRequestMutation() {
 
 export function useRejectJoinRequestMutation() {
   return useMutation({
-    mutationFn: ({
-      teamId,
-      requestId,
-      reason,
-    }: {
-      teamId: string | number;
-      requestId: string | number;
-      reason: string;
-    }) =>
-      api.teamJoinRequestApi.rejectJoinRequest(teamId, requestId, { reason }),
+    mutationFn: queries.rejectJoinRequest.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queries.teamJoinWaitingList.key(variables.teamId),
@@ -829,6 +950,23 @@ export function useCancelMatchRequestMutation() {
     },
     onError: (error: unknown) => {
       console.error('매치 요청 취소 실패:', error);
+    },
+  });
+}
+
+export function useCreateTeamReviewMutation() {
+  return useMutation({
+    mutationFn: queries.createTeamReview.fn,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['teamReviews', variables.reviewedTeamId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['teamReviews', variables.reviewerTeamId],
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 리뷰 등록 실패:', error);
     },
   });
 }
@@ -918,84 +1056,20 @@ export function useRecommendedMatches() {
   });
 }
 
-export function useTeamJoinRequestMutation() {
-  const joinWaitingMutation = useMutation({
-    mutationFn: ({
-      teamId,
-      data,
-    }: {
-      teamId: string | number;
-      data: JoinWaitingRequest;
-    }) => api.teamJoinRequestApi.joinWaiting(teamId, data),
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ['myJoinWaitingList'],
-      });
-      queryClient.invalidateQueries({
-        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queries.team.key(variables.teamId),
-      });
-    },
-    onError: (error: unknown) => {
-      console.error('팀 가입 요청 실패:', error);
-    },
-  });
-
-  const cancelJoinRequestMutation = useMutation({
-    mutationFn: ({
-      teamId,
-      joinWaitingId,
-      data,
-    }: {
-      teamId: string | number;
-      joinWaitingId: string | number;
-      data: JoinWaitingCancelRequest;
-    }) => api.teamJoinRequestApi.cancelJoinRequest(teamId, joinWaitingId, data),
-    onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ['myJoinWaitingList'],
-      });
-      queryClient.invalidateQueries({
-        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
-      });
-    },
-    onError: (error: unknown) => {
-      console.error('팀 가입 요청 취소 실패:', error);
-    },
-  });
-
-  return {
-    joinWaiting: joinWaitingMutation.mutate,
-    isJoining: joinWaitingMutation.isPending,
-    joinError: joinWaitingMutation.error,
-    joinSuccess: joinWaitingMutation.isSuccess,
-    resetJoinState: joinWaitingMutation.reset,
-    cancelJoinRequest: cancelJoinRequestMutation.mutate,
-    isCanceling: cancelJoinRequestMutation.isPending,
-    cancelError: cancelJoinRequestMutation.error,
-    cancelSuccess: cancelJoinRequestMutation.isSuccess,
-    resetCancelState: cancelJoinRequestMutation.reset,
-  };
-}
-
 export function useMyJoinWaitingList(
   page: number = 0,
   size: number = 10,
   sort: string = 'audit.createdAt,desc'
 ) {
   return useQuery({
-    queryKey: ['myJoinWaitingList', page, size, sort],
-    queryFn: () =>
-      api.userJoinWaitingApi.getMyJoinWaitingList(page, size, sort),
+    queryKey: queries.myJoinWaitingList.key(page, size, sort),
+    queryFn: () => queries.myJoinWaitingList.fn(page, size, sort),
   });
 }
 
 export function useCreateMercenaryRecruitment() {
-  const createRecruitmentMutation = useMutation({
-    mutationFn: (data: RecruitmentCreateRequest) =>
-      api.createMercenaryRecruitment(data),
+  return useMutation({
+    mutationFn: queries.createMercenaryRecruitment.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['mercenaryRecruitments'],
@@ -1005,14 +1079,6 @@ export function useCreateMercenaryRecruitment() {
       console.error('용병 모집 게시글 생성 실패:', error);
     },
   });
-
-  return {
-    createRecruitment: createRecruitmentMutation.mutate,
-    isCreating: createRecruitmentMutation.isPending,
-    createError: createRecruitmentMutation.error,
-    createSuccess: createRecruitmentMutation.isSuccess,
-    resetCreateState: createRecruitmentMutation.reset,
-  };
 }
 
 export function useMercenaryRecruitments(
@@ -1046,14 +1112,8 @@ export function useMyMercenaryRecruitments(
 }
 
 export function useUpdateMercenaryRecruitment() {
-  const updateRecruitmentMutation = useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: number;
-      data: RecruitmentUpdateRequest;
-    }) => api.mercenaryApi.updateMercenaryRecruitment(id, data),
+  return useMutation({
+    mutationFn: queries.updateMercenaryRecruitment.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['mercenaryRecruitments'],
@@ -1069,19 +1129,11 @@ export function useUpdateMercenaryRecruitment() {
       console.error('용병 모집 게시글 수정 실패:', error);
     },
   });
-
-  return {
-    updateRecruitment: updateRecruitmentMutation.mutate,
-    isUpdating: updateRecruitmentMutation.isPending,
-    updateError: updateRecruitmentMutation.error,
-    updateSuccess: updateRecruitmentMutation.isSuccess,
-    resetUpdateState: updateRecruitmentMutation.reset,
-  };
 }
 
 export function useDeleteMercenaryRecruitment() {
-  const deleteRecruitmentMutation = useMutation({
-    mutationFn: (id: number) => api.mercenaryApi.deleteMercenaryRecruitment(id),
+  return useMutation({
+    mutationFn: queries.deleteMercenaryRecruitment.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['mercenaryRecruitments'],
@@ -1095,27 +1147,6 @@ export function useDeleteMercenaryRecruitment() {
     },
     onError: (error: unknown) => {
       console.error('용병 모집 게시글 삭제 실패:', error);
-    },
-  });
-
-  return {
-    deleteRecruitment: deleteRecruitmentMutation.mutate,
-    isDeleting: deleteRecruitmentMutation.isPending,
-    deleteError: deleteRecruitmentMutation.error,
-    deleteSuccess: deleteRecruitmentMutation.isSuccess,
-    resetDeleteState: deleteRecruitmentMutation.reset,
-  };
-}
-
-export function useCreateTeamReviewMutation() {
-  return useMutation({
-    mutationFn: (data: TeamReviewRequest) =>
-      api.teamReviewApi.createReview(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['teamRecentMatches'] });
-    },
-    onError: (error: unknown) => {
-      console.error('팀 리뷰 등록 실패:', error);
     },
   });
 }
