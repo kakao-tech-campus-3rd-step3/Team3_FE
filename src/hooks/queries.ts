@@ -38,10 +38,13 @@ import type {
   RecommendedMatch,
   JoinWaitingRequest,
   JoinWaitingCancelRequest,
+  TeamMember, // 사용하지 않음음
   RecruitmentCreateRequest,
   RecruitmentUpdateRequest,
   TeamReviewRequest,
+  TeamMemberSliceResponse,
 } from '@/src/types';
+import { CreateLineupRequest, CreateLineupResponse } from '@/src/types/lineup';
 import { addDaysToDate, formatDateForAPI } from '@/src/utils/date';
 
 export const queries = {
@@ -292,11 +295,14 @@ export function useTeamMembers(
   page: number = 0,
   size: number = 10
 ) {
-  return useQuery({
+  const query = useQuery({
     queryKey: queries.teamMembers.key(teamId, page, size),
     queryFn: () => queries.teamMembers.fn(teamId, page, size),
     enabled: !!teamId,
   });
+  /*********************************/
+  const members = query.data?.content ?? []; // 🔹 항상 배열만 보장
+  return { ...query, members };
 }
 
 export function useTeamMember(
@@ -1116,6 +1122,47 @@ export function useCreateTeamReviewMutation() {
     },
     onError: (error: unknown) => {
       console.error('팀 리뷰 등록 실패:', error);
+    },
+  });
+}
+
+export function useTeamMembersInfinite(
+  teamId: string | number,
+  size: number = 10
+) {
+  return useInfiniteQuery<TeamMemberSliceResponse>({
+    queryKey: ['teamMembersSlice', teamId],
+    queryFn: ({ pageParam }) =>
+      api.teamMemberApi.getTeamMembersSlice(
+        teamId,
+        pageParam ? Number(pageParam) : undefined,
+        size
+      ),
+    getNextPageParam: lastPage => {
+      // hasNext가 true일 경우, 다음 커서 id 반환
+      if (lastPage.hasNext && lastPage.members.length > 0) {
+        return lastPage.members[lastPage.members.length - 1].id;
+      }
+      return undefined;
+    },
+    enabled: !!teamId,
+    initialPageParam: undefined, // 첫 페이지는 cursorId 없음
+  });
+}
+
+export function useCreateLineupsMutation() {
+  return useMutation<CreateLineupResponse, Error, CreateLineupRequest>({
+    // ✅ 제네릭으로 반환/에러/인수 타입 지정
+    mutationFn: data => api.lineupApi.createLineups(data),
+
+    onSuccess: data => {
+      console.log('✅ 라인업 생성 성공:', data);
+      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+    },
+
+    onError: error => {
+      console.error('❌ 라인업 생성 실패:', error);
     },
   });
 }

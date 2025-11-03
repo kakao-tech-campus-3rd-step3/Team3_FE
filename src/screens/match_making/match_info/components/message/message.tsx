@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 
-import { style } from '@/src/screens/match_making/match_info/component/message/message_style';
+import { style } from '@/src/screens/match_making/match_info/components/message/message_style';
 
 type Props = {
   value: string;

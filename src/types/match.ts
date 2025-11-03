@@ -76,6 +76,7 @@ export interface MatchCreateRequestDto {
   skillLevelMax: string;
   universityOnly: boolean;
   message: string;
+  lineupId: number;
 }
 
 export interface MatchCreateResponseDto {

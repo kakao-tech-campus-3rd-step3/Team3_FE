@@ -6,3 +6,4 @@ export * from '@/src/api/auth';
 export * from '@/src/api/venue';
 export * from '@/src/api/mercenary';
 export * from '@/src/api/teamReview';
+export * from '@/src/api/lineup';

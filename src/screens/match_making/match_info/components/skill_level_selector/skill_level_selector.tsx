@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 
-import { style } from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector_style';
+import { style } from '@/src/screens/match_making/match_info/components/skill_level_selector/skill_level_selector_style';
 
 const LEVELS = [
   { key: 'AMATEUR', label: '아마추어', description: '초보자' },

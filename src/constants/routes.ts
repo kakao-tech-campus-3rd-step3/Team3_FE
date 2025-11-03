@@ -18,6 +18,9 @@ export const ROUTES = {
   TEAM_JOIN_LIST: '/team/join-list',
 
   MATCH_MAKING: '/match_making/match_info',
+  MEMBER_READY: '/member_ready',
+  TEAMMATE_REGISTER: '/match_making/teammate_register',
+  TEAM_FORMATION: '/match_making/team_formation',
   MATCH_APPLICATION: '/match_application',
   CHECK_CREATED_MATCHES: '/check_created_matches',
   CHECK_APPLIED_MATCHES: '/check_applied_matches',
