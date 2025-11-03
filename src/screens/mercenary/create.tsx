@@ -6,9 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
-  ScrollView,
   Alert,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Dropdown from '@/src/components/dropdown';
@@ -118,102 +120,108 @@ export default function MercenaryCreateScreen() {
     <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
       <CustomHeader title="용병 모집" showBackButton={true} />
 
-      <ScrollView
-        style={styles.formContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.formSection}>
-          <Text style={styles.formSectionTitle}>매치 정보</Text>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>매치 날짜</Text>
-            <TouchableOpacity
-              style={styles.dateTimeButton}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text style={styles.dateTimeLabel}>날짜</Text>
-              <Text style={styles.dateTimeValue} numberOfLines={1}>
-                {matchDate.toLocaleDateString('ko-KR', {
-                  month: 'short',
-                  day: 'numeric',
-                  weekday: 'short',
-                })}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>매치 시간</Text>
-            <TouchableOpacity
-              style={styles.dateTimeButton}
-              onPress={() => setShowTimePicker(true)}
-            >
-              <Text style={styles.dateTimeLabel}>시간</Text>
-              <Text style={styles.dateTimeValue} numberOfLines={1}>
-                {matchTime.toLocaleTimeString('ko-KR', {
-                  hour: 'numeric',
-                  minute: '2-digit',
-                  hour12: false,
-                })}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.formSection}>
-          <Text style={styles.formSectionTitle}>용병 정보</Text>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>포지션</Text>
-            <Dropdown
-              items={POSITION_OPTIONS}
-              value={recruitmentForm.position || null}
-              onChange={value =>
-                setRecruitmentForm(prev => ({ ...prev, position: value }))
-              }
-              placeholder="포지션을 선택하세요"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>실력 레벨</Text>
-            <Dropdown
-              items={SKILL_LEVEL_OPTIONS}
-              value={recruitmentForm.skillLevel || null}
-              onChange={value =>
-                setRecruitmentForm(prev => ({ ...prev, skillLevel: value }))
-              }
-              placeholder="실력 레벨을 선택하세요"
-            />
-          </View>
-        </View>
-
-        <View style={styles.formSection}>
-          <Text style={styles.formSectionTitle}>모집 메시지</Text>
-          <TextInput
-            style={styles.textAreaInput}
-            placeholder="용병 모집에 대한 메시지를 작성해주세요"
-            placeholderTextColor={theme.colors.text.sub}
-            multiline
-            numberOfLines={4}
-            textAlignVertical="top"
-            value={recruitmentForm.message}
-            onChangeText={text =>
-              setRecruitmentForm(prev => ({ ...prev, message: text }))
-            }
-          />
-        </View>
-
-        <TouchableOpacity
-          style={[styles.createSubmitButton, isCreating && { opacity: 0.6 }]}
-          onPress={handleCreateRecruitment}
-          disabled={isCreating}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAwareScrollView
+          style={styles.formContainer}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          enableOnAndroid={true}
+          extraScrollHeight={80}
         >
-          <Text style={styles.createSubmitButtonText}>
-            {isCreating ? '생성 중...' : '용병 모집하기'}
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
+          <View style={styles.formSection}>
+            <Text style={styles.formSectionTitle}>매치 정보</Text>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>매치 날짜</Text>
+              <TouchableOpacity
+                style={styles.dateTimeButton}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <Text style={styles.dateTimeLabel}>날짜</Text>
+                <Text style={styles.dateTimeValue} numberOfLines={1}>
+                  {matchDate.toLocaleDateString('ko-KR', {
+                    month: 'short',
+                    day: 'numeric',
+                    weekday: 'short',
+                  })}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>매치 시간</Text>
+              <TouchableOpacity
+                style={styles.dateTimeButton}
+                onPress={() => setShowTimePicker(true)}
+              >
+                <Text style={styles.dateTimeLabel}>시간</Text>
+                <Text style={styles.dateTimeValue} numberOfLines={1}>
+                  {matchTime.toLocaleTimeString('ko-KR', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: false,
+                  })}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.formSection}>
+            <Text style={styles.formSectionTitle}>용병 정보</Text>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>포지션</Text>
+              <Dropdown
+                items={POSITION_OPTIONS}
+                value={recruitmentForm.position || null}
+                onChange={value =>
+                  setRecruitmentForm(prev => ({ ...prev, position: value }))
+                }
+                placeholder="포지션을 선택하세요"
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>실력 레벨</Text>
+              <Dropdown
+                items={SKILL_LEVEL_OPTIONS}
+                value={recruitmentForm.skillLevel || null}
+                onChange={value =>
+                  setRecruitmentForm(prev => ({ ...prev, skillLevel: value }))
+                }
+                placeholder="실력 레벨을 선택하세요"
+              />
+            </View>
+          </View>
+
+          <View style={styles.formSection}>
+            <Text style={styles.formSectionTitle}>모집 메시지</Text>
+            <TextInput
+              style={styles.textAreaInput}
+              placeholder="용병 모집에 대한 메시지를 작성해주세요"
+              placeholderTextColor={theme.colors.text.sub}
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+              value={recruitmentForm.message}
+              onChangeText={text =>
+                setRecruitmentForm(prev => ({ ...prev, message: text }))
+              }
+            />
+          </View>
+
+          <TouchableOpacity
+            style={[styles.createSubmitButton, isCreating && { opacity: 0.6 }]}
+            onPress={handleCreateRecruitment}
+            disabled={isCreating}
+          >
+            <Text style={styles.createSubmitButtonText}>
+              {isCreating ? '생성 중...' : '용병 모집하기'}
+            </Text>
+          </TouchableOpacity>
+        </KeyboardAwareScrollView>
+      </TouchableWithoutFeedback>
 
       <ModalDatePicker
         visible={showDatePicker}
@@ -241,7 +249,10 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: theme.spacing.spacing6,
+    paddingBottom: theme.spacing.spacing6,
   },
   formSection: {
     marginBottom: theme.spacing.spacing6,

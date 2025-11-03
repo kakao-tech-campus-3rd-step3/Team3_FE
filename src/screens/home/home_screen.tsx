@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { ScrollView, View, ActivityIndicator, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ROUTES } from '@/src/constants/routes';
 import { useUserProfile, useLogout } from '@/src/hooks/queries';
 import BenefitsSection from '@/src/screens/home/components/benefit_section';
 import HomeHeader from '@/src/screens/home/components/home_header';
@@ -75,9 +76,11 @@ export default function HomeScreen() {
 
   const handleMatchPress = useCallback((matchDate?: string) => {
     if (matchDate) {
-      router.push(`/(tabs)/match-info?date=${encodeURIComponent(matchDate)}`);
+      router.push(
+        `${ROUTES.MATCH_INFO_TAB}?date=${encodeURIComponent(matchDate)}`
+      );
     } else {
-      router.push('/(tabs)/match-info');
+      router.push(ROUTES.MATCH_INFO_TAB);
     }
   }, []);
 

@@ -12,6 +12,7 @@ import {
 import TeamBasicInfo from '@/src/components/team/steps/team_basic_info';
 import TeamDetails from '@/src/components/team/steps/team_details';
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { ROUTES } from '@/src/constants/routes';
 import { styles } from '@/src/features/team_creation/styles';
 import { useCreateTeamMutation } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
@@ -83,7 +84,7 @@ export default function TeamCreationScreen() {
           {
             text: '확인',
             onPress: () => {
-              router.replace('/');
+              router.replace(ROUTES.HOME);
             },
           },
         ]);

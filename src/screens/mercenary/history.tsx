@@ -17,6 +17,7 @@ import { RecruitmentCard } from '@/src/components/mercenary/recruitment_card';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import StatusBadge from '@/src/components/ui/status_badge';
 import { TabSelector } from '@/src/components/ui/tab_selector';
+import { ROUTES } from '@/src/constants/routes';
 import {
   useMyJoinWaitingList,
   useMyMercenaryRecruitments,
@@ -60,7 +61,7 @@ export default function MercenaryHistoryScreen() {
   const myRecruitmentsData = recruitmentsData?.content || [];
 
   const handleEdit = (recruitmentId: number) => {
-    router.push(`/mercenary/edit?id=${recruitmentId}`);
+    router.push(`${ROUTES.MERCENARY_EDIT}?id=${recruitmentId}`);
   };
 
   const handleDelete = (recruitmentId: number) => {

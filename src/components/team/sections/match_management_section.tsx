@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { memo } from 'react';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { memo, useMemo } from 'react';
+import { Alert, Dimensions, Text, TouchableOpacity, View } from 'react-native';
 
 import { ROUTES } from '@/src/constants/routes';
 import { useAuth } from '@/src/contexts/auth_context';
@@ -41,6 +41,28 @@ export default memo(function MatchManagementSection({
 }: MatchManagementSectionProps) {
   const { token } = useAuth();
   const isAuthenticated = !!token;
+  const screenWidth = Dimensions.get('window').width;
+
+  const titleStyles = useMemo(() => {
+    if (screenWidth < 360) {
+      return {
+        fontSize: 11,
+        minFontSize: 9,
+        iconSize: 28,
+      };
+    } else if (screenWidth < 400) {
+      return {
+        fontSize: 12,
+        minFontSize: 10,
+        iconSize: 30,
+      };
+    }
+    return {
+      fontSize: 14,
+      minFontSize: 12,
+      iconSize: 32,
+    };
+  }, [screenWidth]);
 
   const checkTeamMembership = () => {
     if (!isAuthenticated) {
@@ -79,9 +101,25 @@ export default memo(function MatchManagementSection({
             style={styles.matchManagementItem}
             activeOpacity={0.7}
           >
-            <Ionicons name={action.icon} size={32} color={action.color} />
+            <Ionicons
+              name={action.icon}
+              size={titleStyles.iconSize}
+              color={action.color}
+            />
             <View style={styles.matchManagementInfo}>
-              <Text style={styles.matchManagementTitle}>{action.title}</Text>
+              <Text
+                style={[
+                  styles.matchManagementTitle,
+                  { fontSize: titleStyles.fontSize },
+                ]}
+                numberOfLines={1}
+                adjustsFontSizeToFit={true}
+                minimumFontScale={
+                  titleStyles.minFontSize / titleStyles.fontSize
+                }
+              >
+                {action.title}
+              </Text>
             </View>
           </TouchableOpacity>
         ))}

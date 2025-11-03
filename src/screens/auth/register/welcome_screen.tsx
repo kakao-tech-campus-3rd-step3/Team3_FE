@@ -19,6 +19,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ROUTES } from '@/src/constants/routes';
 import { theme } from '@/src/theme';
 
 interface WelcomeScreenProps {
@@ -93,7 +94,7 @@ export default function WelcomeScreen({ onSwitchToLogin }: WelcomeScreenProps) {
   }));
 
   const handleStartAuth = () => {
-    router.push('/(auth)/register');
+    router.push(ROUTES.REGISTER);
   };
 
   const handleStartButtonPressIn = () => {

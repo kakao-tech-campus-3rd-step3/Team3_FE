@@ -1,13 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   FlatList,
   StyleSheet,
-  TextInput,
   Modal,
   ScrollView,
   Alert,
@@ -17,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RecruitmentCard } from '@/src/components/mercenary/recruitment_card';
 import MercenaryApplicationModal from '@/src/components/modals/mercenary_application_modal';
 import { convertPositionToKorean } from '@/src/constants/positions';
+import { ROUTES } from '@/src/constants/routes';
 import { UNIVERSITIES } from '@/src/constants/universities';
 import {
   useMercenaryRecruitments,
@@ -33,7 +33,6 @@ import { translateErrorMessage } from '@/src/utils/error_messages';
 export default function MercenaryMainScreen() {
   const [selectedUniversity, setSelectedUniversity] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [isDetailModalOpen, setIsDetailModalOpen] = useState<boolean>(false);
   const [selectedRecruitmentId, setSelectedRecruitmentId] = useState<
     number | null
@@ -60,9 +59,11 @@ export default function MercenaryMainScreen() {
     error: detailError,
   } = useMercenaryRecruitment(selectedRecruitmentId || 0);
 
-  const filteredUniversities = UNIVERSITIES.filter(university =>
-    university.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredRecruitments = useMemo(() => {
+    const list = recruitmentsData?.content || [];
+    if (!selectedUniversity || selectedUniversity === '전체') return list;
+    return list.filter(r => r.universityName === selectedUniversity);
+  }, [recruitmentsData?.content, selectedUniversity]);
 
   const formatTime = (time: string) => {
     return time.slice(0, 5);
@@ -162,7 +163,16 @@ export default function MercenaryMainScreen() {
         <Text style={newStyles.headerTitle}>용병 서비스</Text>
         <TouchableOpacity
           style={newStyles.addButton}
-          onPress={() => router.push('/mercenary/create')}
+          onPress={() => {
+            if (!userProfile?.teamId) {
+              Alert.alert(
+                '팀 참여 필요',
+                '용병 모집을 하려면 먼저 팀에 가입해야 합니다.'
+              );
+              return;
+            }
+            router.push(ROUTES.MERCENARY_CREATE);
+          }}
         >
           <Ionicons name="add" size={24} color={theme.colors.brand.main} />
         </TouchableOpacity>
@@ -202,39 +212,18 @@ export default function MercenaryMainScreen() {
       >
         <SafeAreaView style={newStyles.modalContainer}>
           <View style={newStyles.modalHeader}>
+            <View style={newStyles.modalHeaderLeft} />
+            <Text style={newStyles.modalTitle}>대학교 선택</Text>
             <TouchableOpacity
               onPress={() => setIsModalOpen(false)}
               style={newStyles.modalCloseButton}
             >
               <Ionicons name="close" size={24} color={theme.colors.text.main} />
             </TouchableOpacity>
-            <Text style={newStyles.modalTitle}>대학교 선택</Text>
-            <View style={newStyles.modalHeaderRight} />
-          </View>
-
-          <View style={newStyles.searchInputContainer}>
-            <Ionicons name="search" size={20} color={theme.colors.text.sub} />
-            <TextInput
-              style={newStyles.searchInput}
-              placeholder="대학교명을 입력하세요"
-              placeholderTextColor={theme.colors.text.sub}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              autoFocus
-            />
-            {searchQuery !== '' && (
-              <TouchableOpacity onPress={() => setSearchQuery('')}>
-                <Ionicons
-                  name="close-circle"
-                  size={20}
-                  color={theme.colors.text.sub}
-                />
-              </TouchableOpacity>
-            )}
           </View>
 
           <FlatList
-            data={[{ id: 0, name: '전체' }, ...filteredUniversities]}
+            data={[{ id: 0, name: '전체' }, ...UNIVERSITIES]}
             keyExtractor={item => item.id.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -246,7 +235,6 @@ export default function MercenaryMainScreen() {
                 onPress={() => {
                   setSelectedUniversity(item.name);
                   setIsModalOpen(false);
-                  setSearchQuery('');
                 }}
               >
                 <Text
@@ -452,7 +440,7 @@ export default function MercenaryMainScreen() {
 
       <View style={newStyles.content}>
         <FlatList
-          data={recruitmentsData?.content || []}
+          data={filteredRecruitments}
           renderItem={renderRecruitmentCard}
           keyExtractor={item => item.recruitmentId.toString()}
           contentContainerStyle={newStyles.listContainer}
@@ -488,6 +476,7 @@ export default function MercenaryMainScreen() {
           setSelectedRecruitment(null);
         }}
         onApply={handleApplication}
+        isApplying={isJoining}
       />
     </SafeAreaView>
   );
@@ -573,18 +562,20 @@ const newStyles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  modalCloseButton: {
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: theme.colors.background.sub,
+  modalHeaderLeft: {
+    width: 40,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: theme.colors.text.main,
+    flex: 1,
+    textAlign: 'center',
   },
-  modalHeaderRight: {
-    width: 32,
+  modalCloseButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: theme.colors.background.sub,
   },
   searchInputContainer: {
     flexDirection: 'row',

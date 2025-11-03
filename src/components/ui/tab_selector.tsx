@@ -1,5 +1,11 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useMemo } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 
 import { theme } from '@/src/theme';
 
@@ -14,19 +20,56 @@ export const TabSelector: React.FC<TabSelectorProps> = ({
   activeTab,
   onTabChange,
 }) => {
+  const screenWidth = Dimensions.get('window').width;
+
+  const tabStyles = useMemo(() => {
+    if (screenWidth < 360) {
+      return {
+        paddingHorizontal: theme.spacing.spacing2,
+        paddingVertical: theme.spacing.spacing2,
+        fontSize: 11,
+        minFontSize: 9,
+      };
+    } else if (screenWidth < 400) {
+      return {
+        paddingHorizontal: theme.spacing.spacing3,
+        paddingVertical: theme.spacing.spacing2,
+        fontSize: 12,
+        minFontSize: 10,
+      };
+    }
+    return {
+      paddingHorizontal: theme.spacing.spacing4,
+      paddingVertical: theme.spacing.spacing3,
+      fontSize: 14,
+      minFontSize: 12,
+    };
+  }, [screenWidth]);
+
   return (
     <View style={styles.container}>
       {tabs.map(tab => (
         <TouchableOpacity
           key={tab.key}
-          style={[styles.tab, activeTab === tab.key && styles.activeTab]}
+          style={[
+            styles.tab,
+            {
+              paddingHorizontal: tabStyles.paddingHorizontal,
+              paddingVertical: tabStyles.paddingVertical,
+            },
+            activeTab === tab.key && styles.activeTab,
+          ]}
           onPress={() => onTabChange(tab.key)}
         >
           <Text
             style={[
               styles.tabText,
+              { fontSize: tabStyles.fontSize },
               activeTab === tab.key && styles.activeTabText,
             ]}
+            numberOfLines={1}
+            adjustsFontSizeToFit={true}
+            minimumFontScale={tabStyles.minFontSize / tabStyles.fontSize}
           >
             {tab.label}
           </Text>
@@ -47,10 +90,10 @@ const styles = StyleSheet.create({
   },
   tab: {
     flex: 1,
-    paddingVertical: theme.spacing.spacing3,
-    paddingHorizontal: theme.spacing.spacing4,
     borderRadius: 6,
     alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 0,
   },
   activeTab: {
     backgroundColor: theme.colors.background.main,

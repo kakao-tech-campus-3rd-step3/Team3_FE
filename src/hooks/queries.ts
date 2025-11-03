@@ -45,7 +45,7 @@ import type {
   TeamMemberSliceResponse,
 } from '@/src/types';
 import { CreateLineupRequest, CreateLineupResponse } from '@/src/types/lineup';
-import { formatDateForAPI } from '@/src/utils/date';
+import { addDaysToDate, formatDateForAPI } from '@/src/utils/date';
 
 export const queries = {
   login: {
@@ -89,6 +89,10 @@ export const queries = {
   userProfile: {
     key: ['user', 'profile'] as const,
     fn: () => api.profileApi.getProfile(),
+  },
+  userProfileById: {
+    key: (userId: string | number) => ['user', 'profile', userId] as const,
+    fn: (userId: string | number) => api.profileApi.getProfileById(userId),
   },
   user: {
     key: ['user'] as const,
@@ -209,6 +213,18 @@ export function useUserProfile() {
     queryKey: queries.userProfile.key,
     queryFn: queries.userProfile.fn,
     enabled: !!token && isInitialized,
+  });
+}
+
+export function useUserProfileById(userId: string | number | undefined) {
+  const { token, isInitialized } = useAuth();
+
+  return useQuery({
+    queryKey: userId
+      ? queries.userProfileById.key(userId)
+      : ['user', 'profile', 'undefined'],
+    queryFn: () => queries.userProfileById.fn(userId as string | number),
+    enabled: !!token && isInitialized && !!userId,
   });
 }
 
@@ -834,8 +850,7 @@ const fetchWaitingMatches = async (): Promise<MatchWaitingResponseDto[]> => {
     });
 
     if (result.length === 0) {
-      const tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1);
+      const tomorrow = addDaysToDate(today, 1);
       const tomorrowString = formatDateForAPI(tomorrow);
 
       const tomorrowResult = await api.getMatchWaitingList({
@@ -846,8 +861,7 @@ const fetchWaitingMatches = async (): Promise<MatchWaitingResponseDto[]> => {
       result = [...result, ...tomorrowResult];
 
       if (tomorrowResult.length === 0) {
-        const dayAfterTomorrow = new Date(today);
-        dayAfterTomorrow.setDate(today.getDate() + 2);
+        const dayAfterTomorrow = addDaysToDate(today, 2);
         const dayAfterTomorrowString = formatDateForAPI(dayAfterTomorrow);
 
         const dayAfterTomorrowResult = await api.getMatchWaitingList({
@@ -886,8 +900,7 @@ const getRecommendedMatches = (
   matches: MatchWaitingResponseDto[]
 ): RecommendedMatch[] => {
   const today = new Date();
-  const threeDaysLater = new Date(today);
-  threeDaysLater.setDate(today.getDate() + 3);
+  const threeDaysLater = addDaysToDate(today, 3);
 
   const upcomingMatches = matches.filter(match => {
     const matchDate = new Date(match.preferredDate);

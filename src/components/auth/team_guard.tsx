@@ -41,7 +41,7 @@ export default function TeamGuard({
           {
             text: '취소',
             style: 'cancel',
-            onPress: () => router.replace('/(tabs)'),
+            onPress: () => router.replace(ROUTES.TABS),
           },
         ]
       );
@@ -113,7 +113,7 @@ export default function TeamGuard({
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => router.replace('/(tabs)')}
+            onPress={() => router.replace(ROUTES.TABS)}
             style={{
               paddingHorizontal: 24,
               paddingVertical: 12,
