@@ -44,7 +44,11 @@ import type {
   TeamReviewRequest,
   TeamMemberSliceResponse,
 } from '@/src/types';
-import { CreateLineupRequest, CreateLineupResponse } from '@/src/types/lineup';
+import {
+  ApiLineupItem,
+  CreateLineupRequest,
+  CreateLineupResponse,
+} from '@/src/types/lineup';
 import { addDaysToDate, formatDateForAPI } from '@/src/utils/date';
 
 export const queries = {
@@ -1163,5 +1167,14 @@ export function useCreateLineupsMutation() {
     onError: error => {
       console.error('❌ 라인업 생성 실패:', error);
     },
+  });
+}
+
+export function useLineupDetail(lineupId?: number) {
+  return useQuery<ApiLineupItem[]>({
+    queryKey: ['lineup', lineupId],
+    queryFn: () => api.getLineupById(lineupId as number),
+    enabled: !!lineupId,
+    staleTime: 1000 * 30, // 30s
   });
 }

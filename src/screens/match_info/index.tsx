@@ -133,7 +133,7 @@ export default function MatchInfoScreen() {
       match={item}
       onPressRequest={() => handlePressRequest(item.waitingId)}
       disabled={isPending}
-      isAlreadyApplied={isAlreadyApplied(item.teamId)}
+      hasRequested={isAlreadyApplied(item.teamId)}
     />
   );
 

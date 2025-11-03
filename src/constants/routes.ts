@@ -34,6 +34,8 @@ export const ROUTES = {
   TEAM_REVIEW: '/review/team_review',
   TOURNAMENT: '/tournament',
 
+  LINEUP: '/match_application/lineup',
+
   TABS: '/(tabs)',
   MATCH_INFO_TAB: '/(tabs)/match-info',
 } as const;

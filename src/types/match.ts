@@ -64,6 +64,7 @@ export interface MatchWaitingResponseDto {
   message: string;
   status: 'WAITING' | 'MATCHED' | 'CANCELLED' | 'COMPLETED';
   expiresAt: string;
+  lineup1Id: number;
 }
 
 export interface MatchCreateRequestDto {

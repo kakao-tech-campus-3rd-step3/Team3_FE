@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router'; // ✅ 추가
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
@@ -24,6 +25,7 @@ export default function MatchCard({
   isCancellable = false,
   hasRequested = false,
 }: MatchCardProps) {
+  const router = useRouter(); // ✅ 추가
   const { data: venuesData } = useVenues();
   const [venueMap, setVenueMap] = useState<Record<number, string>>({});
 
@@ -113,6 +115,26 @@ export default function MatchCard({
   };
 
   const status = getStatusStyle(match?.status);
+
+  // ✅ 라인업 조회 핸들러
+  const handleViewLineup = () => {
+    const lineupId = match?.lineup1Id;
+
+    if (!lineupId) {
+      console.warn('⚠️ lineupId가 존재하지 않습니다.');
+      alert('아직 등록된 라인업이 없습니다.');
+      return;
+    }
+
+    const lineupIdNum = Number(lineupId);
+    if (isNaN(lineupIdNum)) {
+      console.error('❌ lineupId가 숫자가 아닙니다:', lineupId);
+      alert('라인업 ID가 올바르지 않습니다.');
+      return;
+    }
+
+    router.push(`/match_application/lineup?lineupId=${lineupIdNum}`);
+  };
 
   return (
     <View style={styles.matchCard}>
@@ -219,27 +241,50 @@ export default function MatchCard({
       </View>
 
       <View style={styles.matchFooter}>
-        {!['CANCELED'].includes(match?.status?.toUpperCase?.() || '') && (
+        {/* ✅ 버튼들을 한 줄에 배치 */}
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          {/* 라인업 조회 버튼 */}
           <TouchableOpacity
-            onPress={onPressRequest}
-            disabled={disabled || hasRequested}
+            onPress={handleViewLineup}
             style={[
               styles.requestButton,
-              (disabled || hasRequested) && styles.requestButtonDisabled,
-              isCancellable && { backgroundColor: theme.colors.red[600] },
+              {
+                flex: 1,
+                backgroundColor: theme.colors.blue[600],
+              },
             ]}
           >
-            <Text style={styles.requestButtonText}>
-              {disabled
-                ? '요청 중...'
-                : hasRequested
-                  ? '신청됨'
-                  : isCancellable
-                    ? '취소하기'
-                    : '신청하기'}
-            </Text>
+            <Text style={styles.requestButtonText}>라인업 조회</Text>
           </TouchableOpacity>
-        )}
+
+          {/* 신청 버튼 */}
+          {!['CANCELED'].includes(match?.status?.toUpperCase?.() || '') && (
+            <TouchableOpacity
+              onPress={onPressRequest}
+              disabled={disabled || hasRequested}
+              style={[
+                styles.requestButton,
+                {
+                  flex: 1,
+                  backgroundColor: isCancellable
+                    ? theme.colors.red[600]
+                    : theme.colors.blue[600],
+                  opacity: disabled || hasRequested ? 0.6 : 1,
+                },
+              ]}
+            >
+              <Text style={styles.requestButtonText}>
+                {disabled
+                  ? '요청 중...'
+                  : hasRequested
+                    ? '신청됨'
+                    : isCancellable
+                      ? '취소하기'
+                      : '신청하기'}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     </View>
   );

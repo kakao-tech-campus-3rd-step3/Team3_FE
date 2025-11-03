@@ -139,4 +139,5 @@ export const MERCENARY_API = {
 
 export const LINEUP_API = {
   CREATE: '/api/lineups', // POST 요청 (라인업 생성)
+  GET_LINEUP: (lineupId: number | string) => `/api/lineups/${lineupId}`,
 };
