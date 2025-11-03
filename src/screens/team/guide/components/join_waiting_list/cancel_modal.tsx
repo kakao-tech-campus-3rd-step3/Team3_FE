@@ -15,7 +15,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ROUTES } from '@/src/constants/routes';
-import { useTeamJoinRequestMutation } from '@/src/hooks/queries';
+import { useCancelJoinRequestMutation } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/team/guide/components/join_waiting_list/styles';
 import { colors } from '@/src/theme';
 import type { UserJoinWaitingItem } from '@/src/types/team';
@@ -36,7 +36,7 @@ export default function CancelModal({
   onOuterModalClose,
 }: CancelModalProps) {
   const router = useRouter();
-  const { cancelJoinRequest, isCanceling } = useTeamJoinRequestMutation();
+  const cancelJoinRequestMutation = useCancelJoinRequestMutation();
 
   const handleCancel = () => {
     if (!joinWaitingItem) return;
@@ -53,7 +53,7 @@ export default function CancelModal({
           text: '예',
           style: 'default',
           onPress: () => {
-            cancelJoinRequest(
+            cancelJoinRequestMutation.mutate(
               {
                 teamId: joinWaitingItem.teamId,
                 joinWaitingId: joinWaitingItem.id,
@@ -154,7 +154,7 @@ export default function CancelModal({
             <TouchableOpacity
               style={[styles.button, styles.modalCancelButton]}
               onPress={handleClose}
-              disabled={isCanceling}
+              disabled={cancelJoinRequestMutation.isPending}
             >
               <Text style={styles.modalCancelButtonText}>돌아가기</Text>
             </TouchableOpacity>
@@ -162,9 +162,9 @@ export default function CancelModal({
             <TouchableOpacity
               style={[styles.button, styles.confirmButton]}
               onPress={handleCancel}
-              disabled={isCanceling}
+              disabled={cancelJoinRequestMutation.isPending}
             >
-              {isCanceling ? (
+              {cancelJoinRequestMutation.isPending ? (
                 <ActivityIndicator size="small" color={colors.text.white} />
               ) : (
                 <>

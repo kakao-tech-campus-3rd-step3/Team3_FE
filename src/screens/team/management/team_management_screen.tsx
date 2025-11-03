@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { View, ScrollView, RefreshControl, Alert } from 'react-native';
 
@@ -9,6 +10,7 @@ import TeamReviewsSection from '@/src/components/team/sections/team_reviews_sect
 import EmptyState from '@/src/components/team/states/empty_state';
 import LoadingState from '@/src/components/team/states/loading_state';
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { ROUTES } from '@/src/constants/routes';
 import {
   useTeam,
   useTeamMembers,
@@ -135,7 +137,14 @@ export default function TeamManagementScreen({
           onPress: () => {
             exitTeamMutation.mutate(numericTeamId, {
               onSuccess: () => {
-                Alert.alert('성공', '팀에서 성공적으로 나가졌습니다.');
+                Alert.alert('성공', '팀에서 성공적으로 나가졌습니다.', [
+                  {
+                    text: '확인',
+                    onPress: () => {
+                      router.replace(ROUTES.TEAM_GUIDE);
+                    },
+                  },
+                ]);
               },
               onError: error => {
                 console.error('팀 나가기 실패:', error);

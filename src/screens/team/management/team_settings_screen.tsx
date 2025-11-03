@@ -16,7 +16,6 @@ import {
   useTeamMembers,
   useUserProfile,
   useDeleteTeamMutation,
-  useTeam,
   useTeamMatchRequests,
   useAcceptMatchRequestMutation,
   useRejectMatchRequestMutation,
@@ -54,16 +53,13 @@ export default function TeamSettingsScreen({
     data: matchRequestsData,
     isLoading: matchRequestsLoading,
     error: matchRequestsError,
-    refetch: refetchMatchRequests,
   } = useTeamMatchRequests();
 
   const matchRequests: MatchRequest[] = matchRequestsData || [];
-  const { refetch: refetchTeam, data: teamData } = useTeam(numericTeamId);
   const {
     data: teamMembersData,
     isLoading: membersLoading,
     error: membersError,
-    refetch: refetchMembers,
   } = useTeamMembers(numericTeamId, 0, 100);
   const {
     data: joinRequestsData,
@@ -194,9 +190,6 @@ export default function TeamSettingsScreen({
                 onSuccess: () => {
                   setProcessingRequestId(null);
                   Alert.alert('성공', `가입을 ${action}했습니다.`);
-                  refetch();
-                  refetchMembers();
-                  refetchTeam();
                 },
                 onError: (error: unknown) => {
                   setProcessingRequestId(null);
@@ -208,10 +201,7 @@ export default function TeamSettingsScreen({
                   ) {
                     const message = (error as any).message;
                     if (message && typeof message === 'string') {
-                      errorMessage = translateErrorMessage(message, {
-                        endpoint: `/api/teams/${teamId}/join-waiting/${requestId}/approve`,
-                        method: 'POST',
-                      });
+                      errorMessage = translateErrorMessage(message);
                     }
                   }
                   Alert.alert('오류', errorMessage);
@@ -229,7 +219,6 @@ export default function TeamSettingsScreen({
                 onSuccess: () => {
                   setProcessingRequestId(null);
                   Alert.alert('성공', `가입을 ${action}했습니다.`);
-                  refetch();
                 },
                 onError: () => {
                   setProcessingRequestId(null);
@@ -262,7 +251,6 @@ export default function TeamSettingsScreen({
                 setAcceptedMatchId(matchId);
                 setMatchAccepted(true);
                 setShowMatchRequestsModal(false);
-                refetchMatchRequests();
               },
               onError: () => {
                 Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
@@ -272,7 +260,6 @@ export default function TeamSettingsScreen({
             rejectMatchRequestMutation.mutate(requestId, {
               onSuccess: () => {
                 Alert.alert('성공', `매치 요청을 ${action}했습니다.`);
-                refetchMatchRequests();
               },
               onError: () => {
                 Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);

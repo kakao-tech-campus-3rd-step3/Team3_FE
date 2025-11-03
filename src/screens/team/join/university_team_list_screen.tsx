@@ -16,7 +16,7 @@ import { ROUTES } from '@/src/constants/routes';
 import {
   useTeamsByUniversityInfinite,
   useUserProfile,
-  useTeamJoinRequestMutation,
+  useJoinWaitingMutation,
 } from '@/src/hooks/queries';
 import FilterModal from '@/src/screens/team/join/components/filter_modal';
 import JoinConfirmationModal from '@/src/screens/team/join/components/join_confirmation_modal';
@@ -50,7 +50,7 @@ export default function UniversityTeamListScreen() {
   const slideAnim = useState(new Animated.Value(0))[0];
   const joinModalAnim = useState(new Animated.Value(0))[0];
 
-  const { joinWaiting } = useTeamJoinRequestMutation();
+  const joinWaitingMutation = useJoinWaitingMutation();
 
   const {
     data,
@@ -133,7 +133,7 @@ export default function UniversityTeamListScreen() {
   const handleConfirmJoin = async () => {
     if (selectedTeam) {
       try {
-        await joinWaiting({
+        await joinWaitingMutation.mutateAsync({
           teamId: selectedTeam.id,
           data: {},
         });
