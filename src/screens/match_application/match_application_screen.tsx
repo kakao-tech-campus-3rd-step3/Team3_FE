@@ -119,7 +119,7 @@ export default function MatchApplicationScreen({
         match={item}
         onPressRequest={() => handlePressRequest(item.waitingId)}
         disabled={false} // 전역 비활성화 제거
-        isAlreadyApplied={hasRequested} // ✅ 수정: isRequested → isAlreadyApplied
+        hasRequested={hasRequested}
       />
     );
   };
