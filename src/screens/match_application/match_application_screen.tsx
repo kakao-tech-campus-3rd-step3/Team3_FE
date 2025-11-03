@@ -41,6 +41,7 @@ export default function MatchApplicationScreen({
   const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [requestedIds, setRequestedIds] = useState<number[]>([]);
 
   const { data: userProfile, error: profileError, refetch } = useUserProfile();
 
@@ -90,6 +91,7 @@ export default function MatchApplicationScreen({
       { waitingId, payload },
       {
         onSuccess: res => {
+          setRequestedIds(prev => [...prev, waitingId]);
           Alert.alert(
             '신청 완료',
             `매치 요청이 전송되었습니다.\n상태: ${res.status}`,
@@ -109,13 +111,18 @@ export default function MatchApplicationScreen({
     );
   };
 
-  const renderMatchCard = ({ item }: { item: any }) => (
-    <MatchCard
-      match={item}
-      onPressRequest={() => handlePressRequest(item.waitingId)}
-      disabled={isPending}
-    />
-  );
+  const renderMatchCard = ({ item }: { item: any }) => {
+    const hasRequested = requestedIds.includes(item.waitingId);
+
+    return (
+      <MatchCard
+        match={item}
+        onPressRequest={() => handlePressRequest(item.waitingId)}
+        disabled={false} // 전역 비활성화 제거
+        isAlreadyApplied={hasRequested} // ✅ 수정: isRequested → isAlreadyApplied
+      />
+    );
+  };
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>

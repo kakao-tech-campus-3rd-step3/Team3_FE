@@ -1156,7 +1156,6 @@ export function useCreateLineupsMutation() {
     mutationFn: data => api.lineupApi.createLineups(data),
 
     onSuccess: data => {
-      console.log('✅ 라인업 생성 성공:', data);
       queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
       queryClient.invalidateQueries({ queryKey: ['team'] });
     },
