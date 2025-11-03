@@ -224,6 +224,9 @@ export const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
     flexShrink: 1,
   },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
   requestDate: {
     fontSize: typography.fontSize.font2,
     color: colors.gray[400],

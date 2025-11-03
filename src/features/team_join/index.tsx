@@ -16,6 +16,7 @@ import TeamCard from '@/src/components/team/filters/team_card';
 import TeamListHeader from '@/src/components/team/filters/team_list_header';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { ROUTES } from '@/src/constants/routes';
 import { styles } from '@/src/features/team_join/styles';
 import {
   useTeamsByUniversityInfinite,
@@ -142,7 +143,7 @@ export default function UniversityTeamListScreen() {
             {
               text: '확인',
               onPress: () => {
-                router.push('/(tabs)');
+                router.push(ROUTES.TABS);
               },
             },
           ]

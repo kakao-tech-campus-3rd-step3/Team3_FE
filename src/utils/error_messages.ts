@@ -77,6 +77,17 @@ export const translateErrorMessage = (
     return '요청한 항목을 찾을 수 없습니다.';
   }
 
+  if (
+    message.includes('FAIL_LOGIN') ||
+    message.includes('로그인 실패') ||
+    (context?.endpoint?.includes('/api/auth/login') &&
+      (message.includes('UNAUTHORIZED') ||
+        message.includes('인증') ||
+        message.includes('credentials')))
+  ) {
+    return '이메일 또는 비밀번호가 올바르지 않습니다.';
+  }
+
   if (/[가-힣]/.test(message)) {
     return message;
   }

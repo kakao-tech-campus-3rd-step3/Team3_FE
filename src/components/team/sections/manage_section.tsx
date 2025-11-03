@@ -4,6 +4,10 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import { styles } from '@/src/components/team/sections/manage_section_styles';
+import {
+  getTeamManagementEditUrl,
+  getTeamManagementMembersUrl,
+} from '@/src/constants/routes';
 import { colors } from '@/src/theme';
 import type { TeamJoinRequest } from '@/src/types/team';
 
@@ -87,7 +91,7 @@ export default function ManageSection({
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={() => router.push(`/team/management/${teamId}/edit`)}
+          onPress={() => router.push(getTeamManagementEditUrl(teamId))}
         >
           <Ionicons
             name="settings-outline"
@@ -105,7 +109,7 @@ export default function ManageSection({
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={() => router.push(`/team/management/${teamId}/members`)}
+          onPress={() => router.push(getTeamManagementMembersUrl(teamId))}
         >
           <Ionicons name="people-outline" size={20} color={colors.gray[700]} />
           <Text

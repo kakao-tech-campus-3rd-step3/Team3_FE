@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import { View, Text, BackHandler } from 'react-native';
 
-import { colors } from '@/src/theme';
-
 import RequestManagementModal, {
   type RequestItem,
-} from './request_management_modal';
+} from '@/src/components/team/modals/request_management_modal';
+import { colors } from '@/src/theme';
 
 export interface MatchRequest {
   requestId: number;

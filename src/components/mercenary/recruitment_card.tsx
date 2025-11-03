@@ -1,6 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useMemo } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 
 import { convertPositionToKorean } from '@/src/constants/positions';
 import { theme } from '@/src/theme';
@@ -29,6 +35,32 @@ export function RecruitmentCard({
   showEditButton = false,
   showDeleteButton = false,
 }: RecruitmentCardProps) {
+  const screenWidth = Dimensions.get('window').width;
+
+  const buttonStyles = useMemo(() => {
+    if (screenWidth < 360) {
+      return {
+        paddingHorizontal: theme.spacing.spacing2,
+        paddingVertical: theme.spacing.spacing1,
+        fontSize: 12,
+        iconSize: 14,
+      };
+    } else if (screenWidth < 400) {
+      return {
+        paddingHorizontal: theme.spacing.spacing2,
+        paddingVertical: theme.spacing.spacing2,
+        fontSize: 13,
+        iconSize: 15,
+      };
+    }
+    return {
+      paddingHorizontal: theme.spacing.spacing3,
+      paddingVertical: theme.spacing.spacing2,
+      fontSize: 14,
+      iconSize: 16,
+    };
+  }, [screenWidth]);
+
   const formatTime = (time: string) => {
     return time.slice(0, 5);
   };
@@ -124,39 +156,78 @@ export function RecruitmentCard({
         </View>
 
         <View style={styles.recruitmentFooter}>
-          <View style={styles.teamInfoRow}>
+          <View style={[styles.teamInfoRow, { flex: 1, flexShrink: 1 }]}>
             <Ionicons
               name="calendar-outline"
               size={14}
               color={theme.colors.text.sub}
             />
-            <Text style={styles.matchDateTime}>
+            <Text
+              style={styles.matchDateTime}
+              numberOfLines={1}
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.8}
+            >
               {recruitment.matchDate} {formatTime(recruitment.matchTime)}
             </Text>
           </View>
           <View style={styles.actionButtons}>
             {showEditButton && onEdit && (
               <TouchableOpacity
-                style={styles.editButton}
+                style={[
+                  styles.editButton,
+                  {
+                    paddingHorizontal: buttonStyles.paddingHorizontal,
+                    paddingVertical: buttonStyles.paddingVertical,
+                  },
+                ]}
                 onPress={e => {
                   e.stopPropagation();
                   onEdit();
                 }}
               >
-                <Ionicons name="create-outline" size={16} color="white" />
-                <Text style={styles.editButtonText}>수정</Text>
+                <Ionicons
+                  name="create-outline"
+                  size={buttonStyles.iconSize}
+                  color="white"
+                />
+                <Text
+                  style={[
+                    styles.editButtonText,
+                    { fontSize: buttonStyles.fontSize },
+                  ]}
+                >
+                  수정
+                </Text>
               </TouchableOpacity>
             )}
             {showDeleteButton && onDelete && (
               <TouchableOpacity
-                style={styles.deleteButton}
+                style={[
+                  styles.deleteButton,
+                  {
+                    paddingHorizontal: buttonStyles.paddingHorizontal,
+                    paddingVertical: buttonStyles.paddingVertical,
+                  },
+                ]}
                 onPress={e => {
                   e.stopPropagation();
                   onDelete();
                 }}
               >
-                <Ionicons name="trash-outline" size={16} color="white" />
-                <Text style={styles.deleteButtonText}>삭제</Text>
+                <Ionicons
+                  name="trash-outline"
+                  size={buttonStyles.iconSize}
+                  color="white"
+                />
+                <Text
+                  style={[
+                    styles.deleteButtonText,
+                    { fontSize: buttonStyles.fontSize },
+                  ]}
+                >
+                  삭제
+                </Text>
               </TouchableOpacity>
             )}
             {showApplyButton && onApply && (
@@ -276,6 +347,7 @@ const styles = StyleSheet.create({
     paddingTop: theme.spacing.spacing2,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.light,
+    gap: theme.spacing.spacing2,
   },
   matchDateTime: {
     fontSize: 13,
@@ -305,18 +377,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: theme.spacing.spacing2,
     alignItems: 'center',
+    flexShrink: 1,
   },
   editButton: {
     backgroundColor: theme.colors.brand.main,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing.spacing3,
-    paddingVertical: theme.spacing.spacing2,
     borderRadius: theme.spacing.spacing2,
     gap: theme.spacing.spacing1,
+    flexShrink: 1,
   },
   editButtonText: {
-    fontSize: 14,
     fontWeight: '600',
     color: 'white',
   },
@@ -324,13 +395,11 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.error,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing.spacing3,
-    paddingVertical: theme.spacing.spacing2,
     borderRadius: theme.spacing.spacing2,
     gap: theme.spacing.spacing1,
+    flexShrink: 1,
   },
   deleteButtonText: {
-    fontSize: 14,
     fontWeight: '600',
     color: 'white',
   },

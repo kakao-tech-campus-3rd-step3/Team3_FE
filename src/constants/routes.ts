@@ -2,6 +2,8 @@ export const ROUTES = {
   HOME: '/',
   LOGIN: '/(auth)/login',
   REGISTER: '/(auth)/register',
+  WELCOME: '/(auth)/welcome',
+  FORGOT_PASSWORD: '/(auth)/forgot_password',
   PROFILE: '/profile',
 
   EDIT_PROFILE: '/profile/edit',
@@ -23,9 +25,14 @@ export const ROUTES = {
 
   MERCENARY: '/mercenary',
   MERCENARY_CREATE: '/mercenary/create',
+  MERCENARY_EDIT: '/mercenary/edit',
+  MERCENARY_APPLY: '/mercenary/apply',
 
   TEAM_REVIEW: '/review/team_review',
   TOURNAMENT: '/tournament',
+
+  TABS: '/(tabs)',
+  MATCH_INFO_TAB: '/(tabs)/match-info',
 } as const;
 
 export type RouteKey = keyof typeof ROUTES;
@@ -36,3 +43,7 @@ export const getTeamManagementSettingsUrl = (teamId: string) =>
   `/team/management/${teamId}/settings`;
 export const getTeamManagementRecentMatchesUrl = (teamId: string) =>
   `/team/management/${teamId}/recent-matches`;
+export const getTeamManagementEditUrl = (teamId: string | number) =>
+  `/team/management/${teamId}/edit`;
+export const getTeamManagementMembersUrl = (teamId: string | number) =>
+  `/team/management/${teamId}/members`;

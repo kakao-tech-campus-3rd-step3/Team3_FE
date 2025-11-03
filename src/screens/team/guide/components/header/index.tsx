@@ -8,6 +8,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
+import { ROUTES } from '@/src/constants/routes';
 import { styles } from '@/src/screens/team/guide/team_guide_styles';
 import { colors } from '@/src/theme';
 
@@ -38,7 +39,7 @@ export default memo(function Header() {
   });
 
   const handleBackPress = () => {
-    router.replace('/(tabs)');
+    router.replace(ROUTES.TABS);
   };
 
   return (

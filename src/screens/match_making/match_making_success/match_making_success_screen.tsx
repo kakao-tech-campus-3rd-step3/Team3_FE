@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, BackHandler } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { ROUTES } from '@/src/constants/routes';
 import { style } from '@/src/screens/match_making/match_making_success/match_making_success_style';
 
 type Stadium = {
@@ -103,7 +104,7 @@ export default function MatchMakingSuccessScreen() {
       <View style={style.bottomBar}>
         <TouchableOpacity
           style={style.homeButton}
-          onPress={() => router.push('/')}
+          onPress={() => router.push(ROUTES.HOME)}
         >
           <Text style={style.homeButtonText}>홈으로 돌아가기</Text>
         </TouchableOpacity>
