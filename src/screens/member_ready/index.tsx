@@ -16,7 +16,7 @@ export default function MemberReadyScreen() {
 
   const handleNotEnoughMembers = () => {
     // 인원이 부족할 때: 용병 모집 화면으로 이동
-    router.push('/team/management');
+    router.push('/mercenary');
   };
 
   return (
