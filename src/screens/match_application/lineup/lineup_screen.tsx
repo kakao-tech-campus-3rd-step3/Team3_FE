@@ -42,43 +42,71 @@ export default function LineupScreen() {
   // ─────────────────────────────────────────────────────────────
   // ① formationType 결정: URL 파라미터 → API 응답 → 휴리스틱
   const formationType = useMemo<FormationType>(() => {
-    // URL 파라미터 우선
+    // 1️⃣ URL 파라미터 우선
     if (formationParam && FORMATION_POSITIONS[formationParam])
       return formationParam;
 
-    // API 응답 내부에 넣어두었다면 활용 (예: items[0].formationType)
-    const apiFormation =
-      Array.isArray(lineupItems) && lineupItems.length > 0
-        ? (lineupItems[0] as any)?.formationType
-        : undefined;
-    if (apiFormation && FORMATION_POSITIONS[apiFormation as FormationType]) {
-      return apiFormation as FormationType;
-    }
-
-    // 휴리스틱: 5-3-2 vs 3-5-2 vs 4-3-3 간단 구분
+    // 2️⃣ API 응답 기반 휴리스틱 추정
     if (Array.isArray(lineupItems)) {
       const starters = lineupItems.filter(i => i.isStarter);
+      if (starters.length === 0) return '4-3-3';
+
       const count = (p: AllowedPosition) =>
         starters.filter(s => String(s.position).toUpperCase() === p).length;
 
-      const cb = count('CB' as AllowedPosition);
-      const lb = count('LB' as AllowedPosition);
-      const rb = count('RB' as AllowedPosition);
-      const lw = count('LW' as AllowedPosition);
-      const rw = count('RW' as AllowedPosition);
-      const st = count('ST' as AllowedPosition);
+      const cb = count('CB');
+      const lb = count('LB');
+      const rb = count('RB');
+      const dm = count('DM');
+      const cm = count('CM');
+      const am = count('AM');
+      const lw = count('LW');
+      const rw = count('RW');
+      const st = count('ST');
+      const fw = count('FW');
 
-      // 두 명의 ST + CB가 3명이면 3백 계열
-      if (st >= 2 && cb >= 3) {
-        // 윙(좌우) 존재하면 3-5-2, 아니고 풀백 둘이면 5-3-2로
-        if (lw + rw >= 1) return '3-5-2';
-        if (lb + rb >= 2) return '5-3-2';
+      const totalDF = cb + lb + rb;
+      const totalMF = dm + cm + am;
+      const totalFW = lw + rw + st + fw;
+
+      // ──────────────── 방어 라인 분석
+      if (totalDF >= 5) {
+        // 윙백 존재시 5백
+        if (lb >= 1 && rb >= 1 && cb >= 3) {
+          return '5-3-2';
+        }
+        // 중앙 밀집형
         return '5-3-2';
       }
-      // 그 외는 기본 4-3-3
+      if (cb === 3 && lb + rb <= 1) {
+        // 3CB 중심 → 3백 계열
+        if (lw + rw >= 1) return '3-5-2';
+        return '3-5-2';
+      }
+
+      // ──────────────── 공격 라인 분석
+      if (st === 2 && totalDF === 4) {
+        // 투톱 + 4백 → 4-4-2 or 4-1-3-2 변형
+        if (dm >= 2) return '4-4-2';
+        return '4-4-2';
+      }
+
+      // ──────────────── 미드필더 구조 분석
+      if (dm === 2 && am === 1 && st === 1) {
+        return '4-2-3-1';
+      }
+      if (dm === 1 && cm >= 3 && st === 1) {
+        return '4-1-4-1';
+      }
+      if (dm === 1 && totalFW === 3) {
+        return '4-1-2-3';
+      }
+
+      // ──────────────── 기본값
       return '4-3-3';
     }
 
+    // 3️⃣ fallback
     return '4-3-3';
   }, [formationParam, lineupItems]);
 
@@ -114,50 +142,126 @@ export default function LineupScreen() {
 
   // ─────────────────────────────────────────────────────────────
   // ③ 포지션→슬롯 매핑 (포메이션별 후보 우선순위)
+  // 기존 positionToSlots 함수 전체를 이 버전으로 대체
   const positionToSlots = (ft: FormationType): Record<string, string[]> => {
-    if (ft === '5-3-2') {
-      // 5백: LB/RB는 윙백 슬롯으로, CB는 3자리
-      return {
-        GK: ['GK'],
-        LB: ['LWB'], // ★ 핵심: LB → LWB
-        RB: ['RWB'], // ★ 핵심: RB → RWB
-        CB: ['LCB', 'CB', 'RCB'],
-        DM: ['CM'],
-        CM: ['LCM', 'CM', 'RCM'],
-        AM: ['CM', 'RCM'],
-        LW: ['LS'], // 윙이 들어왔다면 최전방 보조로 억지 배치 방지
-        RW: ['RS'],
-        ST: ['LS', 'RS'],
-      };
+    switch (ft) {
+      // ① 기본형: 4-3-3
+      case '4-3-3':
+        return {
+          GK: ['GK'],
+          LB: ['LB'],
+          RB: ['RB'],
+          CB: ['LCB', 'RCB', 'CB'],
+          DM: ['CDM', 'CM'],
+          CM: ['LCM', 'CM', 'RCM'],
+          AM: ['LAM', 'CAM', 'RAM', 'CM'],
+          LW: ['LW', 'LM'],
+          RW: ['RW', 'RM'],
+          ST: ['ST', 'LS', 'RS'],
+        };
+
+      // ② 4-4-2 (클래식)
+      case '4-4-2':
+        return {
+          GK: ['GK'],
+          LB: ['LB'],
+          RB: ['RB'],
+          CB: ['LCB', 'RCB'],
+          LW: ['LM', 'LW'],
+          RW: ['RM', 'RW'],
+          DM: ['LCM', 'RCM', 'CM'],
+          CM: ['LCM', 'RCM', 'CM'],
+          AM: ['CAM'],
+          ST: ['LS', 'RS'],
+        };
+
+      // ③ 4-2-3-1
+      case '4-2-3-1':
+        return {
+          GK: ['GK'],
+          LB: ['LB'],
+          RB: ['RB'],
+          CB: ['LCB', 'RCB'],
+          DM: ['LDM', 'RDM', 'CDM'],
+          CM: ['CDM', 'CM'],
+          AM: ['LAM', 'CAM', 'RAM'],
+          LW: ['LAM', 'LW'],
+          RW: ['RAM', 'RW'],
+          ST: ['ST'],
+        };
+
+      // ④ 4-1-4-1
+      case '4-1-4-1':
+        return {
+          GK: ['GK'],
+          LB: ['LB'],
+          RB: ['RB'],
+          CB: ['LCB', 'RCB'],
+          DM: ['CDM'],
+          CM: ['LCM', 'RCM', 'CM'],
+          AM: ['LAM', 'CAM', 'RAM'],
+          LW: ['LM', 'LW'],
+          RW: ['RM', 'RW'],
+          ST: ['ST'],
+        };
+
+      // ⑤ 4-1-2-3 (수비형 미드 1 + 중앙 2)
+      case '4-1-2-3':
+        return {
+          GK: ['GK'],
+          LB: ['LB'],
+          RB: ['RB'],
+          CB: ['LCB', 'RCB'],
+          DM: ['CDM'],
+          CM: ['LCM', 'RCM'],
+          AM: ['CAM'],
+          LW: ['LW'],
+          RW: ['RW'],
+          ST: ['ST'],
+        };
+
+      // ⑥ 3-5-2 (중앙 3백 + 윙미드)
+      case '3-5-2':
+        return {
+          GK: ['GK'],
+          LB: ['LCB'],
+          RB: ['RCB'],
+          CB: ['LCB', 'CB', 'RCB'],
+          LW: ['LM'],
+          RW: ['RM'],
+          DM: ['LDM', 'RDM', 'CM'],
+          CM: ['LCM', 'CM', 'RCM'],
+          AM: ['CAM', 'CM', 'RCM'],
+          ST: ['LS', 'RS'],
+        };
+
+      // ⑦ 5-3-2 (윙백 시스템)
+      case '5-3-2':
+        return {
+          GK: ['GK'],
+          LB: ['LWB'],
+          RB: ['RWB'],
+          CB: ['LCB', 'CB', 'RCB'],
+          DM: ['CDM', 'CM'],
+          CM: ['LCM', 'CM', 'RCM'],
+          AM: ['CAM', 'CM'],
+          ST: ['LS', 'RS'],
+        };
+
+      default:
+        return {
+          GK: ['GK'],
+          LB: ['LB'],
+          RB: ['RB'],
+          CB: ['LCB', 'RCB', 'CB'],
+          DM: ['CDM', 'CM'],
+          CM: ['LCM', 'CM', 'RCM'],
+          AM: ['LAM', 'CAM', 'RAM'],
+          LW: ['LW', 'LM'],
+          RW: ['RW', 'RM'],
+          ST: ['ST'],
+        };
     }
-    if (ft === '3-5-2') {
-      // 3-5-2: 윙(=LM/RM)이면 LW/RW 슬롯로
-      return {
-        GK: ['GK'],
-        LB: ['LCB'],
-        RB: ['RCB'],
-        CB: ['LCB', 'CB', 'RCB'],
-        LW: ['LM'],
-        RW: ['RM'],
-        DM: ['LDM', 'RDM', 'CM'],
-        CM: ['LCM', 'CM', 'RCM'],
-        AM: ['CAM', 'CM', 'RCM'],
-        ST: ['LS', 'RS'],
-      };
-    }
-    // 기본(4백 계열)
-    return {
-      GK: ['GK'],
-      LB: ['LB'],
-      RB: ['RB'],
-      CB: ['LCB', 'RCB', 'CB'],
-      DM: ['CDM', 'CM'],
-      CM: ['LCM', 'CM', 'RCM'],
-      AM: ['LAM', 'CAM', 'RAM', 'CM'],
-      LW: ['LW', 'LM'],
-      RW: ['RW', 'RM'],
-      ST: ['ST', 'LS', 'RS'],
-    };
   };
 
   const SLOT_PREF = positionToSlots(formationType);
