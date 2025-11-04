@@ -72,12 +72,13 @@ export default function MatchInfoScreen() {
     useMyAppliedMatches();
 
   const isAlreadyApplied = (teamId: number) => {
-    if (!appliedMatches) return false;
+    if (!appliedMatches || !userProfile?.teamId) return false;
 
     return appliedMatches.some(
       appliedMatch =>
+        appliedMatch.requestTeamId === userProfile.teamId &&
         appliedMatch.targetTeamId === teamId &&
-        appliedMatch.status !== 'CANCELED'
+        appliedMatch.status === 'PENDING'
     );
   };
 

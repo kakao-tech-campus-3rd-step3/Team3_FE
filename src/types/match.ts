@@ -62,7 +62,7 @@ export interface MatchWaitingResponseDto {
   skillLevelMax: 'AMATEUR' | 'SEMI_PRO' | 'PRO';
   universityOnly: boolean;
   message: string;
-  status: 'WAITING' | 'MATCHED' | 'CANCELLED' | 'COMPLETED';
+  status: 'WAITING' | 'MATCHED' | 'CANCELED' | 'EXPIRED';
   expiresAt: string;
   lineup1Id: number;
 }

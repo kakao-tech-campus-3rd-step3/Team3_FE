@@ -1178,3 +1178,16 @@ export function useLineupDetail(lineupId?: number) {
     staleTime: 1000 * 30, // 30s
   });
 }
+
+export function useMyMatchRequests() {
+  const { token, isInitialized } = useAuth();
+
+  return useQuery<MatchWaitingHistoryResponseDto[], Error>({
+    queryKey: ['myMatchRequests'],
+    queryFn: async () => {
+      const response = await api.getMyMatchRequests(); // api에 정의 필요
+      return response;
+    },
+    enabled: !!token && isInitialized,
+  });
+}
