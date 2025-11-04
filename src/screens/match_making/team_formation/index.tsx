@@ -19,7 +19,7 @@ import { TeamMemberSelectModal } from '@/src/components/ui/team_member_select_mo
 import { FORMATION_POSITIONS, FormationType } from '@/src/constants/formations';
 import {
   useCreateLineupsMutation,
-  useTeamMembers,
+  useTeamMembersInfinite,
   useUserProfile,
 } from '@/src/hooks/queries';
 import { AllowedPosition } from '@/src/types/lineup';
@@ -32,7 +32,11 @@ export default function TeamFormationScreen() {
   const { data: userProfile } = useUserProfile();
   const teamId = userProfile?.teamId ?? 0;
 
-  const { members: teamMembers, isLoading } = useTeamMembers(teamId, 0, 10);
+  const { data, fetchNextPage, isLoading } = useTeamMembersInfinite(teamId, 50);
+  const teamMembers = useMemo(
+    () => (data ? data.pages.flatMap(page => page.members) : []),
+    [data]
+  );
   const { mutate: createLineups, isPending } = useCreateLineupsMutation();
 
   const [selectedFormation, setSelectedFormation] =
