@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router'; // ✅ 추가
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
+import { ROUTES } from '@/src/constants/routes';
 import { useVenues } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/match_application/match_application_style';
 import { theme } from '@/src/theme';
@@ -260,7 +261,15 @@ export default function MatchCard({
           {/* 신청 버튼 */}
           {!['CANCELED'].includes(match?.status?.toUpperCase?.() || '') && (
             <TouchableOpacity
-              onPress={onPressRequest}
+              onPress={() =>
+                router.push({
+                  pathname: ROUTES.CREATE_LINEUP,
+                  params: {
+                    waitingId: String(match.waitingId),
+                    targetTeamId: String(match.teamId),
+                  },
+                })
+              }
               disabled={disabled || hasRequested}
               style={[
                 styles.requestButton,

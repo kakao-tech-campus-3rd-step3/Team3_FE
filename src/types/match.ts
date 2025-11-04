@@ -88,6 +88,7 @@ export interface MatchCreateResponseDto {
 }
 export interface MatchRequestRequestDto {
   requestMessage: string;
+  lineupId: number;
 }
 
 export type MatchRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';

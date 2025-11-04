@@ -59,6 +59,10 @@ function AppContent() {
               name="match_making/team_formation"
             />,
             <Stack.Screen key="lineup" name="match_application/lineup" />,
+            <Stack.Screen
+              key="Createlineup"
+              name="match_application/create_lineup"
+            />,
           ]
         ) : (
           <Stack.Screen name="(auth)" />

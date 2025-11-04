@@ -35,6 +35,7 @@ export const ROUTES = {
   TOURNAMENT: '/tournament',
 
   LINEUP: '/match_application/lineup',
+  CREATE_LINEUP: '/match_application/create_lineup',
 
   TABS: '/(tabs)',
   MATCH_INFO_TAB: '/(tabs)/match-info',

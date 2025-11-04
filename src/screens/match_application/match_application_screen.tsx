@@ -66,48 +66,14 @@ export default function MatchApplicationScreen({
     setRefreshing(false);
   };
 
-  const handlePressRequest = async (waitingId: number) => {
-    await refetch();
-
-    const rawTeamId = userProfile?.teamId;
-
-    if (!rawTeamId) {
+  const handlePressRequest = (waitingId: number, targetTeamId: number) => {
+    if (!userProfile?.teamId) {
       Alert.alert('알림', '팀 정보가 없습니다. 팀을 먼저 생성해주세요.');
       return;
     }
 
-    const numericTeamId = Number(rawTeamId);
-
-    if (isNaN(numericTeamId) || numericTeamId <= 0) {
-      Alert.alert('알림', '유효하지 않는 팀 ID입니다.');
-      return;
-    }
-
-    const payload: MatchRequestRequestDto = {
-      requestMessage: `${userProfile.name}(${numericTeamId}) 팀이 매치 요청`,
-    };
-
-    requestMatch(
-      { waitingId, payload },
-      {
-        onSuccess: res => {
-          setRequestedIds(prev => [...prev, waitingId]);
-          Alert.alert(
-            '신청 완료',
-            `매치 요청이 전송되었습니다.\n상태: ${res.status}`,
-            [
-              {
-                text: '확인',
-                style: 'default',
-                onPress: () => router.push(ROUTES.HOME),
-              },
-            ]
-          );
-        },
-        onError: () => {
-          Alert.alert('오류', '매치 요청 중 문제가 발생했습니다.');
-        },
-      }
+    router.push(
+      `/match_application/create_lineup?waitingId=${waitingId}&targetTeamId=${targetTeamId}`
     );
   };
 
@@ -117,8 +83,8 @@ export default function MatchApplicationScreen({
     return (
       <MatchCard
         match={item}
-        onPressRequest={() => handlePressRequest(item.waitingId)}
-        disabled={false} // 전역 비활성화 제거
+        onPressRequest={() => handlePressRequest(item.waitingId, item.teamId)}
+        disabled={false}
         hasRequested={hasRequested}
       />
     );
