@@ -134,6 +134,7 @@ export default function LineupScreen() {
 
   // ─────────────────────────────────────────────────────────────
   // ② 팀원 이름 매핑
+  // ② 팀원 이름 매핑
   const memberMap = new Map<number, string>();
   teamMembers.forEach(m => {
     const key = Number(m.id);
@@ -289,23 +290,34 @@ export default function LineupScreen() {
   // ④ 매핑/배치
   lineupItems.forEach((it: ApiLineupItem) => {
     const idNum = Number(it.teamMemberId);
-    const name = memberMap.get(idNum) ?? `#${idNum}`;
+    const nameFromMyTeam = memberMap.get(idNum);
     const slot = it.isStarter ? pickSlotFor(String(it.position)) : null;
 
+    // ✅ userName과 teamId가 응답에 들어온 경우, 우선적으로 사용
+    const displayName =
+      it.userName ||
+      nameFromMyTeam ||
+      (it.teamId === teamId ? `#${idNum}` : `상대팀 ${idNum}`);
+
     if (it.isStarter && slot) {
-      starters[slot] = name;
+      starters[slot] = displayName;
       usedSlots.add(slot);
-      if (__DEV__)
+      if (__DEV__) {
         console.log(
-          `✅ 배치: ${it.position} → ${slot} (${name}) [${formationType}]`
+          `✅ 배치: ${it.position} → ${slot} (${displayName}) [${formationType}]`
         );
+      }
     } else if (it.isStarter && !slot) {
-      if (__DEV__)
+      if (__DEV__) {
         console.warn(
           `⚠️ 슬롯 없음: ${it.position} (formation=${formationType})`
         );
+      }
     } else {
-      bench.push({ name, position: it.position as AllowedPosition });
+      bench.push({
+        name: displayName,
+        position: it.position as AllowedPosition,
+      });
     }
   });
 

@@ -53,6 +53,8 @@ export interface ApiLineupItem {
   isStarter: boolean;
   createdAt: string;
   updatedAt: string;
+  userName?: string;
+  teamId?: number;
 }
 
 // 화면에서 쓰기 좋은 뷰 모델
