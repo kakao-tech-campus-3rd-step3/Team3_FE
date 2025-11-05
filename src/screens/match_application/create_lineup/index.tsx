@@ -17,6 +17,7 @@ import Dropdown from '@/src/components/dropdown';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { TeamMemberSelectModal } from '@/src/components/ui/team_member_select_modal';
 import { FORMATION_POSITIONS, FormationType } from '@/src/constants/formations';
+import { ROUTES } from '@/src/constants/routes';
 import {
   useCreateLineupsMutation,
   useMatchRequestMutation,
@@ -179,7 +180,7 @@ export default function CreateLineupScreen() {
                 [
                   {
                     text: '확인',
-                    onPress: () => router.push('/match_making/match_info'),
+                    onPress: () => router.push(ROUTES.HOME),
                   },
                 ]
               );
