@@ -27,8 +27,9 @@ export default memo(function Buttons() {
     data: joinWaitingData,
     isLoading: isJoinWaitingLoading,
     refetch,
-  } = useMyJoinWaitingList(0, 1);
-  const hasJoinWaiting = joinWaitingData && !joinWaitingData.empty;
+  } = useMyJoinWaitingList(0, 100);
+  const hasPendingJoinWaiting =
+    joinWaitingData?.content?.some(item => item.status === 'PENDING') ?? false;
 
   const dynamicStyles = StyleSheet.create({
     createButton: {
@@ -86,7 +87,7 @@ export default memo(function Buttons() {
   );
 
   const handleJoinTeam = () => {
-    if (hasJoinWaiting) {
+    if (hasPendingJoinWaiting) {
       setShowJoinWaitingList(true);
     } else {
       router.push({
@@ -127,18 +128,20 @@ export default memo(function Buttons() {
           adjustsFontSizeToFit={true}
           minimumFontScale={0.8}
         >
-          {hasJoinWaiting ? '팀 신청 현황' : '팀 참여하기'}
+          {hasPendingJoinWaiting ? '팀 신청 현황' : '팀 참여하기'}
         </Text>
-        {hasJoinWaiting && (
+        {hasPendingJoinWaiting && (
           <View style={styles.notificationBadge}>
             <Text style={styles.notificationText}>
-              {joinWaitingData?.totalElements || 0}
+              {joinWaitingData?.content?.filter(
+                item => item.status === 'PENDING'
+              ).length || 0}
             </Text>
           </View>
         )}
       </TouchableOpacity>
 
-      {!hasJoinWaiting && (
+      {!hasPendingJoinWaiting && (
         <TouchableOpacity
           style={dynamicStyles.createButton}
           onPress={() =>

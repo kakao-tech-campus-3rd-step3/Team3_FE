@@ -31,6 +31,8 @@ import type {
   JoinWaitingCancelRequest,
   ApiUserJoinWaitingPageResponse,
   UserJoinWaitingPageResponse,
+  TeamMemberSliceResponse,
+  ApiTeamMemberSliceResponse,
 } from '@/src/types/team';
 import {
   transformTeamListPageResponse,
@@ -98,6 +100,30 @@ export const teamMemberApi = {
     const transformed = transformTeamMemberPageResponse(apiResponse);
 
     return transformed;
+  },
+
+  getTeamMembersSlice: async (
+    teamId: string | number,
+    cursorId?: number,
+    size: number = 10
+  ): Promise<TeamMemberSliceResponse> => {
+    try {
+      const apiResponse = await apiClient.get<ApiTeamMemberPageResponse>(
+        TEAM_MEMBER_API.GET_MEMBERS_SLICE(teamId, cursorId, size)
+      );
+
+      // ✅ 실제 응답 구조에 맞게 content 사용
+      const members = apiResponse.content ?? [];
+      const hasNext = apiResponse.last === false; // last=false면 다음 페이지 있음
+
+      return {
+        members: members.map(transformTeamMemberItem),
+        hasNext,
+      };
+    } catch (error) {
+      console.error('❌ [API ERROR] GET_MEMBERS_SLICE 실패:', error);
+      return { members: [], hasNext: false };
+    }
   },
 
   getTeamMember: async (

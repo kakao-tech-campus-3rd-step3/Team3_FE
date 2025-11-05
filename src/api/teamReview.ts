@@ -6,8 +6,8 @@ export const teamReviewApi = {
   createReview: (data: TeamReviewRequest) =>
     apiClient.post(TEAM_REVIEW_API.CREATE, data),
 
-  getReviewsByProfile: (profileId: number) =>
-    apiClient.get(TEAM_REVIEW_API.LIST(profileId)),
+  getReviewsByTeamId: (reviewedTeamId: number) =>
+    apiClient.get(TEAM_REVIEW_API.LIST(reviewedTeamId)),
 
   getReviewById: (reviewId: number) =>
     apiClient.get(TEAM_REVIEW_API.DETAIL(reviewId)),

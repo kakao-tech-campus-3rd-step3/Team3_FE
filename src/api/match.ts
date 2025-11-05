@@ -209,3 +209,12 @@ export const getEnemyTeam = async (matchId: number | string) => {
   );
   return response;
 };
+
+export const getMyMatchRequests = async (): Promise<
+  MatchWaitingHistoryResponseDto[]
+> => {
+  const res = await apiClient.get<MatchWaitingHistoryResponseDto[]>(
+    '/api/matches/requests/me'
+  );
+  return res;
+};

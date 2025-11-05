@@ -37,10 +37,17 @@ import type {
   RecommendedMatch,
   JoinWaitingRequest,
   JoinWaitingCancelRequest,
+  TeamMember,
   RecruitmentCreateRequest,
   RecruitmentUpdateRequest,
   TeamReviewRequest,
+  TeamMemberSliceResponse,
 } from '@/src/types';
+import {
+  ApiLineupItem,
+  CreateLineupRequest,
+  CreateLineupResponse,
+} from '@/src/types/lineup';
 import { addDaysToDate, formatDateForAPI } from '@/src/utils/date';
 
 export const queries = {
@@ -441,11 +448,13 @@ export function useTeamMembers(
   page: number = 0,
   size: number = 10
 ) {
-  return useQuery({
+  const query = useQuery({
     queryKey: queries.teamMembers.key(teamId, page, size),
     queryFn: () => queries.teamMembers.fn(teamId, page, size),
     enabled: !!teamId,
   });
+  const members = query.data?.content ?? [];
+  return { ...query, members };
 }
 
 export function useTeamMember(
@@ -1148,5 +1157,65 @@ export function useDeleteMercenaryRecruitment() {
     onError: (error: unknown) => {
       console.error('용병 모집 게시글 삭제 실패:', error);
     },
+  });
+}
+
+export function useTeamMembersInfinite(
+  teamId: string | number,
+  size: number = 10
+) {
+  return useInfiniteQuery<TeamMemberSliceResponse>({
+    queryKey: ['teamMembersSlice', teamId],
+    queryFn: ({ pageParam }) =>
+      api.teamMemberApi.getTeamMembersSlice(
+        teamId,
+        pageParam ? Number(pageParam) : undefined,
+        size
+      ),
+    getNextPageParam: lastPage => {
+      if (lastPage.hasNext && lastPage.members.length > 0) {
+        return lastPage.members[lastPage.members.length - 1].id;
+      }
+      return undefined;
+    },
+    enabled: !!teamId,
+    initialPageParam: undefined,
+  });
+}
+
+export function useCreateLineupsMutation() {
+  return useMutation<CreateLineupResponse, Error, CreateLineupRequest>({
+    mutationFn: data => api.lineupApi.createLineups(data),
+
+    onSuccess: data => {
+      queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+    },
+
+    onError: error => {
+      console.error('❌ 라인업 생성 실패:', error);
+    },
+  });
+}
+
+export function useLineupDetail(lineupId?: number) {
+  return useQuery<ApiLineupItem[]>({
+    queryKey: ['lineup', lineupId],
+    queryFn: () => api.getLineupById(lineupId as number),
+    enabled: !!lineupId,
+    staleTime: 1000 * 30,
+  });
+}
+
+export function useMyMatchRequests() {
+  const { token, isInitialized } = useAuth();
+
+  return useQuery<MatchWaitingHistoryResponseDto[], Error>({
+    queryKey: ['myMatchRequests'],
+    queryFn: async () => {
+      const response = await api.getMyMatchRequests();
+      return response;
+    },
+    enabled: !!token && isInitialized,
   });
 }

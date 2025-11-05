@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+    width: '100%',
   },
   dropdownText: {
     fontSize: theme.typography.fontSize.font4,

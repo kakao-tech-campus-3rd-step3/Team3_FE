@@ -84,12 +84,12 @@ export const getMercenaryReviews = async (
 };
 
 export const getTeamReviews = async (
-  teamId: number
+  reviewedTeamId: number
 ): Promise<MercenaryTeamReview[]> => {
   const response = await apiClient.get<MercenaryTeamReview[]>(
     '/api/team-reviews',
     {
-      params: { teamId },
+      params: { reviewedTeamId },
     }
   );
   return response;

@@ -55,6 +55,16 @@ export const TEAM_API = {
 export const TEAM_MEMBER_API = {
   GET_MEMBERS: (teamId: string | number, page: number = 0, size: number = 10) =>
     `/api/teams/${teamId}/users?page=${page}&size=${size}`,
+  GET_MEMBERS_SLICE: (
+    teamId: string | number,
+    cursorId?: number,
+    size: number = 10
+  ) => {
+    const query = new URLSearchParams();
+    if (cursorId !== undefined) query.append('cursorId', String(cursorId));
+    query.append('size', String(size));
+    return `/api/teams/${teamId}/users/slice?${query.toString()}`;
+  },
   GET_MEMBER: (teamId: string | number, userId: string | number) =>
     `/api/teams/${teamId}/users/${userId}`,
   UPDATE_ROLE: (teamId: string | number, userId: string | number) =>
@@ -75,8 +85,8 @@ export const TEAM_MATCH_API = {
 export const TEAM_REVIEW_API = {
   CREATE: '/api/team-reviews',
   DETAIL: (id: number | string) => `/api/team-reviews/${id}`,
-  LIST: (profileId: number | string) =>
-    `/api/team-reviews?profileId=${profileId}`,
+  LIST: (reviewedTeamId: number | string) =>
+    `/api/team-reviews?reviewedTeamId=${reviewedTeamId}`,
 };
 
 export const MATCH_CREATE_API = {
@@ -125,4 +135,9 @@ export const MERCENARY_API = {
   CREATE_RECRUITMENT: '/api/mercenaries/recruitments',
   UPDATE_RECRUITMENT: (id: number) => `/api/mercenaries/recruitments/${id}`,
   DELETE_RECRUITMENT: (id: number) => `/api/mercenaries/recruitments/${id}`,
+};
+
+export const LINEUP_API = {
+  CREATE: '/api/lineups', // POST 요청 (라인업 생성)
+  GET_LINEUP: (lineupId: number | string) => `/api/lineups/${lineupId}`,
 };
