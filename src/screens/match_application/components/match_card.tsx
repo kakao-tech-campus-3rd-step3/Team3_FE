@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router'; // ✅ 추가
+import { useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
@@ -26,7 +26,7 @@ export default function MatchCard({
   isCancellable = false,
   hasRequested = false,
 }: MatchCardProps) {
-  const router = useRouter(); // ✅ 추가
+  const router = useRouter();
   const { data: venuesData } = useVenues();
   const [venueMap, setVenueMap] = useState<Record<number, string>>({});
 
@@ -117,7 +117,6 @@ export default function MatchCard({
 
   const status = getStatusStyle(match?.status);
 
-  // ✅ 라인업 조회 핸들러
   const handleViewLineup = () => {
     const lineupId = match?.lineup1Id;
 
@@ -242,47 +241,81 @@ export default function MatchCard({
       </View>
 
       <View style={styles.matchFooter}>
-        {/* ✅ 버튼들을 한 줄에 배치 */}
-        <View style={{ flexDirection: 'row', gap: 8 }}>
-          {/* 라인업 조회 버튼 */}
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: 10,
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+          }}
+        >
           <TouchableOpacity
             onPress={handleViewLineup}
             style={[
               styles.requestButton,
               {
-                flex: 1,
-                backgroundColor: theme.colors.blue[600],
+                backgroundColor: theme.colors.white,
+                borderWidth: 1.5,
+                borderColor: theme.colors.brand.main,
+                paddingHorizontal: theme.spacing.spacing5,
+                minWidth: 120,
               },
             ]}
           >
-            <Text style={styles.requestButtonText}>라인업 조회</Text>
+            <Text
+              style={[
+                styles.requestButtonText,
+                { color: theme.colors.brand.main, fontSize: 13 },
+              ]}
+              numberOfLines={1}
+            >
+              라인업 조회
+            </Text>
           </TouchableOpacity>
 
-          {/* 신청 버튼 */}
           {!['CANCELED'].includes(match?.status?.toUpperCase?.() || '') && (
             <TouchableOpacity
-              onPress={() =>
-                router.push({
-                  pathname: ROUTES.CREATE_LINEUP,
-                  params: {
-                    waitingId: String(match.waitingId),
-                    targetTeamId: String(match.teamId),
-                  },
-                })
+              onPress={
+                isCancellable
+                  ? onPressRequest
+                  : () =>
+                      router.push({
+                        pathname: ROUTES.CREATE_LINEUP,
+                        params: {
+                          waitingId: String(match.waitingId),
+                          targetTeamId: String(match.teamId),
+                        },
+                      })
               }
               disabled={disabled || hasRequested}
               style={[
                 styles.requestButton,
                 {
-                  flex: 1,
                   backgroundColor: isCancellable
-                    ? theme.colors.red[600]
+                    ? theme.colors.white
                     : theme.colors.blue[600],
+                  borderWidth: isCancellable ? 1.5 : 0,
+                  borderColor: isCancellable
+                    ? theme.colors.red[400]
+                    : 'transparent',
                   opacity: disabled || hasRequested ? 0.6 : 1,
+                  paddingHorizontal: theme.spacing.spacing5,
+                  minWidth: 120,
                 },
               ]}
             >
-              <Text style={styles.requestButtonText}>
+              <Text
+                style={[
+                  styles.requestButtonText,
+                  {
+                    color: isCancellable
+                      ? theme.colors.red[600]
+                      : theme.colors.white,
+                    fontSize: 13,
+                  },
+                ]}
+                numberOfLines={1}
+              >
                 {disabled
                   ? '요청 중...'
                   : hasRequested

@@ -103,7 +103,6 @@ export default function TeamFormationScreen() {
   };
 
   const handleConfirmLineup = () => {
-    // ✅ 1. 인원수 확인
     if (filledCount !== 11) {
       Alert.alert(
         '라인업 미완성',
@@ -112,7 +111,6 @@ export default function TeamFormationScreen() {
       return;
     }
 
-    // ✅ 2. 중복 확인
     const starterIds = new Set(
       Object.values(formationAssignments).filter((v): v is number => v !== null)
     );
@@ -125,7 +123,6 @@ export default function TeamFormationScreen() {
       return;
     }
 
-    // ✅ 3. Payload 생성
     const positionMap = buildPositionMap(
       FORMATION_POSITIONS[selectedFormation]
     );
@@ -142,10 +139,8 @@ export default function TeamFormationScreen() {
       positionMap
     );
 
-    // ✅ 4. API 요청
     createLineups(payload, {
       onSuccess: data => {
-        // ✅ 타입이 CreateLineupResponse (즉, CreatedLineupItem[]), 배열 확정됨
         const createdLineupId = data[0]?.lineupId ?? null;
 
         if (!createdLineupId) {
@@ -153,30 +148,26 @@ export default function TeamFormationScreen() {
           return;
         }
 
-        Alert.alert(
-          '라인업 확정 완료',
-          '✅ 라인업이 성공적으로 등록되었습니다.',
-          [
-            {
-              text: '다음으로 이동',
-              onPress: () =>
-                router.push({
-                  pathname: '/match_making/match_info',
-                  params: {
-                    formation: JSON.stringify(formationAssignments),
-                    type: selectedFormation,
-                    lineupId: String(createdLineupId), // ✅ 전달
-                  },
-                }),
-            },
-          ]
-        );
+        Alert.alert('라인업 확정 완료', '라인업이 성공적으로 등록되었습니다.', [
+          {
+            text: '다음으로 이동',
+            onPress: () =>
+              router.push({
+                pathname: '/match_making/match_info',
+                params: {
+                  formation: JSON.stringify(formationAssignments),
+                  type: selectedFormation,
+                  lineupId: String(createdLineupId),
+                },
+              }),
+          },
+        ]);
       },
       onError: err => {
         console.error('❌ 라인업 생성 실패:', err);
         Alert.alert(
           '라인업 등록 실패',
-          '❌ 라인업 생성 중 오류가 발생했습니다. 다시 시도해주세요.'
+          '라인업 생성 중 오류가 발생했습니다. 다시 시도해주세요.'
         );
       },
     });
@@ -194,7 +185,6 @@ export default function TeamFormationScreen() {
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
           <ActivityIndicator size="large" color="#007AFF" />
-          <Text>팀 정보를 불러오는 중...</Text>
         </View>
       ) : (
         <ScrollView
@@ -202,11 +192,10 @@ export default function TeamFormationScreen() {
           contentContainerStyle={style.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* 📋 포메이션 선택 */}
           <View style={style.cardContainer}>
             <View style={style.card}>
               <View style={style.cardHeader}>
-                <Text style={style.cardTitle}>📋 포메이션 선택</Text>
+                <Text style={style.cardTitle}>포메이션 선택</Text>
               </View>
               <View style={style.cardContent}>
                 <Dropdown
@@ -229,10 +218,9 @@ export default function TeamFormationScreen() {
             </View>
           </View>
 
-          {/* ⚽ 선발 라인업 */}
           <View style={style.fieldCard}>
             <View style={style.cardHeader}>
-              <Text style={style.cardTitle}>⚽ 선발 라인업</Text>
+              <Text style={style.cardTitle}>선발 라인업</Text>
             </View>
 
             <ImageBackground
@@ -285,17 +273,16 @@ export default function TeamFormationScreen() {
                       resizeMode="contain"
                     />
                     <Text style={style.playerName}>{displayName}</Text>
-                    {isEmpty && <Text style={style.warningIcon}>❗</Text>}
+                    {isEmpty && <Text style={style.warningIcon}>!</Text>}
                   </TouchableOpacity>
                 );
               })}
             </ImageBackground>
           </View>
 
-          {/* 🧢 후보 라인업 */}
           <View style={style.fieldCard}>
             <View style={style.cardHeader}>
-              <Text style={style.cardTitle}>↔️ 후보 라인업</Text>
+              <Text style={style.cardTitle}>후보 라인업</Text>
             </View>
 
             <View style={style.cardContent}>
@@ -317,7 +304,7 @@ export default function TeamFormationScreen() {
                     style={style.addMoreButton}
                     onPress={() => setShowBenchModal(true)}
                   >
-                    <Text style={style.addMoreButtonText}>＋ 추가하기</Text>
+                    <Text style={style.addMoreButtonText}>추가하기</Text>
                   </TouchableOpacity>
                 </View>
               ) : (
@@ -329,14 +316,13 @@ export default function TeamFormationScreen() {
                     style={style.addButton}
                     onPress={() => setShowBenchModal(true)}
                   >
-                    <Text style={style.addButtonText}>＋ 후보 추가</Text>
+                    <Text style={style.addButtonText}>후보 추가</Text>
                   </TouchableOpacity>
                 </>
               )}
             </View>
           </View>
 
-          {/* ✅ 통합된 버튼 */}
           <View style={[style.nextButtonCard, { marginTop: 20 }]}>
             <TouchableOpacity
               style={[
@@ -351,7 +337,7 @@ export default function TeamFormationScreen() {
               ) : (
                 <Text style={style.nextButtonText}>
                   {isFormationComplete
-                    ? '✅ 라인업 확정 및 진행'
+                    ? '라인업 확정 및 진행'
                     : `(${filledCount}/11) 포지션 배정`}
                 </Text>
               )}
@@ -360,7 +346,6 @@ export default function TeamFormationScreen() {
         </ScrollView>
       )}
 
-      {/* 팀원 선택 모달 */}
       {showModal && (
         <TeamMemberSelectModal
           visible={showModal}
@@ -385,7 +370,6 @@ export default function TeamFormationScreen() {
         />
       )}
 
-      {/* 후보선수 모달 */}
       {showBenchModal && (
         <TeamMemberSelectModal
           visible={showBenchModal}

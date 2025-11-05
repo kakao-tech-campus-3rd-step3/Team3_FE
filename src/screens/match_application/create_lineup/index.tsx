@@ -110,29 +110,23 @@ export default function CreateLineupScreen() {
   };
 
   const handleConfirmLineup = () => {
-    // ✅ 1. 인원수 확인
     if (filledCount !== 11) {
       Alert.alert(
         '라인업 미완성',
-        `⚠️ 선발 ${filledCount}/11명만 배정되었습니다. 모든 포지션을 채워주세요.`
+        `선발 ${filledCount}/11명만 배정되었습니다. 모든 포지션을 채워주세요.`
       );
       return;
     }
 
-    // ✅ 2. 중복 확인
     const starterIds = new Set(
       Object.values(formationAssignments).filter((v): v is number => v !== null)
     );
     const hasDuplicate = benchMembers.some(b => starterIds.has(b.id));
     if (hasDuplicate) {
-      Alert.alert(
-        '중복 등록',
-        '⚠️ 같은 선수가 선발과 후보에 중복되어 있습니다.'
-      );
+      Alert.alert('중복 등록', '같은 선수가 선발과 후보에 중복되어 있습니다.');
       return;
     }
 
-    // ✅ 3. Payload 생성
     const positionMap = buildPositionMap(
       FORMATION_POSITIONS[selectedFormation]
     );
@@ -149,7 +143,6 @@ export default function CreateLineupScreen() {
       positionMap
     );
 
-    // ✅ 4. API 요청
     createLineups(payload, {
       onSuccess: data => {
         const createdLineupId = data[0]?.lineupId ?? null;
@@ -159,7 +152,6 @@ export default function CreateLineupScreen() {
           return;
         }
 
-        // ✅ 3️⃣ 라인업 생성 후 바로 매치 요청 전송
         if (!waitingId || !targetTeamId) {
           Alert.alert('오류', '매치 요청 대상 정보가 없습니다.');
           return;
@@ -176,7 +168,7 @@ export default function CreateLineupScreen() {
             onSuccess: () => {
               Alert.alert(
                 '매치 요청 완료',
-                '✅ 라인업이 등록되고 매치 요청이 전송되었습니다.',
+                '라인업이 등록되고 매치 요청이 전송되었습니다.',
                 [
                   {
                     text: '확인',
@@ -186,20 +178,20 @@ export default function CreateLineupScreen() {
               );
             },
             onError: err => {
-              console.error('❌ 매치 요청 실패:', err);
+              console.error('매치 요청 실패:', err);
               Alert.alert(
                 '매치 요청 실패',
-                '⚠️ 라인업은 등록되었으나 매치 요청에 실패했습니다.'
+                '라인업은 등록되었으나 매치 요청에 실패했습니다.'
               );
             },
           }
         );
       },
       onError: err => {
-        console.error('❌ 라인업 생성 실패:', err);
+        console.error('라인업 생성 실패:', err);
         Alert.alert(
           '라인업 등록 실패',
-          '❌ 라인업 생성 중 오류가 발생했습니다. 다시 시도해주세요.'
+          '라인업 생성 중 오류가 발생했습니다. 다시 시도해주세요.'
         );
       },
     });
@@ -225,11 +217,10 @@ export default function CreateLineupScreen() {
           contentContainerStyle={style.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* 📋 포메이션 선택 */}
           <View style={style.cardContainer}>
             <View style={style.card}>
               <View style={style.cardHeader}>
-                <Text style={style.cardTitle}>📋 포메이션 선택</Text>
+                <Text style={style.cardTitle}>포메이션 선택</Text>
               </View>
               <View style={style.cardContent}>
                 <Dropdown
@@ -252,10 +243,9 @@ export default function CreateLineupScreen() {
             </View>
           </View>
 
-          {/* ⚽ 선발 라인업 */}
           <View style={style.fieldCard}>
             <View style={style.cardHeader}>
-              <Text style={style.cardTitle}>⚽ 선발 라인업</Text>
+              <Text style={style.cardTitle}>선발 라인업</Text>
             </View>
 
             <ImageBackground
@@ -308,17 +298,16 @@ export default function CreateLineupScreen() {
                       resizeMode="contain"
                     />
                     <Text style={style.playerName}>{displayName}</Text>
-                    {isEmpty && <Text style={style.warningIcon}>❗</Text>}
+                    {isEmpty && <Text style={style.warningIcon}>!</Text>}
                   </TouchableOpacity>
                 );
               })}
             </ImageBackground>
           </View>
 
-          {/* 🧢 후보 라인업 */}
           <View style={style.fieldCard}>
             <View style={style.cardHeader}>
-              <Text style={style.cardTitle}>↔️ 후보 라인업</Text>
+              <Text style={style.cardTitle}>후보 라인업</Text>
             </View>
 
             <View style={style.cardContent}>
@@ -340,7 +329,7 @@ export default function CreateLineupScreen() {
                     style={style.addMoreButton}
                     onPress={() => setShowBenchModal(true)}
                   >
-                    <Text style={style.addMoreButtonText}>＋ 추가하기</Text>
+                    <Text style={style.addMoreButtonText}>추가하기</Text>
                   </TouchableOpacity>
                 </View>
               ) : (
@@ -352,14 +341,13 @@ export default function CreateLineupScreen() {
                     style={style.addButton}
                     onPress={() => setShowBenchModal(true)}
                   >
-                    <Text style={style.addButtonText}>＋ 후보 추가</Text>
+                    <Text style={style.addButtonText}>후보 추가</Text>
                   </TouchableOpacity>
                 </>
               )}
             </View>
           </View>
 
-          {/* ✅ 통합된 버튼 */}
           <View style={[style.nextButtonCard, { marginTop: 20 }]}>
             <TouchableOpacity
               style={[
@@ -374,7 +362,7 @@ export default function CreateLineupScreen() {
               ) : (
                 <Text style={style.nextButtonText}>
                   {isFormationComplete
-                    ? '✅ 라인업 확정 및 진행'
+                    ? '라인업 확정 및 진행'
                     : `(${filledCount}/11) 포지션 배정`}
                 </Text>
               )}
@@ -383,7 +371,6 @@ export default function CreateLineupScreen() {
         </ScrollView>
       )}
 
-      {/* 팀원 선택 모달 */}
       {showModal && (
         <TeamMemberSelectModal
           visible={showModal}
@@ -408,7 +395,6 @@ export default function CreateLineupScreen() {
         />
       )}
 
-      {/* 후보선수 모달 */}
       {showBenchModal && (
         <TeamMemberSelectModal
           visible={showBenchModal}

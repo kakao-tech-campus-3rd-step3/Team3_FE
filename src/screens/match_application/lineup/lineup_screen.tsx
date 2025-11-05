@@ -39,14 +39,10 @@ export default function LineupScreen() {
     error,
   } = useLineupDetail(Number(lineupId));
 
-  // ─────────────────────────────────────────────────────────────
-  // ① formationType 결정: URL 파라미터 → API 응답 → 휴리스틱
   const formationType = useMemo<FormationType>(() => {
-    // 1️⃣ URL 파라미터 우선
     if (formationParam && FORMATION_POSITIONS[formationParam])
       return formationParam;
 
-    // 2️⃣ API 응답 기반 휴리스틱 추정
     if (Array.isArray(lineupItems)) {
       const starters = lineupItems.filter(i => i.isStarter);
       if (starters.length === 0) return '4-3-3';
@@ -69,29 +65,22 @@ export default function LineupScreen() {
       const totalMF = dm + cm + am;
       const totalFW = lw + rw + st + fw;
 
-      // ──────────────── 방어 라인 분석
       if (totalDF >= 5) {
-        // 윙백 존재시 5백
         if (lb >= 1 && rb >= 1 && cb >= 3) {
           return '5-3-2';
         }
-        // 중앙 밀집형
         return '5-3-2';
       }
       if (cb === 3 && lb + rb <= 1) {
-        // 3CB 중심 → 3백 계열
         if (lw + rw >= 1) return '3-5-2';
         return '3-5-2';
       }
 
-      // ──────────────── 공격 라인 분석
       if (st === 2 && totalDF === 4) {
-        // 투톱 + 4백 → 4-4-2 or 4-1-3-2 변형
         if (dm >= 2) return '4-4-2';
         return '4-4-2';
       }
 
-      // ──────────────── 미드필더 구조 분석
       if (dm === 2 && am === 1 && st === 1) {
         return '4-2-3-1';
       }
@@ -102,11 +91,9 @@ export default function LineupScreen() {
         return '4-1-2-3';
       }
 
-      // ──────────────── 기본값
       return '4-3-3';
     }
 
-    // 3️⃣ fallback
     return '4-3-3';
   }, [formationParam, lineupItems]);
 
@@ -119,7 +106,6 @@ export default function LineupScreen() {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#007AFF" />
-        <Text>라인업 정보를 불러오는 중...</Text>
       </View>
     );
   }
@@ -132,21 +118,13 @@ export default function LineupScreen() {
     );
   }
 
-  // ─────────────────────────────────────────────────────────────
-  // ② 팀원 이름 매핑
-  // ② 팀원 이름 매핑
   const memberMap = new Map<number, string>();
   teamMembers.forEach(m => {
     const key = Number(m.id);
     if (!isNaN(key)) memberMap.set(key, m.name);
   });
-
-  // ─────────────────────────────────────────────────────────────
-  // ③ 포지션→슬롯 매핑 (포메이션별 후보 우선순위)
-  // 기존 positionToSlots 함수 전체를 이 버전으로 대체
   const positionToSlots = (ft: FormationType): Record<string, string[]> => {
     switch (ft) {
-      // ① 기본형: 4-3-3
       case '4-3-3':
         return {
           GK: ['GK'],
@@ -161,7 +139,6 @@ export default function LineupScreen() {
           ST: ['ST', 'LS', 'RS'],
         };
 
-      // ② 4-4-2 (클래식)
       case '4-4-2':
         return {
           GK: ['GK'],
@@ -176,7 +153,6 @@ export default function LineupScreen() {
           ST: ['LS', 'RS'],
         };
 
-      // ③ 4-2-3-1
       case '4-2-3-1':
         return {
           GK: ['GK'],
@@ -191,7 +167,6 @@ export default function LineupScreen() {
           ST: ['ST'],
         };
 
-      // ④ 4-1-4-1
       case '4-1-4-1':
         return {
           GK: ['GK'],
@@ -206,7 +181,6 @@ export default function LineupScreen() {
           ST: ['ST'],
         };
 
-      // ⑤ 4-1-2-3 (수비형 미드 1 + 중앙 2)
       case '4-1-2-3':
         return {
           GK: ['GK'],
@@ -221,7 +195,6 @@ export default function LineupScreen() {
           ST: ['ST'],
         };
 
-      // ⑥ 3-5-2 (중앙 3백 + 윙미드)
       case '3-5-2':
         return {
           GK: ['GK'],
@@ -236,7 +209,6 @@ export default function LineupScreen() {
           ST: ['LS', 'RS'],
         };
 
-      // ⑦ 5-3-2 (윙백 시스템)
       case '5-3-2':
         return {
           GK: ['GK'],
@@ -275,25 +247,20 @@ export default function LineupScreen() {
     const base = (pos || '').toUpperCase();
     const candidates = SLOT_PREF[base] ?? [base];
 
-    // 1) 포메이션 내 명시 후보 우선
     for (const c of candidates) {
       if (positions.some(p => p.id === c) && !usedSlots.has(c)) return c;
     }
-    // 2) 접두사(예: CB → LCB/RCB)
     const alt = positions.find(
       p => p.id.startsWith(base) && !usedSlots.has(p.id)
     );
     return alt?.id ?? null;
   };
 
-  // ─────────────────────────────────────────────────────────────
-  // ④ 매핑/배치
   lineupItems.forEach((it: ApiLineupItem) => {
     const idNum = Number(it.teamMemberId);
     const nameFromMyTeam = memberMap.get(idNum);
     const slot = it.isStarter ? pickSlotFor(String(it.position)) : null;
 
-    // ✅ userName과 teamId가 응답에 들어온 경우, 우선적으로 사용
     const displayName =
       it.userName ||
       nameFromMyTeam ||
@@ -302,17 +269,7 @@ export default function LineupScreen() {
     if (it.isStarter && slot) {
       starters[slot] = displayName;
       usedSlots.add(slot);
-      if (__DEV__) {
-        console.log(
-          `✅ 배치: ${it.position} → ${slot} (${displayName}) [${formationType}]`
-        );
-      }
     } else if (it.isStarter && !slot) {
-      if (__DEV__) {
-        console.warn(
-          `⚠️ 슬롯 없음: ${it.position} (formation=${formationType})`
-        );
-      }
     } else {
       bench.push({
         name: displayName,
@@ -331,11 +288,10 @@ export default function LineupScreen() {
     >
       <CustomHeader title="라인업 조회" />
 
-      {/* 📋 포메이션 카드 */}
       <View style={style.cardContainer}>
         <View style={style.card}>
           <View style={style.cardHeader}>
-            <Text style={style.cardTitle}>📋 포메이션</Text>
+            <Text style={style.cardTitle}>포메이션</Text>
           </View>
           <View style={style.cardContent}>
             <Text style={{ fontSize: 16, color: '#333' }}>{formationType}</Text>
@@ -343,10 +299,9 @@ export default function LineupScreen() {
         </View>
       </View>
 
-      {/* ⚽ 선발 라인업 카드 */}
       <View style={style.fieldCard}>
         <View style={style.cardHeader}>
-          <Text style={style.cardTitle}>⚽ 선발 라인업</Text>
+          <Text style={style.cardTitle}>선발 라인업</Text>
         </View>
 
         <ImageBackground
@@ -385,10 +340,9 @@ export default function LineupScreen() {
         </ImageBackground>
       </View>
 
-      {/* 🧢 후보 라인업 카드 */}
       <View style={style.fieldCard}>
         <View style={style.cardHeader}>
-          <Text style={style.cardTitle}>🧢 후보 라인업</Text>
+          <Text style={style.cardTitle}>후보 라인업</Text>
         </View>
 
         <View style={style.cardContent}>
