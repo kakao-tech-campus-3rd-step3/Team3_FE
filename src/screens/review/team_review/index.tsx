@@ -10,7 +10,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import Card from '@/src/components/card/card';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import {
   useUserProfile,
@@ -138,51 +137,63 @@ export default function TeamReviewScreen() {
         contentContainerStyle={{ paddingBottom: theme.spacing.spacing10 }}
         showsVerticalScrollIndicator={false}
       >
-        <Card
-          title="⚡ 경기 종합 점수"
-          subtitle="경기 전반적인 만족도를 평가해주세요."
-          style={isMissing('rating') && styles.errorCard}
+        <View
+          style={[styles.section, isMissing('rating') && styles.sectionError]}
         >
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>경기 종합 점수</Text>
+            <Text style={styles.sectionSubtitle}>
+              경기 전반적인 만족도를 평가해주세요
+            </Text>
+          </View>
           <View style={styles.starContainer}>
             {[1, 2, 3, 4, 5].map(value => (
               <TouchableOpacity
                 key={value}
                 onPress={() => handleSetRating(value)}
+                style={styles.starButton}
               >
                 <Ionicons
                   name={value <= rating ? 'star' : 'star-outline'}
-                  size={34}
+                  size={36}
                   color={
                     value <= rating
                       ? theme.colors.yellow[500]
-                      : theme.colors.gray[400]
+                      : theme.colors.gray[300]
                   }
                 />
               </TouchableOpacity>
             ))}
           </View>
-        </Card>
+        </View>
 
-        <Card
-          title="⏰ 시간 엄수"
-          subtitle="약속된 시간에 맞춰 도착했나요?"
-          style={isMissing('punctualityReview') && styles.errorCard}
+        <View
+          style={[
+            styles.section,
+            isMissing('punctualityReview') && styles.sectionError,
+          ]}
         >
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>시간 엄수</Text>
+            <Text style={styles.sectionSubtitle}>
+              약속된 시간에 맞춰 도착했나요?
+            </Text>
+          </View>
           <View style={styles.optionRow}>
             {(['GOOD', 'BAD'] as GoodBad[]).map(option => (
               <TouchableOpacity
                 key={option}
-                style={
-                  punctualityReview === option
-                    ? styles.selectedButton
-                    : styles.button
-                }
+                style={[
+                  styles.optionButton,
+                  punctualityReview === option && styles.optionButtonSelected,
+                ]}
                 onPress={() => handleSetPunctualityReview(option)}
               >
                 <Text
                   style={[
-                    styles.buttonText,
-                    punctualityReview === option && styles.selectedButtonText,
+                    styles.optionButtonText,
+                    punctualityReview === option &&
+                      styles.optionButtonTextSelected,
                   ]}
                 >
                   {LABELS[option]}
@@ -190,28 +201,35 @@ export default function TeamReviewScreen() {
               </TouchableOpacity>
             ))}
           </View>
-        </Card>
+        </View>
 
-        <Card
-          title="🤝 매너"
-          subtitle="상대팀의 스포츠맨십은 어땠나요?"
-          style={isMissing('sportsmanshipReview') && styles.errorCard}
+        <View
+          style={[
+            styles.section,
+            isMissing('sportsmanshipReview') && styles.sectionError,
+          ]}
         >
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>매너</Text>
+            <Text style={styles.sectionSubtitle}>
+              상대팀의 스포츠맨십은 어땠나요?
+            </Text>
+          </View>
           <View style={styles.optionRow}>
             {(['GOOD', 'BAD'] as GoodBad[]).map(option => (
               <TouchableOpacity
                 key={option}
-                style={
-                  sportsmanshipReview === option
-                    ? styles.selectedButton
-                    : styles.button
-                }
+                style={[
+                  styles.optionButton,
+                  sportsmanshipReview === option && styles.optionButtonSelected,
+                ]}
                 onPress={() => handleSetSportsmanshipReview(option)}
               >
                 <Text
                   style={[
-                    styles.buttonText,
-                    sportsmanshipReview === option && styles.selectedButtonText,
+                    styles.optionButtonText,
+                    sportsmanshipReview === option &&
+                      styles.optionButtonTextSelected,
                   ]}
                 >
                   {LABELS[option]}
@@ -219,28 +237,35 @@ export default function TeamReviewScreen() {
               </TouchableOpacity>
             ))}
           </View>
-        </Card>
+        </View>
 
-        <Card
-          title="📊 실력 일치도"
-          subtitle="팀의 실제 실력은 표시된 수준과 비슷했나요?"
-          style={isMissing('skillLevelReview') && styles.errorCard}
+        <View
+          style={[
+            styles.section,
+            isMissing('skillLevelReview') && styles.sectionError,
+          ]}
         >
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>실력 일치도</Text>
+            <Text style={styles.sectionSubtitle}>
+              팀의 실제 실력은 표시된 수준과 비슷했나요?
+            </Text>
+          </View>
           <View style={styles.optionRow}>
             {(['LOWER', 'SIMILAR', 'HIGHER'] as Skill[]).map(option => (
               <TouchableOpacity
                 key={option}
-                style={
-                  skillLevelReview === option
-                    ? styles.selectedButton
-                    : styles.button
-                }
+                style={[
+                  styles.optionButton,
+                  skillLevelReview === option && styles.optionButtonSelected,
+                ]}
                 onPress={() => handleSetSkillLevelReview(option)}
               >
                 <Text
                   style={[
-                    styles.buttonText,
-                    skillLevelReview === option && styles.selectedButtonText,
+                    styles.optionButtonText,
+                    skillLevelReview === option &&
+                      styles.optionButtonTextSelected,
                   ]}
                 >
                   {LABELS[option]}
@@ -248,7 +273,7 @@ export default function TeamReviewScreen() {
               </TouchableOpacity>
             ))}
           </View>
-        </Card>
+        </View>
 
         <TouchableOpacity
           style={[
