@@ -38,7 +38,7 @@ import type {
   RecommendedMatch,
   JoinWaitingRequest,
   JoinWaitingCancelRequest,
-  TeamMember, // 사용하지 않음음
+  TeamMember,
   RecruitmentCreateRequest,
   RecruitmentUpdateRequest,
   TeamReviewRequest,
@@ -304,8 +304,7 @@ export function useTeamMembers(
     queryFn: () => queries.teamMembers.fn(teamId, page, size),
     enabled: !!teamId,
   });
-  /*********************************/
-  const members = query.data?.content ?? []; // 🔹 항상 배열만 보장
+  const members = query.data?.content ?? [];
   return { ...query, members };
 }
 
@@ -1143,20 +1142,18 @@ export function useTeamMembersInfinite(
         size
       ),
     getNextPageParam: lastPage => {
-      // hasNext가 true일 경우, 다음 커서 id 반환
       if (lastPage.hasNext && lastPage.members.length > 0) {
         return lastPage.members[lastPage.members.length - 1].id;
       }
       return undefined;
     },
     enabled: !!teamId,
-    initialPageParam: undefined, // 첫 페이지는 cursorId 없음
+    initialPageParam: undefined,
   });
 }
 
 export function useCreateLineupsMutation() {
   return useMutation<CreateLineupResponse, Error, CreateLineupRequest>({
-    // ✅ 제네릭으로 반환/에러/인수 타입 지정
     mutationFn: data => api.lineupApi.createLineups(data),
 
     onSuccess: data => {
@@ -1175,7 +1172,7 @@ export function useLineupDetail(lineupId?: number) {
     queryKey: ['lineup', lineupId],
     queryFn: () => api.getLineupById(lineupId as number),
     enabled: !!lineupId,
-    staleTime: 1000 * 30, // 30s
+    staleTime: 1000 * 30,
   });
 }
 
@@ -1185,7 +1182,7 @@ export function useMyMatchRequests() {
   return useQuery<MatchWaitingHistoryResponseDto[], Error>({
     queryKey: ['myMatchRequests'],
     queryFn: async () => {
-      const response = await api.getMyMatchRequests(); // api에 정의 필요
+      const response = await api.getMyMatchRequests();
       return response;
     },
     enabled: !!token && isInitialized,

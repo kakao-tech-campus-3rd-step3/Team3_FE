@@ -302,17 +302,8 @@ export default function LineupScreen() {
     if (it.isStarter && slot) {
       starters[slot] = displayName;
       usedSlots.add(slot);
-      if (__DEV__) {
-        console.log(
-          `✅ 배치: ${it.position} → ${slot} (${displayName}) [${formationType}]`
-        );
-      }
     } else if (it.isStarter && !slot) {
-      if (__DEV__) {
-        console.warn(
-          `⚠️ 슬롯 없음: ${it.position} (formation=${formationType})`
-        );
-      }
+      // 슬롯이 없는 경우 무시
     } else {
       bench.push({
         name: displayName,
