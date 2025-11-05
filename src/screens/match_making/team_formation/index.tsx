@@ -103,7 +103,6 @@ export default function TeamFormationScreen() {
   };
 
   const handleConfirmLineup = () => {
-    // ✅ 1. 인원수 확인
     if (filledCount !== 11) {
       Alert.alert(
         '라인업 미완성',
@@ -112,7 +111,6 @@ export default function TeamFormationScreen() {
       return;
     }
 
-    // ✅ 2. 중복 확인
     const starterIds = new Set(
       Object.values(formationAssignments).filter((v): v is number => v !== null)
     );
@@ -125,7 +123,6 @@ export default function TeamFormationScreen() {
       return;
     }
 
-    // ✅ 3. Payload 생성
     const positionMap = buildPositionMap(
       FORMATION_POSITIONS[selectedFormation]
     );
@@ -142,10 +139,8 @@ export default function TeamFormationScreen() {
       positionMap
     );
 
-    // ✅ 4. API 요청
     createLineups(payload, {
       onSuccess: data => {
-        // ✅ 타입이 CreateLineupResponse (즉, CreatedLineupItem[]), 배열 확정됨
         const createdLineupId = data[0]?.lineupId ?? null;
 
         if (!createdLineupId) {
@@ -162,7 +157,7 @@ export default function TeamFormationScreen() {
                 params: {
                   formation: JSON.stringify(formationAssignments),
                   type: selectedFormation,
-                  lineupId: String(createdLineupId), // ✅ 전달
+                  lineupId: String(createdLineupId),
                 },
               }),
           },
@@ -197,7 +192,6 @@ export default function TeamFormationScreen() {
           contentContainerStyle={style.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* 📋 포메이션 선택 */}
           <View style={style.cardContainer}>
             <View style={style.card}>
               <View style={style.cardHeader}>
@@ -224,7 +218,6 @@ export default function TeamFormationScreen() {
             </View>
           </View>
 
-          {/* ⚽ 선발 라인업 */}
           <View style={style.fieldCard}>
             <View style={style.cardHeader}>
               <Text style={style.cardTitle}>선발 라인업</Text>
@@ -287,7 +280,6 @@ export default function TeamFormationScreen() {
             </ImageBackground>
           </View>
 
-          {/* 🧢 후보 라인업 */}
           <View style={style.fieldCard}>
             <View style={style.cardHeader}>
               <Text style={style.cardTitle}>후보 라인업</Text>
@@ -331,7 +323,6 @@ export default function TeamFormationScreen() {
             </View>
           </View>
 
-          {/* ✅ 통합된 버튼 */}
           <View style={[style.nextButtonCard, { marginTop: 20 }]}>
             <TouchableOpacity
               style={[
@@ -355,7 +346,6 @@ export default function TeamFormationScreen() {
         </ScrollView>
       )}
 
-      {/* 팀원 선택 모달 */}
       {showModal && (
         <TeamMemberSelectModal
           visible={showModal}
@@ -380,7 +370,6 @@ export default function TeamFormationScreen() {
         />
       )}
 
-      {/* 후보선수 모달 */}
       {showBenchModal && (
         <TeamMemberSelectModal
           visible={showBenchModal}

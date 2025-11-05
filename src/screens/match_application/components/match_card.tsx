@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router'; // ✅ 추가
+import { useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
@@ -26,7 +26,7 @@ export default function MatchCard({
   isCancellable = false,
   hasRequested = false,
 }: MatchCardProps) {
-  const router = useRouter(); // ✅ 추가
+  const router = useRouter();
   const { data: venuesData } = useVenues();
   const [venueMap, setVenueMap] = useState<Record<number, string>>({});
 
@@ -117,7 +117,6 @@ export default function MatchCard({
 
   const status = getStatusStyle(match?.status);
 
-  // ✅ 라인업 조회 핸들러
   const handleViewLineup = () => {
     const lineupId = match?.lineup1Id;
 
