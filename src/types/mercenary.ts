@@ -99,7 +99,7 @@ export interface MercenaryReview {
   userId: number;
   rating: number;
   punctualityReview: 'GOOD' | 'BAD';
-  sportmanshipReview: 'GOOD' | 'BAD';
+  sportsmanshipReview: 'GOOD' | 'BAD';
   skillLevelReview: 'SIMILAR' | 'LOWER' | 'HIGHER';
 }
 
@@ -110,6 +110,6 @@ export interface MercenaryTeamReview {
   reviewedTeamId: number;
   rating: number;
   punctualityReview: 'GOOD' | 'BAD';
-  sportmanshipReview: 'GOOD' | 'BAD';
+  sportsmanshipReview: 'GOOD' | 'BAD';
   skillLevelReview: 'SIMILAR' | 'LOWER' | 'HIGHER';
 }
