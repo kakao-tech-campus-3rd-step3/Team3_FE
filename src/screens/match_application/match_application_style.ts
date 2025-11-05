@@ -258,19 +258,10 @@ export const styles = StyleSheet.create({
   requestButton: {
     backgroundColor: theme.colors.blue[600],
     paddingVertical: theme.spacing.spacing3,
-    paddingHorizontal: theme.spacing.spacing4,
-    borderRadius: theme.spacing.spacing2,
+    borderRadius: theme.spacing.spacing3,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 40,
-    shadowColor: theme.colors.blue[600],
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    minHeight: 44,
   },
 
   requestButtonDisabled: {
