@@ -9,7 +9,7 @@ import { MercenaryReview, MercenaryTeamReview } from '@/src/types/mercenary';
 interface BaseReview {
   rating: number;
   punctualityReview: 'GOOD' | 'BAD';
-  sportmanshipReview: 'GOOD' | 'BAD';
+  sportsmanshipReview: 'GOOD' | 'BAD';
   skillLevelReview: 'SIMILAR' | 'LOWER' | 'HIGHER';
 }
 
@@ -102,8 +102,8 @@ export function ReviewsList<T extends BaseReview>({
       },
       {
         label: '매너',
-        good: reviews.filter(r => r.sportmanshipReview === 'GOOD').length,
-        bad: reviews.filter(r => r.sportmanshipReview === 'BAD').length,
+        good: reviews.filter(r => r.sportsmanshipReview === 'GOOD').length,
+        bad: reviews.filter(r => r.sportsmanshipReview === 'BAD').length,
       },
       {
         label: '실력',
