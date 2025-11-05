@@ -62,8 +62,9 @@ export interface MatchWaitingResponseDto {
   skillLevelMax: 'AMATEUR' | 'SEMI_PRO' | 'PRO';
   universityOnly: boolean;
   message: string;
-  status: 'WAITING' | 'MATCHED' | 'CANCELLED' | 'COMPLETED';
+  status: 'WAITING' | 'MATCHED' | 'CANCELED' | 'EXPIRED';
   expiresAt: string;
+  lineup1Id: number;
 }
 
 export interface MatchCreateRequestDto {
@@ -87,6 +88,7 @@ export interface MatchCreateResponseDto {
 }
 export interface MatchRequestRequestDto {
   requestMessage: string;
+  lineupId: number;
 }
 
 export type MatchRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';

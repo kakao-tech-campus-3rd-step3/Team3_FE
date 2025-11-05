@@ -72,12 +72,13 @@ export default function MatchInfoScreen() {
     useMyAppliedMatches();
 
   const isAlreadyApplied = (teamId: number) => {
-    if (!appliedMatches) return false;
+    if (!appliedMatches || !userProfile?.teamId) return false;
 
     return appliedMatches.some(
       appliedMatch =>
+        appliedMatch.requestTeamId === userProfile.teamId &&
         appliedMatch.targetTeamId === teamId &&
-        appliedMatch.status !== 'CANCELED'
+        appliedMatch.status === 'PENDING'
     );
   };
 
@@ -103,29 +104,6 @@ export default function MatchInfoScreen() {
       Alert.alert('알림', '유효하지 않는 팀 ID입니다.');
       return;
     }
-
-    const payload: MatchRequestRequestDto = {
-      requestMessage: `${userProfile.name}(${numericTeamId}) 팀이 매치 요청`,
-    };
-
-    requestMatch(
-      { waitingId, payload },
-      {
-        onSuccess: res => {
-          refetchAppliedMatches();
-          Alert.alert('신청 완료', '매치 요청이 전송되었습니다.', [
-            {
-              text: '확인',
-              style: 'default',
-              onPress: () => router.push(ROUTES.HOME),
-            },
-          ]);
-        },
-        onError: () => {
-          Alert.alert('오류', '매치 요청 중 문제가 발생했습니다.');
-        },
-      }
-    );
   };
 
   const renderMatchCard = ({ item }: { item: MatchWaitingResponseDto }) => (
@@ -133,7 +111,7 @@ export default function MatchInfoScreen() {
       match={item}
       onPressRequest={() => handlePressRequest(item.waitingId)}
       disabled={isPending}
-      isAlreadyApplied={isAlreadyApplied(item.teamId)}
+      hasRequested={isAlreadyApplied(item.teamId)}
     />
   );
 

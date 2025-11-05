@@ -44,3 +44,22 @@ export interface CreatedLineupItem {
 }
 
 export type CreateLineupResponse = CreatedLineupItem[];
+
+export interface ApiLineupItem {
+  id: number;
+  lineupId: number;
+  teamMemberId: number;
+  position: string;
+  isStarter: boolean;
+  createdAt: string;
+  updatedAt: string;
+  userName?: string;
+  teamId?: number;
+}
+
+// 화면에서 쓰기 좋은 뷰 모델
+export interface LineupDetailView {
+  lineupId: number;
+  starters: Record<string, { id: number; name: string }>;
+  bench: { id: number; name: string; position: AllowedPosition }[];
+}

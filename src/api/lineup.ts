@@ -4,6 +4,7 @@ import type {
   CreateLineupRequest,
   ApiCreateLineupResponse,
   CreateLineupResponse,
+  ApiLineupItem,
 } from '@/src/types/lineup';
 
 /**
@@ -48,3 +49,13 @@ export const lineupApi = {
     }
   },
 };
+
+export async function getLineupById(
+  lineupId: number
+): Promise<ApiLineupItem[]> {
+  // 서버는 배열을 반환
+  const res = await apiClient.get<ApiLineupItem[]>(
+    LINEUP_API.GET_LINEUP(lineupId)
+  );
+  return res;
+}

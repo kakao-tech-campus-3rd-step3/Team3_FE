@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState, useMemo } from 'react';
 import {
   View,
@@ -17,18 +17,25 @@ import Dropdown from '@/src/components/dropdown';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { TeamMemberSelectModal } from '@/src/components/ui/team_member_select_modal';
 import { FORMATION_POSITIONS, FormationType } from '@/src/constants/formations';
+import { ROUTES } from '@/src/constants/routes';
 import {
   useCreateLineupsMutation,
+  useMatchRequestMutation,
   useTeamMembersInfinite,
   useUserProfile,
 } from '@/src/hooks/queries';
+import { style } from '@/src/screens/match_application/create_lineup/create_lineup_style';
+import { MatchRequestRequestDto } from '@/src/types';
 import { AllowedPosition } from '@/src/types/lineup';
 import { buildPositionMap, createLineupPayload } from '@/src/utils/lineup';
 
-import { style } from './team_formation_style';
-
-export default function TeamFormationScreen() {
+export default function CreateLineupScreen() {
   const router = useRouter();
+  const { waitingId, targetTeamId } = useLocalSearchParams<{
+    waitingId?: string;
+    targetTeamId?: string;
+  }>();
+  const { mutate: requestMatch } = useMatchRequestMutation();
   const { data: userProfile } = useUserProfile();
   const teamId = userProfile?.teamId ?? 0;
 
@@ -145,7 +152,6 @@ export default function TeamFormationScreen() {
     // ✅ 4. API 요청
     createLineups(payload, {
       onSuccess: data => {
-        // ✅ 타입이 CreateLineupResponse (즉, CreatedLineupItem[]), 배열 확정됨
         const createdLineupId = data[0]?.lineupId ?? null;
 
         if (!createdLineupId) {
@@ -153,23 +159,40 @@ export default function TeamFormationScreen() {
           return;
         }
 
-        Alert.alert(
-          '라인업 확정 완료',
-          '✅ 라인업이 성공적으로 등록되었습니다.',
-          [
-            {
-              text: '다음으로 이동',
-              onPress: () =>
-                router.push({
-                  pathname: '/match_making/match_info',
-                  params: {
-                    formation: JSON.stringify(formationAssignments),
-                    type: selectedFormation,
-                    lineupId: String(createdLineupId), // ✅ 전달
+        // ✅ 3️⃣ 라인업 생성 후 바로 매치 요청 전송
+        if (!waitingId || !targetTeamId) {
+          Alert.alert('오류', '매치 요청 대상 정보가 없습니다.');
+          return;
+        }
+
+        const matchPayload: MatchRequestRequestDto = {
+          requestMessage: `${userProfile?.name}(${userProfile?.teamId}) 팀이 매치 요청`,
+          lineupId: createdLineupId,
+        };
+
+        requestMatch(
+          { waitingId: Number(waitingId), payload: matchPayload },
+          {
+            onSuccess: () => {
+              Alert.alert(
+                '매치 요청 완료',
+                '✅ 라인업이 등록되고 매치 요청이 전송되었습니다.',
+                [
+                  {
+                    text: '확인',
+                    onPress: () => router.push(ROUTES.HOME),
                   },
-                }),
+                ]
+              );
             },
-          ]
+            onError: err => {
+              console.error('❌ 매치 요청 실패:', err);
+              Alert.alert(
+                '매치 요청 실패',
+                '⚠️ 라인업은 등록되었으나 매치 요청에 실패했습니다.'
+              );
+            },
+          }
         );
       },
       onError: err => {

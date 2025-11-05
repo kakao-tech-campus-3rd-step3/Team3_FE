@@ -44,7 +44,11 @@ import type {
   TeamReviewRequest,
   TeamMemberSliceResponse,
 } from '@/src/types';
-import { CreateLineupRequest, CreateLineupResponse } from '@/src/types/lineup';
+import {
+  ApiLineupItem,
+  CreateLineupRequest,
+  CreateLineupResponse,
+} from '@/src/types/lineup';
 import { addDaysToDate, formatDateForAPI } from '@/src/utils/date';
 
 export const queries = {
@@ -1156,7 +1160,6 @@ export function useCreateLineupsMutation() {
     mutationFn: data => api.lineupApi.createLineups(data),
 
     onSuccess: data => {
-      console.log('✅ 라인업 생성 성공:', data);
       queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
       queryClient.invalidateQueries({ queryKey: ['team'] });
     },
@@ -1164,5 +1167,27 @@ export function useCreateLineupsMutation() {
     onError: error => {
       console.error('❌ 라인업 생성 실패:', error);
     },
+  });
+}
+
+export function useLineupDetail(lineupId?: number) {
+  return useQuery<ApiLineupItem[]>({
+    queryKey: ['lineup', lineupId],
+    queryFn: () => api.getLineupById(lineupId as number),
+    enabled: !!lineupId,
+    staleTime: 1000 * 30, // 30s
+  });
+}
+
+export function useMyMatchRequests() {
+  const { token, isInitialized } = useAuth();
+
+  return useQuery<MatchWaitingHistoryResponseDto[], Error>({
+    queryKey: ['myMatchRequests'],
+    queryFn: async () => {
+      const response = await api.getMyMatchRequests(); // api에 정의 필요
+      return response;
+    },
+    enabled: !!token && isInitialized,
   });
 }
