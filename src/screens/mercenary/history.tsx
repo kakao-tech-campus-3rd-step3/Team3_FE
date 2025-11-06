@@ -49,7 +49,7 @@ export default function MercenaryHistoryScreen() {
   const { data: recruitmentsData, isLoading: isRecruitmentsLoading } =
     useMyMercenaryRecruitments(recruitmentsPage, pageSize, 'matchDate,asc');
 
-  const { deleteRecruitment, isDeleting } = useDeleteMercenaryRecruitment();
+  const { deleteRecruitment } = useDeleteMercenaryRecruitment();
   const { cancelJoinRequest, isCanceling } = useTeamJoinRequestMutation();
 
   const [cancelModalVisible, setCancelModalVisible] = useState(false);

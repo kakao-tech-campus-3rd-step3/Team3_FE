@@ -53,3 +53,5 @@ export const getTeamManagementEditUrl = (teamId: string | number) =>
   `/team/management/${teamId}/edit`;
 export const getTeamManagementMembersUrl = (teamId: string | number) =>
   `/team/management/${teamId}/members`;
+export const getTeamManagementMatchRequestsUrl = (teamId: string | number) =>
+  `/team/management/${teamId}/match-requests`;

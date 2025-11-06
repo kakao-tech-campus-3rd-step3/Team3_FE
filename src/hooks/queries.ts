@@ -38,7 +38,6 @@ import type {
   RecommendedMatch,
   JoinWaitingRequest,
   JoinWaitingCancelRequest,
-  TeamMember,
   RecruitmentCreateRequest,
   RecruitmentUpdateRequest,
   TeamReviewRequest,
@@ -730,6 +729,9 @@ export function useAcceptMatchRequestMutation() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queries.teamMatchRequests.key,
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.myAppliedMatches.key,
       });
     },
     onError: (error: unknown) => {

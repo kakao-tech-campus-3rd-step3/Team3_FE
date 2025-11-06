@@ -1,10 +1,11 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect } from 'react';
-import { View, Text, BackHandler } from 'react-native';
+import { View, Text, BackHandler, StyleSheet } from 'react-native';
 
 import RequestManagementModal, {
   type RequestItem,
 } from '@/src/components/team/modals/request_management_modal';
-import { colors } from '@/src/theme';
+import { colors, spacing, typography } from '@/src/theme';
 
 export interface MatchRequest {
   requestId: number;
@@ -16,8 +17,13 @@ export interface MatchRequest {
   targetTeamName: {
     name: string;
   };
+  preferredDate?: string;
+  preferredTimeStart?: string;
+  preferredTimeEnd?: string;
+  venueName?: string;
   requestMessage: string;
   status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELED';
+  requestTeamLineupId?: number;
 }
 
 interface MatchRequestsModalProps {
@@ -55,97 +61,131 @@ export default function MatchRequestsModal({
       return message.replace(/\([0-9]+\)\s*팀이/, '팀이');
     };
 
+    const formatDate = (dateString?: string) => {
+      if (!dateString) return '날짜 미정';
+      try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ko-KR', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          weekday: 'short',
+        });
+      } catch {
+        return dateString;
+      }
+    };
+
+    const formatTime = (timeStart?: string, timeEnd?: string) => {
+      if (!timeStart || !timeEnd) return '시간 미정';
+      try {
+        const start = timeStart.slice(0, 5);
+        const end = timeEnd.slice(0, 5);
+        return `${start} ~ ${end}`;
+      } catch {
+        return `${timeStart} ~ ${timeEnd}`;
+      }
+    };
+
     return (
-      <View style={{ marginBottom: 12 }}>
+      <View style={styles.detailsContainer}>
         {matchRequest && (
           <>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: 6,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: colors.gray[600],
-                  fontWeight: '500',
-                }}
-              >
-                요청 팀:
-              </Text>
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: colors.gray[900],
-                  flex: 1,
-                  textAlign: 'right',
-                }}
-              >
-                {matchRequest.requestTeamName.name}
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: 6,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: colors.gray[600],
-                  fontWeight: '500',
-                }}
-              >
-                대상 팀:
-              </Text>
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: colors.gray[900],
-                  flex: 1,
-                  textAlign: 'right',
-                }}
-              >
-                {matchRequest.targetTeamName.name}
-              </Text>
-            </View>
+            {/* 매치 정보 카드 */}
+            {(matchRequest.preferredDate ||
+              matchRequest.preferredTimeStart ||
+              matchRequest.venueName) && (
+              <View style={styles.matchInfoCard}>
+                <View style={styles.matchInfoHeader}>
+                  <Ionicons
+                    name="calendar-outline"
+                    size={18}
+                    color={colors.blue[600]}
+                  />
+                  <Text style={styles.matchInfoTitle}>매치 정보</Text>
+                </View>
+
+                <View style={styles.matchInfoGrid}>
+                  {matchRequest.preferredDate && (
+                    <View style={styles.matchInfoItem}>
+                      <View style={styles.matchInfoItemIcon}>
+                        <Ionicons
+                          name="calendar"
+                          size={16}
+                          color={colors.blue[500]}
+                        />
+                      </View>
+                      <View style={styles.matchInfoItemContent}>
+                        <Text style={styles.matchInfoItemLabel}>경기 일정</Text>
+                        <Text style={styles.matchInfoItemValue}>
+                          {formatDate(matchRequest.preferredDate)}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+
+                  {(matchRequest.preferredTimeStart ||
+                    matchRequest.preferredTimeEnd) && (
+                    <View style={styles.matchInfoItem}>
+                      <View style={styles.matchInfoItemIcon}>
+                        <Ionicons
+                          name="time"
+                          size={16}
+                          color={colors.purple[500]}
+                        />
+                      </View>
+                      <View style={styles.matchInfoItemContent}>
+                        <Text style={styles.matchInfoItemLabel}>경기 시간</Text>
+                        <Text style={styles.matchInfoItemValue}>
+                          {formatTime(
+                            matchRequest.preferredTimeStart,
+                            matchRequest.preferredTimeEnd
+                          )}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+
+                  {matchRequest.venueName && (
+                    <View style={styles.matchInfoItem}>
+                      <View style={styles.matchInfoItemIcon}>
+                        <Ionicons
+                          name="location"
+                          size={16}
+                          color={colors.green[500]}
+                        />
+                      </View>
+                      <View style={styles.matchInfoItemContent}>
+                        <Text style={styles.matchInfoItemLabel}>경기장</Text>
+                        <Text style={styles.matchInfoItemValue}>
+                          {matchRequest.venueName}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+                </View>
+              </View>
+            )}
+
+            {/* 요청 메시지 */}
+            {request.message && (
+              <View style={styles.messageSection}>
+                <View style={styles.messageHeader}>
+                  <Ionicons
+                    name="chatbubble-outline"
+                    size={18}
+                    color={colors.gray[600]}
+                  />
+                  <Text style={styles.messageTitle}>요청 메시지</Text>
+                </View>
+                <View style={styles.messageContent}>
+                  <Text style={styles.messageText}>
+                    {cleanMessage(request.message)}
+                  </Text>
+                </View>
+              </View>
+            )}
           </>
-        )}
-        {request.message && (
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 6,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 14,
-                color: colors.gray[600],
-                fontWeight: '500',
-              }}
-            >
-              메시지:
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: colors.gray[900],
-                flex: 1,
-                textAlign: 'right',
-              }}
-            >
-              {cleanMessage(request.message)}
-            </Text>
-          </View>
         )}
       </View>
     );
@@ -183,3 +223,85 @@ export default function MatchRequestsModal({
     />
   );
 }
+
+const styles = StyleSheet.create({
+  detailsContainer: {
+    marginBottom: spacing.spacing3,
+  },
+  matchInfoCard: {
+    backgroundColor: colors.blue[50],
+    borderRadius: spacing.spacing3,
+    padding: spacing.spacing4,
+    marginBottom: spacing.spacing4,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.blue[500],
+  },
+  matchInfoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.spacing2,
+    marginBottom: spacing.spacing3,
+  },
+  matchInfoTitle: {
+    fontSize: typography.fontSize.font4,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.gray[900],
+  },
+  matchInfoGrid: {
+    gap: spacing.spacing3,
+  },
+  matchInfoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    padding: spacing.spacing3,
+    borderRadius: spacing.spacing2,
+    gap: spacing.spacing2,
+  },
+  matchInfoItemIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.gray[50],
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  matchInfoItemContent: {
+    flex: 1,
+  },
+  matchInfoItemLabel: {
+    fontSize: typography.fontSize.font2,
+    color: colors.gray[600],
+    fontWeight: typography.fontWeight.medium,
+    marginBottom: spacing.spacing1,
+  },
+  matchInfoItemValue: {
+    fontSize: typography.fontSize.font3,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.gray[900],
+  },
+  messageSection: {
+    marginTop: spacing.spacing2,
+  },
+  messageHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.spacing2,
+    marginBottom: spacing.spacing2,
+  },
+  messageTitle: {
+    fontSize: typography.fontSize.font4,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.gray[900],
+  },
+  messageContent: {
+    backgroundColor: colors.gray[50],
+    borderRadius: spacing.spacing2,
+    padding: spacing.spacing3,
+  },
+  messageText: {
+    fontSize: typography.fontSize.font3,
+    color: colors.gray[700],
+    lineHeight: typography.lineHeight.line5,
+  },
+});
