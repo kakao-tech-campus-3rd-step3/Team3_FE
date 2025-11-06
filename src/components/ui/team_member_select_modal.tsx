@@ -11,13 +11,13 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import { useTeamMembersInfinite, useUserProfile } from '@/src/hooks/queries'; // ✅ 추가
+import { useTeamMembersInfinite, useUserProfile } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import { TeamMember } from '@/src/types/team';
 
 interface TeamMemberSelectModalProps {
   visible: boolean;
-  members: TeamMember[]; // 기존 유지 (초기용)
+  members: TeamMember[];
   position: string | null;
   onClose: () => void;
   onSelect?: (memberId: number, memberName: string) => void;
@@ -47,24 +47,18 @@ export const TeamMemberSelectModal = ({
   const [selected, setSelected] = useState<Record<number, boolean>>({});
   const [filter, setFilter] = useState<string>('전체');
 
-  // ✅ 현재 로그인한 사용자의 팀 ID 가져오기
   const { data: userProfile } = useUserProfile();
   const teamId = userProfile?.teamId ?? 0;
 
-  // ✅ 무한스크롤 훅에 teamId 적용 (하드코딩 제거)
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useTeamMembersInfinite(teamId, 10);
 
-  // ✅ 서버로부터 모든 페이지 데이터 병합
   const allMembers = useMemo(
     () => (data ? data.pages.flatMap(page => page.members) : members),
     [data, members]
   );
-
-  // ✅ 포지션 필터
   const positionFilters = ['전체', 'GK', 'DF', 'MF', 'FW'];
 
-  // ✅ 필터링된 리스트
   const filteredMembers = useMemo(() => {
     return filter === '전체'
       ? allMembers
@@ -104,7 +98,6 @@ export const TeamMemberSelectModal = ({
     }
 
     if (multiple && isAssigned) {
-      // ✅ Alert에서 예를 눌렀을 때만 실제 변경
       Alert.alert(
         '선발 선수 추가',
         `${name} 선수는 현재 선발 라인업에 포함되어 있습니다.\n후보로 등록 시 선발에서 제외됩니다.`,
@@ -127,7 +120,6 @@ export const TeamMemberSelectModal = ({
       return;
     }
 
-    // ✅ Alert가 뜨지 않은 경우에만 즉시 상태 변경
     setSelected(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
@@ -152,7 +144,6 @@ export const TeamMemberSelectModal = ({
             {position ? `${position} 포지션 선택` : '팀원 선택'}
           </Text>
 
-          {/* ✅ 포지션 필터 버튼 */}
           <View style={styles.filterRow}>
             {positionFilters.map(f => (
               <TouchableOpacity

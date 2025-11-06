@@ -30,6 +30,7 @@ interface RequestManagementModalProps {
   onClose: () => void;
   onRequestAction: (requestId: number, status: 'approved' | 'rejected') => void;
   renderRequestDetails?: (request: RequestItem) => React.ReactNode;
+  processingRequestId?: number | null;
 }
 
 export default function RequestManagementModal({
@@ -42,6 +43,7 @@ export default function RequestManagementModal({
   onClose,
   onRequestAction,
   renderRequestDetails,
+  processingRequestId,
 }: RequestManagementModalProps) {
   const defaultRenderRequestDetails = (request: RequestItem) => (
     <View style={styles.requestDetails}>
@@ -128,8 +130,13 @@ export default function RequestManagementModal({
                   {request.status === 'PENDING' && (
                     <View style={styles.requestActions}>
                       <TouchableOpacity
-                        style={styles.approveButton}
+                        style={[
+                          styles.approveButton,
+                          processingRequestId === request.id &&
+                            styles.buttonDisabled,
+                        ]}
                         onPress={() => onRequestAction(request.id, 'approved')}
+                        disabled={processingRequestId === request.id}
                       >
                         <Ionicons
                           name="checkmark"
@@ -139,8 +146,13 @@ export default function RequestManagementModal({
                         <Text style={styles.approveButtonText}>승인</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        style={styles.rejectButton}
+                        style={[
+                          styles.rejectButton,
+                          processingRequestId === request.id &&
+                            styles.buttonDisabled,
+                        ]}
                         onPress={() => onRequestAction(request.id, 'rejected')}
+                        disabled={processingRequestId === request.id}
                       >
                         <Ionicons name="close" size={16} color={colors.white} />
                         <Text style={styles.rejectButtonText}>거절</Text>
