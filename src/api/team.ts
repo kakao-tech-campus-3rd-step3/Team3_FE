@@ -64,12 +64,14 @@ export const teamListApi = {
   getTeamsByUniversity: async (
     university: string,
     page: number = 0,
-    size: number = 10
+    size: number = 10,
+    includedDeleted: boolean = false
   ): Promise<TeamListPageResponse> => {
     const params = new URLSearchParams({
       university: university,
       page: page.toString(),
       size: size.toString(),
+      includedDeleted: includedDeleted.toString(),
     });
     const apiResponse = await apiClient.get<ApiTeamListPageResponse>(
       `${TEAM_API.GET_TEAMS_BY_UNIVERSITY}?${params.toString()}`
