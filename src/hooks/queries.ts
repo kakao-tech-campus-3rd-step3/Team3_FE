@@ -731,6 +731,9 @@ export function useAcceptMatchRequestMutation() {
       queryClient.invalidateQueries({
         queryKey: queries.teamMatchRequests.key,
       });
+      queryClient.invalidateQueries({
+        queryKey: queries.myAppliedMatches.key,
+      });
     },
     onError: (error: unknown) => {
       console.error('매치 요청 승인 실패:', error);

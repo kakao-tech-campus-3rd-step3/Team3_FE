@@ -24,6 +24,7 @@ export function getExtendedStatusLabel(status: ExtendedStatus): string {
 export function toBasicStatus(input: string | undefined | null): BasicStatus {
   switch ((input || '').toUpperCase()) {
     case 'APPROVED':
+    case 'ACCEPTED':
       return 'APPROVED';
     case 'REJECTED':
       return 'REJECTED';
