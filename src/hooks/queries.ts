@@ -828,6 +828,7 @@ export function useMatchRequestMutation() {
     }) => api.requestMatchApi(waitingId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['match-waiting-list'] });
+      queryClient.invalidateQueries({ queryKey: queries.myAppliedMatches.key });
     },
     onError: (error: unknown) => {
       console.error('매치 요청 실패:', error);
@@ -1202,7 +1203,7 @@ export function useMyMatchRequests() {
   return useQuery<MatchWaitingHistoryResponseDto[], Error>({
     queryKey: ['myMatchRequests'],
     queryFn: async () => {
-      const response = await api.getMyMatchRequests();
+      const response = await api.getMyAppliedMatches();
       return response;
     },
     enabled: !!token && isInitialized,
