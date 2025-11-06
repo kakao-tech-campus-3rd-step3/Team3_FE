@@ -70,7 +70,7 @@ export default function TeamSettingsScreen({
     isLoading,
     error,
     refetch,
-  } = useTeamJoinWaitingList(teamId, 'PENDING', 0, 10);
+  } = useTeamJoinWaitingList(teamId, 'PENDING', false, 0, 10);
 
   const currentUserName = userProfile?.name;
   const teamMembers = teamMembersData?.content || [];

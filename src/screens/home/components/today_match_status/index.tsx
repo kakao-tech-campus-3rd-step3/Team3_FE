@@ -32,17 +32,23 @@ export default memo(function TodayMatchStatus({
     data: appliedMatches = [],
     isLoading: appliedLoading,
     error: appliedError,
-  } = useMyAppliedMatches();
+  } = useMyAppliedMatches({
+    enabled: !!teamId,
+  });
   const {
     data: createdMatches = [],
     isLoading: createdLoading,
     error: createdError,
-  } = useMyCreatedMatches();
+  } = useMyCreatedMatches({
+    enabled: !!teamId,
+  });
   const {
     data: recentMatches = [],
     isLoading: recentLoading,
     error: recentError,
-  } = useTeamRecentMatches('MATCHED');
+  } = useTeamRecentMatches('MATCHED', {
+    enabled: !!teamId,
+  });
 
   const isLoading = appliedLoading || createdLoading || recentLoading;
   const hasError = appliedError || createdError || recentError;

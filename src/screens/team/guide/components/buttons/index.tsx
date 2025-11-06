@@ -29,7 +29,9 @@ export default memo(function Buttons() {
     refetch,
   } = useMyJoinWaitingList(0, 100);
   const hasPendingJoinWaiting =
-    joinWaitingData?.content?.some(item => item.status === 'PENDING') ?? false;
+    !isJoinWaitingLoading &&
+    (joinWaitingData?.content?.some(item => item.status === 'PENDING') ??
+      false);
 
   const dynamicStyles = StyleSheet.create({
     createButton: {
@@ -97,9 +99,9 @@ export default memo(function Buttons() {
     }
   };
 
-  if (isJoinWaitingLoading) {
-    return (
-      <View style={styles.buttonContainer}>
+  return (
+    <View style={styles.buttonContainer}>
+      {isJoinWaitingLoading ? (
         <View style={[dynamicStyles.joinButton, { opacity: 0.5 }]}>
           <Ionicons name="people-outline" size={24} color={colors.blue[500]} />
           <Text
@@ -111,60 +113,62 @@ export default memo(function Buttons() {
             로딩 중...
           </Text>
         </View>
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.buttonContainer}>
-      <TouchableOpacity
-        style={dynamicStyles.joinButton}
-        onPress={handleJoinTeam}
-      >
-        <Ionicons name="people-outline" size={24} color={colors.blue[500]} />
-        <Text
-          style={dynamicStyles.joinButtonText}
-          numberOfLines={1}
-          adjustsFontSizeToFit={true}
-          minimumFontScale={0.8}
-        >
-          {hasPendingJoinWaiting ? '팀 신청 현황' : '팀 참여하기'}
-        </Text>
-        {hasPendingJoinWaiting && (
-          <View style={styles.notificationBadge}>
-            <Text style={styles.notificationText}>
-              {joinWaitingData?.content?.filter(
-                item => item.status === 'PENDING'
-              ).length || 0}
-            </Text>
-          </View>
-        )}
-      </TouchableOpacity>
-
-      {!hasPendingJoinWaiting && (
-        <TouchableOpacity
-          style={dynamicStyles.createButton}
-          onPress={() =>
-            router.push({
-              pathname: ROUTES.TEAM_CREATION,
-              params: { university: userProfile?.university || '' },
-            })
-          }
-        >
-          <Ionicons
-            name="add-circle-outline"
-            size={24}
-            color={colors.text.white}
-          />
-          <Text
-            style={dynamicStyles.createButtonText}
-            numberOfLines={1}
-            adjustsFontSizeToFit={true}
-            minimumFontScale={0.8}
+      ) : (
+        <>
+          <TouchableOpacity
+            style={dynamicStyles.joinButton}
+            onPress={handleJoinTeam}
           >
-            팀 생성하기
-          </Text>
-        </TouchableOpacity>
+            <Ionicons
+              name="people-outline"
+              size={24}
+              color={colors.blue[500]}
+            />
+            <Text
+              style={dynamicStyles.joinButtonText}
+              numberOfLines={1}
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.8}
+            >
+              {hasPendingJoinWaiting ? '팀 신청 현황' : '팀 참여하기'}
+            </Text>
+            {hasPendingJoinWaiting && (
+              <View style={styles.notificationBadge}>
+                <Text style={styles.notificationText}>
+                  {joinWaitingData?.content?.filter(
+                    item => item.status === 'PENDING'
+                  ).length || 0}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
+
+          {!hasPendingJoinWaiting && (
+            <TouchableOpacity
+              style={dynamicStyles.createButton}
+              onPress={() =>
+                router.push({
+                  pathname: ROUTES.TEAM_CREATION,
+                  params: { university: userProfile?.university || '' },
+                })
+              }
+            >
+              <Ionicons
+                name="add-circle-outline"
+                size={24}
+                color={colors.text.white}
+              />
+              <Text
+                style={dynamicStyles.createButtonText}
+                numberOfLines={1}
+                adjustsFontSizeToFit={true}
+                minimumFontScale={0.8}
+              >
+                팀 생성하기
+              </Text>
+            </TouchableOpacity>
+          )}
+        </>
       )}
 
       <Modal
