@@ -1,6 +1,7 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,7 +11,6 @@ import {
   RefreshControl,
 } from 'react-native';
 
-import { ROUTES } from '@/src/constants/routes';
 import {
   useUserProfile,
   useMyAppliedMatches,
@@ -71,13 +71,30 @@ export default function MatchInfoScreen() {
   const { data: appliedMatches, refetch: refetchAppliedMatches } =
     useMyAppliedMatches();
 
+  useFocusEffect(
+    useCallback(() => {
+      refetchAppliedMatches();
+    }, [refetchAppliedMatches])
+  );
+
   const isAlreadyApplied = (teamId: number) => {
-    if (!appliedMatches || !userProfile?.teamId) return false;
+    if (
+      !appliedMatches ||
+      !Array.isArray(appliedMatches) ||
+      !userProfile?.teamId
+    ) {
+      return false;
+    }
+
+    const userTeamId = Number(userProfile.teamId);
+    if (isNaN(userTeamId)) {
+      return false;
+    }
 
     return appliedMatches.some(
       appliedMatch =>
-        appliedMatch.requestTeamId === userProfile.teamId &&
-        appliedMatch.targetTeamId === teamId &&
+        Number(appliedMatch.requestTeamId) === userTeamId &&
+        Number(appliedMatch.targetTeamId) === teamId &&
         appliedMatch.status === 'PENDING'
     );
   };
