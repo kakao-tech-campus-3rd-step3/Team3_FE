@@ -10,12 +10,10 @@ export default function MemberReadyScreen() {
   const router = useRouter();
 
   const handleEnoughMembers = () => {
-    // 인원이 충분할 때: TEAM_FORMATION으으로 이동
     router.push(ROUTES.TEAM_FORMATION);
   };
 
   const handleNotEnoughMembers = () => {
-    // 인원이 부족할 때: 용병 모집 화면으로 이동
     router.push('/mercenary');
   };
 

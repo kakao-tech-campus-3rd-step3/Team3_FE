@@ -1183,7 +1183,7 @@ export function useCreateLineupsMutation() {
     },
 
     onError: error => {
-      console.error('❌ 라인업 생성 실패:', error);
+      console.error('라인업 생성 실패:', error);
     },
   });
 }

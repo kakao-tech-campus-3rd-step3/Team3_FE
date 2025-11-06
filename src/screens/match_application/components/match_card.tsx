@@ -121,14 +121,12 @@ export default function MatchCard({
     const lineupId = match?.lineup1Id;
 
     if (!lineupId) {
-      console.warn('⚠️ lineupId가 존재하지 않습니다.');
       alert('아직 등록된 라인업이 없습니다.');
       return;
     }
 
     const lineupIdNum = Number(lineupId);
     if (isNaN(lineupIdNum)) {
-      console.error('❌ lineupId가 숫자가 아닙니다:', lineupId);
       alert('라인업 ID가 올바르지 않습니다.');
       return;
     }
