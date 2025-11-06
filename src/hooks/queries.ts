@@ -147,16 +147,25 @@ export const queries = {
     key: (
       teamId: string | number,
       status: string = 'PENDING',
-      page: number = 0,
-      size: number = 10
-    ) => ['teamJoinWaitingList', teamId, status, page, size] as const,
-    fn: (
-      teamId: string | number,
-      status: string = 'PENDING',
+      isMercenary: boolean = false,
       page: number = 0,
       size: number = 10
     ) =>
-      api.teamJoinRequestApi.getTeamJoinWaitingList(teamId, status, page, size),
+      ['teamJoinWaitingList', teamId, status, isMercenary, page, size] as const,
+    fn: (
+      teamId: string | number,
+      status: string = 'PENDING',
+      isMercenary: boolean = false,
+      page: number = 0,
+      size: number = 10
+    ) =>
+      api.teamJoinRequestApi.getTeamJoinWaitingList(
+        teamId,
+        status,
+        isMercenary,
+        page,
+        size
+      ),
   },
   teamMatchRequests: {
     key: ['teamMatchRequests'] as const,
@@ -350,12 +359,20 @@ export function useTeamRecentMatches(
 export function useTeamJoinWaitingList(
   teamId: string | number,
   status: string = 'PENDING',
+  isMercenary: boolean = false,
   page: number = 0,
   size: number = 10
 ) {
   return useQuery({
-    queryKey: queries.teamJoinWaitingList.key(teamId, status, page, size),
-    queryFn: () => queries.teamJoinWaitingList.fn(teamId, status, page, size),
+    queryKey: queries.teamJoinWaitingList.key(
+      teamId,
+      status,
+      isMercenary,
+      page,
+      size
+    ),
+    queryFn: () =>
+      queries.teamJoinWaitingList.fn(teamId, status, isMercenary, page, size),
     enabled: !!teamId,
     placeholderData: keepPreviousData,
   });
@@ -750,7 +767,7 @@ export function useApproveJoinRequestMutation() {
       api.teamJoinRequestApi.approveJoinRequest(teamId, requestId, { role }),
     onSuccess: (response, variables) => {
       queryClient.invalidateQueries({
-        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
+        queryKey: ['teamJoinWaitingList', variables.teamId],
       });
       queryClient.invalidateQueries({
         queryKey: queries.teamMembers.key(variables.teamId),
@@ -779,7 +796,7 @@ export function useRejectJoinRequestMutation() {
       api.teamJoinRequestApi.rejectJoinRequest(teamId, requestId, { reason }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
+        queryKey: ['teamJoinWaitingList', variables.teamId],
       });
     },
     onError: (error: unknown) => {
@@ -944,7 +961,7 @@ export function useTeamJoinRequestMutation() {
         queryKey: ['myJoinWaitingList'],
       });
       queryClient.invalidateQueries({
-        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
+        queryKey: ['teamJoinWaitingList', variables.teamId],
       });
       queryClient.invalidateQueries({
         queryKey: queries.team.key(variables.teamId),
@@ -970,7 +987,7 @@ export function useTeamJoinRequestMutation() {
         queryKey: ['myJoinWaitingList'],
       });
       queryClient.invalidateQueries({
-        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
+        queryKey: ['teamJoinWaitingList', variables.teamId],
       });
     },
     onError: (error: unknown) => {

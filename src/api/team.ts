@@ -216,12 +216,14 @@ export const teamJoinRequestApi = {
   getTeamJoinWaitingList: async (
     teamId: string | number,
     status: string = 'PENDING',
+    isMercenary: boolean = false,
     page: number = 0,
     size: number = 10,
     sort: string = 'audit.createdAt,desc'
   ): Promise<TeamJoinRequestPageResponse> => {
     const params = new URLSearchParams({
       status,
+      isMercenary: isMercenary.toString(),
       page: page.toString(),
       size: size.toString(),
       sort,

@@ -152,12 +152,14 @@ export const transformTeamJoinRequestItem = (
     id: apiItem.id,
     applicantName: apiItem.applicantName,
     teamId: apiItem.teamId,
+    teamName: apiItem.teamName,
     applicantId: apiItem.applicantId,
     message: apiItem.message,
     status: getJoinRequestStatusInEnglish(apiItem.status),
     decisionReason: apiItem.decisionReason,
     decidedBy: apiItem.decidedBy,
     decidedAt: apiItem.decidedAt,
+    isMercenary: apiItem.isMercenary,
   };
 };
 
@@ -213,6 +215,7 @@ export const transformUserJoinWaitingItem = (
     decisionReason: apiItem.decisionReason,
     decidedBy: apiItem.decidedBy,
     decidedAt: apiItem.decidedAt,
+    isMercenary: apiItem.isMercenary,
   };
 };
 
