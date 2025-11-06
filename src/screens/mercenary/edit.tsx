@@ -42,12 +42,6 @@ const SKILL_LEVEL_MAP: { [key: string]: string } = {
   AMATEUR: '아마추어',
 };
 
-const SKILL_LEVEL_REVERSE_MAP: { [key: string]: string } = {
-  프로: 'PRO',
-  세미프로: 'SEMI_PRO',
-  아마추어: 'AMATEUR',
-};
-
 const SKILL_LEVEL_OPTIONS = ['아마추어', '세미프로', '프로'] as const;
 
 export default function MercenaryEditScreen() {

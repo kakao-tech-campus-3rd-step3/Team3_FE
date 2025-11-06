@@ -48,7 +48,7 @@ export default function TeamSettingsScreen({
   } = useTeamMatchRequests();
 
   const matchRequests: MatchRequestResponseDto[] = matchRequestsData || [];
-  const { refetch: refetchTeam, data: teamData } = useTeam(numericTeamId);
+  const { refetch: refetchTeam } = useTeam(numericTeamId);
   const {
     data: teamMembersData,
     isLoading: membersLoading,

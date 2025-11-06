@@ -48,7 +48,7 @@ export const convertUTCToKSTDate = (utcDateTimeString: string): string => {
     }
 
     // 시간 파싱
-    const [hours, minutes] = timeString.split(':').map(Number);
+    const [hours] = timeString.split(':').map(Number);
 
     // UTC 시간에 +9시간을 더해서 KST 시간 계산
     let kstHours = hours + 9;

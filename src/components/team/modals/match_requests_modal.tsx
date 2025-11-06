@@ -6,7 +6,6 @@ import RequestManagementModal, {
   type RequestItem,
 } from '@/src/components/team/modals/request_management_modal';
 import { colors, spacing, typography } from '@/src/theme';
-import { convertUTCToKSTTime, convertUTCToKSTDate } from '@/src/utils/timezone';
 
 export interface MatchRequest {
   requestId: number;

@@ -62,7 +62,6 @@ export default function LineupScreen() {
       const fw = count('FW');
 
       const totalDF = cb + lb + rb;
-      const totalMF = dm + cm + am;
       const totalFW = lw + rw + st + fw;
 
       if (totalDF >= 5) {

@@ -38,7 +38,6 @@ import type {
   RecommendedMatch,
   JoinWaitingRequest,
   JoinWaitingCancelRequest,
-  TeamMember,
   RecruitmentCreateRequest,
   RecruitmentUpdateRequest,
   TeamReviewRequest,
