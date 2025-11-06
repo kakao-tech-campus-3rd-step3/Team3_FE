@@ -9,12 +9,6 @@ import {
 import { apiClient } from '@/src/lib/api_client';
 import { queryClient } from '@/src/lib/query_client';
 
-interface TokenRefreshResult {
-  accessToken: string;
-  refreshToken: string;
-  accessTokenExpiresIn: number;
-}
-
 interface AuthStateCallbacks {
   setToken: (token: string | null) => void;
   setRefreshToken: (refreshToken: string | null) => void;
@@ -96,7 +90,6 @@ export class AuthService {
         );
       }
     } catch (error) {
-      console.warn('토큰 갱신 실패:', error);
       this.cancelTokenRefresh();
       await this.clearAuthState();
       SplashScreen.hideAsync();
@@ -104,7 +97,7 @@ export class AuthService {
     }
   }
 
-  async initializeAuth(): Promise<{ token: string | null }> {
+  async initializeAuth(): Promise<void> {
     this.callbacks.setToken(null);
 
     try {
@@ -115,43 +108,15 @@ export class AuthService {
 
       if (!refreshToken) {
         await this.clearAuthState();
-        return { token: null };
+        SplashScreen.hideAsync();
+        return;
       }
 
-      const response = await authApi.refreshToken(refreshToken);
-      const {
-        accessToken,
-        refreshToken: newRefreshToken,
-        accessTokenExpiresIn,
-      } = response;
-
-      await updateSecureStoreResource(
-        'authToken',
-        accessToken,
-        value => value ?? ''
-      );
-      await updateSecureStoreResource(
-        'refreshToken',
-        newRefreshToken,
-        value => value ?? ''
-      );
-
-      this.callbacks.setToken(accessToken);
-      this.callbacks.setRefreshToken(newRefreshToken);
-      apiClient.setToken(accessToken);
-
-      if (accessTokenExpiresIn) {
-        this.scheduleTokenRefresh(accessTokenExpiresIn, () =>
-          this.refreshAccessToken(newRefreshToken)
-        );
-      }
-
-      return { token: accessToken };
+      await this.refreshAccessToken(refreshToken);
     } catch (error) {
-      console.warn('토큰 갱신 실패:', error);
       this.cancelTokenRefresh();
       await this.clearAuthState();
-      return { token: null };
+      throw error;
     }
   }
 

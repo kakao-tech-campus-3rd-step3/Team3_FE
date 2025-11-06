@@ -60,6 +60,10 @@ export const queries = {
     key: ['register'] as const,
     fn: (registerData: RegisterRequest) => api.authApi.register(registerData),
   },
+  refreshToken: {
+    key: ['refreshToken'] as const,
+    fn: (refreshToken: string) => api.authApi.refreshToken(refreshToken),
+  },
   sendVerification: {
     key: ['sendVerification'] as const,
     fn: (email: string) => api.authApi.sendVerification(email),

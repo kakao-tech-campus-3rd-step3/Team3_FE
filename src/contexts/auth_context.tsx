@@ -54,7 +54,11 @@ function AuthProviderInner({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     apiClient.setOnTokenExpired(async () => {
-      await authServiceRef.current!.refreshAccessToken(refreshTokenState);
+      try {
+        await authServiceRef.current!.refreshAccessToken(refreshTokenState);
+      } catch (error) {
+        console.error('토큰 갱신 실패:', error);
+      }
     });
   }, [refreshTokenState]);
 
