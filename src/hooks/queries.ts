@@ -337,7 +337,7 @@ export function useTeamMatches(teamId: string | number) {
 
 export function useTeamRecentMatches(
   status?: string,
-  options?: UseQueryOptions<unknown, Error>
+  options?: Partial<UseQueryOptions<unknown, Error>>
 ) {
   return useQuery({
     queryKey: queries.teamRecentMatches.key(status),
@@ -361,18 +361,21 @@ export function useTeamJoinWaitingList(
   });
 }
 
-export function useMyAppliedMatches() {
+export function useMyAppliedMatches(
+  options?: Partial<UseQueryOptions<MatchWaitingHistoryResponseDto[], Error>>
+) {
   const { data: userProfile } = useUserProfile();
 
   return useQuery<MatchWaitingHistoryResponseDto[], Error>({
     queryKey: queries.myAppliedMatches.key,
     queryFn: queries.myAppliedMatches.fn,
     enabled: !!userProfile?.teamId,
+    ...options,
   });
 }
 
 export function useMyCreatedMatches(
-  options?: UseQueryOptions<MatchWaitingResponseDto[], Error>
+  options?: Partial<UseQueryOptions<MatchWaitingResponseDto[], Error>>
 ) {
   return useQuery<MatchWaitingResponseDto[], Error>({
     queryKey: queries.myCreatedMatches.key,

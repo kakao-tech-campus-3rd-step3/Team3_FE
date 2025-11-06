@@ -155,6 +155,9 @@ export async function getMyCreatedMatches(): Promise<
 
     return response.content || [];
   } catch (error) {
+    if (error instanceof ApiError && error.message.includes('팀 멤버')) {
+      return [];
+    }
     console.error('getMyCreatedMatches API 에러:', error);
     throw error;
   }
