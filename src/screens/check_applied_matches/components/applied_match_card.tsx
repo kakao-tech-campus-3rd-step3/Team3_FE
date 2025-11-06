@@ -6,6 +6,7 @@ import StatusBadge from '@/src/components/ui/status_badge';
 import { theme } from '@/src/theme';
 import type { MatchWaitingHistoryResponseDto } from '@/src/types/match';
 import { toBasicStatus } from '@/src/utils/status_labels';
+import { convertUTCToKSTTime, convertUTCToKSTDate } from '@/src/utils/timezone';
 
 interface AppliedMatchCardProps {
   match: MatchWaitingHistoryResponseDto;
@@ -30,8 +31,9 @@ export default function AppliedMatchCard({
 
   const requestTeam = getName(match.requestTeamName);
   const targetTeam = getName(match.targetTeamName);
-  const date = match.requestAt?.split('T')[0] || '';
-  const time = match.requestAt?.split('T')[1]?.slice(0, 5) || '';
+  const date = match.requestAt ? convertUTCToKSTDate(match.requestAt) : '';
+  const time = match.requestAt ? convertUTCToKSTTime(match.requestAt) : '';
+
   const status = toBasicStatus(match.status || 'PENDING');
 
   return (
