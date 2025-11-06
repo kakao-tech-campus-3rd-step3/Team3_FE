@@ -121,14 +121,12 @@ export default function MatchCard({
     const lineupId = match?.lineup1Id;
 
     if (!lineupId) {
-      console.warn('⚠️ lineupId가 존재하지 않습니다.');
       alert('아직 등록된 라인업이 없습니다.');
       return;
     }
 
     const lineupIdNum = Number(lineupId);
     if (isNaN(lineupIdNum)) {
-      console.error('❌ lineupId가 숫자가 아닙니다:', lineupId);
       alert('라인업 ID가 올바르지 않습니다.');
       return;
     }
@@ -291,13 +289,11 @@ export default function MatchCard({
               style={[
                 styles.requestButton,
                 {
-                  backgroundColor: isCancellable
-                    ? theme.colors.white
-                    : theme.colors.blue[600],
-                  borderWidth: isCancellable ? 1.5 : 0,
+                  backgroundColor: theme.colors.white,
+                  borderWidth: 1.5,
                   borderColor: isCancellable
                     ? theme.colors.red[400]
-                    : 'transparent',
+                    : theme.colors.blue[600],
                   opacity: disabled || hasRequested ? 0.6 : 1,
                   paddingHorizontal: theme.spacing.spacing5,
                   minWidth: 120,
@@ -310,7 +306,7 @@ export default function MatchCard({
                   {
                     color: isCancellable
                       ? theme.colors.red[600]
-                      : theme.colors.white,
+                      : theme.colors.blue[600],
                     fontSize: 13,
                   },
                 ]}

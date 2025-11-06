@@ -222,16 +222,25 @@ export const queries = {
     key: (
       teamId: string | number,
       status: string = 'PENDING',
-      page: number = 0,
-      size: number = 10
-    ) => ['teamJoinWaitingList', teamId, status, page, size] as const,
-    fn: (
-      teamId: string | number,
-      status: string = 'PENDING',
+      isMercenary: boolean = false,
       page: number = 0,
       size: number = 10
     ) =>
-      api.teamJoinRequestApi.getTeamJoinWaitingList(teamId, status, page, size),
+      ['teamJoinWaitingList', teamId, status, isMercenary, page, size] as const,
+    fn: (
+      teamId: string | number,
+      status: string = 'PENDING',
+      isMercenary: boolean = false,
+      page: number = 0,
+      size: number = 10
+    ) =>
+      api.teamJoinRequestApi.getTeamJoinWaitingList(
+        teamId,
+        status,
+        isMercenary,
+        page,
+        size
+      ),
   },
   approveJoinRequest: {
     key: ['approveJoinRequest'] as const,
@@ -490,7 +499,7 @@ export function useTeamMatches(teamId: string | number) {
 
 export function useTeamRecentMatches(
   status?: string,
-  options?: UseQueryOptions<unknown, Error>
+  options?: Partial<UseQueryOptions<unknown, Error>>
 ) {
   return useQuery({
     queryKey: queries.teamRecentMatches.key(status),
@@ -503,29 +512,40 @@ export function useTeamRecentMatches(
 export function useTeamJoinWaitingList(
   teamId: string | number,
   status: string = 'PENDING',
+  isMercenary: boolean = false,
   page: number = 0,
   size: number = 10
 ) {
   return useQuery({
-    queryKey: queries.teamJoinWaitingList.key(teamId, status, page, size),
-    queryFn: () => queries.teamJoinWaitingList.fn(teamId, status, page, size),
+    queryKey: queries.teamJoinWaitingList.key(
+      teamId,
+      status,
+      isMercenary,
+      page,
+      size
+    ),
+    queryFn: () =>
+      queries.teamJoinWaitingList.fn(teamId, status, isMercenary, page, size),
     enabled: !!teamId,
     placeholderData: keepPreviousData,
   });
 }
 
-export function useMyAppliedMatches() {
+export function useMyAppliedMatches(
+  options?: Partial<UseQueryOptions<MatchWaitingHistoryResponseDto[], Error>>
+) {
   const { data: userProfile } = useUserProfile();
 
   return useQuery<MatchWaitingHistoryResponseDto[], Error>({
     queryKey: queries.myAppliedMatches.key,
     queryFn: queries.myAppliedMatches.fn,
     enabled: !!userProfile?.teamId,
+    ...options,
   });
 }
 
 export function useMyCreatedMatches(
-  options?: UseQueryOptions<MatchWaitingResponseDto[], Error>
+  options?: Partial<UseQueryOptions<MatchWaitingResponseDto[], Error>>
 ) {
   return useQuery<MatchWaitingResponseDto[], Error>({
     queryKey: queries.myCreatedMatches.key,
@@ -847,7 +867,7 @@ export function useJoinWaitingMutation() {
         queryKey: ['myJoinWaitingList'],
       });
       queryClient.invalidateQueries({
-        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
+        queryKey: ['teamJoinWaitingList', variables.teamId],
       });
       queryClient.invalidateQueries({
         queryKey: queries.team.key(variables.teamId),
@@ -901,7 +921,7 @@ export function useRejectJoinRequestMutation() {
     mutationFn: queries.rejectJoinRequest.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: queries.teamJoinWaitingList.key(variables.teamId),
+        queryKey: ['teamJoinWaitingList', variables.teamId],
       });
     },
     onError: (error: unknown) => {
@@ -933,6 +953,7 @@ export function useMatchRequestMutation() {
     }) => api.requestMatchApi(waitingId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['match-waiting-list'] });
+      queryClient.invalidateQueries({ queryKey: queries.myAppliedMatches.key });
     },
     onError: (error: unknown) => {
       console.error('매치 요청 실패:', error);
@@ -1069,6 +1090,68 @@ export function useRecommendedMatches() {
   });
 }
 
+export function useTeamJoinRequestMutation() {
+  const joinWaitingMutation = useMutation({
+    mutationFn: ({
+      teamId,
+      data,
+    }: {
+      teamId: string | number;
+      data: JoinWaitingRequest;
+    }) => api.teamJoinRequestApi.joinWaiting(teamId, data),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['myJoinWaitingList'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['teamJoinWaitingList', variables.teamId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: queries.team.key(variables.teamId),
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 가입 요청 실패:', error);
+    },
+  });
+
+  const cancelJoinRequestMutation = useMutation({
+    mutationFn: ({
+      teamId,
+      joinWaitingId,
+      data,
+    }: {
+      teamId: string | number;
+      joinWaitingId: string | number;
+      data: JoinWaitingCancelRequest;
+    }) => api.teamJoinRequestApi.cancelJoinRequest(teamId, joinWaitingId, data),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['myJoinWaitingList'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['teamJoinWaitingList', variables.teamId],
+      });
+    },
+    onError: (error: unknown) => {
+      console.error('팀 가입 요청 취소 실패:', error);
+    },
+  });
+
+  return {
+    joinWaiting: joinWaitingMutation.mutate,
+    isJoining: joinWaitingMutation.isPending,
+    joinError: joinWaitingMutation.error,
+    joinSuccess: joinWaitingMutation.isSuccess,
+    resetJoinState: joinWaitingMutation.reset,
+    cancelJoinRequest: cancelJoinRequestMutation.mutate,
+    isCanceling: cancelJoinRequestMutation.isPending,
+    cancelError: cancelJoinRequestMutation.error,
+    cancelSuccess: cancelJoinRequestMutation.isSuccess,
+    resetCancelState: cancelJoinRequestMutation.reset,
+  };
+}
+
 export function useMyJoinWaitingList(
   page: number = 0,
   size: number = 10,
@@ -1197,7 +1280,7 @@ export function useCreateLineupsMutation() {
     },
 
     onError: error => {
-      console.error('❌ 라인업 생성 실패:', error);
+      console.error('라인업 생성 실패:', error);
     },
   });
 }
@@ -1217,7 +1300,7 @@ export function useMyMatchRequests() {
   return useQuery<MatchWaitingHistoryResponseDto[], Error>({
     queryKey: ['myMatchRequests'],
     queryFn: async () => {
-      const response = await api.getMyMatchRequests();
+      const response = await api.getMyAppliedMatches();
       return response;
     },
     enabled: !!token && isInitialized,

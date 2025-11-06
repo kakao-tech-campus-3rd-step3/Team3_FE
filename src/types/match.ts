@@ -138,8 +138,8 @@ export interface MatchWaitingHistoryResponseDto {
   targetTeamId: number;
   targetTeamName: string | { name: string };
   requestMessage: string;
+  status: MatchRequestStatus;
   requestAt: string;
-  status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
 }
 
 export interface EnemyTeamResponseDto {

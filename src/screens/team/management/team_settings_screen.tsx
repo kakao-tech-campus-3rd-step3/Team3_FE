@@ -53,6 +53,7 @@ export default function TeamSettingsScreen({
     data: matchRequestsData,
     isLoading: matchRequestsLoading,
     error: matchRequestsError,
+    refetch: refetchMatchRequests,
   } = useTeamMatchRequests();
 
   const matchRequests: MatchRequest[] = matchRequestsData || [];
@@ -66,7 +67,7 @@ export default function TeamSettingsScreen({
     isLoading,
     error,
     refetch,
-  } = useTeamJoinWaitingList(teamId, 'PENDING', 0, 10);
+  } = useTeamJoinWaitingList(teamId, 'PENDING', false, 0, 10);
 
   const currentUserName = userProfile?.name;
   const teamMembers = teamMembersData?.content || [];
@@ -244,6 +245,7 @@ export default function TeamSettingsScreen({
         text: action,
         style: status === 'rejected' ? 'destructive' : 'default',
         onPress: () => {
+          setProcessingRequestId(requestId);
           if (status === 'approved') {
             acceptMatchRequestMutation.mutate(requestId, {
               onSuccess: response => {
@@ -251,17 +253,22 @@ export default function TeamSettingsScreen({
                 setAcceptedMatchId(matchId);
                 setMatchAccepted(true);
                 setShowMatchRequestsModal(false);
+                setProcessingRequestId(null);
+                refetchMatchRequests();
               },
               onError: () => {
+                setProcessingRequestId(null);
                 Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
               },
             });
           } else {
             rejectMatchRequestMutation.mutate(requestId, {
               onSuccess: () => {
+                setProcessingRequestId(null);
                 Alert.alert('성공', `매치 요청을 ${action}했습니다.`);
               },
               onError: () => {
+                setProcessingRequestId(null);
                 Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
               },
             });
@@ -356,6 +363,7 @@ export default function TeamSettingsScreen({
         matchRequests={matchRequests}
         onClose={() => setShowMatchRequestsModal(false)}
         onMatchRequest={handleMatchRequest}
+        processingRequestId={processingRequestId}
       />
     </View>
   );

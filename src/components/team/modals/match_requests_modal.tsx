@@ -25,6 +25,7 @@ interface MatchRequestsModalProps {
   matchRequests: MatchRequest[];
   onClose: () => void;
   onMatchRequest: (requestId: number, status: 'approved' | 'rejected') => void;
+  processingRequestId?: number | null;
 }
 
 export default function MatchRequestsModal({
@@ -32,6 +33,7 @@ export default function MatchRequestsModal({
   matchRequests,
   onClose,
   onMatchRequest,
+  processingRequestId,
 }: MatchRequestsModalProps) {
   const requests: RequestItem[] = matchRequests.map(request => ({
     id: request.requestId,
@@ -177,6 +179,7 @@ export default function MatchRequestsModal({
       onClose={onClose}
       onRequestAction={onMatchRequest}
       renderRequestDetails={renderMatchRequestDetails}
+      processingRequestId={processingRequestId}
     />
   );
 }

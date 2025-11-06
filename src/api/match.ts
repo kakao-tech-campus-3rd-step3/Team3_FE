@@ -155,6 +155,9 @@ export async function getMyCreatedMatches(): Promise<
 
     return response.content || [];
   } catch (error) {
+    if (error instanceof ApiError && error.message.includes('팀 멤버')) {
+      return [];
+    }
     console.error('getMyCreatedMatches API 에러:', error);
     throw error;
   }
@@ -171,16 +174,23 @@ export async function getMyAppliedMatches(): Promise<
   MatchWaitingHistoryResponseDto[]
 > {
   try {
-    const response = await apiClient.get<{
-      content: MatchWaitingHistoryResponseDto[];
-      empty: boolean;
-      totalElements: number;
-      totalPages: number;
-      first: boolean;
-      last: boolean;
-    }>(MATCH_REQUEST_API.GET_MY_APPLIED_MATCHES);
+    const response = await apiClient.get<
+      | MatchWaitingHistoryResponseDto[]
+      | {
+          content: MatchWaitingHistoryResponseDto[];
+          empty?: boolean;
+          totalElements?: number;
+          totalPages?: number;
+          first?: boolean;
+          last?: boolean;
+        }
+    >(MATCH_REQUEST_API.GET_MY_APPLIED_MATCHES);
 
-    return response.content || [];
+    if (response && typeof response === 'object' && 'content' in response) {
+      return response.content || [];
+    }
+
+    return Array.isArray(response) ? response : [];
   } catch (error) {
     if (error instanceof ApiError && error.message.includes('팀 멤버')) {
       return [];
@@ -208,13 +218,4 @@ export const getEnemyTeam = async (matchId: number | string) => {
     MATCH_REQUEST_API.GET_ENEMY_TEAM(matchId)
   );
   return response;
-};
-
-export const getMyMatchRequests = async (): Promise<
-  MatchWaitingHistoryResponseDto[]
-> => {
-  const res = await apiClient.get<MatchWaitingHistoryResponseDto[]>(
-    '/api/matches/requests/me'
-  );
-  return res;
 };

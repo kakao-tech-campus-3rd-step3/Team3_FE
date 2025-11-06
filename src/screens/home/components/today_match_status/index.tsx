@@ -3,19 +3,13 @@ import { memo } from 'react';
 import { Text, View } from 'react-native';
 
 import {
-  useMyAppliedMatches,
-  useMyCreatedMatches,
   useTeamRecentMatches,
   useUserProfile,
   useTeam,
 } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/home/components/today_match_status/styles';
 import { theme } from '@/src/theme';
-import {
-  MatchWaitingHistoryResponseDto,
-  MatchWaitingResponseDto,
-  RecentMatchResponse,
-} from '@/src/types/match';
+import { RecentMatchResponse } from '@/src/types/match';
 import { formatDateForAPI, convertUTCToKSTTime } from '@/src/utils/timezone';
 
 interface TodayMatchStatusProps {
@@ -29,23 +23,15 @@ export default memo(function TodayMatchStatus({
   const { data: team } = useTeam(userProfile?.teamId || 0);
 
   const {
-    data: appliedMatches = [],
-    isLoading: appliedLoading,
-    error: appliedError,
-  } = useMyAppliedMatches();
-  const {
-    data: createdMatches = [],
-    isLoading: createdLoading,
-    error: createdError,
-  } = useMyCreatedMatches();
-  const {
     data: recentMatches = [],
     isLoading: recentLoading,
     error: recentError,
-  } = useTeamRecentMatches('MATCHED');
+  } = useTeamRecentMatches('MATCHED', {
+    enabled: !!teamId,
+  });
 
-  const isLoading = appliedLoading || createdLoading || recentLoading;
-  const hasError = appliedError || createdError || recentError;
+  const isLoading = recentLoading;
+  const hasError = recentError;
 
   const today = new Date();
   const todayString = formatDateForAPI(today);
@@ -68,28 +54,7 @@ export default memo(function TodayMatchStatus({
     return kstNow < kstMatchTime;
   };
 
-  const todayAppliedMatch = appliedMatches.find(
-    (match: MatchWaitingHistoryResponseDto) => {
-      const matchDate = new Date(match.requestAt).toISOString().split('T')[0];
-      return (
-        isMatchTodayAndNotExpired(matchDate) && match.status === 'APPROVED'
-      );
-    }
-  );
-
-  const todayCreatedMatch = createdMatches.find(
-    (match: MatchWaitingResponseDto) => {
-      const matchDate = new Date(match.preferredDate)
-        .toISOString()
-        .split('T')[0];
-      return (
-        isMatchTodayAndNotExpired(matchDate, match.preferredTimeEnd) &&
-        match.status === 'MATCHED'
-      );
-    }
-  );
-
-  const todayRecentMatch = (recentMatches as RecentMatchResponse[]).find(
+  const todayMatch = (recentMatches as RecentMatchResponse[]).find(
     (match: RecentMatchResponse) => {
       const matchDate = new Date(match.matchDate).toISOString().split('T')[0];
       return (
@@ -99,48 +64,15 @@ export default memo(function TodayMatchStatus({
     }
   );
 
-  const todayMatch = todayRecentMatch || todayAppliedMatch || todayCreatedMatch;
-
-  const getOpponentTeamName = (
-    match:
-      | MatchWaitingHistoryResponseDto
-      | MatchWaitingResponseDto
-      | RecentMatchResponse
-  ) => {
+  const getOpponentTeamName = (match: RecentMatchResponse) => {
     if (!userProfile?.teamId || !team) return '상대팀';
 
     const currentTeamName = team.name || '';
 
-    if ('team1Name' in match && 'team2Name' in match) {
-      if (match.team1Name === currentTeamName) {
-        return match.team2Name || '상대팀';
-      } else if (match.team2Name === currentTeamName) {
-        return match.team1Name || '상대팀';
-      }
-    }
-
-    if ('targetTeamName' in match) {
-      if (typeof match.targetTeamName === 'string') {
-        return match.targetTeamName;
-      } else if (
-        match.targetTeamName &&
-        typeof match.targetTeamName === 'object' &&
-        'name' in match.targetTeamName
-      ) {
-        return match.targetTeamName.name;
-      }
-    }
-
-    if ('teamName' in match) {
-      if (typeof match.teamName === 'string') {
-        return match.teamName;
-      } else if (
-        match.teamName &&
-        typeof match.teamName === 'object' &&
-        'name' in match.teamName
-      ) {
-        return match.teamName.name;
-      }
+    if (match.createTeamName === currentTeamName) {
+      return match.requestTeamName || '상대팀';
+    } else if (match.requestTeamName === currentTeamName) {
+      return match.createTeamName || '상대팀';
     }
 
     return '상대팀';

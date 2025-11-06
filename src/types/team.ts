@@ -227,24 +227,28 @@ export interface ApiTeamJoinRequest {
   id: number;
   applicantName: string;
   teamId: number;
+  teamName: string;
   applicantId: number;
   message?: string;
   status: string;
   decisionReason: string | null;
   decidedBy: number | null;
   decidedAt: string | null;
+  isMercenary: boolean;
 }
 
 export interface TeamJoinRequest {
   id: number;
   applicantName: string;
   teamId: number;
+  teamName: string;
   applicantId: number;
   message?: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
   decisionReason: string | null;
   decidedBy: number | null;
   decidedAt: string | null;
+  isMercenary: boolean;
 }
 
 export interface ApiTeamJoinRequestPageResponse {
@@ -313,6 +317,7 @@ export interface ApiUserJoinWaitingItem {
   decisionReason: string | null;
   decidedBy: number | null;
   decidedAt: string | null;
+  isMercenary: boolean;
 }
 
 export interface UserJoinWaitingItem {
@@ -325,6 +330,7 @@ export interface UserJoinWaitingItem {
   decisionReason: string | null;
   decidedBy: number | null;
   decidedAt: string | null;
+  isMercenary: boolean;
 }
 
 export interface ApiUserJoinWaitingPageResponse {

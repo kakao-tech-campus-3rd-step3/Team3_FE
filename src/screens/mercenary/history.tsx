@@ -57,7 +57,9 @@ export default function MercenaryHistoryScreen() {
     useState<UserJoinWaitingItem | null>(null);
   const [cancelReason, setCancelReason] = useState('');
 
-  const applicationsData = joinWaitingData?.content || [];
+  const applicationsData = (joinWaitingData?.content || []).filter(
+    item => item.isMercenary === true
+  );
   const myRecruitmentsData = recruitmentsData?.content || [];
 
   const handleEdit = (recruitmentId: number) => {

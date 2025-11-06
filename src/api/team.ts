@@ -64,12 +64,14 @@ export const teamListApi = {
   getTeamsByUniversity: async (
     university: string,
     page: number = 0,
-    size: number = 10
+    size: number = 10,
+    includedDeleted: boolean = false
   ): Promise<TeamListPageResponse> => {
     const params = new URLSearchParams({
       university: university,
       page: page.toString(),
       size: size.toString(),
+      includedDeleted: includedDeleted.toString(),
     });
     const apiResponse = await apiClient.get<ApiTeamListPageResponse>(
       `${TEAM_API.GET_TEAMS_BY_UNIVERSITY}?${params.toString()}`
@@ -112,16 +114,15 @@ export const teamMemberApi = {
         TEAM_MEMBER_API.GET_MEMBERS_SLICE(teamId, cursorId, size)
       );
 
-      // ✅ 실제 응답 구조에 맞게 content 사용
       const members = apiResponse.content ?? [];
-      const hasNext = apiResponse.last === false; // last=false면 다음 페이지 있음
+      const hasNext = apiResponse.last === false;
 
       return {
         members: members.map(transformTeamMemberItem),
         hasNext,
       };
     } catch (error) {
-      console.error('❌ [API ERROR] GET_MEMBERS_SLICE 실패:', error);
+      console.error('[API ERROR] GET_MEMBERS_SLICE 실패:', error);
       return { members: [], hasNext: false };
     }
   },
@@ -214,12 +215,14 @@ export const teamJoinRequestApi = {
   getTeamJoinWaitingList: async (
     teamId: string | number,
     status: string = 'PENDING',
+    isMercenary: boolean = false,
     page: number = 0,
     size: number = 10,
     sort: string = 'audit.createdAt,desc'
   ): Promise<TeamJoinRequestPageResponse> => {
     const params = new URLSearchParams({
       status,
+      isMercenary: isMercenary.toString(),
       page: page.toString(),
       size: size.toString(),
       sort,

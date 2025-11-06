@@ -35,7 +35,8 @@ export default function CreateLineupScreen() {
     waitingId?: string;
     targetTeamId?: string;
   }>();
-  const { mutate: requestMatch } = useMatchRequestMutation();
+  const { mutate: requestMatch, isPending: isRequestMatchPending } =
+    useMatchRequestMutation();
   const { data: userProfile } = useUserProfile();
   const teamId = userProfile?.teamId ?? 0;
 
@@ -44,7 +45,10 @@ export default function CreateLineupScreen() {
     () => (data ? data.pages.flatMap(page => page.members) : []),
     [data]
   );
-  const { mutate: createLineups, isPending } = useCreateLineupsMutation();
+  const { mutate: createLineups, isPending: isCreateLineupPending } =
+    useCreateLineupsMutation();
+
+  const isPending = isCreateLineupPending || isRequestMatchPending;
 
   const [selectedFormation, setSelectedFormation] =
     useState<FormationType>('4-3-3');
