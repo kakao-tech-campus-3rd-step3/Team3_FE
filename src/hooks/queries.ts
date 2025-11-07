@@ -216,6 +216,206 @@ export const queries = {
     fn: (page: number = 0, size: number = 10, sort: string = 'matchDate,asc') =>
       api.mercenaryApi.getMyMercenaryRecruitments(page, size, sort),
   },
+  createTeam: {
+    key: ['createTeam'] as const,
+    fn: (teamData: CreateTeamRequest) => api.createTeam(teamData),
+  },
+  joinTeam: {
+    key: ['joinTeam'] as const,
+    fn: (teamId: number) => api.joinTeamApi.joinTeam(teamId),
+  },
+  updateProfile: {
+    key: ['updateProfile'] as const,
+    fn: (data: UpdateProfileRequest) => api.profileApi.updateProfile(data),
+  },
+  deleteProfile: {
+    key: ['deleteProfile'] as const,
+    fn: () => api.profileApi.deleteProfile(),
+  },
+  removeMember: {
+    key: ['removeMember'] as const,
+    fn: ({
+      teamId,
+      userId,
+    }: {
+      teamId: string | number;
+      userId: string | number;
+    }) => api.teamMemberApi.removeMember(teamId, userId),
+  },
+  updateMemberRole: {
+    key: ['updateMemberRole'] as const,
+    fn: ({
+      teamId,
+      userId,
+      role,
+    }: {
+      teamId: string | number;
+      userId: string | number;
+      role: TeamMemberRole;
+    }) => api.teamMemberApi.updateMemberRole(teamId, userId, role),
+  },
+  updateTeam: {
+    key: ['updateTeam'] as const,
+    fn: ({
+      teamId,
+      data,
+    }: {
+      teamId: string | number;
+      data: {
+        name: string;
+        description: string;
+        university: string;
+        skillLevel: SkillLevel;
+        teamType: TeamType;
+      };
+    }) => api.teamEditApi.updateTeam(teamId, data),
+  },
+  deleteTeam: {
+    key: ['deleteTeam'] as const,
+    fn: (teamId: string | number) => api.teamDeleteApi.deleteTeam(teamId),
+  },
+  exitTeam: {
+    key: ['exitTeam'] as const,
+    fn: (teamId: string | number) => api.teamExitApi.exitTeam(teamId),
+  },
+  delegateLeadership: {
+    key: ['delegateLeadership'] as const,
+    fn: ({
+      teamId,
+      memberId,
+    }: {
+      teamId: string | number;
+      memberId: string | number;
+    }) => api.teamMemberApi.delegateLeadership(teamId, memberId),
+  },
+  acceptMatchRequest: {
+    key: ['acceptMatchRequest'] as const,
+    fn: (requestId: number | string) => api.acceptMatchRequestApi(requestId),
+  },
+  rejectMatchRequest: {
+    key: ['rejectMatchRequest'] as const,
+    fn: (requestId: number | string) => api.rejectMatchRequestApi(requestId),
+  },
+  createMatch: {
+    key: ['createMatch'] as const,
+    fn: (payload: MatchCreateRequestDto) => api.createMatch(payload),
+  },
+  requestMatch: {
+    key: ['requestMatch'] as const,
+    fn: ({
+      waitingId,
+      payload,
+    }: {
+      waitingId: number | string;
+      payload: MatchRequestRequestDto;
+    }) => api.requestMatchApi(waitingId, payload),
+  },
+  cancelCreatedMatch: {
+    key: ['cancelCreatedMatch'] as const,
+    fn: (waitingId: number) => api.cancelCreatedMatchApi(waitingId),
+  },
+  cancelMatchRequest: {
+    key: ['cancelMatchRequest'] as const,
+    fn: (requestId: number | string) => api.cancelMatchRequestById(requestId),
+  },
+  createMercenaryRecruitment: {
+    key: ['createMercenaryRecruitment'] as const,
+    fn: (data: RecruitmentCreateRequest) =>
+      api.createMercenaryRecruitment(data),
+  },
+  updateMercenaryRecruitment: {
+    key: ['updateMercenaryRecruitment'] as const,
+    fn: ({ id, data }: { id: number; data: RecruitmentUpdateRequest }) =>
+      api.mercenaryApi.updateMercenaryRecruitment(id, data),
+  },
+  deleteMercenaryRecruitment: {
+    key: ['deleteMercenaryRecruitment'] as const,
+    fn: (id: number) => api.mercenaryApi.deleteMercenaryRecruitment(id),
+  },
+  createTeamReview: {
+    key: ['createTeamReview'] as const,
+    fn: (data: TeamReviewRequest) => api.teamReviewApi.createReview(data),
+  },
+  createLineups: {
+    key: ['createLineups'] as const,
+    fn: (data: CreateLineupRequest) => api.lineupApi.createLineups(data),
+  },
+  lineup: {
+    key: (lineupId: number) => ['lineup', lineupId] as const,
+    fn: (lineupId: number) => api.getLineupById(lineupId),
+  },
+  myJoinWaitingList: {
+    key: (
+      page: number = 0,
+      size: number = 10,
+      sort: string = 'audit.createdAt,desc'
+    ) => ['myJoinWaitingList', page, size, sort] as const,
+    fn: (
+      page: number = 0,
+      size: number = 10,
+      sort: string = 'audit.createdAt,desc'
+    ) => api.userJoinWaitingApi.getMyJoinWaitingList(page, size, sort),
+  },
+  teamMembersSlice: {
+    key: (teamId: string | number) => ['teamMembersSlice', teamId] as const,
+    fn: ({
+      teamId,
+      cursorId,
+      size,
+    }: {
+      teamId: string | number;
+      cursorId?: number;
+      size: number;
+    }) => api.teamMemberApi.getTeamMembersSlice(teamId, cursorId, size),
+  },
+  joinWaiting: {
+    key: ['joinWaiting'] as const,
+    fn: ({
+      teamId,
+      data,
+    }: {
+      teamId: string | number;
+      data: JoinWaitingRequest;
+    }) => api.teamJoinRequestApi.joinWaiting(teamId, data),
+  },
+  cancelJoinRequest: {
+    key: ['cancelJoinRequest'] as const,
+    fn: ({
+      teamId,
+      joinWaitingId,
+      data,
+    }: {
+      teamId: string | number;
+      joinWaitingId: string | number;
+      data: JoinWaitingCancelRequest;
+    }) => api.teamJoinRequestApi.cancelJoinRequest(teamId, joinWaitingId, data),
+  },
+  approveJoinRequest: {
+    key: ['approveJoinRequest'] as const,
+    fn: ({
+      teamId,
+      requestId,
+      role,
+    }: {
+      teamId: string | number;
+      requestId: string | number;
+      role: '회장' | '부회장' | '일반멤버';
+    }) =>
+      api.teamJoinRequestApi.approveJoinRequest(teamId, requestId, { role }),
+  },
+  rejectJoinRequest: {
+    key: ['rejectJoinRequest'] as const,
+    fn: ({
+      teamId,
+      requestId,
+      reason,
+    }: {
+      teamId: string | number;
+      requestId: string | number;
+      reason: string;
+    }) =>
+      api.teamJoinRequestApi.rejectJoinRequest(teamId, requestId, { reason }),
+  },
 } as const;
 
 export function useUserProfile() {
@@ -428,8 +628,7 @@ export function useEnemyTeam(matchId: number | string | undefined) {
 
 export function useCreateTeamMutation() {
   return useMutation({
-    mutationFn: (teamData: CreateTeamRequest): Promise<CreateTeamResponse> =>
-      api.createTeam(teamData),
+    mutationFn: queries.createTeam.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
@@ -441,8 +640,7 @@ export function useCreateTeamMutation() {
 
 export function useJoinTeamMutation() {
   return useMutation({
-    mutationFn: (teamId: number): Promise<JoinTeamResponse> =>
-      api.joinTeamApi.joinTeam(teamId),
+    mutationFn: queries.joinTeam.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
@@ -567,8 +765,7 @@ export function useVerifyCodeSignupMutation() {
 
 export function useUpdateProfileMutation() {
   return useMutation({
-    mutationFn: (data: UpdateProfileRequest) =>
-      api.profileApi.updateProfile(data),
+    mutationFn: queries.updateProfile.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
@@ -580,7 +777,7 @@ export function useUpdateProfileMutation() {
 
 export function useDeleteProfileMutation() {
   return useMutation({
-    mutationFn: () => api.profileApi.deleteProfile(),
+    mutationFn: queries.deleteProfile.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
     },
@@ -592,13 +789,7 @@ export function useDeleteProfileMutation() {
 
 export function useRemoveMemberMutation() {
   return useMutation({
-    mutationFn: ({
-      teamId,
-      userId,
-    }: {
-      teamId: string | number;
-      userId: string | number;
-    }) => api.teamMemberApi.removeMember(teamId, userId),
+    mutationFn: queries.removeMember.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queries.teamMembers.key(variables.teamId, 0, 10),
@@ -615,15 +806,7 @@ export function useRemoveMemberMutation() {
 
 export function useUpdateMemberRoleMutation() {
   return useMutation({
-    mutationFn: ({
-      teamId,
-      userId,
-      role,
-    }: {
-      teamId: string | number;
-      userId: string | number;
-      role: TeamMemberRole;
-    }) => api.teamMemberApi.updateMemberRole(teamId, userId, role),
+    mutationFn: queries.updateMemberRole.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queries.teamMembers.key(variables.teamId, 0, 10),
@@ -640,19 +823,7 @@ export function useUpdateMemberRoleMutation() {
 
 export function useUpdateTeamMutation() {
   return useMutation({
-    mutationFn: ({
-      teamId,
-      data,
-    }: {
-      teamId: string | number;
-      data: {
-        name: string;
-        description: string;
-        university: string;
-        skillLevel: SkillLevel;
-        teamType: TeamType;
-      };
-    }) => api.teamEditApi.updateTeam(teamId, data),
+    mutationFn: queries.updateTeam.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queries.team.key(variables.teamId),
@@ -667,9 +838,7 @@ export function useUpdateTeamMutation() {
 
 export function useDeleteTeamMutation() {
   return useMutation({
-    mutationFn: (teamId: string | number) => {
-      return api.teamDeleteApi.deleteTeam(teamId);
-    },
+    mutationFn: queries.deleteTeam.fn,
     onSuccess: (_, teamId) => {
       queryClient.invalidateQueries({ queryKey: queries.team.key(teamId) });
       queryClient.invalidateQueries({
@@ -684,7 +853,7 @@ export function useDeleteTeamMutation() {
 
 export function useTeamExitMutation() {
   return useMutation({
-    mutationFn: (teamId: string | number) => api.teamExitApi.exitTeam(teamId),
+    mutationFn: queries.exitTeam.fn,
     onSuccess: (_, teamId) => {
       queryClient.invalidateQueries({ queryKey: queries.team.key(teamId) });
       queryClient.invalidateQueries({
@@ -701,13 +870,7 @@ export function useTeamExitMutation() {
 
 export function useDelegateLeadershipMutation() {
   return useMutation({
-    mutationFn: ({
-      teamId,
-      memberId,
-    }: {
-      teamId: string | number;
-      memberId: string | number;
-    }) => api.teamMemberApi.delegateLeadership(teamId, memberId),
+    mutationFn: queries.delegateLeadership.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['teamMembers', variables.teamId],
@@ -724,8 +887,7 @@ export function useDelegateLeadershipMutation() {
 
 export function useAcceptMatchRequestMutation() {
   return useMutation({
-    mutationFn: (requestId: number | string) =>
-      api.acceptMatchRequestApi(requestId),
+    mutationFn: queries.acceptMatchRequest.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queries.teamMatchRequests.key,
@@ -742,8 +904,7 @@ export function useAcceptMatchRequestMutation() {
 
 export function useRejectMatchRequestMutation() {
   return useMutation({
-    mutationFn: (requestId: number | string) =>
-      api.rejectMatchRequestApi(requestId),
+    mutationFn: queries.rejectMatchRequest.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queries.teamMatchRequests.key,
@@ -757,16 +918,7 @@ export function useRejectMatchRequestMutation() {
 
 export function useApproveJoinRequestMutation() {
   return useMutation({
-    mutationFn: ({
-      teamId,
-      requestId,
-      role,
-    }: {
-      teamId: string | number;
-      requestId: string | number;
-      role: '회장' | '부회장' | '일반멤버';
-    }) =>
-      api.teamJoinRequestApi.approveJoinRequest(teamId, requestId, { role }),
+    mutationFn: queries.approveJoinRequest.fn,
     onSuccess: (response, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['teamJoinWaitingList', variables.teamId],
@@ -786,16 +938,7 @@ export function useApproveJoinRequestMutation() {
 
 export function useRejectJoinRequestMutation() {
   return useMutation({
-    mutationFn: ({
-      teamId,
-      requestId,
-      reason,
-    }: {
-      teamId: string | number;
-      requestId: string | number;
-      reason: string;
-    }) =>
-      api.teamJoinRequestApi.rejectJoinRequest(teamId, requestId, { reason }),
+    mutationFn: queries.rejectJoinRequest.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['teamJoinWaitingList', variables.teamId],
@@ -809,7 +952,7 @@ export function useRejectJoinRequestMutation() {
 
 export function useCreateMatchMutation() {
   return useMutation({
-    mutationFn: (payload: MatchCreateRequestDto) => api.createMatch(payload),
+    mutationFn: queries.createMatch.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queries.myCreatedMatches.key });
     },
@@ -821,13 +964,7 @@ export function useCreateMatchMutation() {
 
 export function useMatchRequestMutation() {
   return useMutation({
-    mutationFn: ({
-      waitingId,
-      payload,
-    }: {
-      waitingId: number | string;
-      payload: MatchRequestRequestDto;
-    }) => api.requestMatchApi(waitingId, payload),
+    mutationFn: queries.requestMatch.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['match-waiting-list'] });
       queryClient.invalidateQueries({ queryKey: queries.myAppliedMatches.key });
@@ -840,7 +977,7 @@ export function useMatchRequestMutation() {
 
 export function useCancelMatchMutation() {
   return useMutation({
-    mutationFn: (waitingId: number) => api.cancelCreatedMatchApi(waitingId),
+    mutationFn: queries.cancelCreatedMatch.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queries.myCreatedMatches.key });
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
@@ -853,8 +990,7 @@ export function useCancelMatchMutation() {
 
 export function useCancelMatchRequestMutation() {
   return useMutation({
-    mutationFn: (requestId: number | string) =>
-      api.cancelMatchRequestById(requestId),
+    mutationFn: queries.cancelMatchRequest.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queries.myAppliedMatches.key });
       queryClient.invalidateQueries({ queryKey: queries.userProfile.key });
@@ -870,7 +1006,7 @@ const fetchWaitingMatches = async (): Promise<MatchWaitingResponseDto[]> => {
   const todayString = formatDateForAPI(today);
 
   try {
-    let result = await api.getMatchWaitingList({
+    let result = await queries.matchWaitingList.fn({
       selectDate: todayString,
       startTime: '00:00:00',
     });
@@ -879,7 +1015,7 @@ const fetchWaitingMatches = async (): Promise<MatchWaitingResponseDto[]> => {
       const tomorrow = addDaysToDate(today, 1);
       const tomorrowString = formatDateForAPI(tomorrow);
 
-      const tomorrowResult = await api.getMatchWaitingList({
+      const tomorrowResult = await queries.matchWaitingList.fn({
         selectDate: tomorrowString,
         startTime: '00:00:00',
       });
@@ -890,7 +1026,7 @@ const fetchWaitingMatches = async (): Promise<MatchWaitingResponseDto[]> => {
         const dayAfterTomorrow = addDaysToDate(today, 2);
         const dayAfterTomorrowString = formatDateForAPI(dayAfterTomorrow);
 
-        const dayAfterTomorrowResult = await api.getMatchWaitingList({
+        const dayAfterTomorrowResult = await queries.matchWaitingList.fn({
           selectDate: dayAfterTomorrowString,
           startTime: '00:00:00',
         });
@@ -952,13 +1088,7 @@ export function useRecommendedMatches() {
 
 export function useTeamJoinRequestMutation() {
   const joinWaitingMutation = useMutation({
-    mutationFn: ({
-      teamId,
-      data,
-    }: {
-      teamId: string | number;
-      data: JoinWaitingRequest;
-    }) => api.teamJoinRequestApi.joinWaiting(teamId, data),
+    mutationFn: queries.joinWaiting.fn,
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['myJoinWaitingList'],
@@ -976,15 +1106,7 @@ export function useTeamJoinRequestMutation() {
   });
 
   const cancelJoinRequestMutation = useMutation({
-    mutationFn: ({
-      teamId,
-      joinWaitingId,
-      data,
-    }: {
-      teamId: string | number;
-      joinWaitingId: string | number;
-      data: JoinWaitingCancelRequest;
-    }) => api.teamJoinRequestApi.cancelJoinRequest(teamId, joinWaitingId, data),
+    mutationFn: queries.cancelJoinRequest.fn,
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['myJoinWaitingList'],
@@ -1018,16 +1140,14 @@ export function useMyJoinWaitingList(
   sort: string = 'audit.createdAt,desc'
 ) {
   return useQuery({
-    queryKey: ['myJoinWaitingList', page, size, sort],
-    queryFn: () =>
-      api.userJoinWaitingApi.getMyJoinWaitingList(page, size, sort),
+    queryKey: queries.myJoinWaitingList.key(page, size, sort),
+    queryFn: () => queries.myJoinWaitingList.fn(page, size, sort),
   });
 }
 
 export function useCreateMercenaryRecruitment() {
   const createRecruitmentMutation = useMutation({
-    mutationFn: (data: RecruitmentCreateRequest) =>
-      api.createMercenaryRecruitment(data),
+    mutationFn: queries.createMercenaryRecruitment.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['mercenaryRecruitments'],
@@ -1079,13 +1199,7 @@ export function useMyMercenaryRecruitments(
 
 export function useUpdateMercenaryRecruitment() {
   const updateRecruitmentMutation = useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: number;
-      data: RecruitmentUpdateRequest;
-    }) => api.mercenaryApi.updateMercenaryRecruitment(id, data),
+    mutationFn: queries.updateMercenaryRecruitment.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['mercenaryRecruitments'],
@@ -1113,7 +1227,7 @@ export function useUpdateMercenaryRecruitment() {
 
 export function useDeleteMercenaryRecruitment() {
   const deleteRecruitmentMutation = useMutation({
-    mutationFn: (id: number) => api.mercenaryApi.deleteMercenaryRecruitment(id),
+    mutationFn: queries.deleteMercenaryRecruitment.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['mercenaryRecruitments'],
@@ -1141,8 +1255,7 @@ export function useDeleteMercenaryRecruitment() {
 
 export function useCreateTeamReviewMutation() {
   return useMutation({
-    mutationFn: (data: TeamReviewRequest) =>
-      api.teamReviewApi.createReview(data),
+    mutationFn: queries.createTeamReview.fn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teamRecentMatches'] });
     },
@@ -1157,13 +1270,13 @@ export function useTeamMembersInfinite(
   size: number = 10
 ) {
   return useInfiniteQuery<TeamMemberSliceResponse>({
-    queryKey: ['teamMembersSlice', teamId],
+    queryKey: queries.teamMembersSlice.key(teamId),
     queryFn: ({ pageParam }) =>
-      api.teamMemberApi.getTeamMembersSlice(
+      queries.teamMembersSlice.fn({
         teamId,
-        pageParam ? Number(pageParam) : undefined,
-        size
-      ),
+        cursorId: pageParam ? Number(pageParam) : undefined,
+        size,
+      }),
     getNextPageParam: lastPage => {
       if (lastPage.hasNext && lastPage.members.length > 0) {
         return lastPage.members[lastPage.members.length - 1].id;
@@ -1177,13 +1290,11 @@ export function useTeamMembersInfinite(
 
 export function useCreateLineupsMutation() {
   return useMutation<CreateLineupResponse, Error, CreateLineupRequest>({
-    mutationFn: data => api.lineupApi.createLineups(data),
-
+    mutationFn: queries.createLineups.fn,
     onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['teamMembers'] });
       queryClient.invalidateQueries({ queryKey: ['team'] });
     },
-
     onError: error => {
       console.error('라인업 생성 실패:', error);
     },
@@ -1192,8 +1303,8 @@ export function useCreateLineupsMutation() {
 
 export function useLineupDetail(lineupId?: number) {
   return useQuery<ApiLineupItem[]>({
-    queryKey: ['lineup', lineupId],
-    queryFn: () => api.getLineupById(lineupId as number),
+    queryKey: lineupId ? queries.lineup.key(lineupId) : ['lineup', undefined],
+    queryFn: () => queries.lineup.fn(lineupId as number),
     enabled: !!lineupId,
     staleTime: 1000 * 30,
   });
@@ -1203,11 +1314,8 @@ export function useMyMatchRequests() {
   const { token, isInitialized } = useAuth();
 
   return useQuery<MatchWaitingHistoryResponseDto[], Error>({
-    queryKey: ['myMatchRequests'],
-    queryFn: async () => {
-      const response = await api.getMyAppliedMatches();
-      return response;
-    },
+    queryKey: queries.myAppliedMatches.key,
+    queryFn: queries.myAppliedMatches.fn,
     enabled: !!token && isInitialized,
   });
 }
