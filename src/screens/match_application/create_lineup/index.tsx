@@ -40,7 +40,7 @@ export default function CreateLineupScreen() {
   const { data: userProfile } = useUserProfile();
   const teamId = userProfile?.teamId ?? 0;
 
-  const { data, fetchNextPage, isLoading } = useTeamMembersInfinite(teamId, 50);
+  const { data, isLoading } = useTeamMembersInfinite(teamId, 50);
   const teamMembers = useMemo(
     () => (data ? data.pages.flatMap(page => page.members) : []),
     [data]
@@ -94,10 +94,6 @@ export default function CreateLineupScreen() {
       return updated;
     });
     setShowModal(false);
-  };
-
-  const handleRemoveFromBench = (name: string) => {
-    setBenchMembers(prev => prev.filter(m => m.name !== name));
   };
 
   const filledCount = Object.values(formationAssignments).filter(

@@ -1,0 +1,15 @@
+import { Stack, useLocalSearchParams } from 'expo-router';
+import React from 'react';
+
+import MatchRequestsScreen from '@/src/screens/team/management/match_requests_screen';
+
+export default function MatchRequestsPage() {
+  const { teamId } = useLocalSearchParams<{ teamId: string }>();
+
+  return (
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <MatchRequestsScreen teamId={teamId} />
+    </>
+  );
+}

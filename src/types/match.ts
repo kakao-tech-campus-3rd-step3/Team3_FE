@@ -103,8 +103,13 @@ export interface MatchRequestResponseDto {
   targetTeamName: {
     name: string;
   };
+  preferredDate?: string;
+  preferredTimeStart?: string;
+  preferredTimeEnd?: string;
+  venueName?: string;
   requestMessage: string;
   status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELED';
+  requestTeamLineupId?: number;
 }
 
 export interface MatchConfirmedResponseDto {

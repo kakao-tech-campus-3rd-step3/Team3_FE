@@ -56,12 +56,6 @@ export default function MercenaryCreateScreen() {
 
   const SKILL_LEVEL_OPTIONS = ['아마추어', '세미프로', '프로'] as const;
 
-  const SKILL_LEVEL_REVERSE_MAP: { [key: string]: string } = {
-    프로: 'PRO',
-    세미프로: 'SEMI_PRO',
-    아마추어: 'AMATEUR',
-  };
-
   const handleCreateRecruitment = () => {
     if (
       !recruitmentForm.message ||

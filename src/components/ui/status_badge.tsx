@@ -3,9 +3,7 @@ import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 import { theme } from '@/src/theme';
 import {
-  BASIC_STATUS_LABELS,
   EXTENDED_STATUS_LABELS,
-  type BasicStatus,
   type ExtendedStatus,
 } from '@/src/utils/status_labels';
 

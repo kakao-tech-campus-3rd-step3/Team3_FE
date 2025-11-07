@@ -32,7 +32,6 @@ import type {
   ApiUserJoinWaitingPageResponse,
   UserJoinWaitingPageResponse,
   TeamMemberSliceResponse,
-  ApiTeamMemberSliceResponse,
 } from '@/src/types/team';
 import {
   transformTeamListPageResponse,

@@ -22,13 +22,11 @@ import MatchCard from '@/src/screens/match_application/components/match_card';
 import { styles } from '@/src/screens/match_application/match_application_style';
 import type {
   MatchWaitingListRequestDto,
-  MatchRequestRequestDto,
   MatchWaitingResponseDto,
 } from '@/src/types/match';
 import { formatDateForAPI, formatTimeForAPI } from '@/src/utils/date';
 
 export default function MatchInfoScreen() {
-  const router = useRouter();
   const { date } = useLocalSearchParams<{ date?: string }>();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);

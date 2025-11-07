@@ -37,7 +37,6 @@ export default function TeamManagementScreen({
   const {
     data: teamMembersData,
     isLoading: membersLoading,
-    error: membersError,
     refetch: refetchMembers,
   } = useTeamMembers(numericTeamId, 0, 100);
 

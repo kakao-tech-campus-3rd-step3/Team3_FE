@@ -3,9 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
 import JoinRequestsModal from '@/src/components/team/modals/join_requests_modal';
-import MatchRequestsModal, {
-  type MatchRequest,
-} from '@/src/components/team/modals/match_requests_modal';
 import ManageSection from '@/src/components/team/sections/manage_section';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
@@ -16,14 +13,14 @@ import {
   useTeamMembers,
   useUserProfile,
   useDeleteTeamMutation,
+  useTeam,
   useTeamMatchRequests,
-  useAcceptMatchRequestMutation,
-  useRejectMatchRequestMutation,
   useApproveJoinRequestMutation,
   useRejectJoinRequestMutation,
 } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/team/management/team_settings_styles';
 import { colors } from '@/src/theme';
+import type { MatchRequestResponseDto } from '@/src/types/match';
 import { translateErrorMessage } from '@/src/utils/error_messages';
 
 interface TeamSettingsScreenProps {
@@ -34,17 +31,12 @@ export default function TeamSettingsScreen({
   teamId,
 }: TeamSettingsScreenProps) {
   const [showJoinRequestsModal, setShowJoinRequestsModal] = useState(false);
-  const [showMatchRequestsModal, setShowMatchRequestsModal] = useState(false);
-  const [matchAccepted, setMatchAccepted] = useState(false);
-  const [acceptedMatchId, setAcceptedMatchId] = useState<number | null>(null);
   const [processingRequestId, setProcessingRequestId] = useState<number | null>(
     null
   );
   const { data: userProfile } = useUserProfile();
 
   const deleteTeamMutation = useDeleteTeamMutation();
-  const acceptMatchRequestMutation = useAcceptMatchRequestMutation();
-  const rejectMatchRequestMutation = useRejectMatchRequestMutation();
   const approveJoinRequestMutation = useApproveJoinRequestMutation();
   const rejectJoinRequestMutation = useRejectJoinRequestMutation();
 
@@ -53,14 +45,15 @@ export default function TeamSettingsScreen({
     data: matchRequestsData,
     isLoading: matchRequestsLoading,
     error: matchRequestsError,
-    refetch: refetchMatchRequests,
   } = useTeamMatchRequests();
 
-  const matchRequests: MatchRequest[] = matchRequestsData || [];
+  const matchRequests: MatchRequestResponseDto[] = matchRequestsData || [];
+  const { refetch: refetchTeam } = useTeam(numericTeamId);
   const {
     data: teamMembersData,
     isLoading: membersLoading,
     error: membersError,
+    refetch: refetchMembers,
   } = useTeamMembers(numericTeamId, 0, 100);
   const {
     data: joinRequestsData,
@@ -96,24 +89,6 @@ export default function TeamSettingsScreen({
       );
     }
   }, [currentUserMember, canManageTeam, numericTeamId]);
-
-  useEffect(() => {
-    if (!showMatchRequestsModal && matchAccepted && acceptedMatchId) {
-      requestAnimationFrame(() => {
-        Alert.alert('성공', '매치가 성사되었습니다!', [
-          {
-            text: '확인',
-            onPress: () => {
-              router.push(`${ROUTES.MATCH_SET}?matchId=${acceptedMatchId}`);
-              setMatchAccepted(false);
-              setAcceptedMatchId(null);
-            },
-          },
-        ]);
-        setMatchAccepted(false);
-      });
-    }
-  }, [showMatchRequestsModal, matchAccepted, acceptedMatchId]);
 
   if (!teamId || teamId === null || teamId === undefined) {
     return (
@@ -191,6 +166,9 @@ export default function TeamSettingsScreen({
                 onSuccess: () => {
                   setProcessingRequestId(null);
                   Alert.alert('성공', `가입을 ${action}했습니다.`);
+                  refetch();
+                  refetchMembers();
+                  refetchTeam();
                 },
                 onError: (error: unknown) => {
                   setProcessingRequestId(null);
@@ -202,7 +180,10 @@ export default function TeamSettingsScreen({
                   ) {
                     const message = (error as any).message;
                     if (message && typeof message === 'string') {
-                      errorMessage = translateErrorMessage(message);
+                      errorMessage = translateErrorMessage(message, {
+                        endpoint: `/api/teams/${teamId}/join-waiting/${requestId}/approve`,
+                        method: 'POST',
+                      });
                     }
                   }
                   Alert.alert('오류', errorMessage);
@@ -220,6 +201,7 @@ export default function TeamSettingsScreen({
                 onSuccess: () => {
                   setProcessingRequestId(null);
                   Alert.alert('성공', `가입을 ${action}했습니다.`);
+                  refetch();
                 },
                 onError: () => {
                   setProcessingRequestId(null);
@@ -227,51 +209,6 @@ export default function TeamSettingsScreen({
                 },
               }
             );
-          }
-        },
-      },
-    ]);
-  };
-
-  const handleMatchRequest = async (
-    requestId: number,
-    status: 'approved' | 'rejected'
-  ) => {
-    const action = status === 'approved' ? '수락' : '거절';
-
-    Alert.alert(`매치 ${action}`, `이 매치 요청을 ${action}하시겠습니까?`, [
-      { text: '취소', style: 'cancel' },
-      {
-        text: action,
-        style: status === 'rejected' ? 'destructive' : 'default',
-        onPress: () => {
-          setProcessingRequestId(requestId);
-          if (status === 'approved') {
-            acceptMatchRequestMutation.mutate(requestId, {
-              onSuccess: response => {
-                const { matchId } = response;
-                setAcceptedMatchId(matchId);
-                setMatchAccepted(true);
-                setShowMatchRequestsModal(false);
-                setProcessingRequestId(null);
-                refetchMatchRequests();
-              },
-              onError: () => {
-                setProcessingRequestId(null);
-                Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
-              },
-            });
-          } else {
-            rejectMatchRequestMutation.mutate(requestId, {
-              onSuccess: () => {
-                setProcessingRequestId(null);
-                Alert.alert('성공', `매치 요청을 ${action}했습니다.`);
-              },
-              onError: () => {
-                setProcessingRequestId(null);
-                Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
-              },
-            });
           }
         },
       },
@@ -344,7 +281,6 @@ export default function TeamSettingsScreen({
             joinRequests={joinRequests}
             matchRequests={matchRequests}
             onShowJoinRequestsModal={() => setShowJoinRequestsModal(true)}
-            onShowMatchRequestsModal={() => setShowMatchRequestsModal(true)}
             onDeleteTeam={handleDeleteTeam}
           />
         </View>
@@ -355,14 +291,6 @@ export default function TeamSettingsScreen({
         joinRequests={joinRequests}
         onClose={() => setShowJoinRequestsModal(false)}
         onJoinRequest={handleJoinRequest}
-        processingRequestId={processingRequestId}
-      />
-
-      <MatchRequestsModal
-        visible={showMatchRequestsModal}
-        matchRequests={matchRequests}
-        onClose={() => setShowMatchRequestsModal(false)}
-        onMatchRequest={handleMatchRequest}
         processingRequestId={processingRequestId}
       />
     </View>
