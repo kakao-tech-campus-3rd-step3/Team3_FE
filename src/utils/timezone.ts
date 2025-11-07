@@ -35,32 +35,27 @@ export const convertUTCToKSTDate = (utcDateTimeString: string): string => {
   if (!utcDateTimeString) return '';
 
   try {
-    // UTC 날짜시간 문자열에서 날짜와 시간 부분 추출
     let datePart = '';
     let timeString = '';
 
     if (utcDateTimeString.includes('T')) {
       const parts = utcDateTimeString.split('T');
-      datePart = parts[0]; // yyyy-MM-dd 형식
-      timeString = parts[1].replace('Z', '').split('.')[0]; // HH:mm:ss 형식
+      datePart = parts[0];
+      timeString = parts[1].replace('Z', '').split('.')[0];
     } else {
       return utcDateTimeString.split('T')[0] || '';
     }
 
-    // 시간 파싱
     const [hours] = timeString.split(':').map(Number);
 
-    // UTC 시간에 +9시간을 더해서 KST 시간 계산
     let kstHours = hours + 9;
     let date = new Date(datePart);
 
-    // 24시간을 넘으면 다음 날로
     if (kstHours >= 24) {
       kstHours -= 24;
       date.setDate(date.getDate() + 1);
     }
 
-    // 날짜를 yyyy-MM-dd 형식으로 반환
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
