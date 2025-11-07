@@ -120,11 +120,11 @@ export function createRefreshTokenResource() {
   });
 }
 
-export function updateSecureStoreResource<T>(
+export async function updateSecureStoreResource<T>(
   key: string,
   value: T,
   serialize?: (value: T) => string
-) {
+): Promise<void> {
   const cached = getResourceState<T>(key);
   if (cached) {
     setResourceState<T>(key, {
@@ -134,14 +134,20 @@ export function updateSecureStoreResource<T>(
   }
 
   const serializeFn = serialize ?? ((val: T) => JSON.stringify(val));
-  SecureStore.setItemAsync(key, serializeFn(value)).catch(error => {
+  try {
+    await SecureStore.setItemAsync(key, serializeFn(value));
+  } catch (error) {
     console.error(`데이터 저장 실패: ${key}:`, error);
-  });
+    throw error;
+  }
 }
 
-export function deleteSecureStoreResource(key: string) {
+export async function deleteSecureStoreResource(key: string): Promise<void> {
   resourceCache.delete(key);
-  SecureStore.deleteItemAsync(key).catch(error => {
+  try {
+    await SecureStore.deleteItemAsync(key);
+  } catch (error) {
     console.error(`데이터 삭제 실패: ${key}:`, error);
-  });
+    throw error;
+  }
 }
