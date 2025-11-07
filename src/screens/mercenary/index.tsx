@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -577,33 +577,6 @@ const newStyles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: theme.colors.background.sub,
   },
-  searchInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.background.sub,
-    borderRadius: 12,
-    paddingHorizontal: theme.spacing.spacing4,
-    marginHorizontal: theme.spacing.spacing6,
-    marginVertical: theme.spacing.spacing4,
-    borderWidth: 2,
-    borderColor: theme.colors.brand.main + '20',
-    gap: theme.spacing.spacing2,
-    shadowColor: theme.colors.shadow.light,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: theme.colors.text.main,
-    paddingVertical: theme.spacing.spacing3,
-    fontWeight: '500',
-  },
   universityList: {
     flex: 1,
     backgroundColor: theme.colors.background.main,
@@ -788,24 +761,5 @@ const newStyles = StyleSheet.create({
     fontSize: 14,
     color: theme.colors.text.main,
     lineHeight: 20,
-  },
-  teamInfoSection: {
-    marginBottom: theme.spacing.spacing3,
-    gap: theme.spacing.spacing1,
-  },
-  teamInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.spacing1,
-  },
-  teamNameText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: theme.colors.text.main,
-  },
-  universityNameText: {
-    fontSize: 13,
-    color: theme.colors.text.sub,
-    fontWeight: '500',
   },
 });

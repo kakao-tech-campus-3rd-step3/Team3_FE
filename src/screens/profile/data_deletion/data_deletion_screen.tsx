@@ -1,5 +1,4 @@
 import { router } from 'expo-router';
-import React from 'react';
 import { ScrollView, Text, View, TouchableOpacity, Alert } from 'react-native';
 
 import { ROUTES } from '@/src/constants/routes';

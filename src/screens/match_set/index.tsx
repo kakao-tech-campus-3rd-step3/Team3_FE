@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   View,
   Text,

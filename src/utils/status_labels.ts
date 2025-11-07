@@ -8,18 +8,10 @@ export const BASIC_STATUS_LABELS: Record<BasicStatus, string> = {
   CANCELED: '취소됨',
 };
 
-export function getBasicStatusLabel(status: BasicStatus): string {
-  return BASIC_STATUS_LABELS[status] ?? status;
-}
-
 export const EXTENDED_STATUS_LABELS: Record<ExtendedStatus, string> = {
   ...BASIC_STATUS_LABELS,
   ACCEPTED: '수락됨',
 };
-
-export function getExtendedStatusLabel(status: ExtendedStatus): string {
-  return EXTENDED_STATUS_LABELS[status] ?? status;
-}
 
 export function toBasicStatus(input: string | undefined | null): BasicStatus {
   switch ((input || '').toUpperCase()) {

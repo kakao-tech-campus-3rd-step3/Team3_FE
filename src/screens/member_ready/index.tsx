@@ -1,5 +1,4 @@
 import { useRouter } from 'expo-router';
-import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';

@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
 import JoinRequestsModal from '@/src/components/team/modals/join_requests_modal';

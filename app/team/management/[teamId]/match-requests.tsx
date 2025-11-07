@@ -1,5 +1,4 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import React from 'react';
 
 import MatchRequestsScreen from '@/src/screens/team/management/match_requests_screen';
 
