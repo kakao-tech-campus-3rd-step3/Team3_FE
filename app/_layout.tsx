@@ -72,7 +72,7 @@ function AppContent() {
             />,
             <Stack.Screen key="lineup" name="match_application/lineup" />,
             <Stack.Screen
-              key="Createlineup"
+              key="create_lineup"
               name="match_application/create_lineup"
             />,
           ]

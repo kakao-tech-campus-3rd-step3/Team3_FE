@@ -14,7 +14,8 @@ export default function TeamManagementLayout() {
     { name: 'settings', title: '팀 설정' },
     { name: 'edit', title: '팀 정보 수정' },
     { name: 'members', title: '팀원 관리' },
-    { name: 'recent-matches', title: '최근 경기' },
+    { name: 'recent_matches', title: '최근 경기' },
+    { name: 'match_requests', title: '매치 요청' },
   ];
 
   return (
