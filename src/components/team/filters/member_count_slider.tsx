@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import { styles } from '@/src/components/team/filters/member_count_slider_styles';

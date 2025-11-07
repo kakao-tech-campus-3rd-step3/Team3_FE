@@ -1,5 +1,4 @@
 import { useLocalSearchParams } from 'expo-router';
-import React from 'react';
 
 import TeamRecentMatchesScreen from '@/src/components/team/cards/team_recent_matches_screen';
 

@@ -1,5 +1,4 @@
 import { router } from 'expo-router';
-import React from 'react';
 import { Text, View, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';

@@ -1,5 +1,5 @@
 import { useLocalSearchParams, router } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   FlatList,

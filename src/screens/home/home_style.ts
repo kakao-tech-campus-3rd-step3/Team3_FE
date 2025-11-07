@@ -76,12 +76,6 @@ export const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
-  greetingText: {
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.sub,
-    marginBottom: theme.spacing.spacing4,
-    fontWeight: theme.typography.fontWeight.medium,
-  },
   greetingSubtext: {
     fontSize: theme.typography.fontSize.font5,
     fontWeight: theme.typography.fontWeight.semibold,
@@ -90,25 +84,6 @@ export const styles = StyleSheet.create({
   },
   highlightText: {
     color: theme.colors.grass[300],
-  },
-
-  activityStatsContainer: {
-    width: '100%',
-    backgroundColor: theme.colors.background.main,
-    borderRadius: theme.spacing.spacing3,
-    padding: theme.spacing.spacing4,
-    marginBottom: theme.spacing.spacing6,
-  },
-  statsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.spacing4,
-  },
-  statsTitle: {
-    fontSize: theme.typography.fontSize.font5,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.main,
-    marginLeft: theme.spacing.spacing2,
   },
 
   matchStatusCard: {
@@ -228,73 +203,6 @@ export const styles = StyleSheet.create({
   benefitIconContainer: {
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
-  },
-
-  statsCard: {
-    margin: 0,
-    marginTop: theme.spacing.spacing3,
-    marginBottom: theme.spacing.spacing4,
-    padding: theme.spacing.spacing2,
-    minHeight: theme.spacing.spacing15,
-    width: '100%',
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing.spacing3,
-    paddingHorizontal: theme.spacing.spacing2,
-  },
-  statItem: {
-    alignItems: 'center',
-    flex: 1,
-    paddingVertical: theme.spacing.spacing2,
-  },
-  statValue: {
-    fontSize: theme.typography.fontSize.font5,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing2,
-  },
-  statLabel: {
-    fontSize: theme.typography.fontSize.font3,
-    color: theme.colors.text.sub,
-    fontWeight: theme.typography.fontWeight.medium,
-  },
-  additionalStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: theme.spacing.spacing5,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.gray[300],
-    paddingHorizontal: theme.spacing.spacing2,
-  },
-  additionalStatItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.spacing1,
-    paddingVertical: theme.spacing.spacing1,
-  },
-  additionalStatText: {
-    fontSize: theme.typography.fontSize.font1,
-    color: theme.colors.text.sub,
-    fontWeight: theme.typography.fontWeight.regular,
-  },
-  footballIcon: {
-    fontSize: theme.typography.fontSize.font4,
-    marginRight: theme.spacing.spacing1,
-  },
-  locationIcon: {
-    fontSize: theme.typography.fontSize.font4,
-    marginRight: theme.spacing.spacing1,
-  },
-
-  headerDivider: {
-    height: 1,
-    backgroundColor: theme.colors.gray[200],
-    marginTop: theme.spacing.spacing8,
-    marginBottom: theme.spacing.spacing6,
-    marginHorizontal: theme.spacing.spacing4,
-    borderRadius: theme.spacing.spacing1,
   },
 
   weatherSection: {

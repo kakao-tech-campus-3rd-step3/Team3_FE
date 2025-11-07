@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text, TouchableOpacity, Modal, Animated } from 'react-native';
 
 import { styles } from '@/src/components/team/filters/filter_modal_styles';

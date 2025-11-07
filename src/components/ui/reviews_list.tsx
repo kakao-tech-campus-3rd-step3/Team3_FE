@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import Card from '@/src/components/card/card';
@@ -223,10 +222,13 @@ export function ReviewsList<T extends BaseReview>({
   );
 }
 
-export const MercenaryReviewsList: React.FC<{
+export const MercenaryReviewsList = ({
+  reviews,
+  isLoading,
+}: {
   reviews: MercenaryReview[];
   isLoading?: boolean;
-}> = ({ reviews, isLoading }) => (
+}) => (
   <ReviewsList
     reviews={reviews}
     isLoading={isLoading}
@@ -235,10 +237,13 @@ export const MercenaryReviewsList: React.FC<{
   />
 );
 
-export const TeamReviewsList: React.FC<{
+export const TeamReviewsList = ({
+  reviews,
+  isLoading,
+}: {
   reviews: MercenaryTeamReview[];
   isLoading?: boolean;
-}> = ({ reviews, isLoading }) => (
+}) => (
   <ReviewsList
     reviews={reviews}
     isLoading={isLoading}

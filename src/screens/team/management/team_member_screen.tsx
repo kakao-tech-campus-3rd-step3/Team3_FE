@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, ScrollView, Alert, RefreshControl } from 'react-native';
 
 import MemberInfoCard from '@/src/components/team/cards/member_info_card';

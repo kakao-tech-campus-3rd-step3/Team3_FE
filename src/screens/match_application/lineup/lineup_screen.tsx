@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   View,
   Text,

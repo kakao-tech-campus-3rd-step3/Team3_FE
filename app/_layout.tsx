@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import ErrorBoundary from 'react-native-error-boundary';
 import 'react-native-reanimated';

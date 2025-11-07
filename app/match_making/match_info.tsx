@@ -1,5 +1,3 @@
-import React from 'react';
-
 import TeamGuard from '@/src/components/auth/team_guard';
 import MatchInfoScreen from '@/src/screens/match_making/match_info/match_info_screen';
 

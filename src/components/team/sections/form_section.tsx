@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 
 import { styles } from '@/src/components/team/sections/form_section_styles';
