@@ -143,36 +143,37 @@ function JoinRequestCard({
 
       <View style={styles.requestDetails}>
         {[
-          ...(request.message
-            ? [{ label: '가입 메시지:', value: request.message }]
-            : []),
+          request.message && {
+            label: '가입 메시지:',
+            value: request.message,
+          },
           ...detailRows,
-          ...(request.decisionReason
-            ? [{ label: '결정 사유:', value: request.decisionReason }]
-            : []),
-          ...(request.decidedBy
-            ? [{ label: '결정자:', value: String(request.decidedBy) }]
-            : []),
-          ...(request.decidedAt
-            ? [
-                {
-                  label: '결정일:',
-                  value: new Date(request.decidedAt).toLocaleDateString(
-                    'ko-KR'
-                  ),
-                },
-              ]
-            : []),
-        ].map(row => (
-          <InfoRow
-            key={`${row.label}${row.value}`}
-            label={row.label}
-            value={row.value}
-            containerStyle={styles.requestDetailRow}
-            labelStyle={styles.requestDetailLabel}
-            valueStyle={styles.requestDetailValue}
-          />
-        ))}
+          request.decisionReason && {
+            label: '결정 사유:',
+            value: request.decisionReason,
+          },
+          request.decidedBy && {
+            label: '결정자:',
+            value: String(request.decidedBy),
+          },
+          request.decidedAt && {
+            label: '결정일:',
+            value: new Date(request.decidedAt).toLocaleDateString('ko-KR'),
+          },
+        ]
+          .filter((row): row is { label: string; value: string } =>
+            Boolean(row)
+          )
+          .map(row => (
+            <InfoRow
+              key={`${row.label}${row.value}`}
+              label={row.label}
+              value={row.value}
+              containerStyle={styles.requestDetailRow}
+              labelStyle={styles.requestDetailLabel}
+              valueStyle={styles.requestDetailValue}
+            />
+          ))}
       </View>
 
       {request.status === 'PENDING' && (
