@@ -38,12 +38,13 @@ export default function MatchSetScreen() {
     return (
       <View style={styles.container}>
         <CustomHeader title="매치 성사 완료" />
-        <View style={styles.scrollContainer}>
-          <View style={styles.scrollContent}>
-            <View style={styles.successSection}>
-              <ActivityIndicator size="large" color={theme.colors.blue[600]} />
-            </View>
-          </View>
+        <View
+          style={[
+            styles.scrollContainer,
+            { justifyContent: 'center', alignItems: 'center' },
+          ]}
+        >
+          <ActivityIndicator size="large" color={theme.colors.blue[600]} />
         </View>
       </View>
     );
