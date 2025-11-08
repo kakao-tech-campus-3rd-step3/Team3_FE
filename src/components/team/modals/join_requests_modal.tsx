@@ -16,7 +16,6 @@ import StatusBadge from '@/src/components/ui/status_badge';
 import { convertPositionToKorean } from '@/src/constants/positions';
 import { useUserProfileById } from '@/src/hooks/queries';
 import { colors } from '@/src/theme';
-import type { UserProfile } from '@/src/types';
 import type { TeamJoinRequest } from '@/src/types/team';
 import { getSkillLevelInKorean } from '@/src/utils/team';
 
