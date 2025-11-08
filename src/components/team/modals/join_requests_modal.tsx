@@ -109,15 +109,13 @@ function JoinRequestCard({
 }) {
   const { data: profile } = useUserProfileById(request.applicantId);
 
-  const p: UserProfile | undefined = profile;
-
-  const detailRows = p
+  const detailRows = profile
     ? [
-        { label: '이메일:', value: p.email },
-        { label: '카카오톡:', value: p.kakaoTalkId },
-        { label: '포지션:', value: convertPositionToKorean(p.position) },
-        { label: '실력:', value: getSkillLevelInKorean(p.skillLevel) },
-        { label: '대학:', value: p.university },
+        { label: '이메일:', value: profile.email },
+        { label: '카카오톡:', value: profile.kakaoTalkId },
+        { label: '포지션:', value: convertPositionToKorean(profile.position) },
+        { label: '실력:', value: getSkillLevelInKorean(profile.skillLevel) },
+        { label: '대학:', value: profile.university },
       ].filter(row => !!row.value)
     : [];
 
@@ -127,7 +125,7 @@ function JoinRequestCard({
         <View style={styles.applicantInfo}>
           <View style={styles.applicantNameRow}>
             <Text style={styles.applicantName}>
-              {p?.name ||
+              {profile?.name ||
                 request.applicantName ||
                 `사용자 ${request.applicantId}`}
             </Text>

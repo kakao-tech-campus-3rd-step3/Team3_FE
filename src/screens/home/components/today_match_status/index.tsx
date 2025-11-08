@@ -24,14 +24,11 @@ export default memo(function TodayMatchStatus({
 
   const {
     data: recentMatches = [],
-    isLoading: recentLoading,
-    error: recentError,
+    isLoading,
+    error: hasError,
   } = useTeamRecentMatches('MATCHED', {
     enabled: !!teamId,
   });
-
-  const isLoading = recentLoading;
-  const hasError = recentError;
 
   const today = new Date();
   const todayString = formatDateForAPI(today);
