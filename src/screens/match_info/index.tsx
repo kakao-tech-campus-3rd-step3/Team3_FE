@@ -1,6 +1,6 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useFocusEffect } from '@react-navigation/native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useState, useEffect, useCallback } from 'react';
 import {
   View,
@@ -15,7 +15,6 @@ import {
   useUserProfile,
   useMyAppliedMatches,
   useMatchWaitingList,
-  useMatchRequestMutation,
 } from '@/src/hooks/queries';
 import FilterCard from '@/src/screens/match_application/components/filter_card';
 import MatchCard from '@/src/screens/match_application/components/match_card';
@@ -64,7 +63,6 @@ export default function MatchInfoScreen() {
       (error as any)?.message?.includes('해당 팀 멤버'));
 
   const shouldShowError = error && !isTeamMemberError;
-  const { mutate: requestMatch, isPending } = useMatchRequestMutation();
 
   const { data: appliedMatches, refetch: refetchAppliedMatches } =
     useMyAppliedMatches();
@@ -125,7 +123,7 @@ export default function MatchInfoScreen() {
     <MatchCard
       match={item}
       onPressRequest={() => handlePressRequest(item.waitingId)}
-      disabled={isPending}
+      disabled={false}
       hasRequested={isAlreadyApplied(item.teamId)}
     />
   );

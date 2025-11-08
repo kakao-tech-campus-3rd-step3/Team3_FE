@@ -60,7 +60,11 @@ export default function MatchRequestsScreen({
       }
       refetchMatchRequests();
     }
-  }, [acceptMatchRequestMutation.isSuccess, acceptMatchRequestMutation.data]);
+  }, [
+    acceptMatchRequestMutation.isSuccess,
+    acceptMatchRequestMutation.data,
+    refetchMatchRequests,
+  ]);
 
   const handleMatchRequest = async (
     requestId: number,

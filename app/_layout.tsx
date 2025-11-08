@@ -21,13 +21,11 @@ function AppContent() {
   });
 
   let token: string | null = null;
-  let refreshToken: string | null = null;
   let isInitialized = false;
 
   try {
     const authData = useAuth();
     token = authData.token;
-    refreshToken = authData.refreshToken;
     isInitialized = authData.isInitialized;
 
     if (!isInitialized || !loaded) {
