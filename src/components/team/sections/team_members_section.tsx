@@ -3,7 +3,7 @@ import { memo, useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import { styles } from '@/src/components/team/sections/team_members_section_styles';
-import { TabSelector } from '@/src/components/ui/tab_selector';
+import { TabGroup, TabList, Tab } from '@/src/components/ui/tab_selector';
 import { colors } from '@/src/theme';
 import type { TeamMember } from '@/src/types/team';
 import { getRoleDisplayName } from '@/src/utils/team';
@@ -21,13 +21,10 @@ export default memo(function TeamMembersSection({
   membersLoading,
   onMemberPress,
 }: TeamMembersSectionProps) {
-  const [activeTab, setActiveTab] = useState<MemberTab>('all');
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const tabs = [
-    { key: 'all', label: '전체' },
-    { key: 'members', label: '팀 멤버' },
-    { key: 'mercenaries', label: '용병' },
-  ];
+  const tabs: MemberTab[] = ['all', 'members', 'mercenaries'];
+  const activeTab = tabs[selectedIndex];
 
   const filteredMembers = useMemo(() => {
     if (!Array.isArray(teamMembers)) return [];
@@ -56,11 +53,13 @@ export default memo(function TeamMembersSection({
   return (
     <View style={styles.membersSection}>
       <Text style={styles.sectionTitle}>팀 멤버</Text>
-      <TabSelector
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={tabKey => setActiveTab(tabKey as MemberTab)}
-      />
+      <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+        <TabList>
+          <Tab index={0}>전체</Tab>
+          <Tab index={1}>팀 멤버</Tab>
+          <Tab index={2}>용병</Tab>
+        </TabList>
+      </TabGroup>
       <View style={styles.memberList}>
         {filteredMembers.map(member => (
           <TouchableOpacity

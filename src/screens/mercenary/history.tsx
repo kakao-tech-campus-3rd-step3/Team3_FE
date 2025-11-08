@@ -16,7 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { RecruitmentCard } from '@/src/components/mercenary/recruitment_card';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import StatusBadge from '@/src/components/ui/status_badge';
-import { TabSelector } from '@/src/components/ui/tab_selector';
+import { TabGroup, TabList, Tab } from '@/src/components/ui/tab_selector';
 import { ROUTES } from '@/src/constants/routes';
 import {
   useMyJoinWaitingList,
@@ -35,9 +35,9 @@ import { translateErrorMessage } from '@/src/utils/error_messages';
 export default function MercenaryHistoryScreen() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [recruitmentsPage, setRecruitmentsPage] = useState<number>(0);
-  const [activeTab, setActiveTab] = useState<'applications' | 'myRecruitments'>(
-    'applications'
-  );
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const activeTab: 'applications' | 'myRecruitments' =
+    selectedIndex === 0 ? 'applications' : 'myRecruitments';
   const pageSize = 10;
 
   const { data: joinWaitingData, isLoading } = useMyJoinWaitingList(
@@ -58,7 +58,6 @@ export default function MercenaryHistoryScreen() {
     useState<UserJoinWaitingItem | null>(null);
   const [cancelReason, setCancelReason] = useState('');
 
-  // API에서 isMercenary: true로 필터링되므로 클라이언트 측 필터링 불필요
   const applicationsData = joinWaitingData?.content || [];
   const myRecruitmentsData = recruitmentsData?.content || [];
 
@@ -133,11 +132,6 @@ export default function MercenaryHistoryScreen() {
       }
     );
   };
-
-  const tabs = [
-    { key: 'applications', label: '신청 기록' },
-    { key: 'myRecruitments', label: '작성 기록' },
-  ];
 
   const renderRecruitmentCard = ({ item }: { item: RecruitmentResponse }) => (
     <RecruitmentCard
@@ -239,13 +233,12 @@ export default function MercenaryHistoryScreen() {
     <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
       <CustomHeader title="용병 기록" showBackButton={false} />
 
-      <TabSelector
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={tabKey =>
-          setActiveTab(tabKey as 'applications' | 'myRecruitments')
-        }
-      />
+      <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+        <TabList>
+          <Tab index={0}>신청 기록</Tab>
+          <Tab index={1}>작성 기록</Tab>
+        </TabList>
+      </TabGroup>
 
       <View style={styles.content}>
         {activeTab === 'applications' ? (
