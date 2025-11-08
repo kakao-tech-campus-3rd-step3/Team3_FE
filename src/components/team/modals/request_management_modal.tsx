@@ -1,12 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import { type ReactNode } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { styles } from '@/src/components/team/modals/join_requests_modal_styles';
+import InfoRow from '@/src/components/ui/info_row';
+import StatusBadge from '@/src/components/ui/status_badge';
 import { colors } from '@/src/theme';
-import { getJoinRequestStatusDisplayName } from '@/src/utils/team';
-
-import { styles } from './join_requests_modal_styles';
 
 export interface RequestItem {
   id: number;
@@ -29,7 +29,8 @@ interface RequestManagementModalProps {
   emptyStateText: string;
   onClose: () => void;
   onRequestAction: (requestId: number, status: 'approved' | 'rejected') => void;
-  renderRequestDetails?: (request: RequestItem) => React.ReactNode;
+  renderRequestDetails?: (request: RequestItem) => ReactNode;
+  processingRequestId?: number | null;
 }
 
 export default function RequestManagementModal({
@@ -42,36 +43,45 @@ export default function RequestManagementModal({
   onClose,
   onRequestAction,
   renderRequestDetails,
+  processingRequestId,
 }: RequestManagementModalProps) {
   const defaultRenderRequestDetails = (request: RequestItem) => (
     <View style={styles.requestDetails}>
       {request.teamId && (
-        <View style={styles.requestDetailRow}>
-          <Text style={styles.requestDetailLabel}>팀 ID:</Text>
-          <Text style={styles.requestDetailValue}>{request.teamId}</Text>
-        </View>
+        <InfoRow
+          label="팀 ID:"
+          value={String(request.teamId)}
+          containerStyle={styles.requestDetailRow}
+          labelStyle={styles.requestDetailLabel}
+          valueStyle={styles.requestDetailValue}
+        />
       )}
       {request.decisionReason && (
-        <View style={styles.requestDetailRow}>
-          <Text style={styles.requestDetailLabel}>결정 사유:</Text>
-          <Text style={styles.requestDetailValue}>
-            {request.decisionReason}
-          </Text>
-        </View>
+        <InfoRow
+          label="결정 사유:"
+          value={request.decisionReason}
+          containerStyle={styles.requestDetailRow}
+          labelStyle={styles.requestDetailLabel}
+          valueStyle={styles.requestDetailValue}
+        />
       )}
       {request.decidedBy && (
-        <View style={styles.requestDetailRow}>
-          <Text style={styles.requestDetailLabel}>결정자:</Text>
-          <Text style={styles.requestDetailValue}>{request.decidedBy}</Text>
-        </View>
+        <InfoRow
+          label="결정자:"
+          value={String(request.decidedBy)}
+          containerStyle={styles.requestDetailRow}
+          labelStyle={styles.requestDetailLabel}
+          valueStyle={styles.requestDetailValue}
+        />
       )}
       {request.decidedAt && (
-        <View style={styles.requestDetailRow}>
-          <Text style={styles.requestDetailLabel}>결정일:</Text>
-          <Text style={styles.requestDetailValue}>
-            {new Date(request.decidedAt).toLocaleDateString('ko-KR')}
-          </Text>
-        </View>
+        <InfoRow
+          label="결정일:"
+          value={new Date(request.decidedAt).toLocaleDateString('ko-KR')}
+          containerStyle={styles.requestDetailRow}
+          labelStyle={styles.requestDetailLabel}
+          valueStyle={styles.requestDetailValue}
+        />
       )}
     </View>
   );
@@ -107,41 +117,9 @@ export default function RequestManagementModal({
               {requests.map(request => (
                 <View key={request.id} style={styles.requestCard}>
                   <View style={styles.requestHeader}>
-                    <View style={styles.applicantInfo}>
-                      {request.applicantId && (
-                        <Text style={styles.applicantName}>
-                          신청자 ID: {request.applicantId}
-                        </Text>
-                      )}
-                      <Text style={styles.applicantEmail}>
-                        신청 ID: {request.id}
-                      </Text>
-                    </View>
+                    <View style={styles.applicantInfo}></View>
                     <View style={styles.requestStatus}>
-                      <View
-                        style={[
-                          styles.statusBadge,
-                          request.status === 'PENDING' && styles.statusPending,
-                          request.status === 'APPROVED' &&
-                            styles.statusApproved,
-                          request.status === 'REJECTED' &&
-                            styles.statusRejected,
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.statusText,
-                            request.status === 'PENDING' &&
-                              styles.statusTextPending,
-                            request.status === 'APPROVED' &&
-                              styles.statusTextApproved,
-                            request.status === 'REJECTED' &&
-                              styles.statusTextRejected,
-                          ]}
-                        >
-                          {getJoinRequestStatusDisplayName(request.status)}
-                        </Text>
-                      </View>
+                      <StatusBadge status={request.status} />
                     </View>
                   </View>
 
@@ -152,8 +130,13 @@ export default function RequestManagementModal({
                   {request.status === 'PENDING' && (
                     <View style={styles.requestActions}>
                       <TouchableOpacity
-                        style={styles.approveButton}
+                        style={[
+                          styles.approveButton,
+                          processingRequestId === request.id &&
+                            styles.buttonDisabled,
+                        ]}
                         onPress={() => onRequestAction(request.id, 'approved')}
+                        disabled={processingRequestId === request.id}
                       >
                         <Ionicons
                           name="checkmark"
@@ -163,8 +146,13 @@ export default function RequestManagementModal({
                         <Text style={styles.approveButtonText}>승인</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        style={styles.rejectButton}
+                        style={[
+                          styles.rejectButton,
+                          processingRequestId === request.id &&
+                            styles.buttonDisabled,
+                        ]}
                         onPress={() => onRequestAction(request.id, 'rejected')}
+                        disabled={processingRequestId === request.id}
                       >
                         <Ionicons name="close" size={16} color={colors.white} />
                         <Text style={styles.rejectButtonText}>거절</Text>

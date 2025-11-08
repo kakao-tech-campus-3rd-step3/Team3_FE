@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, ScrollView, Alert, RefreshControl } from 'react-native';
 
 import MemberInfoCard from '@/src/components/team/cards/member_info_card';
@@ -15,10 +15,13 @@ import {
   useDelegateLeadershipMutation,
   useUserProfile,
 } from '@/src/hooks/queries';
+import { styles } from '@/src/screens/team/management/team_member_style';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
+import {
+  ERROR_MESSAGES,
+  getErrorMessageByStatus,
+} from '@/src/utils/error_messages';
 import { getRoleDisplayName } from '@/src/utils/team';
-
-import { styles } from './team_member_style';
 
 interface MemberManagementScreenProps {
   teamId: string | number;
@@ -38,7 +41,7 @@ export default function MemberManagementScreen({
     isLoading,
     error,
     refetch,
-  } = useTeamMembers(numericTeamId);
+  } = useTeamMembers(numericTeamId, 0, 100);
 
   const removeMemberMutation = useRemoveMemberMutation();
   const updateMemberRoleMutation = useUpdateMemberRoleMutation();
@@ -106,7 +109,6 @@ export default function MemberManagementScreen({
       return;
     }
 
-    // 회장/부회장만 역할 변경 가능
     if (
       currentUserMember.role !== 'LEADER' &&
       currentUserMember.role !== 'VICE_LEADER'
@@ -118,7 +120,6 @@ export default function MemberManagementScreen({
       return;
     }
 
-    // 자기 자신의 역할은 변경할 수 없음
     if (member.userId === currentUserMember.userId) {
       Alert.alert(
         '알림',
@@ -180,34 +181,31 @@ export default function MemberManagementScreen({
 
                     if (apiError.status === 401) {
                       errorMessage = '인증이 필요합니다. 다시 로그인해주세요.';
-                    } else if (apiError.status === 403) {
-                      if (apiError.message?.includes('NO_PERMISSION')) {
-                        errorMessage =
-                          '역할 변경 권한이 없습니다. 회장과 부회장만 변경할 수 있습니다.';
-                      } else if (
-                        apiError.message?.includes(
-                          'SELF_DELEGATION_NOT_ALLOWED'
-                        )
-                      ) {
-                        errorMessage =
-                          '회장/부회장은 자신의 역할을 직접 변경할 수 없습니다.';
-                      } else {
-                        errorMessage = '역할 변경 권한이 없습니다.';
+                    } else {
+                      const statusBasedMessage = getErrorMessageByStatus(
+                        apiError.status,
+                        apiError.message
+                      );
+                      if (statusBasedMessage) {
+                        errorMessage = statusBasedMessage;
+                      } else if (apiError.status === 403) {
+                        if (apiError.message?.includes('NO_PERMISSION')) {
+                          errorMessage =
+                            ERROR_MESSAGES.ROLE_CHANGE_PERMISSION_DENIED_DETAIL;
+                        } else if (
+                          apiError.message?.includes(
+                            'SELF_DELEGATION_NOT_ALLOWED'
+                          )
+                        ) {
+                          errorMessage =
+                            '회장/부회장은 자신의 역할을 직접 변경할 수 없습니다.';
+                        } else {
+                          errorMessage =
+                            ERROR_MESSAGES.ROLE_CHANGE_PERMISSION_DENIED;
+                        }
+                      } else if (apiError.message) {
+                        errorMessage = apiError.message;
                       }
-                    } else if (apiError.status === 404) {
-                      if (apiError.message?.includes('TEAM_NOT_FOUND')) {
-                        errorMessage = '팀을 찾을 수 없습니다.';
-                      } else if (
-                        apiError.message?.includes('TEAM_MEMBER_NOT_FOUND')
-                      ) {
-                        errorMessage = '팀원을 찾을 수 없습니다.';
-                      } else {
-                        errorMessage = '요청한 정보를 찾을 수 없습니다.';
-                      }
-                    } else if (apiError.status === 400) {
-                      errorMessage = '유효하지 않은 역할입니다.';
-                    } else if (apiError.message) {
-                      errorMessage = apiError.message;
                     }
                   }
 
@@ -228,7 +226,7 @@ export default function MemberManagementScreen({
     );
 
     if (!currentUserMember) {
-      Alert.alert('오류', '현재 사용자 정보를 찾을 수 없습니다.');
+      Alert.alert('오류', ERROR_MESSAGES.USER_INFO_NOT_FOUND);
       return;
     }
 
@@ -292,11 +290,15 @@ export default function MemberManagementScreen({
                       data?: any;
                     };
 
-                    if (apiError.status === 403) {
+                    const statusBasedMessage = getErrorMessageByStatus(
+                      apiError.status,
+                      apiError.message
+                    );
+                    if (statusBasedMessage) {
+                      errorMessage = statusBasedMessage;
+                    } else if (apiError.status === 403) {
                       errorMessage =
-                        '팀원 강퇴 권한이 없습니다. 회장과 부회장만 강퇴할 수 있습니다.';
-                    } else if (apiError.status === 404) {
-                      errorMessage = '팀원을 찾을 수 없습니다.';
+                        ERROR_MESSAGES.MEMBER_REMOVE_PERMISSION_DENIED;
                     } else if (apiError.message) {
                       errorMessage = apiError.message;
                     }
@@ -319,7 +321,7 @@ export default function MemberManagementScreen({
     );
 
     if (!currentUserMember) {
-      Alert.alert('오류', '현재 사용자 정보를 찾을 수 없습니다.');
+      Alert.alert('오류', ERROR_MESSAGES.USER_INFO_NOT_FOUND);
       return;
     }
 
@@ -375,11 +377,15 @@ export default function MemberManagementScreen({
                       data?: any;
                     };
 
-                    if (apiError.status === 403) {
+                    const statusBasedMessage = getErrorMessageByStatus(
+                      apiError.status,
+                      apiError.message
+                    );
+                    if (statusBasedMessage) {
+                      errorMessage = statusBasedMessage;
+                    } else if (apiError.status === 403) {
                       errorMessage =
-                        '리더십 위임 권한이 없습니다. 회장만 위임할 수 있습니다.';
-                    } else if (apiError.status === 404) {
-                      errorMessage = '팀원을 찾을 수 없습니다.';
+                        ERROR_MESSAGES.LEADERSHIP_DELEGATE_PERMISSION_DENIED;
                     } else if (apiError.status === 409) {
                       errorMessage =
                         '자기 자신에게는 리더십을 위임할 수 없습니다.';
@@ -414,17 +420,19 @@ export default function MemberManagementScreen({
           <MemberInfoCard />
           <MemberListSection
             teamMembers={teamMembers.content.sort((a, b) => {
-              // 역할 우선순위: 회장(1) > 부회장(2) > 일반멤버(3)
-              const roleOrder = { LEADER: 1, VICE_LEADER: 2, MEMBER: 3 };
-              const aOrder = roleOrder[a.role] || 3;
-              const bOrder = roleOrder[b.role] || 3;
+              const roleOrder = {
+                LEADER: 1,
+                VICE_LEADER: 2,
+                MEMBER: 3,
+                MERCENARY: 4,
+              };
+              const aOrder = roleOrder[a.role] || 4;
+              const bOrder = roleOrder[b.role] || 4;
 
-              // 역할이 다르면 역할 순서로 정렬
               if (aOrder !== bOrder) {
                 return aOrder - bOrder;
               }
 
-              // 같은 역할이면 이름순으로 정렬
               return a.name.localeCompare(b.name);
             })}
             currentUserMember={teamMembers.content.find(

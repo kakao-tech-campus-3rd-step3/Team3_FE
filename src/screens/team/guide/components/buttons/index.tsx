@@ -11,12 +11,11 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
-import { useUserProfile } from '@/src/hooks/queries';
-import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
+import { ROUTES } from '@/src/constants/routes';
+import { useUserProfile, useMyJoinWaitingList } from '@/src/hooks/queries';
+import JoinWaitingList from '@/src/screens/team/guide/components/join_waiting_list';
+import { styles } from '@/src/screens/team/guide/team_guide_styles';
 import { colors } from '@/src/theme';
-
-import { styles } from '../../team_guide_styles';
-import JoinWaitingList from '../join_waiting_list';
 
 export default memo(function Buttons() {
   const router = useRouter();
@@ -28,8 +27,11 @@ export default memo(function Buttons() {
     data: joinWaitingData,
     isLoading: isJoinWaitingLoading,
     refetch,
-  } = useMyJoinWaitingList(0, 1);
-  const hasJoinWaiting = joinWaitingData && !joinWaitingData.empty;
+  } = useMyJoinWaitingList(0, 100);
+  const hasPendingJoinWaiting =
+    !isJoinWaitingLoading &&
+    (joinWaitingData?.content?.some(item => item.status === 'PENDING') ??
+      false);
 
   const dynamicStyles = StyleSheet.create({
     createButton: {
@@ -87,21 +89,19 @@ export default memo(function Buttons() {
   );
 
   const handleJoinTeam = () => {
-    if (hasJoinWaiting) {
+    if (hasPendingJoinWaiting) {
       setShowJoinWaitingList(true);
     } else {
-      // 사용자 대학 정보를 파라미터로 전달하여 바로 팀 목록으로 이동
       router.push({
-        pathname: '/team/join-university',
+        pathname: ROUTES.TEAM_JOIN_UNIVERSITY,
         params: { university: userProfile?.university || '' },
       });
     }
   };
 
-  // 로딩 중일 때는 버튼들을 숨김
-  if (isJoinWaitingLoading) {
-    return (
-      <View style={styles.buttonContainer}>
+  return (
+    <View style={styles.buttonContainer}>
+      {isJoinWaitingLoading ? (
         <View style={[dynamicStyles.joinButton, { opacity: 0.5 }]}>
           <Ionicons name="people-outline" size={24} color={colors.blue[500]} />
           <Text
@@ -113,58 +113,62 @@ export default memo(function Buttons() {
             로딩 중...
           </Text>
         </View>
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.buttonContainer}>
-      <TouchableOpacity
-        style={dynamicStyles.joinButton}
-        onPress={handleJoinTeam}
-      >
-        <Ionicons name="people-outline" size={24} color={colors.blue[500]} />
-        <Text
-          style={dynamicStyles.joinButtonText}
-          numberOfLines={1}
-          adjustsFontSizeToFit={true}
-          minimumFontScale={0.8}
-        >
-          {hasJoinWaiting ? '팀 신청 현황' : '팀 참여하기'}
-        </Text>
-        {hasJoinWaiting && (
-          <View style={styles.notificationBadge}>
-            <Text style={styles.notificationText}>
-              {joinWaitingData?.totalElements || 0}
-            </Text>
-          </View>
-        )}
-      </TouchableOpacity>
-
-      {!hasJoinWaiting && (
-        <TouchableOpacity
-          style={dynamicStyles.createButton}
-          onPress={() =>
-            router.push({
-              pathname: '/team/creation',
-              params: { university: userProfile?.university || '' },
-            })
-          }
-        >
-          <Ionicons
-            name="add-circle-outline"
-            size={24}
-            color={colors.text.white}
-          />
-          <Text
-            style={dynamicStyles.createButtonText}
-            numberOfLines={1}
-            adjustsFontSizeToFit={true}
-            minimumFontScale={0.8}
+      ) : (
+        <>
+          <TouchableOpacity
+            style={dynamicStyles.joinButton}
+            onPress={handleJoinTeam}
           >
-            팀 생성하기
-          </Text>
-        </TouchableOpacity>
+            <Ionicons
+              name="people-outline"
+              size={24}
+              color={colors.blue[500]}
+            />
+            <Text
+              style={dynamicStyles.joinButtonText}
+              numberOfLines={1}
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.8}
+            >
+              {hasPendingJoinWaiting ? '팀 신청 현황' : '팀 참여하기'}
+            </Text>
+            {hasPendingJoinWaiting && (
+              <View style={styles.notificationBadge}>
+                <Text style={styles.notificationText}>
+                  {joinWaitingData?.content?.filter(
+                    item => item.status === 'PENDING'
+                  ).length || 0}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
+
+          {!hasPendingJoinWaiting && (
+            <TouchableOpacity
+              style={dynamicStyles.createButton}
+              onPress={() =>
+                router.push({
+                  pathname: ROUTES.TEAM_CREATION,
+                  params: { university: userProfile?.university || '' },
+                })
+              }
+            >
+              <Ionicons
+                name="add-circle-outline"
+                size={24}
+                color={colors.text.white}
+              />
+              <Text
+                style={dynamicStyles.createButtonText}
+                numberOfLines={1}
+                adjustsFontSizeToFit={true}
+                minimumFontScale={0.8}
+              >
+                팀 생성하기
+              </Text>
+            </TouchableOpacity>
+          )}
+        </>
       )}
 
       <Modal

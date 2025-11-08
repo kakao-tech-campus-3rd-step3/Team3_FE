@@ -1,25 +1,24 @@
-import React from 'react';
+import { type ReactNode } from 'react';
 import { Text, View, StyleProp, ViewStyle } from 'react-native';
 
+import { styles } from '@/src/components/card/card_style';
 import { colors } from '@/src/theme';
-
-import { styles } from './card_style';
 
 interface CardProps {
   title?: string;
   subtitle?: string;
   level?: 0 | 1 | 2;
-  children?: React.ReactNode;
+  children?: ReactNode;
   style?: StyleProp<ViewStyle>;
 }
 
-export const Card = ({
+export default function Card({
   title,
   subtitle,
   level,
   children,
   style,
-}: CardProps) => {
+}: CardProps) {
   const getBorderColor = () => {
     if (level === undefined) return undefined;
 
@@ -56,4 +55,4 @@ export const Card = ({
       {children && <View style={styles.content}>{children}</View>}
     </View>
   );
-};
+}

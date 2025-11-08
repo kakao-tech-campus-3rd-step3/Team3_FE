@@ -2,6 +2,7 @@ import { Redirect, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
+import { ROUTES } from '@/src/constants/routes';
 import { useAuth } from '@/src/contexts/auth_context';
 
 export default function AuthLayout() {
@@ -13,7 +14,7 @@ export default function AuthLayout() {
   }, []);
 
   if (isAuthenticated) {
-    return <Redirect href="/(tabs)" />;
+    return <Redirect href={ROUTES.TABS} />;
   }
 
   return (

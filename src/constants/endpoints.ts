@@ -20,6 +20,7 @@ export const PROFILE_API = {
   GET_PROFILE: '/api/profiles/me',
   UPDATE_PROFILE: '/api/profiles/me',
   DELETE_PROFILE: '/api/profiles/me',
+  GET_PROFILE_BY_ID: (id: string | number) => `/api/profiles/${id}`,
 };
 
 export const RECOMMENDED_MATCH_API = {
@@ -54,6 +55,16 @@ export const TEAM_API = {
 export const TEAM_MEMBER_API = {
   GET_MEMBERS: (teamId: string | number, page: number = 0, size: number = 10) =>
     `/api/teams/${teamId}/users?page=${page}&size=${size}`,
+  GET_MEMBERS_SLICE: (
+    teamId: string | number,
+    cursorId?: number,
+    size: number = 10
+  ) => {
+    const query = new URLSearchParams();
+    if (cursorId !== undefined) query.append('cursorId', String(cursorId));
+    query.append('size', String(size));
+    return `/api/teams/${teamId}/users/slice?${query.toString()}`;
+  },
   GET_MEMBER: (teamId: string | number, userId: string | number) =>
     `/api/teams/${teamId}/users/${userId}`,
   UPDATE_ROLE: (teamId: string | number, userId: string | number) =>
@@ -71,12 +82,21 @@ export const TEAM_MATCH_API = {
     `/api/teams/${teamId}/match-requests/${requestId}`,
 };
 
+export const TEAM_REVIEW_API = {
+  CREATE: '/api/team-reviews',
+  DETAIL: (id: number | string) => `/api/team-reviews/${id}`,
+  LIST: (reviewedTeamId: number | string) =>
+    `/api/team-reviews?reviewedTeamId=${reviewedTeamId}`,
+};
+
 export const MATCH_CREATE_API = {
   CREATE: '/api/matches',
 };
 
 export const MATCH_WAITING_API = {
   GET_WAITING_LIST: '/api/matches/waiting',
+  GET_WAITING_LIST_BY_TEAM: (teamId: string | number) =>
+    `/api/matches/waiting?teamId=${teamId}`,
   GET_MY_CREATED_MATCHES: '/api/matches/waiting/me',
   CANCEL_WAITING: (waitingId: string | number) =>
     `/api/matches/waiting/${waitingId}/cancel`,
@@ -104,6 +124,22 @@ export const USER_JOIN_WAITING_API = {
   GET_MY_JOIN_WAITING: (
     page: number = 0,
     size: number = 10,
-    sort: string = 'createdAt,desc'
-  ) => `/api/users/me/join-waiting?page=${page}&size=${size}&sort=${sort}`,
+    sort: string = 'audit.createdAt,desc',
+    isMercenary: boolean = false
+  ) =>
+    `/api/users/me/join-waiting?page=${page}&size=${size}&sort=${sort}&isMercenary=${isMercenary}`,
+};
+
+export const MERCENARY_API = {
+  GET_RECRUITMENTS: '/api/mercenaries/recruitments',
+  GET_RECRUITMENT_BY_ID: (id: number) => `/api/mercenaries/recruitments/${id}`,
+  GET_MY_RECRUITMENTS: '/api/mercenaries/recruitments/me',
+  CREATE_RECRUITMENT: '/api/mercenaries/recruitments',
+  UPDATE_RECRUITMENT: (id: number) => `/api/mercenaries/recruitments/${id}`,
+  DELETE_RECRUITMENT: (id: number) => `/api/mercenaries/recruitments/${id}`,
+};
+
+export const LINEUP_API = {
+  CREATE: '/api/lineups',
+  GET_LINEUP: (lineupId: number | string) => `/api/lineups/${lineupId}`,
 };

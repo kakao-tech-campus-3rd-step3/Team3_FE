@@ -9,11 +9,10 @@ import {
   FlatList,
 } from 'react-native';
 
+import { styles } from '@/src/components/team/steps/team_basic_info_styles';
 import { UNIVERSITIES } from '@/src/constants/universities';
 import { colors } from '@/src/theme';
 import { TeamType, TEAM_TYPES } from '@/src/types/team';
-
-import { styles } from './team_basic_info_styles';
 
 interface TeamBasicInfoProps {
   teamName: string;

@@ -1,6 +1,6 @@
 export type TeamType = '중앙동아리' | '과동아리' | '기타';
 export type SkillLevel = '아마추어' | '세미프로' | '프로';
-export type TeamMemberRole = 'LEADER' | 'VICE_LEADER' | 'MEMBER';
+export type TeamMemberRole = 'LEADER' | 'VICE_LEADER' | 'MEMBER' | 'MERCENARY';
 
 export const TEAM_TYPES: TeamType[] = ['중앙동아리', '과동아리', '기타'];
 export const SKILL_LEVELS: SkillLevel[] = ['아마추어', '세미프로', '프로'];
@@ -165,6 +165,16 @@ export interface TeamMemberPageResponse {
   empty: boolean;
 }
 
+export interface ApiTeamMemberSliceResponse {
+  members: ApiTeamMember[];
+  hasNext: boolean;
+}
+
+export interface TeamMemberSliceResponse {
+  members: TeamMember[];
+  hasNext: boolean;
+}
+
 export interface TeamManagementData {
   team: {
     id: number;
@@ -217,22 +227,28 @@ export interface ApiTeamJoinRequest {
   id: number;
   applicantName: string;
   teamId: number;
+  teamName: string;
   applicantId: number;
+  message?: string;
   status: string;
   decisionReason: string | null;
   decidedBy: number | null;
   decidedAt: string | null;
+  isMercenary: boolean;
 }
 
 export interface TeamJoinRequest {
   id: number;
   applicantName: string;
   teamId: number;
+  teamName: string;
   applicantId: number;
+  message?: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
   decisionReason: string | null;
   decidedBy: number | null;
   decidedAt: string | null;
+  isMercenary: boolean;
 }
 
 export interface ApiTeamJoinRequestPageResponse {
@@ -265,11 +281,14 @@ export interface TeamJoinRequestPageResponse {
 
 export interface JoinWaitingRequest {
   message?: string;
+  isMercenary?: boolean;
 }
 
 export interface JoinWaitingResponse {
   id: number;
+  applicantName: string;
   teamId: number;
+  teamName: string;
   applicantId: number;
   status: string;
   decisionReason: string | null;
@@ -300,6 +319,7 @@ export interface ApiUserJoinWaitingItem {
   decisionReason: string | null;
   decidedBy: number | null;
   decidedAt: string | null;
+  isMercenary: boolean;
 }
 
 export interface UserJoinWaitingItem {
@@ -312,6 +332,7 @@ export interface UserJoinWaitingItem {
   decisionReason: string | null;
   decidedBy: number | null;
   decidedAt: string | null;
+  isMercenary: boolean;
 }
 
 export interface ApiUserJoinWaitingPageResponse {
@@ -340,4 +361,14 @@ export interface UserJoinWaitingPageResponse {
   numberOfElements: number;
   sort: Sort;
   empty: boolean;
+}
+
+export interface TeamReviewRequest {
+  matchId: number;
+  reviewerTeamId: number;
+  reviewedTeamId: number;
+  rating: number;
+  punctualityReview: 'GOOD' | 'BAD';
+  sportsmanshipReview: 'GOOD' | 'BAD';
+  skillLevelReview: 'LOWER' | 'SIMILAR' | 'HIGHER';
 }

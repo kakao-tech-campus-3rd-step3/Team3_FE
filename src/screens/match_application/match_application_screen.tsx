@@ -1,5 +1,5 @@
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -10,19 +10,12 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import { ROUTES } from '@/src/constants/routes';
-import { useUserProfile } from '@/src/hooks/queries';
-import { useMatchRequest } from '@/src/hooks/useMatchRequest';
-import { useMatchWaitingList } from '@/src/hooks/useMatchWaitingList';
-import type {
-  MatchWaitingListRequestDto,
-  MatchRequestRequestDto,
-} from '@/src/types/match';
+import { useUserProfile, useMatchWaitingList } from '@/src/hooks/queries';
+import FilterCard from '@/src/screens/match_application/components/filter_card';
+import MatchCard from '@/src/screens/match_application/components/match_card';
+import { styles } from '@/src/screens/match_application/match_application_style';
+import type { MatchWaitingListRequestDto } from '@/src/types/match';
 import { formatDateForAPI, formatTimeForAPI } from '@/src/utils/date';
-
-import FilterCard from './components/filter_card';
-import MatchCard from './components/match_card';
-import { styles } from './match_application_style';
 
 interface MatchApplicationScreenProps {
   teamId?: number;
@@ -40,6 +33,7 @@ export default function MatchApplicationScreen({
   const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [requestedIds] = useState<number[]>([]);
 
   const { data: userProfile, error: profileError, refetch } = useUserProfile();
 
@@ -56,7 +50,6 @@ export default function MatchApplicationScreen({
     error,
     refetch: refetchData,
   } = useMatchWaitingList(params);
-  const { mutate: requestMatch, isPending } = useMatchRequest();
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -64,57 +57,29 @@ export default function MatchApplicationScreen({
     setRefreshing(false);
   };
 
-  const handlePressRequest = async (waitingId: number) => {
-    await refetch();
-
-    const rawTeamId = userProfile?.teamId;
-
-    if (!rawTeamId) {
+  const handlePressRequest = (waitingId: number, targetTeamId: number) => {
+    if (!userProfile?.teamId) {
       Alert.alert('알림', '팀 정보가 없습니다. 팀을 먼저 생성해주세요.');
       return;
     }
 
-    const numericTeamId = Number(rawTeamId);
-
-    if (isNaN(numericTeamId) || numericTeamId <= 0) {
-      Alert.alert('알림', '유효하지 않는 팀 ID입니다.');
-      return;
-    }
-
-    const payload: MatchRequestRequestDto = {
-      requestMessage: `${userProfile.name}(${numericTeamId}) 팀이 매치 요청`,
-    };
-
-    requestMatch(
-      { waitingId, payload },
-      {
-        onSuccess: res => {
-          Alert.alert(
-            '신청 완료',
-            `매치 요청이 전송되었습니다.\n상태: ${res.status}`,
-            [
-              {
-                text: '확인',
-                style: 'default',
-                onPress: () => router.push(ROUTES.HOME),
-              },
-            ]
-          );
-        },
-        onError: () => {
-          Alert.alert('오류', '매치 요청 중 문제가 발생했습니다.');
-        },
-      }
+    router.push(
+      `/match_application/create_lineup?waitingId=${waitingId}&targetTeamId=${targetTeamId}`
     );
   };
 
-  const renderMatchCard = ({ item }: { item: any }) => (
-    <MatchCard
-      match={item}
-      onPressRequest={() => handlePressRequest(item.waitingId)}
-      disabled={isPending}
-    />
-  );
+  const renderMatchCard = ({ item }: { item: any }) => {
+    const hasRequested = requestedIds.includes(item.waitingId);
+
+    return (
+      <MatchCard
+        match={item}
+        onPressRequest={() => handlePressRequest(item.waitingId, item.teamId)}
+        disabled={false}
+        hasRequested={hasRequested}
+      />
+    );
+  };
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>

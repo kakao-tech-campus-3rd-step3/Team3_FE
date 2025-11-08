@@ -1,7 +1,6 @@
-import React from 'react';
 import { Text, View } from 'react-native';
 
-import { BadgeStyles } from './badge_style';
+import { BadgeStyles } from '@/src/screens/profile/components/badge/badge_style';
 
 interface BadgeProps {
   text: string;
@@ -17,11 +16,11 @@ interface BadgeProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-export const Badge = ({
+export default function Badge({
   text,
   variant = 'primary',
   size = 'medium',
-}: BadgeProps) => {
+}: BadgeProps) {
   const getSizeStyle = () => {
     switch (size) {
       case 'small':
@@ -70,4 +69,4 @@ export const Badge = ({
       <Text style={getTextStyle()}>{text}</Text>
     </View>
   );
-};
+}

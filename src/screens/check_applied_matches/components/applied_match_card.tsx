@@ -1,8 +1,11 @@
-import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
+import InfoRow from '@/src/components/ui/info_row';
+import StatusBadge from '@/src/components/ui/status_badge';
 import { theme } from '@/src/theme';
 import type { MatchWaitingHistoryResponseDto } from '@/src/types/match';
+import { toBasicStatus } from '@/src/utils/status_labels';
+import { convertUTCToKSTTime, convertUTCToKSTDate } from '@/src/utils/timezone';
 
 interface AppliedMatchCardProps {
   match: MatchWaitingHistoryResponseDto;
@@ -27,22 +30,10 @@ export default function AppliedMatchCard({
 
   const requestTeam = getName(match.requestTeamName);
   const targetTeam = getName(match.targetTeamName);
-  const date = match.requestAt?.split('T')[0] || '';
-  const time = match.requestAt?.split('T')[1]?.slice(0, 5) || '';
-  const status = match.status || 'PENDING';
+  const date = match.requestAt ? convertUTCToKSTDate(match.requestAt) : '';
+  const time = match.requestAt ? convertUTCToKSTTime(match.requestAt) : '';
 
-  const getStatusColor = () => {
-    switch (status.toUpperCase()) {
-      case 'APPROVED':
-        return theme.colors.green[600];
-      case 'REJECTED':
-        return theme.colors.red[600];
-      case 'CANCELED':
-        return theme.colors.gray[600];
-      default:
-        return theme.colors.yellow[600];
-    }
-  };
+  const status = toBasicStatus(match.status || 'PENDING');
 
   return (
     <TouchableOpacity
@@ -55,40 +46,29 @@ export default function AppliedMatchCard({
     >
       <View style={styles.header}>
         <Text style={styles.teamTitle}>{`${requestTeam} → ${targetTeam}`}</Text>
-        <View
-          style={[
-            styles.statusBadge,
-            {
-              borderColor: getStatusColor(),
-              backgroundColor: getStatusColor() + '20',
-            },
-          ]}
-        >
-          <Text style={[styles.statusText, { color: getStatusColor() }]}>
-            {status === 'PENDING'
-              ? '대기 중'
-              : status === 'APPROVED'
-                ? '수락됨'
-                : status === 'REJECTED'
-                  ? '거절됨'
-                  : '취소됨'}
-          </Text>
-        </View>
+        <StatusBadge status={status} />
       </View>
 
       <View style={styles.body}>
-        <View style={styles.row}>
-          <Text style={styles.label}>요청 일자</Text>
-          <Text style={styles.value}>{date}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>요청 시간</Text>
-          <Text style={styles.value}>{time}</Text>
-        </View>
-        <View style={[styles.row, { marginTop: 6 }]}>
-          <Text style={styles.label}>요청 메시지</Text>
-          <Text style={styles.message}>{match.requestMessage}</Text>
-        </View>
+        <InfoRow
+          label="요청 일자"
+          value={date}
+          labelStyle={styles.label}
+          valueStyle={styles.value}
+        />
+        <InfoRow
+          label="요청 시간"
+          value={time}
+          labelStyle={styles.label}
+          valueStyle={styles.value}
+        />
+        <InfoRow
+          label="요청 메시지"
+          value={match.requestMessage}
+          containerStyle={{ marginTop: 6 }}
+          labelStyle={styles.label}
+          valueStyle={styles.message}
+        />
       </View>
 
       {status === 'PENDING' && onCancel && (
@@ -131,23 +111,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: theme.colors.gray[900],
   },
-  statusBadge: {
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
   body: {
     marginTop: 4,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 2,
   },
   label: {
     fontSize: 13,

@@ -1,7 +1,6 @@
-import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-import { styles } from './connect_button_styles';
+import { styles } from '@/src/components/team/filters/connect_button_styles';
 
 interface ConnectButtonProps {
   selectedUniversity: string;

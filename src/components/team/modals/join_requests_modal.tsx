@@ -10,17 +10,21 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { styles } from '@/src/components/team/modals/join_requests_modal_styles';
+import InfoRow from '@/src/components/ui/info_row';
+import StatusBadge from '@/src/components/ui/status_badge';
+import { convertPositionToKorean } from '@/src/constants/positions';
+import { useUserProfileById } from '@/src/hooks/queries';
 import { colors } from '@/src/theme';
 import type { TeamJoinRequest } from '@/src/types/team';
-import { getJoinRequestStatusDisplayName } from '@/src/utils/team';
-
-import { styles } from './join_requests_modal_styles';
+import { getSkillLevelInKorean } from '@/src/utils/team';
 
 interface JoinRequestsModalProps {
   visible: boolean;
   joinRequests: TeamJoinRequest[];
   onClose: () => void;
   onJoinRequest: (requestId: number, status: 'approved' | 'rejected') => void;
+  processingRequestId?: number | null;
 }
 
 export default function JoinRequestsModal({
@@ -28,8 +32,8 @@ export default function JoinRequestsModal({
   joinRequests,
   onClose,
   onJoinRequest,
+  processingRequestId = null,
 }: JoinRequestsModalProps) {
-  // 모달 뒤로가기 버튼 활성화
   useEffect(() => {
     const backAction = () => {
       if (visible) {
@@ -78,113 +82,134 @@ export default function JoinRequestsModal({
           ) : (
             <View style={styles.requestsList}>
               {joinRequests.map(request => (
-                <View key={request.id} style={styles.requestCard}>
-                  <View style={styles.requestHeader}>
-                    <View style={styles.applicantInfo}>
-                      <Text style={styles.applicantName}>
-                        {request.applicantName ||
-                          `사용자 ${request.applicantId}`}
-                      </Text>
-                    </View>
-                    <View style={styles.requestStatus}>
-                      <View
-                        style={[
-                          styles.statusBadge,
-                          request.status === 'PENDING' && styles.statusPending,
-                          request.status === 'APPROVED' &&
-                            styles.statusApproved,
-                          request.status === 'REJECTED' &&
-                            styles.statusRejected,
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.statusText,
-                            request.status === 'PENDING' &&
-                              styles.statusTextPending,
-                            request.status === 'APPROVED' &&
-                              styles.statusTextApproved,
-                            request.status === 'REJECTED' &&
-                              styles.statusTextRejected,
-                          ]}
-                        >
-                          {getJoinRequestStatusDisplayName(request.status)}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <View style={styles.requestDetails}>
-                    {request.decisionReason && (
-                      <View style={styles.requestDetailRow}>
-                        <Text style={styles.requestDetailLabel}>
-                          결정 사유:
-                        </Text>
-                        <Text style={styles.requestDetailValue}>
-                          {request.decisionReason}
-                        </Text>
-                      </View>
-                    )}
-                    {request.decidedBy && (
-                      <View style={styles.requestDetailRow}>
-                        <Text style={styles.requestDetailLabel}>결정자:</Text>
-                        <Text style={styles.requestDetailValue}>
-                          {request.decidedBy}
-                        </Text>
-                      </View>
-                    )}
-                    {request.decidedAt && (
-                      <View style={styles.requestDetailRow}>
-                        <Text style={styles.requestDetailLabel}>결정일:</Text>
-                        <Text style={styles.requestDetailValue}>
-                          {new Date(request.decidedAt).toLocaleDateString(
-                            'ko-KR'
-                          )}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-
-                  {request.status === 'PENDING' && (
-                    <View style={styles.requestActions}>
-                      <TouchableOpacity
-                        style={styles.approveButton}
-                        onPress={() => onJoinRequest(request.id, 'approved')}
-                      >
-                        <Ionicons
-                          name="checkmark"
-                          size={16}
-                          color={colors.white}
-                        />
-                        <Text
-                          style={styles.approveButtonText}
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                        >
-                          승인
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.rejectButton}
-                        onPress={() => onJoinRequest(request.id, 'rejected')}
-                      >
-                        <Ionicons name="close" size={16} color={colors.white} />
-                        <Text
-                          style={styles.rejectButtonText}
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                        >
-                          거절
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
+                <JoinRequestCard
+                  key={request.id}
+                  request={request}
+                  onJoinRequest={onJoinRequest}
+                  isProcessing={processingRequestId === request.id}
+                />
               ))}
             </View>
           )}
         </ScrollView>
       </SafeAreaView>
     </Modal>
+  );
+}
+
+function JoinRequestCard({
+  request,
+  onJoinRequest,
+  isProcessing = false,
+}: {
+  request: TeamJoinRequest;
+  onJoinRequest: (requestId: number, status: 'approved' | 'rejected') => void;
+  isProcessing?: boolean;
+}) {
+  const { data: profile } = useUserProfileById(request.applicantId);
+
+  const detailRows = profile
+    ? [
+        { label: '이메일:', value: profile.email },
+        { label: '카카오톡:', value: profile.kakaoTalkId },
+        { label: '포지션:', value: convertPositionToKorean(profile.position) },
+        { label: '실력:', value: getSkillLevelInKorean(profile.skillLevel) },
+        { label: '대학:', value: profile.university },
+      ].filter(row => !!row.value)
+    : [];
+
+  return (
+    <View style={styles.requestCard}>
+      <View style={styles.requestHeader}>
+        <View style={styles.applicantInfo}>
+          <View style={styles.applicantNameRow}>
+            <Text style={styles.applicantName}>
+              {profile?.name ||
+                request.applicantName ||
+                `사용자 ${request.applicantId}`}
+            </Text>
+            {request.isMercenary && (
+              <View style={styles.mercenaryBadge}>
+                <Text style={styles.mercenaryBadgeText}>용병</Text>
+              </View>
+            )}
+          </View>
+        </View>
+        <View style={styles.requestStatus}>
+          <StatusBadge status={request.status} />
+        </View>
+      </View>
+
+      <View style={styles.requestDetails}>
+        {[
+          request.message && {
+            label: '가입 메시지:',
+            value: request.message,
+          },
+          ...detailRows,
+          request.decisionReason && {
+            label: '결정 사유:',
+            value: request.decisionReason,
+          },
+          request.decidedBy && {
+            label: '결정자:',
+            value: String(request.decidedBy),
+          },
+          request.decidedAt && {
+            label: '결정일:',
+            value: new Date(request.decidedAt).toLocaleDateString('ko-KR'),
+          },
+        ]
+          .filter((row): row is { label: string; value: string } =>
+            Boolean(row)
+          )
+          .map(row => (
+            <InfoRow
+              key={`${row.label}${row.value}`}
+              label={row.label}
+              value={row.value}
+              containerStyle={styles.requestDetailRow}
+              labelStyle={styles.requestDetailLabel}
+              valueStyle={styles.requestDetailValue}
+            />
+          ))}
+      </View>
+
+      {request.status === 'PENDING' && (
+        <View style={styles.requestActions}>
+          <TouchableOpacity
+            style={[
+              styles.approveButton,
+              isProcessing && styles.buttonDisabled,
+            ]}
+            onPress={() => onJoinRequest(request.id, 'approved')}
+            disabled={isProcessing}
+          >
+            <Ionicons name="checkmark" size={16} color={colors.white} />
+            <Text
+              style={styles.approveButtonText}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {isProcessing ? '처리 중...' : '승인'}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.rejectButton, isProcessing && styles.buttonDisabled]}
+            onPress={() => onJoinRequest(request.id, 'rejected')}
+            disabled={isProcessing}
+          >
+            <Ionicons name="close" size={16} color={colors.white} />
+            <Text
+              style={styles.rejectButtonText}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {isProcessing ? '처리 중...' : '거절'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
   );
 }

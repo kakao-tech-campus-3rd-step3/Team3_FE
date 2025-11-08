@@ -2,11 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
+import { styles } from '@/src/components/team/sections/member_list_section_styles';
 import { theme } from '@/src/theme';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
 import { getRoleDisplayName } from '@/src/utils/team';
-
-import { styles } from './member_list_section_styles';
 
 interface MemberListSectionProps {
   teamMembers: TeamMember[];
@@ -33,6 +32,8 @@ export default memo(function MemberListSection({
         return theme.colors.blue[600];
       case 'MEMBER':
         return theme.colors.green[600];
+      case 'MERCENARY':
+        return theme.colors.grass[600];
       default:
         return theme.colors.gray[500];
     }
@@ -75,16 +76,11 @@ export default memo(function MemberListSection({
                 </View>
                 <Text style={styles.memberEmail}>{member.email || ''}</Text>
                 <Text style={styles.memberUniversity}>{member.position}</Text>
-                <Text style={styles.joinDate}>
-                  가입일:{' '}
-                  {new Date(member.joinedAt).toLocaleDateString('ko-KR')}
-                </Text>
               </View>
             </View>
 
             {currentUserMember && (
               <View style={styles.memberActions}>
-                {/* 회장만 보이는 리더십 위임 버튼 */}
                 {currentUserMember.role === 'LEADER' &&
                   member.role !== 'LEADER' && (
                     <TouchableOpacity
@@ -104,7 +100,6 @@ export default memo(function MemberListSection({
                     </TouchableOpacity>
                   )}
 
-                {/* 역할 변경 버튼 */}
                 {member.role !== 'LEADER' &&
                   (currentUserMember.role === 'LEADER' ||
                     (currentUserMember.role === 'VICE_LEADER' &&
@@ -128,7 +123,6 @@ export default memo(function MemberListSection({
                     </TouchableOpacity>
                   )}
 
-                {/* 강퇴 버튼 */}
                 {member.role !== 'LEADER' &&
                   (currentUserMember.role === 'LEADER' ||
                     (currentUserMember.role === 'VICE_LEADER' &&

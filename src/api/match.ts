@@ -5,6 +5,7 @@ import {
   MATCH_WAITING_API,
 } from '@/src/constants/endpoints';
 import { apiClient } from '@/src/lib/api_client';
+import { FormatError, TeamMemberError } from '@/src/lib/errors';
 import {
   Match,
   MatchCreateRequestDto,
@@ -128,8 +129,7 @@ export async function getMatchWaitingList(
   try {
     const response = await apiClient.get<PageResponse>(url);
     return response.content || [];
-  } catch (error) {
-    console.error('🌐 [API] getMatchWaitingList 에러:', error);
+  } catch (error: any) {
     throw error;
   }
 }
@@ -156,7 +156,6 @@ export async function getMyCreatedMatches(): Promise<
 
     return response.content || [];
   } catch (error) {
-    console.error('getMyCreatedMatches API 에러:', error);
     throw error;
   }
 }
@@ -172,18 +171,39 @@ export async function getMyAppliedMatches(): Promise<
   MatchWaitingHistoryResponseDto[]
 > {
   try {
-    const response = await apiClient.get<{
-      content: MatchWaitingHistoryResponseDto[];
-      empty: boolean;
-      totalElements: number;
-      totalPages: number;
-      first: boolean;
-      last: boolean;
-    }>(MATCH_REQUEST_API.GET_MY_APPLIED_MATCHES);
+    const response = await apiClient.get<
+      | MatchWaitingHistoryResponseDto[]
+      | {
+          content: MatchWaitingHistoryResponseDto[];
+          empty?: boolean;
+          totalElements?: number;
+          totalPages?: number;
+          first?: boolean;
+          last?: boolean;
+        }
+    >(MATCH_REQUEST_API.GET_MY_APPLIED_MATCHES);
 
-    return response.content || [];
+    try {
+      if (response && typeof response === 'object' && 'content' in response) {
+        return response.content || [];
+      }
+
+      return Array.isArray(response) ? response : [];
+    } catch (error) {
+      if (error instanceof TypeError) {
+        throw new FormatError(
+          '매치 신청 내역 응답 데이터 형식이 올바르지 않습니다.'
+        );
+      }
+      throw error;
+    }
   } catch (error) {
-    console.error('getMyAppliedMatches API 에러:', error);
+    if (error instanceof FormatError) {
+      return [];
+    }
+    if (error instanceof TeamMemberError) {
+      return [];
+    }
     throw error;
   }
 }
@@ -196,7 +216,6 @@ export async function cancelMatchRequestById(
     const response = await apiClient.delete<MatchRequestResponseDto>(url);
     return response;
   } catch (error) {
-    console.error('cancelMatchRequestById API 에러:', error);
     throw error;
   }
 }

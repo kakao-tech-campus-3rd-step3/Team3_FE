@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -28,7 +28,12 @@ interface Props {
   handleNext: () => void;
 }
 
-export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
+export default function ProfileInfo({
+  data,
+  onChange,
+  handlePrev,
+  handleNext,
+}: Props) {
   const { width } = useWindowDimensions();
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const { errors, validateField } = useRegisterValidation(
@@ -47,10 +52,11 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
       borderColor: theme.colors.border.input,
       borderRadius: Math.max(8, width * 0.02),
       paddingHorizontal: Math.max(16, width * 0.04),
-      paddingVertical: Math.max(12, width * 0.03),
       fontSize: Math.max(14, width * 0.04),
       color: theme.colors.text.main,
       backgroundColor: theme.colors.background.input,
+      textAlignVertical: 'center',
+      minHeight: 50,
     },
     errorText: {
       color: theme.colors.red[500],
@@ -122,6 +128,7 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
               onChangeText={text => handleFieldChange('name', text)}
               onFocus={() => setFocusedField('name')}
               onBlur={() => setFocusedField(null)}
+              multiline={false}
             />
             {errors.name && (
               <Text style={dynamicStyles.errorText}>{errors.name}</Text>
@@ -137,11 +144,14 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
                   styles.inputFilled,
                 errors.kakaoTalkId && styles.inputError,
               ]}
-              placeholder="예: mykakao_id (영문, 숫자, ., _, - 사용)"
+              placeholder="카카오톡 아이디를 입력해주세요"
               value={data.kakaoTalkId}
               onChangeText={text => handleFieldChange('kakaoTalkId', text)}
               onFocus={() => setFocusedField('kakaoTalkId')}
               onBlur={() => setFocusedField(null)}
+              autoCapitalize="none"
+              autoCorrect={false}
+              multiline={false}
             />
             {errors.kakaoTalkId && (
               <Text style={dynamicStyles.errorText}>{errors.kakaoTalkId}</Text>
@@ -164,6 +174,7 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
               maxLength={2}
               onFocus={() => setFocusedField('studentYear')}
               onBlur={() => setFocusedField(null)}
+              multiline={false}
             />
             {errors.studentYear && (
               <Text style={dynamicStyles.errorText}>{errors.studentYear}</Text>
@@ -184,6 +195,7 @@ export function ProfileInfo({ data, onChange, handlePrev, handleNext }: Props) {
               onChangeText={text => handleFieldChange('department', text)}
               onFocus={() => setFocusedField('department')}
               onBlur={() => setFocusedField(null)}
+              multiline={false}
             />
             {errors.department && (
               <Text style={dynamicStyles.errorText}>{errors.department}</Text>
@@ -214,44 +226,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background.main,
   },
-  scrollView: {
-    flex: 1,
-  },
+  scrollView: { flex: 1 },
   scrollContent: {
     paddingHorizontal: theme.spacing.spacing2,
     paddingBottom: theme.spacing.spacing20,
     minHeight: '100%',
   },
-  inputGroup: {
-    marginBottom: theme.spacing.spacing6,
-  },
-  label: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing2,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.colors.border.input,
-    borderRadius: 8,
-    paddingHorizontal: theme.spacing.spacing4,
-    paddingVertical: theme.spacing.spacing3,
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.main,
-    backgroundColor: theme.colors.background.input,
-  },
-  inputFilled: {
-    borderColor: theme.colors.brand.main,
-  },
-  inputError: {
-    borderColor: theme.colors.red[500],
-  },
-  errorText: {
-    color: theme.colors.red[500],
-    fontSize: theme.typography.fontSize.font3,
-    marginTop: theme.spacing.spacing2,
-  },
+  inputGroup: { marginBottom: theme.spacing.spacing6 },
+  inputFilled: { borderColor: theme.colors.brand.main },
+  inputError: { borderColor: theme.colors.red[500] },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -269,11 +252,6 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.spacing4,
     alignItems: 'center',
   },
-  prevButtonText: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.sub,
-  },
   nextButton: {
     flex: 1,
     backgroundColor: theme.colors.brand.main,
@@ -281,12 +259,5 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.spacing4,
     alignItems: 'center',
   },
-  nextButtonDisabled: {
-    backgroundColor: theme.colors.gray[400],
-  },
-  nextButtonText: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.white,
-  },
+  nextButtonDisabled: { backgroundColor: theme.colors.gray[400] },
 });

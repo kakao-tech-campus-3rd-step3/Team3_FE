@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,13 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import { useMyJoinWaitingList } from '@/src/hooks/useTeamJoinRequest';
+import { getTeamManagementUrl } from '@/src/constants/routes';
+import { useMyJoinWaitingList } from '@/src/hooks/queries';
+import CancelModal from '@/src/screens/team/guide/components/join_waiting_list/cancel_modal';
+import { styles } from '@/src/screens/team/guide/components/join_waiting_list/styles';
 import { colors } from '@/src/theme';
 import type { UserJoinWaitingItem } from '@/src/types/team';
 import { getUserJoinWaitingStatusDisplayName } from '@/src/utils/team';
-
-import CancelModal from './cancel_modal';
-import { styles } from './styles';
 
 interface JoinWaitingListProps {
   onClose: () => void;
@@ -31,7 +31,7 @@ export default function JoinWaitingList({ onClose }: JoinWaitingListProps) {
   const { data, isLoading, error, refetch } = useMyJoinWaitingList(page, 10);
 
   const handleViewTeam = (teamId: number) => {
-    router.push(`/team/management/${teamId}`);
+    router.push(getTeamManagementUrl(teamId));
     onClose();
   };
 
@@ -62,7 +62,6 @@ export default function JoinWaitingList({ onClose }: JoinWaitingListProps) {
 
     return (
       <View style={styles.joinWaitingItem}>
-        {/* 헤더 섹션 */}
         <View style={styles.cardHeader}>
           <View style={styles.teamInfoSection}>
             <View style={styles.teamIconContainer}>
@@ -84,7 +83,6 @@ export default function JoinWaitingList({ onClose }: JoinWaitingListProps) {
           </View>
         </View>
 
-        {/* 신청자 정보 섹션 */}
         <View style={styles.applicantSection}>
           <View style={styles.applicantHeader}>
             <Ionicons
@@ -104,7 +102,6 @@ export default function JoinWaitingList({ onClose }: JoinWaitingListProps) {
           </View>
         </View>
 
-        {/* 상태별 메시지 */}
         <View style={styles.statusMessageSection}>
           <View
             style={[styles.statusMessage, getStatusMessageStyle(item.status)]}
@@ -125,7 +122,6 @@ export default function JoinWaitingList({ onClose }: JoinWaitingListProps) {
           </View>
         </View>
 
-        {/* 액션 버튼 */}
         {item.status === 'APPROVED' && (
           <View style={styles.actionSection}>
             <TouchableOpacity

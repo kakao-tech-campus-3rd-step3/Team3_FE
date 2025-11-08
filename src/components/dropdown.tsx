@@ -19,7 +19,7 @@ interface DropdownProps<T> {
   placeholder?: string;
 }
 
-export function Dropdown<T extends string | number>({
+export default function Dropdown<T extends string | number>({
   items,
   value,
   onChange,
@@ -34,7 +34,6 @@ export function Dropdown<T extends string | number>({
 
   return (
     <View>
-      {/* Dropdown 버튼 */}
       <TouchableOpacity
         style={styles.dropdownButton}
         onPress={() => setIsOpen(true)}
@@ -106,6 +105,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+    width: '100%',
   },
   dropdownText: {
     fontSize: theme.typography.fontSize.font4,

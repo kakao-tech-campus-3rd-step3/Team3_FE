@@ -1,19 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
+import { styles } from '@/src/components/team/sections/manage_section_styles';
+import {
+  getTeamManagementEditUrl,
+  getTeamManagementMembersUrl,
+  getTeamManagementMatchRequestsUrl,
+} from '@/src/constants/routes';
 import { colors } from '@/src/theme';
 import type { TeamJoinRequest } from '@/src/types/team';
-
-import { styles } from './manage_section_styles';
 
 interface ManageSectionProps {
   teamId: string | number;
   joinRequests: TeamJoinRequest[];
   matchRequests?: any[]; // 매치 요청 타입은 추후 정의
   onShowJoinRequestsModal: () => void;
-  onShowMatchRequestsModal?: () => void;
   onDeleteTeam: () => void;
 }
 
@@ -22,7 +24,6 @@ export default function ManageSection({
   joinRequests,
   matchRequests = [],
   onShowJoinRequestsModal,
-  onShowMatchRequestsModal,
   onDeleteTeam,
 }: ManageSectionProps) {
   return (
@@ -57,38 +58,34 @@ export default function ManageSection({
           </Text>
         </TouchableOpacity>
 
-        {onShowMatchRequestsModal && (
-          <TouchableOpacity
-            style={styles.secondaryButton}
-            onPress={onShowMatchRequestsModal}
+        <TouchableOpacity
+          style={styles.secondaryButton}
+          onPress={() => router.push(getTeamManagementMatchRequestsUrl(teamId))}
+        >
+          <Ionicons
+            name="football-outline"
+            size={20}
+            color={colors.gray[700]}
+          />
+          <Text
+            style={styles.secondaryButtonText}
+            numberOfLines={1}
+            ellipsizeMode="tail"
           >
-            <Ionicons
-              name="football-outline"
-              size={20}
-              color={colors.gray[700]}
-            />
-            <Text
-              style={styles.secondaryButtonText}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              매치 요청 관리
-              {matchRequests.filter(req => req.status === 'PENDING').length >
-                0 && (
-                <Text style={styles.badgeText}>
-                  {' '}
-                  (
-                  {matchRequests.filter(req => req.status === 'PENDING').length}
-                  )
-                </Text>
-              )}
-            </Text>
-          </TouchableOpacity>
-        )}
+            매치 요청 관리
+            {matchRequests.filter(req => req.status === 'PENDING').length >
+              0 && (
+              <Text style={styles.badgeText}>
+                {' '}
+                ({matchRequests.filter(req => req.status === 'PENDING').length})
+              </Text>
+            )}
+          </Text>
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={() => router.push(`/team/management/${teamId}/edit`)}
+          onPress={() => router.push(getTeamManagementEditUrl(teamId))}
         >
           <Ionicons
             name="settings-outline"
@@ -106,7 +103,7 @@ export default function ManageSection({
 
         <TouchableOpacity
           style={styles.secondaryButton}
-          onPress={() => router.push(`/team/management/${teamId}/members`)}
+          onPress={() => router.push(getTeamManagementMembersUrl(teamId))}
         >
           <Ionicons name="people-outline" size={20} color={colors.gray[700]} />
           <Text

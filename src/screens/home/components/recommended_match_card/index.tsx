@@ -1,19 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 
-import { useUserProfile } from '@/src/hooks/queries';
-import { useRecommendedMatches } from '@/src/hooks/useRecommendedMatches';
+import { useUserProfile, useRecommendedMatches } from '@/src/hooks/queries';
+import { styles } from '@/src/screens/home/components/recommended_match_card/styles';
 import { theme } from '@/src/theme';
 import { RecommendedMatch } from '@/src/types/home';
-
-import { styles } from './styles';
 
 interface SafeMatchPreviewProps {
   onMatchPress?: (matchDate?: string) => void;
 }
 
-function SafeMatchPreview({ onMatchPress }: SafeMatchPreviewProps) {
+export default function SafeMatchPreview({
+  onMatchPress,
+}: SafeMatchPreviewProps) {
   const { data: userProfile } = useUserProfile();
   const { data: matches = [], isLoading } = useRecommendedMatches();
 
@@ -140,5 +139,3 @@ function SafeMatchPreview({ onMatchPress }: SafeMatchPreviewProps) {
     </View>
   );
 }
-
-export default SafeMatchPreview;

@@ -122,11 +122,30 @@ export const styles = StyleSheet.create({
   applicantInfo: {
     flex: 1,
   },
+  applicantNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.spacing2,
+    flexWrap: 'wrap',
+  },
   applicantName: {
     fontSize: typography.fontSize.font4,
     fontWeight: typography.fontWeight.semibold,
     color: colors.gray[900],
     marginBottom: 2,
+  },
+  mercenaryBadge: {
+    backgroundColor: colors.blue[100],
+    paddingHorizontal: spacing.spacing2,
+    paddingVertical: 2,
+    borderRadius: spacing.spacing2,
+    borderWidth: 1,
+    borderColor: colors.blue[300],
+  },
+  mercenaryBadgeText: {
+    fontSize: typography.fontSize.font2,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.blue[700],
   },
   applicantEmail: {
     fontSize: typography.fontSize.font3,
@@ -163,8 +182,8 @@ export const styles = StyleSheet.create({
     color: colors.red[600],
   },
   requestDetails: {
-    flexDirection: 'row',
-    gap: spacing.spacing4,
+    flexDirection: 'column',
+    gap: spacing.spacing2,
     marginBottom: spacing.spacing3,
   },
   requestDetailRow: {
@@ -223,6 +242,9 @@ export const styles = StyleSheet.create({
     fontSize: typography.fontSize.font3,
     fontWeight: typography.fontWeight.semibold,
     flexShrink: 1,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   requestDate: {
     fontSize: typography.fontSize.font2,

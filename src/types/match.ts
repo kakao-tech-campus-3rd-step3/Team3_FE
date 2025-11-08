@@ -32,8 +32,10 @@ export interface Match {
 
 export interface RecentMatchResponse {
   matchId: number;
-  team1Name: string;
-  team2Name: string;
+  createTeamId: number;
+  createTeamName: string;
+  requestTeamId: number;
+  requestTeamName: string;
   matchDate: string;
   matchTime: string;
   venueName: string;
@@ -60,8 +62,9 @@ export interface MatchWaitingResponseDto {
   skillLevelMax: 'AMATEUR' | 'SEMI_PRO' | 'PRO';
   universityOnly: boolean;
   message: string;
-  status: 'WAITING' | 'MATCHED' | 'CANCELLED' | 'COMPLETED';
+  status: 'WAITING' | 'MATCHED' | 'CANCELED' | 'EXPIRED';
   expiresAt: string;
+  lineup1Id: number;
 }
 
 export interface MatchCreateRequestDto {
@@ -74,6 +77,7 @@ export interface MatchCreateRequestDto {
   skillLevelMax: string;
   universityOnly: boolean;
   message: string;
+  lineupId: number;
 }
 
 export interface MatchCreateResponseDto {
@@ -84,6 +88,7 @@ export interface MatchCreateResponseDto {
 }
 export interface MatchRequestRequestDto {
   requestMessage: string;
+  lineupId: number;
 }
 
 export type MatchRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
@@ -98,8 +103,13 @@ export interface MatchRequestResponseDto {
   targetTeamName: {
     name: string;
   };
+  preferredDate?: string;
+  preferredTimeStart?: string;
+  preferredTimeEnd?: string;
+  venueName?: string;
   requestMessage: string;
   status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELED';
+  requestTeamLineupId?: number;
 }
 
 export interface MatchConfirmedResponseDto {
@@ -133,8 +143,8 @@ export interface MatchWaitingHistoryResponseDto {
   targetTeamId: number;
   targetTeamName: string | { name: string };
   requestMessage: string;
+  status: MatchRequestStatus;
   requestAt: string;
-  status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED';
 }
 
 export interface EnemyTeamResponseDto {

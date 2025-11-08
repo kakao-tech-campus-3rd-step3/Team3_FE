@@ -8,22 +8,51 @@ import axios, {
 
 import config from '@/src/config/environment';
 
-function extractErrorMessage(response: any): string {
-  const data = response?.data ?? response;
+import { TeamMemberError } from './errors';
 
-  if (data?.data && typeof data.data === 'object' && 'message' in data.data) {
+function extractErrorMessage(response: unknown): string {
+  const isAxiosResponse = (
+    obj: unknown
+  ): obj is { data?: unknown; statusText?: string } => {
+    return typeof obj === 'object' && obj !== null;
+  };
+
+  if (!isAxiosResponse(response)) {
+    return 'Unknown error';
+  }
+
+  const data = response.data ?? response;
+
+  if (
+    data &&
+    typeof data === 'object' &&
+    'data' in data &&
+    typeof data.data === 'object' &&
+    data.data !== null &&
+    'message' in data.data
+  ) {
     return String(data.data.message);
   }
 
-  if (typeof data?.message === 'string') {
+  if (
+    data &&
+    typeof data === 'object' &&
+    'message' in data &&
+    typeof data.message === 'string'
+  ) {
     return data.message;
   }
 
-  if (typeof data?.error === 'string') {
+  if (
+    data &&
+    typeof data === 'object' &&
+    'error' in data &&
+    typeof data.error === 'string'
+  ) {
     return data.error;
   }
 
-  if (typeof response?.statusText === 'string') {
+  if (typeof response.statusText === 'string') {
     return response.statusText;
   }
 
@@ -130,7 +159,29 @@ class ApiClient {
         const errorMessage = extractErrorMessage(error.response);
         const errorData = error.response.data || {};
 
-        throw new ApiError(errorMessage, error.response.status, errorData);
+        let detailedMessage = errorMessage;
+        if (errorData && typeof errorData === 'object') {
+          if ('message' in errorData && typeof errorData.message === 'string') {
+            detailedMessage = errorData.message;
+          } else if ('errors' in errorData && Array.isArray(errorData.errors)) {
+            detailedMessage = errorData.errors.join(', ');
+          }
+        }
+
+        const apiError = new ApiError(
+          detailedMessage || errorMessage,
+          error.response.status,
+          errorData
+        );
+
+        if (
+          apiError.message.includes('팀') &&
+          apiError.message.includes('멤버')
+        ) {
+          throw new TeamMemberError(apiError.message);
+        }
+
+        throw apiError;
       }
       throw error;
     }

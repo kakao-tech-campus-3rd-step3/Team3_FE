@@ -1,9 +1,12 @@
 import {
   TEAM_API,
+  TEAM_MATCH_API,
   TEAM_MEMBER_API,
   USER_JOIN_WAITING_API,
+  MATCH_WAITING_API,
 } from '@/src/constants/endpoints';
 import { apiClient } from '@/src/lib/api_client';
+import { FormatError } from '@/src/lib/errors';
 import type {
   CreateTeamRequest,
   CreateTeamResponse,
@@ -29,6 +32,7 @@ import type {
   JoinWaitingCancelRequest,
   ApiUserJoinWaitingPageResponse,
   UserJoinWaitingPageResponse,
+  TeamMemberSliceResponse,
 } from '@/src/types/team';
 import {
   transformTeamListPageResponse,
@@ -60,12 +64,14 @@ export const teamListApi = {
   getTeamsByUniversity: async (
     university: string,
     page: number = 0,
-    size: number = 10
+    size: number = 10,
+    includedDeleted: boolean = false
   ): Promise<TeamListPageResponse> => {
     const params = new URLSearchParams({
       university: university,
       page: page.toString(),
       size: size.toString(),
+      includedDeleted: includedDeleted.toString(),
     });
     const apiResponse = await apiClient.get<ApiTeamListPageResponse>(
       `${TEAM_API.GET_TEAMS_BY_UNIVERSITY}?${params.toString()}`
@@ -92,7 +98,42 @@ export const teamMemberApi = {
     const apiResponse = await apiClient.get<ApiTeamMemberPageResponse>(
       TEAM_MEMBER_API.GET_MEMBERS(teamId, page, size)
     );
-    return transformTeamMemberPageResponse(apiResponse);
+
+    const transformed = transformTeamMemberPageResponse(apiResponse);
+
+    return transformed;
+  },
+
+  getTeamMembersSlice: async (
+    teamId: string | number,
+    cursorId?: number,
+    size: number = 10
+  ): Promise<TeamMemberSliceResponse> => {
+    try {
+      const apiResponse = await apiClient.get<ApiTeamMemberPageResponse>(
+        TEAM_MEMBER_API.GET_MEMBERS_SLICE(teamId, cursorId, size)
+      );
+
+      const members = apiResponse.content ?? [];
+      const hasNext = apiResponse.last === false;
+
+      try {
+        return {
+          members: members.map(transformTeamMemberItem),
+          hasNext,
+        };
+      } catch (error) {
+        if (error instanceof TypeError) {
+          throw new FormatError('팀 멤버 데이터 형식이 올바르지 않습니다.');
+        }
+        throw error;
+      }
+    } catch (error) {
+      if (error instanceof FormatError) {
+        return { members: [], hasNext: false };
+      }
+      return { members: [], hasNext: false };
+    }
   },
 
   getTeamMember: async (
@@ -183,12 +224,14 @@ export const teamJoinRequestApi = {
   getTeamJoinWaitingList: async (
     teamId: string | number,
     status: string = 'PENDING',
+    isMercenary: boolean = false,
     page: number = 0,
     size: number = 10,
-    sort: string = 'createdAt,desc'
+    sort: string = 'audit.createdAt,desc'
   ): Promise<TeamJoinRequestPageResponse> => {
     const params = new URLSearchParams({
       status,
+      isMercenary: isMercenary.toString(),
       page: page.toString(),
       size: size.toString(),
       sort,
@@ -253,26 +296,24 @@ export const teamDeleteApi = {
     try {
       let matchRequests = null;
       try {
-        matchRequests = await apiClient.get('/api/matches/receive/me/pending');
-      } catch (error) {
-        console.log('[팀 삭제 API] 매치 요청 조회 실패:', error);
-      }
+        matchRequests = await apiClient.get(
+          TEAM_MATCH_API.GET_TEAM_MATCH_REQUESTS()
+        );
+      } catch {}
 
       let recentMatches = null;
       try {
-        recentMatches = await apiClient.get('/api/teams/me/matches');
-      } catch (error) {
-        console.log('[팀 삭제 API] 최근 매치 조회 실패:', error);
-      }
+        recentMatches = await apiClient.get(
+          TEAM_MATCH_API.GET_TEAM_RECENT_MATCHES()
+        );
+      } catch {}
 
       let matchWaiting = null;
       try {
         matchWaiting = await apiClient.get(
-          `/api/matches/waiting?teamId=${teamId}`
+          MATCH_WAITING_API.GET_WAITING_LIST_BY_TEAM(teamId)
         );
-      } catch (error) {
-        console.log('[팀 삭제 API] 매치 대기 목록 조회 실패:', error);
-      }
+      } catch {}
 
       const result = {
         matchRequests,
@@ -295,10 +336,11 @@ export const userJoinWaitingApi = {
   getMyJoinWaitingList: async (
     page: number = 0,
     size: number = 10,
-    sort: string = 'createdAt,desc'
+    sort: string = 'audit.createdAt,desc',
+    isMercenary: boolean = false
   ): Promise<UserJoinWaitingPageResponse> => {
     const apiResponse = await apiClient.get<ApiUserJoinWaitingPageResponse>(
-      USER_JOIN_WAITING_API.GET_MY_JOIN_WAITING(page, size, sort)
+      USER_JOIN_WAITING_API.GET_MY_JOIN_WAITING(page, size, sort, isMercenary)
     );
     return transformUserJoinWaitingPageResponse(apiResponse);
   },

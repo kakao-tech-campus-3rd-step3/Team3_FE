@@ -2,9 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { View, Text } from 'react-native';
 
+import { styles } from '@/src/components/team/cards/member_info_card_styles';
 import { theme } from '@/src/theme';
-
-import { styles } from './member_info_card_styles';
 
 export default memo(function MemberInfoCard() {
   return (

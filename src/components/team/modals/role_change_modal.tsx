@@ -2,10 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { View, Text, TouchableOpacity, Modal } from 'react-native';
 
+import { styles } from '@/src/components/team/modals/role_change_modal_styles';
 import { theme } from '@/src/theme';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
-
-import { styles } from './role_change_modal_styles';
 
 interface RoleChangeModalProps {
   visible: boolean;

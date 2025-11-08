@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { theme } from '@/src/theme';
 
-export default StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     minHeight: '100%',
@@ -66,6 +66,9 @@ export default StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: theme.colors.text.main,
+    flex: 1,
+    flexShrink: 1,
+    minWidth: 0,
   },
   profileUniversity: {
     fontSize: 16,

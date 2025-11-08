@@ -2,11 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { View, Text } from 'react-native';
 
+import { styles } from '@/src/components/team/cards/team_reviews_section_styles';
 import { colors } from '@/src/theme';
 import type { TeamReview } from '@/src/types/review';
 import { ReviewType } from '@/src/types/review';
-
-import { styles } from './team_reviews_section_styles';
 
 interface TeamReviewsSectionProps {
   teamReviews: TeamReview[] | undefined;

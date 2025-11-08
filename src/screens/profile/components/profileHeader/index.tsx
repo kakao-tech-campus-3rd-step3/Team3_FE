@@ -1,15 +1,25 @@
 import { Ionicons } from '@expo/vector-icons';
-import { memo } from 'react';
-import { View, Text } from 'react-native';
+import { memo, useMemo } from 'react';
+import { View, Text, Dimensions } from 'react-native';
 
-import { Badge } from '@/src/screens/profile/components/badge/badge';
+import Badge from '@/src/screens/profile/components/badge/badge';
+import { styles } from '@/src/screens/profile/profile_style';
 import { theme } from '@/src/theme';
 import { UserProfile } from '@/src/types/profile';
 import { formatDate } from '@/src/utils/date';
 
-import styles from '../../profile_style';
-
 export default memo(function ProfileHeader({ user }: { user: UserProfile }) {
+  const screenWidth = Dimensions.get('window').width;
+
+  const { nameFontSize, minFontSize } = useMemo(() => {
+    if (screenWidth < 360) {
+      return { nameFontSize: 16, minFontSize: 12 };
+    } else if (screenWidth < 400) {
+      return { nameFontSize: 18, minFontSize: 14 };
+    }
+    return { nameFontSize: 20, minFontSize: 16 };
+  }, [screenWidth]);
+
   const getSkillLevelBadge = (skillLevel: string) => {
     switch (skillLevel) {
       case 'PRO':
@@ -32,7 +42,14 @@ export default memo(function ProfileHeader({ user }: { user: UserProfile }) {
       </View>
       <View style={styles.profileInfo}>
         <View style={[styles.nameContainer]}>
-          <Text style={styles.profileName}>{user.name}</Text>
+          <Text
+            style={[styles.profileName, { fontSize: nameFontSize }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit={true}
+            minimumFontScale={minFontSize / nameFontSize}
+          >
+            {user.name}
+          </Text>
           <Badge
             text={skillBadge.text}
             variant={skillBadge.variant}

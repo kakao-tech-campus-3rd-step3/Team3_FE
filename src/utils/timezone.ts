@@ -31,6 +31,40 @@ export const convertUTCToKSTTime = (utcDateTimeString: string): string => {
   return `${String(kstHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 };
 
+export const convertUTCToKSTDate = (utcDateTimeString: string): string => {
+  if (!utcDateTimeString) return '';
+
+  try {
+    let datePart = '';
+    let timeString = '';
+
+    if (utcDateTimeString.includes('T')) {
+      const parts = utcDateTimeString.split('T');
+      datePart = parts[0];
+      timeString = parts[1].replace('Z', '').split('.')[0];
+    } else {
+      return utcDateTimeString.split('T')[0] || '';
+    }
+
+    const [hours] = timeString.split(':').map(Number);
+
+    let kstHours = hours + 9;
+    let date = new Date(datePart);
+
+    if (kstHours >= 24) {
+      kstHours -= 24;
+      date.setDate(date.getDate() + 1);
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  } catch {
+    return utcDateTimeString.split('T')[0] || '';
+  }
+};
+
 export const formatDateForAPI = (date: Date): string => {
   const kstDate = toZonedTime(date, KST_TIMEZONE);
   return format(kstDate, 'yyyy-MM-dd');

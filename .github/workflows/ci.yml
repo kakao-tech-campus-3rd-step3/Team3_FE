@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, production]
   pull_request:
-    branches: [main, develop]
+    branches: [main, develop, production]
     types: [opened, synchronize, reopened]
 
 jobs:
@@ -53,8 +53,8 @@ jobs:
     needs: quality-check
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
+      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production')) ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && (github.event.pull_request.base.ref == 'main' || github.event.pull_request.base.ref == 'production'))
 
     steps:
       - name: 코드 체크아웃
@@ -74,10 +74,10 @@ jobs:
 
       - name: EAS Build 실행
         run: |
-          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            # 메인 브랜치: 프로덕션 빌드
+          if [ "${{ github.ref }}" == "refs/heads/main" ] || [ "${{ github.ref }}" == "refs/heads/production" ]; then
+            # 메인 브랜치 또는 프로덕션 브랜치: 프로덕션 빌드
             eas build --platform android --profile production --non-interactive
-            echo "🚀 프로덕션 빌드 완료 (main 브랜치)"
+            echo "🚀 프로덕션 빌드 완료 (${{ github.ref }} 브랜치)"
           else
             # PR 머지: 프리뷰 빌드
             eas build --platform android --profile preview --non-interactive

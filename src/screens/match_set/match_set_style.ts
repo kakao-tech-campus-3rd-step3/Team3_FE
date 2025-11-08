@@ -3,71 +3,251 @@ import { StyleSheet } from 'react-native';
 import { theme } from '@/src/theme';
 
 export const styles = StyleSheet.create({
-  // 전체 컨테이너
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.main, // '#f9fafb'
-    padding: theme.spacing.spacing4, // 16px
+    backgroundColor: theme.colors.gray[50],
   },
-
-  // 콘텐츠 정렬 영역
-  content: {
+  scrollContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  scrollContent: {
     paddingHorizontal: theme.spacing.spacing4,
+    paddingBottom: theme.spacing.spacing20,
   },
 
-  // 상단 성공 메시지
-  successText: {
-    fontSize: theme.typography.fontSize.font5, // 18px
-    fontWeight: theme.typography.fontWeight.bold, // 700
-    color: theme.colors.green[600], // '#16a34a'
-    marginBottom: theme.spacing.spacing6, // 24px
+  successSection: {
+    alignItems: 'center',
+    paddingVertical: theme.spacing.spacing6,
+    marginBottom: theme.spacing.spacing6,
+  },
+  successIconWrapper: {
+    marginBottom: theme.spacing.spacing5,
+  },
+  successIconBackground: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: theme.colors.green[50],
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: theme.colors.green[200],
+  },
+  successIconContainer: {
+    marginBottom: theme.spacing.spacing4,
+  },
+  successTitle: {
+    fontSize: theme.typography.fontSize.font8,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.gray[900],
+    marginBottom: theme.spacing.spacing2,
+    textAlign: 'center',
+  },
+  successSubtitle: {
+    fontSize: theme.typography.fontSize.font4,
+    color: theme.colors.gray[600],
+    textAlign: 'center',
+    lineHeight: theme.typography.lineHeight.line6,
+    marginBottom: theme.spacing.spacing1,
+  },
+  successSubtitle2: {
+    fontSize: theme.typography.fontSize.font4,
+    color: theme.colors.gray[700],
+    textAlign: 'center',
+    fontWeight: theme.typography.fontWeight.medium,
+    marginTop: theme.spacing.spacing2,
   },
 
-  // 정보 박스
-  infoBox: {
-    backgroundColor: theme.colors.white, // '#ffffff'
-    padding: theme.spacing.spacing4, // 16px
-    borderRadius: theme.spacing.spacing3, // 12px
-    borderWidth: 1,
-    borderColor: theme.colors.gray[200], // '#e5e7eb'
-    width: '100%',
-  },
-
-  // 정보 텍스트
-  infoText: {
-    fontSize: theme.typography.fontSize.font4, // 16px
-    color: theme.colors.text.main, // '#111827'
-    marginBottom: theme.spacing.spacing2, // 8px
-  },
-
-  // 하단 고정 바
-  bottomBar: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    padding: theme.spacing.spacing4, // 16px
+  matchInfoCard: {
     backgroundColor: theme.colors.white,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.gray[200],
+    borderRadius: theme.spacing.spacing4,
+    padding: theme.spacing.spacing5,
+    marginBottom: theme.spacing.spacing5,
+    shadowColor: theme.colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: theme.colors.gray[100],
+  },
+  teamInfoCard: {
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.spacing.spacing4,
+    padding: theme.spacing.spacing5,
+    marginBottom: theme.spacing.spacing5,
+    shadowColor: theme.colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: theme.colors.gray[100],
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.spacing5,
+    gap: theme.spacing.spacing2,
+  },
+  cardHeaderIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: theme.colors.blue[50],
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardTitle: {
+    fontSize: theme.typography.fontSize.font5,
+    fontWeight: theme.typography.fontWeight.semibold,
+    color: theme.colors.gray[900],
+  },
+  infoGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.spacing3,
+  },
+  infoCard: {
+    flex: 1,
+    minWidth: '30%',
+    backgroundColor: theme.colors.gray[50],
+    borderRadius: theme.spacing.spacing3,
+    padding: theme.spacing.spacing4,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.gray[100],
+  },
+  infoIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: theme.spacing.spacing2,
+  },
+  infoIconBlue: {
+    backgroundColor: theme.colors.blue[50],
+  },
+  infoIconPurple: {
+    backgroundColor: theme.colors.purple[50],
+  },
+  infoIconGreen: {
+    backgroundColor: theme.colors.green[50],
+  },
+  infoList: {
+    gap: theme.spacing.spacing4,
+  },
+  infoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.spacing3,
+  },
+  infoContent: {
+    flex: 1,
+  },
+  infoLabel: {
+    fontSize: theme.typography.fontSize.font2,
+    color: theme.colors.gray[600],
+    fontWeight: theme.typography.fontWeight.medium,
+    marginBottom: theme.spacing.spacing1,
+    textAlign: 'center',
+  },
+  infoValue: {
+    fontSize: theme.typography.fontSize.font3,
+    color: theme.colors.gray[900],
+    fontWeight: theme.typography.fontWeight.semibold,
+    textAlign: 'center',
+  },
+  teamInfoList: {
+    gap: theme.spacing.spacing3,
+  },
+  teamInfoRow: {
+    flexDirection: 'row',
+    gap: theme.spacing.spacing3,
+  },
+  teamInfoItem: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.gray[50],
+    borderRadius: theme.spacing.spacing3,
+    padding: theme.spacing.spacing3,
+    gap: theme.spacing.spacing2,
+    borderWidth: 1,
+    borderColor: theme.colors.gray[100],
+  },
+  teamInfoIconWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: theme.colors.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.gray[200],
+  },
+  teamInfoContent: {
+    flex: 1,
+  },
+  teamInfoLabel: {
+    fontSize: theme.typography.fontSize.font2,
+    color: theme.colors.gray[500],
+    fontWeight: theme.typography.fontWeight.medium,
+    marginBottom: theme.spacing.spacing1 / 2,
+  },
+  teamInfoValue: {
+    fontSize: theme.typography.fontSize.font3,
+    color: theme.colors.gray[900],
+    fontWeight: theme.typography.fontWeight.semibold,
+  },
+  descriptionSection: {
+    marginTop: theme.spacing.spacing2,
+    padding: theme.spacing.spacing4,
+    backgroundColor: theme.colors.gray[50],
+    borderRadius: theme.spacing.spacing3,
+    borderWidth: 1,
+    borderColor: theme.colors.gray[100],
+  },
+  descriptionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.spacing2,
+    marginBottom: theme.spacing.spacing2,
+  },
+  descriptionLabel: {
+    fontSize: theme.typography.fontSize.font3,
+    fontWeight: theme.typography.fontWeight.semibold,
+    color: theme.colors.gray[700],
+  },
+  descriptionText: {
+    fontSize: theme.typography.fontSize.font3,
+    color: theme.colors.gray[700],
+    lineHeight: theme.typography.lineHeight.line5,
   },
 
-  // 홈 버튼
+  buttonContainer: {
+    paddingHorizontal: theme.spacing.spacing4,
+    paddingVertical: theme.spacing.spacing4,
+    marginBottom: theme.spacing.spacing5,
+  },
   homeButton: {
-    height: theme.spacing.spacing12, // 48px
-    borderRadius: theme.spacing.spacing3, // 12px
-    backgroundColor: theme.colors.blue[600], // '#2563eb'
+    height: 56,
+    borderRadius: theme.spacing.spacing3,
+    backgroundColor: theme.colors.blue[600],
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: theme.spacing.spacing2,
+    shadowColor: theme.colors.blue[600],
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
-
-  // 홈 버튼 텍스트
   homeButtonText: {
     color: theme.colors.white,
-    fontSize: theme.typography.fontSize.font4, // 16px
-    fontWeight: theme.typography.fontWeight.bold, // 700
+    fontSize: theme.typography.fontSize.font4,
+    fontWeight: theme.typography.fontWeight.semibold,
   },
 });

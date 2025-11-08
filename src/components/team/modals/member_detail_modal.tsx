@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
 import {
   View,
   Text,
@@ -11,7 +10,6 @@ import {
 
 import { useTeamMember } from '@/src/hooks/queries';
 import { colors, spacing, typography } from '@/src/theme';
-import { formatDate } from '@/src/utils/date';
 import { getRoleDisplayName } from '@/src/utils/team';
 
 interface MemberDetailModalProps {
@@ -118,20 +116,6 @@ export default function MemberDetailModal({
                     <View style={styles.infoContent}>
                       <Text style={styles.infoLabel}>포지션</Text>
                       <Text style={styles.infoValue}>{member.position}</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.infoItem}>
-                    <Ionicons
-                      name="calendar-outline"
-                      size={20}
-                      color={colors.gray[500]}
-                    />
-                    <View style={styles.infoContent}>
-                      <Text style={styles.infoLabel}>가입일</Text>
-                      <Text style={styles.infoValue}>
-                        {formatDate(member.joinedAt)}
-                      </Text>
                     </View>
                   </View>
                 </View>

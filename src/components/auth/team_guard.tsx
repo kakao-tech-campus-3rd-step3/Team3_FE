@@ -11,7 +11,10 @@ interface TeamGuardProps {
   fallbackMessage?: string;
 }
 
-export function TeamGuard({ children, fallbackMessage }: TeamGuardProps) {
+export default function TeamGuard({
+  children,
+  fallbackMessage,
+}: TeamGuardProps) {
   const router = useRouter();
   const { token } = useAuth();
   const isAuthenticated = !!token;
@@ -38,7 +41,7 @@ export function TeamGuard({ children, fallbackMessage }: TeamGuardProps) {
           {
             text: '취소',
             style: 'cancel',
-            onPress: () => router.replace('/(tabs)'),
+            onPress: () => router.replace(ROUTES.TABS),
           },
         ]
       );
@@ -110,7 +113,7 @@ export function TeamGuard({ children, fallbackMessage }: TeamGuardProps) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => router.replace('/(tabs)')}
+            onPress={() => router.replace(ROUTES.TABS)}
             style={{
               paddingHorizontal: 24,
               paddingVertical: 12,

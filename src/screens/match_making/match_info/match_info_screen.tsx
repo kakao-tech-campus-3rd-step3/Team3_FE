@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -15,24 +15,27 @@ import {
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ModalDatePicker } from '@/src/components/ui/modal_date_picker';
 import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
-import { useUserProfile } from '@/src/hooks/queries';
-import { useCreateMatch } from '@/src/hooks/useCreateMatch';
-import { useVenues } from '@/src/hooks/useVenues';
-import Message from '@/src/screens/match_making/match_info/component/message/message';
-import SkillLevelSelector from '@/src/screens/match_making/match_info/component/skill_level_selector/skill_level_selector';
+import { ROUTES } from '@/src/constants/routes';
+import {
+  useUserProfile,
+  useVenues,
+  useCreateMatchMutation,
+} from '@/src/hooks/queries';
+import Message from '@/src/screens/match_making/match_info/components/message/message';
+import SkillLevelSelector from '@/src/screens/match_making/match_info/components/skill_level_selector/skill_level_selector';
+import { style } from '@/src/screens/match_making/match_info/match_info_style';
 import { MatchCreateRequestDto } from '@/src/types/match';
 import type { Venue } from '@/src/types/venue';
-import { formatKoreanDate, formatDateForAPI } from '@/src/utils/date';
+import { formatDateForAPI } from '@/src/utils/date';
 import { convertKSTToUTCTime } from '@/src/utils/timezone';
-
-import { style } from './match_info_style';
 
 type SkillLevel = 'AMATEUR' | 'SEMI_PRO' | 'PRO';
 
 export default function MatchInfoScreen() {
   const router = useRouter();
+  const { lineupId } = useLocalSearchParams<{ lineupId?: string }>();
   const { data: userProfile, refetch } = useUserProfile();
-  const { mutate: createMatch, isPending } = useCreateMatch();
+  const { mutate: createMatch, isPending } = useCreateMatchMutation();
   const { data: venues, isLoading, error } = useVenues();
 
   const [stadiumModalVisible, setStadiumModalVisible] = useState(false);
@@ -83,9 +86,15 @@ export default function MatchInfoScreen() {
     }
 
     const numericTeamId = Number(rawTeamId);
+    const numericLineupId = lineupId ? Number(lineupId) : undefined;
 
     if (isNaN(numericTeamId) || numericTeamId <= 0) {
       Alert.alert('안내', '유효하지 않은 팀 ID입니다. 다시 시도해주세요.');
+      return;
+    }
+
+    if (!numericLineupId || isNaN(numericLineupId)) {
+      Alert.alert('안내', '유효한 라인업 ID가 없습니다. 다시 시도해주세요.');
       return;
     }
 
@@ -99,6 +108,7 @@ export default function MatchInfoScreen() {
       skillLevelMax: skillMax,
       universityOnly,
       message,
+      lineupId: numericLineupId,
     };
 
     createMatch(payload, {
@@ -106,7 +116,9 @@ export default function MatchInfoScreen() {
         setSuccessModalVisible(true);
       },
       onError: err => {
-        Alert.alert('매치 생성 실패', err.message ?? '다시 시도해주세요.');
+        const errorMessage =
+          err instanceof Error ? err.message : '다시 시도해주세요.';
+        Alert.alert('매치 생성 실패', errorMessage);
       },
     });
   };
@@ -337,13 +349,14 @@ export default function MatchInfoScreen() {
         title="종료 시간 선택"
       />
 
+      {/* ✅ 매치 등록 성공 모달 */}
       <Modal visible={successModalVisible} transparent animationType="fade">
         <TouchableOpacity
           style={style.successModalOverlay}
           activeOpacity={1}
           onPress={() => {
             setSuccessModalVisible(false);
-            router.replace('/');
+            router.replace(ROUTES.HOME);
           }}
         >
           <TouchableOpacity
@@ -351,49 +364,18 @@ export default function MatchInfoScreen() {
             activeOpacity={1}
             onPress={e => e.stopPropagation()}
           >
-            <Text style={style.successTitle}>매치 등록 완료!</Text>
+            <Text style={style.successTitle}>매치 등록 완료 🎉</Text>
             <Text style={style.successMessage}>
               매치가 성공적으로 등록되었습니다.{'\n'}
-              상대방을 기다려주세요.
+              상대 팀을 기다려주세요!
             </Text>
 
-            <View style={style.successInfoContainer}>
-              {selectedStadium && (
-                <Text style={style.successInfoText}>
-                  📍 {selectedStadium.venueName}
-                </Text>
-              )}
-
-              <Text style={style.successInfoText}>
-                🗓 {formatKoreanDate(date)}
-              </Text>
-
-              <Text style={style.successInfoText}>
-                ⏰{' '}
-                {timeStart.toLocaleTimeString('ko-KR', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: false,
-                })}{' '}
-                ~{' '}
-                {timeEnd.toLocaleTimeString('ko-KR', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: false,
-                })}
-              </Text>
-
-              <Text style={style.successInfoText}>
-                💪 {skillMin} ~ {skillMax}
-              </Text>
-            </View>
-
             <TouchableOpacity
-              style={style.successButton}
               onPress={() => {
                 setSuccessModalVisible(false);
-                router.replace('/');
+                router.replace(ROUTES.HOME);
               }}
+              style={style.successButton}
             >
               <Text style={style.successButtonText}>홈으로 돌아가기</Text>
             </TouchableOpacity>

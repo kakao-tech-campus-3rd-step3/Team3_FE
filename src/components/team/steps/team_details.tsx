@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
 import {
   View,
   Text,
@@ -10,10 +9,9 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
+import { styles } from '@/src/components/team/steps/team_details_styles';
 import { colors } from '@/src/theme';
 import { SkillLevel, SKILL_LEVELS } from '@/src/types/team';
-
-import { styles } from './team_details_styles';
 
 interface TeamDetailsProps {
   skillLevel: SkillLevel;

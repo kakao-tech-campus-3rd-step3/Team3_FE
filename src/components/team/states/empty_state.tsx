@@ -2,9 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
+import { styles } from '@/src/components/team/states/empty_state_styles';
 import { colors } from '@/src/theme';
-
-import { styles } from './empty_state_styles';
 
 interface EmptyStateProps {
   icon: string;

@@ -1,8 +1,7 @@
 import { router } from 'expo-router';
-import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-import { styles } from './action_section_styles';
+import { styles } from '@/src/components/team/sections/action_section_styles';
 
 interface ActionSectionProps {
   onSave: () => void;

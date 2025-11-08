@@ -1,7 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
-import React from 'react';
 
-import { TeamGuard } from '@/src/components/auth/team_guard';
+import TeamGuard from '@/src/components/auth/team_guard';
 import MatchApplicationScreen from '@/src/screens/match_application/match_application_screen';
 
 export default function MatchApplicationRoute() {

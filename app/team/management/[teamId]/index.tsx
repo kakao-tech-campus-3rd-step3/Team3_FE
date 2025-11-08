@@ -1,5 +1,4 @@
 import { useLocalSearchParams } from 'expo-router';
-import React from 'react';
 
 import TeamManagementScreen from '@/src/screens/team/management/team_management_screen';
 

@@ -1,5 +1,5 @@
 import { useLocalSearchParams, router } from 'expo-router';
-import React, { useState, useMemo } from 'react';
+import { useState } from 'react';
 import {
   View,
   FlatList,
@@ -12,46 +12,30 @@ import {
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
+import { ROUTES } from '@/src/constants/routes';
 import {
   useTeamsByUniversityInfinite,
   useUserProfile,
+  useTeamJoinRequestMutation,
 } from '@/src/hooks/queries';
-import { useTeamJoinRequest } from '@/src/hooks/useTeamJoinRequest';
+import JoinConfirmationModal from '@/src/screens/team/join/components/join_confirmation_modal';
+import TeamCard from '@/src/screens/team/join/components/team_card';
+import TeamListHeader from '@/src/screens/team/join/components/team_list_header';
+import { styles } from '@/src/screens/team/join/university_team_list_style';
 import { theme } from '@/src/theme';
 import type { TeamListItem } from '@/src/types';
-import { SkillLevel, TeamType } from '@/src/types/team';
-
-import FilterModal from './components/filter_modal';
-import JoinConfirmationModal from './components/join_confirmation_modal';
-import TeamCard from './components/team_card';
-import TeamListHeader from './components/team_list_header';
-import { styles } from './university_team_list_style';
-
-interface FilterOptions {
-  skillLevel: SkillLevel[];
-  teamType: TeamType[];
-  maxMemberCount: number;
-}
 
 export default function UniversityTeamListScreen() {
   const { university } = useLocalSearchParams<{ university: string }>();
   const { data: userProfile } = useUserProfile();
 
-  // 사용자의 대학 정보를 사용하여 팀 목록 조회
   const userUniversity = userProfile?.university || university;
 
-  const [showFilterModal, setShowFilterModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<TeamListItem | null>(null);
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
-    skillLevel: [],
-    teamType: [],
-    maxMemberCount: 50,
-  });
-  const slideAnim = useState(new Animated.Value(0))[0];
   const joinModalAnim = useState(new Animated.Value(0))[0];
 
-  const { joinWaiting } = useTeamJoinRequest();
+  const { joinWaiting } = useTeamJoinRequestMutation();
 
   const {
     data,
@@ -62,55 +46,7 @@ export default function UniversityTeamListScreen() {
     refetch,
   } = useTeamsByUniversityInfinite(userUniversity || '', 10);
 
-  const filteredTeams = useMemo(() => {
-    const allTeams = data?.pages.flatMap((page: any) => page.content) ?? [];
-    let filtered = [...allTeams];
-
-    if (filterOptions.skillLevel.length > 0) {
-      filtered = filtered.filter(team =>
-        filterOptions.skillLevel.includes(team.skillLevel)
-      );
-    }
-
-    if (filterOptions.teamType.length > 0) {
-      filtered = filtered.filter(team =>
-        filterOptions.teamType.includes(team.teamType)
-      );
-    }
-
-    filtered = filtered.filter(
-      team => team.memberCount <= filterOptions.maxMemberCount
-    );
-
-    return filtered;
-  }, [data?.pages, filterOptions]);
-
-  const openFilterModal = () => {
-    setShowFilterModal(true);
-    Animated.timing(slideAnim, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const closeFilterModal = () => {
-    Animated.timing(slideAnim, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      setShowFilterModal(false);
-    });
-  };
-
-  const resetFilters = () => {
-    setFilterOptions({
-      skillLevel: [],
-      teamType: [],
-      maxMemberCount: 50,
-    });
-  };
+  const allTeams = data?.pages.flatMap((page: any) => page.content) ?? [];
 
   const loadMoreTeams = () => {
     if (hasNextPage && !loading) {
@@ -119,7 +55,7 @@ export default function UniversityTeamListScreen() {
   };
 
   const handleJoinTeam = (teamId: number) => {
-    const team = filteredTeams.find(t => t.id === teamId);
+    const team = allTeams.find(t => t.id === teamId);
     if (team) {
       setSelectedTeam(team);
       setShowJoinModal(true);
@@ -154,7 +90,7 @@ export default function UniversityTeamListScreen() {
               {
                 text: '확인',
                 onPress: () => {
-                  router.push('/(tabs)');
+                  router.push(ROUTES.TABS);
                 },
               },
             ]
@@ -185,24 +121,6 @@ export default function UniversityTeamListScreen() {
     <TeamCard team={item} onJoin={handleJoinTeam} />
   );
 
-  const toggleSkillLevel = (level: SkillLevel) => {
-    setFilterOptions(prev => ({
-      ...prev,
-      skillLevel: prev.skillLevel.includes(level)
-        ? prev.skillLevel.filter(l => l !== level)
-        : [...prev.skillLevel, level],
-    }));
-  };
-
-  const toggleTeamType = (type: TeamType) => {
-    setFilterOptions(prev => ({
-      ...prev,
-      teamType: prev.teamType.includes(type)
-        ? prev.teamType.filter(t => t !== type)
-        : [...prev.teamType, type],
-    }));
-  };
-
   if (loading && !data) {
     return (
       <View style={styles.loadingContainer}>
@@ -224,13 +142,10 @@ export default function UniversityTeamListScreen() {
 
       <CustomHeader title="팀 목록" showBackButton={true} />
 
-      <TeamListHeader
-        university={userUniversity || ''}
-        onFilterPress={openFilterModal}
-      />
+      <TeamListHeader university={userUniversity || ''} />
 
       <FlatList
-        data={filteredTeams}
+        data={allTeams}
         renderItem={renderTeamItem}
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.teamList}
@@ -248,23 +163,6 @@ export default function UniversityTeamListScreen() {
               <ActivityIndicator size="small" color={theme.colors.blue[500]} />
             </View>
           ) : null
-        }
-      />
-
-      <FilterModal
-        visible={showFilterModal}
-        filterOptions={filterOptions}
-        slideAnim={slideAnim}
-        onClose={closeFilterModal}
-        onApply={closeFilterModal}
-        onReset={resetFilters}
-        onToggleSkillLevel={toggleSkillLevel}
-        onToggleTeamType={toggleTeamType}
-        onMemberCountChange={value =>
-          setFilterOptions(prev => ({
-            ...prev,
-            maxMemberCount: value,
-          }))
         }
       />
 

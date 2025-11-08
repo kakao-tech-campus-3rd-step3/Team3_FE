@@ -1,8 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 import { theme } from '@/src/theme';
 
-export default StyleSheet.create({
+const { width: screenWidth } = Dimensions.get('window');
+
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background.sub,
@@ -46,7 +48,6 @@ export default StyleSheet.create({
     paddingBottom: theme.spacing.spacing1,
   },
 
-  // 새로운 섹션 스타일들
   mainSection: {
     marginHorizontal: theme.spacing.spacing4,
     marginBottom: theme.spacing.spacing6,
@@ -75,12 +76,6 @@ export default StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
-  greetingText: {
-    fontSize: theme.typography.fontSize.font4,
-    color: theme.colors.text.sub,
-    marginBottom: theme.spacing.spacing4,
-    fontWeight: theme.typography.fontWeight.medium,
-  },
   greetingSubtext: {
     fontSize: theme.typography.fontSize.font5,
     fontWeight: theme.typography.fontWeight.semibold,
@@ -89,25 +84,6 @@ export default StyleSheet.create({
   },
   highlightText: {
     color: theme.colors.grass[300],
-  },
-
-  activityStatsContainer: {
-    width: '100%',
-    backgroundColor: theme.colors.background.main,
-    borderRadius: theme.spacing.spacing3,
-    padding: theme.spacing.spacing4,
-    marginBottom: theme.spacing.spacing6,
-  },
-  statsHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.spacing4,
-  },
-  statsTitle: {
-    fontSize: theme.typography.fontSize.font5,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.main,
-    marginLeft: theme.spacing.spacing2,
   },
 
   matchStatusCard: {
@@ -161,39 +137,6 @@ export default StyleSheet.create({
     fontWeight: theme.typography.fontWeight.medium,
   },
 
-  envelopeSection: {
-    backgroundColor: theme.colors.background.main,
-    borderRadius: theme.spacing.spacing5,
-    padding: theme.spacing.spacing6,
-    shadowColor: theme.colors.gray[900],
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  envelopeHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  envelopeIcon: {
-    width: theme.spacing.spacing10,
-    height: theme.spacing.spacing10,
-    backgroundColor: theme.colors.blue[50],
-    borderRadius: theme.spacing.spacing5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: theme.spacing.spacing3,
-  },
-  envelopeTitle: {
-    fontSize: theme.typography.fontSize.font4,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.main,
-    flex: 1,
-  },
-
   benefitsSection: {
     backgroundColor: theme.colors.background.main,
     borderRadius: theme.spacing.spacing5,
@@ -222,17 +165,18 @@ export default StyleSheet.create({
   benefitsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: theme.spacing.spacing3,
+    gap: screenWidth < 375 ? theme.spacing.spacing2 : theme.spacing.spacing3,
   },
   benefitCard: {
     flex: 1,
-    padding: theme.spacing.spacing5,
+    padding:
+      screenWidth < 375 ? theme.spacing.spacing4 : theme.spacing.spacing5,
     borderRadius: theme.spacing.spacing4,
     alignItems: 'center',
     backgroundColor: theme.colors.background.sub,
     borderWidth: 1,
     borderColor: theme.colors.gray[200],
-    minHeight: 120,
+    minHeight: screenWidth < 375 ? 110 : 120,
     justifyContent: 'center',
   },
   benefitTitle: {
@@ -243,10 +187,15 @@ export default StyleSheet.create({
     marginBottom: theme.spacing.spacing1,
   },
   benefitSubtitle: {
-    fontSize: theme.typography.fontSize.font2,
+    fontSize:
+      screenWidth < 375
+        ? theme.typography.fontSize.font1
+        : theme.typography.fontSize.font2,
     color: theme.colors.text.sub,
     textAlign: 'center',
     marginBottom: theme.spacing.spacing2,
+    lineHeight: screenWidth < 375 ? 16 : 18,
+    flexShrink: 1,
   },
   benefitIcon: {
     fontSize: theme.typography.fontSize.font7,
@@ -254,73 +203,6 @@ export default StyleSheet.create({
   benefitIconContainer: {
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
-  },
-
-  statsCard: {
-    margin: 0,
-    marginTop: theme.spacing.spacing3,
-    marginBottom: theme.spacing.spacing4,
-    padding: theme.spacing.spacing2,
-    minHeight: theme.spacing.spacing15,
-    width: '100%',
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing.spacing3,
-    paddingHorizontal: theme.spacing.spacing2,
-  },
-  statItem: {
-    alignItems: 'center',
-    flex: 1,
-    paddingVertical: theme.spacing.spacing2,
-  },
-  statValue: {
-    fontSize: theme.typography.fontSize.font5,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.main,
-    marginBottom: theme.spacing.spacing2,
-  },
-  statLabel: {
-    fontSize: theme.typography.fontSize.font3,
-    color: theme.colors.text.sub,
-    fontWeight: theme.typography.fontWeight.medium,
-  },
-  additionalStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: theme.spacing.spacing5,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.gray[300],
-    paddingHorizontal: theme.spacing.spacing2,
-  },
-  additionalStatItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.spacing1,
-    paddingVertical: theme.spacing.spacing1,
-  },
-  additionalStatText: {
-    fontSize: theme.typography.fontSize.font1,
-    color: theme.colors.text.sub,
-    fontWeight: theme.typography.fontWeight.regular,
-  },
-  footballIcon: {
-    fontSize: theme.typography.fontSize.font4,
-    marginRight: theme.spacing.spacing1,
-  },
-  locationIcon: {
-    fontSize: theme.typography.fontSize.font4,
-    marginRight: theme.spacing.spacing1,
-  },
-
-  headerDivider: {
-    height: 1,
-    backgroundColor: theme.colors.gray[200],
-    marginTop: theme.spacing.spacing8,
-    marginBottom: theme.spacing.spacing6,
-    marginHorizontal: theme.spacing.spacing4,
-    borderRadius: theme.spacing.spacing1,
   },
 
   weatherSection: {

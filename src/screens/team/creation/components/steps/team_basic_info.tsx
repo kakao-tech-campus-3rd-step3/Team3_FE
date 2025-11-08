@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
 import {
   View,
   Text,
@@ -9,10 +8,9 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
+import { styles } from '@/src/screens/team/creation/team_creation_style';
 import { colors } from '@/src/theme';
 import { TeamType, TEAM_TYPES } from '@/src/types/team';
-
-import { styles } from '../../team_creation_style';
 
 interface TeamBasicInfoProps {
   teamName: string;

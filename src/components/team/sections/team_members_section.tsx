@@ -1,12 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import { memo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
+import { styles } from '@/src/components/team/sections/team_members_section_styles';
+import { TabGroup, TabList, Tab } from '@/src/components/ui/tab_selector';
 import { colors } from '@/src/theme';
 import type { TeamMember } from '@/src/types/team';
 import { getRoleDisplayName } from '@/src/utils/team';
-
-import { styles } from './team_members_section_styles';
 
 interface TeamMembersSectionProps {
   teamMembers: TeamMember[] | undefined;
@@ -14,12 +14,30 @@ interface TeamMembersSectionProps {
   onMemberPress?: (member: TeamMember) => void;
 }
 
+type MemberTab = 'all' | 'members' | 'mercenaries';
+
 export default memo(function TeamMembersSection({
   teamMembers,
   membersLoading,
   onMemberPress,
 }: TeamMembersSectionProps) {
-  const [showAllMembers, setShowAllMembers] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const tabs: MemberTab[] = ['all', 'members', 'mercenaries'];
+  const activeTab = tabs[selectedIndex];
+
+  const filteredMembers = useMemo(() => {
+    if (!Array.isArray(teamMembers)) return [];
+
+    switch (activeTab) {
+      case 'members':
+        return teamMembers.filter(m => m.role !== 'MERCENARY');
+      case 'mercenaries':
+        return teamMembers.filter(m => m.role === 'MERCENARY');
+      default:
+        return teamMembers;
+    }
+  }, [teamMembers, activeTab]);
 
   if (membersLoading) {
     return (
@@ -35,15 +53,15 @@ export default memo(function TeamMembersSection({
   return (
     <View style={styles.membersSection}>
       <Text style={styles.sectionTitle}>팀 멤버</Text>
+      <TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+        <TabList>
+          <Tab index={0}>전체</Tab>
+          <Tab index={1}>팀 멤버</Tab>
+          <Tab index={2}>용병</Tab>
+        </TabList>
+      </TabGroup>
       <View style={styles.memberList}>
-        {(showAllMembers
-          ? Array.isArray(teamMembers)
-            ? teamMembers
-            : []
-          : Array.isArray(teamMembers)
-            ? teamMembers.slice(0, 6)
-            : []
-        ).map(member => (
+        {filteredMembers.map(member => (
           <TouchableOpacity
             key={member.id}
             style={styles.memberCard}
@@ -69,34 +87,25 @@ export default memo(function TeamMembersSection({
                 <Text style={styles.memberBadgeText}>👑</Text>
               </View>
             )}
+            {member.role === 'MERCENARY' && (
+              <View style={styles.mercenaryBadge}>
+                <Text style={styles.mercenaryBadgeText}>용병</Text>
+              </View>
+            )}
           </TouchableOpacity>
         ))}
 
-        {(!Array.isArray(teamMembers) || teamMembers.length === 0) && (
+        {filteredMembers.length === 0 && (
           <View style={styles.emptyState}>
             <Text style={styles.emptyStateTitle}>멤버가 없습니다</Text>
             <Text style={styles.emptyStateText}>
-              아직 팀에 가입한 멤버가 없습니다.
+              {activeTab === 'members'
+                ? '팀 멤버가 없습니다.'
+                : activeTab === 'mercenaries'
+                  ? '용병이 없습니다.'
+                  : '아직 팀에 가입한 멤버가 없습니다.'}
             </Text>
           </View>
-        )}
-
-        {Array.isArray(teamMembers) && teamMembers.length > 6 && (
-          <TouchableOpacity
-            style={styles.showMoreButton}
-            onPress={() => setShowAllMembers(!showAllMembers)}
-          >
-            <Text style={styles.showMoreText}>
-              {showAllMembers
-                ? '간단히 보기'
-                : `전체 보기 (${Array.isArray(teamMembers) ? teamMembers.length : 0}명)`}
-            </Text>
-            <Ionicons
-              name={showAllMembers ? 'chevron-up' : 'chevron-down'}
-              size={16}
-              color={colors.gray[500]}
-            />
-          </TouchableOpacity>
         )}
       </View>
     </View>

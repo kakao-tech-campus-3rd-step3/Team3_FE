@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,14 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
-import { Dropdown } from '@/src/components/dropdown';
+import Dropdown from '@/src/components/dropdown';
+import {
+  POSITION_OPTIONS,
+  convertPositionToKorean,
+  convertKoreanToPosition,
+} from '@/src/constants/positions';
+import { styles } from '@/src/screens/profile/edit/profile_form_style';
 import { UserProfile, UpdateProfileRequest } from '@/src/types/profile';
-
-import { styles } from './profile_form_style';
 
 interface ProfileFormProps {
   initialData: UserProfile;
@@ -18,7 +22,7 @@ interface ProfileFormProps {
   isLoading: boolean;
 }
 
-export function ProfileForm({
+export default function ProfileForm({
   initialData,
   onSave,
   isLoading,
@@ -38,36 +42,6 @@ export function ProfileForm({
         return '프로';
       default:
         return level;
-    }
-  };
-
-  const convertPositionToKorean = (position: string) => {
-    switch (position) {
-      case 'GK':
-        return '골키퍼';
-      case 'DF':
-        return '수비수';
-      case 'MF':
-        return '미드필더';
-      case 'FW':
-        return '공격수';
-      default:
-        return position;
-    }
-  };
-
-  const convertKoreanToPosition = (korean: string) => {
-    switch (korean) {
-      case '골키퍼':
-        return '골키퍼';
-      case '수비수':
-        return '수비수';
-      case '미드필더':
-        return '미드필더';
-      case '공격수':
-        return '공격수';
-      default:
-        return korean;
     }
   };
 
@@ -168,7 +142,7 @@ export function ProfileForm({
       <View style={styles.inputGroup}>
         <Text style={styles.label}>포지션</Text>
         <Dropdown
-          items={['골키퍼', '수비수', '미드필더', '공격수'] as const}
+          items={POSITION_OPTIONS}
           value={formData.position || null}
           onChange={value => updateField('position', value)}
           placeholder="포지션을 선택하세요"

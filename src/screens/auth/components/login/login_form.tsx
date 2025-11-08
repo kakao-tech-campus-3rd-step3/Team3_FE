@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -11,11 +11,13 @@ import {
   Alert,
 } from 'react-native';
 
+import { ROUTES } from '@/src/constants/routes';
 import { useLoginMutation } from '@/src/hooks/queries';
 import { useLoginForm } from '@/src/hooks/useLoginForm';
 import { theme } from '@/src/theme';
+import { translateErrorMessage } from '@/src/utils/error_messages';
 
-function LoginForm() {
+export default function LoginForm() {
   const { formData, errors, updateField, validateForm } = useLoginForm();
   const loginMutation = useLoginMutation();
   const [showPassword, setShowPassword] = useState(false);
@@ -30,15 +32,23 @@ function LoginForm() {
     try {
       await loginMutation.mutateAsync(formData);
     } catch (error: unknown) {
-      const errorMessage = (error as Error).message || '로그인에 실패했습니다.';
+      const rawErrorMessage =
+        (error as Error).message || '로그인에 실패했습니다.';
+      const errorMessage = translateErrorMessage(rawErrorMessage, {
+        endpoint: '/api/auth/login',
+        method: 'POST',
+      });
 
       if (
         errorMessage.includes('비밀번호') ||
         errorMessage.includes('password') ||
         errorMessage.includes('인증') ||
-        errorMessage.includes('credentials')
+        errorMessage.includes('credentials') ||
+        errorMessage.includes('access') ||
+        rawErrorMessage.includes('FAIL_LOGIN') ||
+        rawErrorMessage.includes('로그인')
       ) {
-        setPasswordError('비밀번호가 올바르지 않습니다.');
+        setPasswordError('이메일 또는 비밀번호가 올바르지 않습니다.');
       } else {
         Alert.alert('로그인 실패', errorMessage);
       }
@@ -113,7 +123,7 @@ function LoginForm() {
 
       <TouchableOpacity
         style={styles.forgotPassword}
-        onPress={() => router.push('/(auth)/forgot_password')}
+        onPress={() => router.push(ROUTES.FORGOT_PASSWORD)}
       >
         <Text style={styles.forgotPasswordText}>비밀번호를 잊으셨나요?</Text>
       </TouchableOpacity>
@@ -135,8 +145,6 @@ function LoginForm() {
     </View>
   );
 }
-
-export default LoginForm;
 
 const styles = StyleSheet.create({
   container: {
@@ -175,7 +183,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     textAlignVertical: 'center',
     includeFontPadding: false,
-    height: theme.spacing.spacing6,
+    minHeight: 50,
     paddingTop: 0,
     paddingBottom: 0,
   },

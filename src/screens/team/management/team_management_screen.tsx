@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, ScrollView, RefreshControl, Alert } from 'react-native';
 
 import TeamInfoCard from '@/src/components/team/cards/team_info_card';
 import MemberDetailModal from '@/src/components/team/modals/member_detail_modal';
+import MatchManagementSection from '@/src/components/team/sections/match_management_section';
 import TeamMembersSection from '@/src/components/team/sections/team_members_section';
+import TeamReviewsSection from '@/src/components/team/sections/team_reviews_section';
 import EmptyState from '@/src/components/team/states/empty_state';
 import LoadingState from '@/src/components/team/states/loading_state';
 import { CustomHeader } from '@/src/components/ui/custom_header';
@@ -13,9 +15,9 @@ import {
   useUserProfile,
   useTeamExitMutation,
 } from '@/src/hooks/queries';
+import { styles } from '@/src/screens/team/management/team_management_styles';
 import type { TeamMember } from '@/src/types/team';
-
-import { styles } from './team_management_styles';
+import { ERROR_MESSAGES } from '@/src/utils/error_messages';
 
 interface TeamManagementScreenProps {
   teamId: string | number;
@@ -34,9 +36,8 @@ export default function TeamManagementScreen({
   const {
     data: teamMembersData,
     isLoading: membersLoading,
-    error: membersError,
     refetch: refetchMembers,
-  } = useTeamMembers(numericTeamId);
+  } = useTeamMembers(numericTeamId, 0, 100);
 
   if (!teamId || teamId === null || teamId === undefined) {
     return (
@@ -64,11 +65,11 @@ export default function TeamManagementScreen({
     );
   }
 
-  if (isLoading || membersLoading) {
+  if (isLoading) {
     return <LoadingState />;
   }
 
-  if (error || membersError) {
+  if (error) {
     return (
       <EmptyState
         icon="❌"
@@ -81,16 +82,7 @@ export default function TeamManagementScreen({
     );
   }
 
-  const currentUserName = userProfile?.name;
-  const teamMembers = teamMembersData?.content || [];
-  const currentUserMember = teamMembers.find(
-    member => member.name === currentUserName
-  );
-  const canManageTeam =
-    currentUserMember?.role === 'LEADER' ||
-    currentUserMember?.role === 'VICE_LEADER';
-
-  if (!team || !teamMembersData) {
+  if (!team) {
     return (
       <EmptyState
         icon="🔍"
@@ -100,6 +92,15 @@ export default function TeamManagementScreen({
       />
     );
   }
+
+  const currentUserName = userProfile?.name;
+  const teamMembers = teamMembersData?.content || [];
+  const currentUserMember = teamMembers.find(
+    member => member.name === currentUserName
+  );
+  const canManageTeam =
+    currentUserMember?.role === 'LEADER' ||
+    currentUserMember?.role === 'VICE_LEADER';
 
   const handleMemberPress = (member: TeamMember) => {
     setSelectedMember(member);
@@ -151,7 +152,7 @@ export default function TeamManagementScreen({
                   if (apiError.status === 403) {
                     errorMessage = '팀장은 팀에서 나갈 수 없습니다.';
                   } else if (apiError.status === 404) {
-                    errorMessage = '팀을 찾을 수 없습니다.';
+                    errorMessage = ERROR_MESSAGES.TEAM_NOT_FOUND;
                   } else if (apiError.status === 400) {
                     errorMessage = '마지막 남은 팀원은 나갈 수 없습니다.';
                   } else if (apiError.message) {
@@ -176,7 +177,7 @@ export default function TeamManagementScreen({
         style={styles.scrollContainer}
         refreshControl={
           <RefreshControl
-            refreshing={isLoading || membersLoading}
+            refreshing={isLoading || (membersLoading && !teamMembersData)}
             onRefresh={() => {
               refetch();
               refetchMembers();
@@ -191,19 +192,23 @@ export default function TeamManagementScreen({
             onExitTeam={handleExitTeam}
             isTeamLeader={currentUserMember?.role === 'LEADER'}
           />
+          <MatchManagementSection teamId={numericTeamId} />
+          <TeamReviewsSection teamId={numericTeamId} />
           <TeamMembersSection
             teamMembers={teamMembers.sort((a, b) => {
-              // 역할 우선순위: 회장(1) > 부회장(2) > 일반멤버(3)
-              const roleOrder = { LEADER: 1, VICE_LEADER: 2, MEMBER: 3 };
-              const aOrder = roleOrder[a.role] || 3;
-              const bOrder = roleOrder[b.role] || 3;
+              const roleOrder = {
+                LEADER: 1,
+                VICE_LEADER: 2,
+                MEMBER: 3,
+                MERCENARY: 4,
+              };
+              const aOrder = roleOrder[a.role] || 4;
+              const bOrder = roleOrder[b.role] || 4;
 
-              // 역할이 다르면 역할 순서로 정렬
               if (aOrder !== bOrder) {
                 return aOrder - bOrder;
               }
 
-              // 같은 역할이면 이름순으로 정렬
               return a.name.localeCompare(b.name);
             })}
             membersLoading={membersLoading}

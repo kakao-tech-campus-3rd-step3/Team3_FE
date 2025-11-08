@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,9 +10,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import LoginForm from '../components/login/login_form';
-
-import styles from './login_style';
+import LoginForm from '@/src/screens/auth/components/login/login_form';
+import { styles } from '@/src/screens/auth/login/login_style';
 
 interface LoginScreenProps {
   onSwitchToRegister: () => void;

@@ -1,18 +1,13 @@
 import { router } from 'expo-router';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
-import { acceptMatchRequestApi, rejectMatchRequestApi } from '@/src/api/match';
-import { teamJoinRequestApi } from '@/src/api/team';
 import JoinRequestsModal from '@/src/components/team/modals/join_requests_modal';
-import MatchRequestsModal, {
-  type MatchRequest,
-} from '@/src/components/team/modals/match_requests_modal';
 import ManageSection from '@/src/components/team/sections/manage_section';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { LoadingState } from '@/src/components/ui/loading_state';
-import { ROUTES } from '@/src/constants/routes';
+import { ROUTES, getTeamManagementUrl } from '@/src/constants/routes';
 import {
   useTeamJoinWaitingList,
   useTeamMembers,
@@ -20,10 +15,17 @@ import {
   useDeleteTeamMutation,
   useTeam,
   useTeamMatchRequests,
+  useApproveJoinRequestMutation,
+  useRejectJoinRequestMutation,
 } from '@/src/hooks/queries';
+import { styles } from '@/src/screens/team/management/team_settings_styles';
 import { colors } from '@/src/theme';
+import type { MatchRequestResponseDto } from '@/src/types/match';
+import {
+  ERROR_MESSAGES,
+  translateErrorMessage,
+} from '@/src/utils/error_messages';
 
-import { styles } from './team_settings_styles';
 interface TeamSettingsScreenProps {
   teamId: string | number;
 }
@@ -32,38 +34,75 @@ export default function TeamSettingsScreen({
   teamId,
 }: TeamSettingsScreenProps) {
   const [showJoinRequestsModal, setShowJoinRequestsModal] = useState(false);
-  const [showMatchRequestsModal, setShowMatchRequestsModal] = useState(false);
-  const [matchAccepted, setMatchAccepted] = useState(false);
-  const [acceptedMatchId, setAcceptedMatchId] = useState<number | null>(null);
+  const [processingRequestId, setProcessingRequestId] = useState<number | null>(
+    null
+  );
   const { data: userProfile } = useUserProfile();
 
   const deleteTeamMutation = useDeleteTeamMutation();
+  const approveJoinRequestMutation = useApproveJoinRequestMutation();
+  const rejectJoinRequestMutation = useRejectJoinRequestMutation();
 
   const numericTeamId = teamId ? Number(teamId) : 0;
   const {
     data: matchRequestsData,
     isLoading: matchRequestsLoading,
     error: matchRequestsError,
-    refetch: refetchMatchRequests,
   } = useTeamMatchRequests();
 
-  const matchRequests: MatchRequest[] = matchRequestsData || [];
+  const matchRequests: MatchRequestResponseDto[] = matchRequestsData || [];
   const { refetch: refetchTeam } = useTeam(numericTeamId);
   const {
     data: teamMembersData,
     isLoading: membersLoading,
     error: membersError,
     refetch: refetchMembers,
-  } = useTeamMembers(numericTeamId);
+  } = useTeamMembers(numericTeamId, 0, 100);
   const {
-    data: joinRequestsData,
-    isLoading,
-    error,
-    refetch,
-  } = useTeamJoinWaitingList(teamId, 'PENDING', 0, 10);
+    data: regularMemberRequestsData,
+    isLoading: isLoadingRegular,
+    error: errorRegular,
+    refetch: refetchRegular,
+  } = useTeamJoinWaitingList(teamId, 'PENDING', false, 0, 100);
+
+  const {
+    data: mercenaryRequestsData,
+    isLoading: isLoadingMercenary,
+    error: errorMercenary,
+    refetch: refetchMercenary,
+  } = useTeamJoinWaitingList(teamId, 'PENDING', true, 0, 100);
+
+  const isLoading = isLoadingRegular || isLoadingMercenary;
+  const error = errorRegular || errorMercenary;
+  const refetch = () => {
+    refetchRegular();
+    refetchMercenary();
+  };
+
+  const joinRequestsData = (() => {
+    if (!regularMemberRequestsData && !mercenaryRequestsData) {
+      return null;
+    }
+
+    const regularContent = regularMemberRequestsData?.content || [];
+    const mercenaryContent = mercenaryRequestsData?.content || [];
+    const mergedContent = [...regularContent, ...mercenaryContent];
+
+    const baseData = regularMemberRequestsData || mercenaryRequestsData;
+    return {
+      ...baseData,
+      content: mergedContent,
+      totalElements:
+        (regularMemberRequestsData?.totalElements || 0) +
+        (mercenaryRequestsData?.totalElements || 0),
+      numberOfElements: mergedContent.length,
+      empty: mergedContent.length === 0,
+    };
+  })();
 
   const currentUserName = userProfile?.name;
   const teamMembers = teamMembersData?.content || [];
+
   const currentUserMember = teamMembers.find(
     member => member.name === currentUserName
   );
@@ -71,7 +110,6 @@ export default function TeamSettingsScreen({
     currentUserMember?.role === 'LEADER' ||
     currentUserMember?.role === 'VICE_LEADER';
 
-  // 권한 체크: 회장/부회장이 아니면 알림 표시하고 팀 정보로 이동
   useEffect(() => {
     if (currentUserMember && !canManageTeam) {
       Alert.alert(
@@ -81,35 +119,14 @@ export default function TeamSettingsScreen({
           {
             text: '확인',
             onPress: () => {
-              // 네비게이션 스택을 완전히 초기화하고 팀 정보 화면으로 이동
               router.dismissAll();
-              router.replace(`/team/management/${numericTeamId}`);
+              router.replace(getTeamManagementUrl(numericTeamId));
             },
           },
         ]
       );
     }
   }, [currentUserMember, canManageTeam, numericTeamId]);
-
-  // 모달 닫힌 후 alert 실행행
-  useEffect(() => {
-    if (!showMatchRequestsModal && matchAccepted && acceptedMatchId) {
-      // 모달이 실제로 언마운트된 이후 실행
-      requestAnimationFrame(() => {
-        Alert.alert('성공', '매치가 성사되었습니다!', [
-          {
-            text: '확인',
-            onPress: () => {
-              router.push(`${ROUTES.MATCH_SET}?matchId=${acceptedMatchId}`);
-              setMatchAccepted(false);
-              setAcceptedMatchId(null);
-            },
-          },
-        ]);
-        setMatchAccepted(false);
-      });
-    }
-  }, [showMatchRequestsModal, matchAccepted, acceptedMatchId]);
 
   if (!teamId || teamId === null || teamId === undefined) {
     return (
@@ -173,62 +190,63 @@ export default function TeamSettingsScreen({
       {
         text: action,
         style: status === 'rejected' ? 'destructive' : 'default',
-        onPress: async () => {
-          try {
-            if (status === 'approved') {
-              await teamJoinRequestApi.approveJoinRequest(teamId, requestId, {
-                role: '일반멤버',
-              });
-            } else {
-              await teamJoinRequestApi.rejectJoinRequest(teamId, requestId, {
+        onPress: () => {
+          setProcessingRequestId(requestId);
+          if (status === 'approved') {
+            const role: '회장' | '부회장' | '일반멤버' = '일반멤버';
+            approveJoinRequestMutation.mutate(
+              {
+                teamId,
+                requestId,
+                role,
+              },
+              {
+                onSuccess: () => {
+                  setProcessingRequestId(null);
+                  Alert.alert('성공', `가입을 ${action}했습니다.`);
+                  refetch();
+                  refetchMembers();
+                  refetchTeam();
+                },
+                onError: (error: unknown) => {
+                  setProcessingRequestId(null);
+                  let errorMessage = `${action} 처리 중 오류가 발생했습니다.`;
+                  if (
+                    error &&
+                    typeof error === 'object' &&
+                    'message' in error
+                  ) {
+                    const message = (error as any).message;
+                    if (message && typeof message === 'string') {
+                      errorMessage = translateErrorMessage(message, {
+                        endpoint: `/api/teams/${teamId}/join-waiting/${requestId}/approve`,
+                        method: 'POST',
+                      });
+                    }
+                  }
+                  Alert.alert('오류', errorMessage);
+                },
+              }
+            );
+          } else {
+            rejectJoinRequestMutation.mutate(
+              {
+                teamId,
+                requestId,
                 reason: '가입 거절',
-              });
-            }
-
-            Alert.alert('성공', `가입을 ${action}했습니다.`);
-            refetch();
-            if (status === 'approved') {
-              refetchMembers();
-              refetchTeam();
-            }
-          } catch {
-            Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
-          }
-        },
-      },
-    ]);
-  };
-
-  const handleMatchRequest = async (
-    requestId: number,
-    status: 'approved' | 'rejected'
-  ) => {
-    const action = status === 'approved' ? '수락' : '거절';
-
-    Alert.alert(`매치 ${action}`, `이 매치 요청을 ${action}하시겠습니까?`, [
-      { text: '취소', style: 'cancel' },
-      {
-        text: action,
-        style: status === 'rejected' ? 'destructive' : 'default',
-        onPress: async () => {
-          try {
-            if (status === 'approved') {
-              // ✅ 1️⃣ 매치 요청 수락 API 호출 → matchId 반환
-              const response = await acceptMatchRequestApi(requestId);
-              const { matchId } = response;
-
-              // ✅ 2️⃣ matchId 저장 → 모달 닫힘 트리거
-              setAcceptedMatchId(matchId);
-              setMatchAccepted(true);
-              setShowMatchRequestsModal(false);
-            } else {
-              await rejectMatchRequestApi(requestId);
-              Alert.alert('성공', `매치 요청을 ${action}했습니다.`);
-            }
-
-            refetchMatchRequests();
-          } catch {
-            Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
+              },
+              {
+                onSuccess: () => {
+                  setProcessingRequestId(null);
+                  Alert.alert('성공', `가입을 ${action}했습니다.`);
+                  refetch();
+                },
+                onError: () => {
+                  setProcessingRequestId(null);
+                  Alert.alert('오류', `${action} 처리 중 오류가 발생했습니다.`);
+                },
+              }
+            );
           }
         },
       },
@@ -251,7 +269,7 @@ export default function TeamSettingsScreen({
                   {
                     text: '확인',
                     onPress: () => {
-                      router.replace('/team/guide');
+                      router.replace(ROUTES.TEAM_GUIDE);
                     },
                   },
                 ]);
@@ -272,7 +290,7 @@ export default function TeamSettingsScreen({
                   } else if (apiError.status === 403) {
                     errorMessage = '팀장만 팀을 삭제할 수 있습니다.';
                   } else if (apiError.status === 404) {
-                    errorMessage = '팀을 찾을 수 없습니다.';
+                    errorMessage = ERROR_MESSAGES.TEAM_NOT_FOUND;
                   } else if (apiError.status === 500) {
                     errorMessage =
                       '팀 삭제 중 서버 오류가 발생했습니다.\n\n다음 데이터들이 남아있어 팀을 삭제할 수 없습니다:\n• 팀 가입 대기 목록\n• 진행 중인 매치 요청\n• 팀 관련 업무 데이터\n\n팀에서 먼저 이러한 데이터들을 정리해주세요.';
@@ -301,7 +319,6 @@ export default function TeamSettingsScreen({
             joinRequests={joinRequests}
             matchRequests={matchRequests}
             onShowJoinRequestsModal={() => setShowJoinRequestsModal(true)}
-            onShowMatchRequestsModal={() => setShowMatchRequestsModal(true)}
             onDeleteTeam={handleDeleteTeam}
           />
         </View>
@@ -312,13 +329,7 @@ export default function TeamSettingsScreen({
         joinRequests={joinRequests}
         onClose={() => setShowJoinRequestsModal(false)}
         onJoinRequest={handleJoinRequest}
-      />
-
-      <MatchRequestsModal
-        visible={showMatchRequestsModal}
-        matchRequests={matchRequests}
-        onClose={() => setShowMatchRequestsModal(false)}
-        onMatchRequest={handleMatchRequest}
+        processingRequestId={processingRequestId}
       />
     </View>
   );

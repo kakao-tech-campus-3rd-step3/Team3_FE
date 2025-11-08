@@ -5,8 +5,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { ROUTES, getTeamManagementUrl } from '@/src/constants/routes';
 import { serviceCards } from '@/src/constants/service_card';
 import { useUserProfile } from '@/src/hooks/queries';
-
-import styles from '../../home_style';
+import { styles } from '@/src/screens/home/home_style';
 
 interface BenefitsSectionProps {
   teamId: number | null;
@@ -25,6 +24,11 @@ export default memo(function BenefitsSection({ teamId }: BenefitsSectionProps) {
       } else {
         router.push(ROUTES.TEAM_GUIDE);
       }
+      return;
+    }
+
+    if (serviceId === 'mercenary') {
+      router.push(ROUTES.MERCENARY);
       return;
     }
 

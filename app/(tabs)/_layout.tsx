@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Redirect, Tabs } from 'expo-router';
-import React from 'react';
 import { Platform } from 'react-native';
 
+import { ROUTES } from '@/src/constants/routes';
 import { useAuth } from '@/src/contexts/auth_context';
 import { theme } from '@/src/theme';
 
@@ -11,7 +11,7 @@ export default function TabLayout() {
   const isAuthenticated = !!token;
 
   if (!isAuthenticated) {
-    return <Redirect href="/(auth)/login" />;
+    return <Redirect href={ROUTES.LOGIN} />;
   }
 
   return (
@@ -52,7 +52,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="match-info"
+        name="match_info"
         options={{
           title: '매치 정보',
           headerTitle: '매치 정보',
@@ -60,6 +60,20 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? 'calendar' : 'calendar-outline'}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="mercenary_history"
+        options={{
+          title: '용병 기록',
+          headerShown: false,
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'clipboard' : 'clipboard-outline'}
               size={size}
               color={color}
             />

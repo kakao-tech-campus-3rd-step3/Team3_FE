@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import { ModalDatePicker } from '@/src/components/ui/modal_date_picker';
 import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
+import { styles } from '@/src/screens/match_application/match_application_style';
 import { formatKoreanDate, formatKoreanTime } from '@/src/utils/date';
-
-import { styles } from '../match_application_style';
 
 interface FilterCardProps {
   selectedDate: Date | null;
@@ -43,6 +42,9 @@ export default function FilterCard({
                 styles.filterButtonText,
                 selectedDate && styles.filterButtonTextActive,
               ]}
+              numberOfLines={1}
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.7}
             >
               {selectedDate
                 ? formatKoreanDate(selectedDate)
@@ -62,6 +64,9 @@ export default function FilterCard({
                 styles.filterButtonText,
                 selectedTime && styles.filterButtonTextActive,
               ]}
+              numberOfLines={1}
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.7}
             >
               {selectedTime ? formatKoreanTime(selectedTime) : '시간 선택'}
             </Text>
