@@ -8,18 +8,24 @@ export const BASIC_STATUS_LABELS: Record<BasicStatus, string> = {
   CANCELED: '취소됨',
 };
 
-export function getBasicStatusLabel(status: BasicStatus): string {
-  return BASIC_STATUS_LABELS[status] ?? status;
-}
-
 export const EXTENDED_STATUS_LABELS: Record<ExtendedStatus, string> = {
   ...BASIC_STATUS_LABELS,
   ACCEPTED: '수락됨',
 };
 
-export function getExtendedStatusLabel(status: ExtendedStatus): string {
-  return EXTENDED_STATUS_LABELS[status] ?? status;
-}
+export const KOREAN_TO_ENGLISH_STATUS_MAPPING: Record<string, BasicStatus> = {
+  대기중: 'PENDING',
+  승인: 'APPROVED',
+  승인됨: 'APPROVED',
+  거절: 'REJECTED',
+  거절됨: 'REJECTED',
+  취소: 'CANCELED',
+  취소됨: 'CANCELED',
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELED: 'CANCELED',
+};
 
 export function toBasicStatus(input: string | undefined | null): BasicStatus {
   switch ((input || '').toUpperCase()) {

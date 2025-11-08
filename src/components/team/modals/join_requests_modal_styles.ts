@@ -122,11 +122,30 @@ export const styles = StyleSheet.create({
   applicantInfo: {
     flex: 1,
   },
+  applicantNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.spacing2,
+    flexWrap: 'wrap',
+  },
   applicantName: {
     fontSize: typography.fontSize.font4,
     fontWeight: typography.fontWeight.semibold,
     color: colors.gray[900],
     marginBottom: 2,
+  },
+  mercenaryBadge: {
+    backgroundColor: colors.blue[100],
+    paddingHorizontal: spacing.spacing2,
+    paddingVertical: 2,
+    borderRadius: spacing.spacing2,
+    borderWidth: 1,
+    borderColor: colors.blue[300],
+  },
+  mercenaryBadgeText: {
+    fontSize: typography.fontSize.font2,
+    fontWeight: typography.fontWeight.semibold,
+    color: colors.blue[700],
   },
   applicantEmail: {
     fontSize: typography.fontSize.font3,

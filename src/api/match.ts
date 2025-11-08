@@ -4,7 +4,8 @@ import {
   MATCH_REQUEST_API,
   MATCH_WAITING_API,
 } from '@/src/constants/endpoints';
-import { apiClient, ApiError } from '@/src/lib/api_client';
+import { apiClient } from '@/src/lib/api_client';
+import { FormatError, TeamMemberError } from '@/src/lib/errors';
 import {
   Match,
   MatchCreateRequestDto,
@@ -155,10 +156,6 @@ export async function getMyCreatedMatches(): Promise<
 
     return response.content || [];
   } catch (error) {
-    if (error instanceof ApiError && error.message.includes('팀 멤버')) {
-      return [];
-    }
-    console.error('getMyCreatedMatches API 에러:', error);
     throw error;
   }
 }
@@ -186,16 +183,27 @@ export async function getMyAppliedMatches(): Promise<
         }
     >(MATCH_REQUEST_API.GET_MY_APPLIED_MATCHES);
 
-    if (response && typeof response === 'object' && 'content' in response) {
-      return response.content || [];
-    }
+    try {
+      if (response && typeof response === 'object' && 'content' in response) {
+        return response.content || [];
+      }
 
-    return Array.isArray(response) ? response : [];
+      return Array.isArray(response) ? response : [];
+    } catch (error) {
+      if (error instanceof TypeError) {
+        throw new FormatError(
+          '매치 신청 내역 응답 데이터 형식이 올바르지 않습니다.'
+        );
+      }
+      throw error;
+    }
   } catch (error) {
-    if (error instanceof ApiError && error.message.includes('팀 멤버')) {
+    if (error instanceof FormatError) {
       return [];
     }
-    console.error('getMyAppliedMatches API 에러:', error);
+    if (error instanceof TeamMemberError) {
+      return [];
+    }
     throw error;
   }
 }
@@ -208,7 +216,6 @@ export async function cancelMatchRequestById(
     const response = await apiClient.delete<MatchRequestResponseDto>(url);
     return response;
   } catch (error) {
-    console.error('cancelMatchRequestById API 에러:', error);
     throw error;
   }
 }

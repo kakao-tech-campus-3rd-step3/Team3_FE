@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 import { theme } from '@/src/theme';
@@ -29,7 +28,7 @@ function getColors(status: ExtendedStatus) {
   }
 }
 
-const defaultLabelMap: Record<ExtendedStatus, string> = EXTENDED_STATUS_LABELS;
+const defaultLabelMap = EXTENDED_STATUS_LABELS;
 
 export default function StatusBadge({
   status,

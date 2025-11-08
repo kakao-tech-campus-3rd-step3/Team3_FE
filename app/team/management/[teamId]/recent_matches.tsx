@@ -1,15 +1,14 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import React from 'react';
 
-import MatchRequestsScreen from '@/src/screens/team/management/match_requests_screen';
+import TeamRecentMatchesScreen from '@/src/components/team/cards/team_recent_matches_screen';
 
-export default function MatchRequestsPage() {
+export default function RecentMatchesRoute() {
   const { teamId } = useLocalSearchParams<{ teamId: string }>();
 
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <MatchRequestsScreen teamId={teamId} />
+      <TeamRecentMatchesScreen teamId={teamId} />
     </>
   );
 }

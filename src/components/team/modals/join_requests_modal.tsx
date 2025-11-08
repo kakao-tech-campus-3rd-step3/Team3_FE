@@ -16,7 +16,6 @@ import StatusBadge from '@/src/components/ui/status_badge';
 import { convertPositionToKorean } from '@/src/constants/positions';
 import { useUserProfileById } from '@/src/hooks/queries';
 import { colors } from '@/src/theme';
-import type { UserProfile } from '@/src/types';
 import type { TeamJoinRequest } from '@/src/types/team';
 import { getSkillLevelInKorean } from '@/src/utils/team';
 
@@ -109,15 +108,13 @@ function JoinRequestCard({
 }) {
   const { data: profile } = useUserProfileById(request.applicantId);
 
-  const p: UserProfile | undefined = profile;
-
-  const detailRows = p
+  const detailRows = profile
     ? [
-        { label: '이메일:', value: p.email },
-        { label: '카카오톡:', value: p.kakaoTalkId },
-        { label: '포지션:', value: convertPositionToKorean(p.position) },
-        { label: '실력:', value: getSkillLevelInKorean(p.skillLevel) },
-        { label: '대학:', value: p.university },
+        { label: '이메일:', value: profile.email },
+        { label: '카카오톡:', value: profile.kakaoTalkId },
+        { label: '포지션:', value: convertPositionToKorean(profile.position) },
+        { label: '실력:', value: getSkillLevelInKorean(profile.skillLevel) },
+        { label: '대학:', value: profile.university },
       ].filter(row => !!row.value)
     : [];
 
@@ -125,11 +122,18 @@ function JoinRequestCard({
     <View style={styles.requestCard}>
       <View style={styles.requestHeader}>
         <View style={styles.applicantInfo}>
-          <Text style={styles.applicantName}>
-            {p?.name ||
-              request.applicantName ||
-              `사용자 ${request.applicantId}`}
-          </Text>
+          <View style={styles.applicantNameRow}>
+            <Text style={styles.applicantName}>
+              {profile?.name ||
+                request.applicantName ||
+                `사용자 ${request.applicantId}`}
+            </Text>
+            {request.isMercenary && (
+              <View style={styles.mercenaryBadge}>
+                <Text style={styles.mercenaryBadgeText}>용병</Text>
+              </View>
+            )}
+          </View>
         </View>
         <View style={styles.requestStatus}>
           <StatusBadge status={request.status} />
@@ -138,36 +142,37 @@ function JoinRequestCard({
 
       <View style={styles.requestDetails}>
         {[
-          ...(request.message
-            ? [{ label: '가입 메시지:', value: request.message }]
-            : []),
+          request.message && {
+            label: '가입 메시지:',
+            value: request.message,
+          },
           ...detailRows,
-          ...(request.decisionReason
-            ? [{ label: '결정 사유:', value: request.decisionReason }]
-            : []),
-          ...(request.decidedBy
-            ? [{ label: '결정자:', value: String(request.decidedBy) }]
-            : []),
-          ...(request.decidedAt
-            ? [
-                {
-                  label: '결정일:',
-                  value: new Date(request.decidedAt).toLocaleDateString(
-                    'ko-KR'
-                  ),
-                },
-              ]
-            : []),
-        ].map(row => (
-          <InfoRow
-            key={`${row.label}${row.value}`}
-            label={row.label}
-            value={row.value}
-            containerStyle={styles.requestDetailRow}
-            labelStyle={styles.requestDetailLabel}
-            valueStyle={styles.requestDetailValue}
-          />
-        ))}
+          request.decisionReason && {
+            label: '결정 사유:',
+            value: request.decisionReason,
+          },
+          request.decidedBy && {
+            label: '결정자:',
+            value: String(request.decidedBy),
+          },
+          request.decidedAt && {
+            label: '결정일:',
+            value: new Date(request.decidedAt).toLocaleDateString('ko-KR'),
+          },
+        ]
+          .filter((row): row is { label: string; value: string } =>
+            Boolean(row)
+          )
+          .map(row => (
+            <InfoRow
+              key={`${row.label}${row.value}`}
+              label={row.label}
+              value={row.value}
+              containerStyle={styles.requestDetailRow}
+              labelStyle={styles.requestDetailLabel}
+              valueStyle={styles.requestDetailValue}
+            />
+          ))}
       </View>
 
       {request.status === 'PENDING' && (

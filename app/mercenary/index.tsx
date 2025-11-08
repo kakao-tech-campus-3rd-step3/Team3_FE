@@ -1,7 +1,5 @@
-import React from 'react';
-
 import MercenaryMainScreen from '@/src/screens/mercenary/index';
 
-export default function MercenaryScreenRoute() {
+export default function MercenaryRoute() {
   return <MercenaryMainScreen />;
 }

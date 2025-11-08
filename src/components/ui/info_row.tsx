@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text, ViewStyle, TextStyle } from 'react-native';
 
 interface InfoRowProps {

@@ -6,6 +6,7 @@ import {
   MATCH_WAITING_API,
 } from '@/src/constants/endpoints';
 import { apiClient } from '@/src/lib/api_client';
+import { FormatError } from '@/src/lib/errors';
 import type {
   CreateTeamRequest,
   CreateTeamResponse,
@@ -116,12 +117,21 @@ export const teamMemberApi = {
       const members = apiResponse.content ?? [];
       const hasNext = apiResponse.last === false;
 
-      return {
-        members: members.map(transformTeamMemberItem),
-        hasNext,
-      };
+      try {
+        return {
+          members: members.map(transformTeamMemberItem),
+          hasNext,
+        };
+      } catch (error) {
+        if (error instanceof TypeError) {
+          throw new FormatError('팀 멤버 데이터 형식이 올바르지 않습니다.');
+        }
+        throw error;
+      }
     } catch (error) {
-      console.error('[API ERROR] GET_MEMBERS_SLICE 실패:', error);
+      if (error instanceof FormatError) {
+        return { members: [], hasNext: false };
+      }
       return { members: [], hasNext: false };
     }
   },
@@ -326,10 +336,11 @@ export const userJoinWaitingApi = {
   getMyJoinWaitingList: async (
     page: number = 0,
     size: number = 10,
-    sort: string = 'audit.createdAt,desc'
+    sort: string = 'audit.createdAt,desc',
+    isMercenary: boolean = false
   ): Promise<UserJoinWaitingPageResponse> => {
     const apiResponse = await apiClient.get<ApiUserJoinWaitingPageResponse>(
-      USER_JOIN_WAITING_API.GET_MY_JOIN_WAITING(page, size, sort)
+      USER_JOIN_WAITING_API.GET_MY_JOIN_WAITING(page, size, sort, isMercenary)
     );
     return transformUserJoinWaitingPageResponse(apiResponse);
   },

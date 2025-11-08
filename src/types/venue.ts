@@ -1,5 +1,5 @@
 export interface Venue {
-  venueId: number; // PK 필수
+  venueId: number;
   venueName: string;
   address: string;
   contactInfo: string;

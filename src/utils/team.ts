@@ -22,6 +22,12 @@ import type {
   UserJoinWaitingPageResponse,
 } from '@/src/types/team';
 
+import {
+  BASIC_STATUS_LABELS,
+  EXTENDED_STATUS_LABELS,
+  KOREAN_TO_ENGLISH_STATUS_MAPPING,
+} from './status_labels';
+
 export const TEAM_TYPE_MAPPING: Record<string, TeamType> = {
   CENTRAL_CLUB: '중앙동아리',
   DEPARTMENT_CLUB: '과동아리',
@@ -105,44 +111,25 @@ export const transformTeamMemberPageResponse = (
   };
 };
 
+const ROLE_MAPPING: Record<TeamMemberRole, string> = {
+  LEADER: '회장',
+  VICE_LEADER: '부회장',
+  MEMBER: '일반멤버',
+  MERCENARY: '용병',
+};
+
 export const getRoleDisplayName = (role: TeamMemberRole): string => {
-  const roleMapping: Record<TeamMemberRole, string> = {
-    LEADER: '회장',
-    VICE_LEADER: '부회장',
-    MEMBER: '일반멤버',
-    MERCENARY: '용병',
-  };
-  return roleMapping[role] || '일반멤버';
+  return ROLE_MAPPING[role] || '일반멤버';
 };
 
 export const getRoleInKorean = (role: TeamMemberRole): string => {
-  const roleMapping: Record<TeamMemberRole, string> = {
-    LEADER: '회장',
-    VICE_LEADER: '부회장',
-    MEMBER: '일반멤버',
-    MERCENARY: '용병',
-  };
-  return roleMapping[role] || '일반멤버';
-};
-
-export const JOIN_REQUEST_STATUS_MAPPING: Record<
-  string,
-  TeamJoinRequest['status']
-> = {
-  대기중: 'PENDING',
-  승인: 'APPROVED',
-  거절: 'REJECTED',
-  취소: 'CANCELED',
-  PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED',
-  CANCELED: 'CANCELED',
+  return ROLE_MAPPING[role] || '일반멤버';
 };
 
 export const getJoinRequestStatusInEnglish = (
   koreanStatus: string
 ): TeamJoinRequest['status'] => {
-  return JOIN_REQUEST_STATUS_MAPPING[koreanStatus] || 'PENDING';
+  return KOREAN_TO_ENGLISH_STATUS_MAPPING[koreanStatus] || 'PENDING';
 };
 
 export const transformTeamJoinRequestItem = (
@@ -175,31 +162,16 @@ export const transformTeamJoinRequestPageResponse = (
 export const getJoinRequestStatusDisplayName = (
   status: TeamJoinRequest['status'] | 'ACCEPTED'
 ): string => {
-  const statusMapping: Record<TeamJoinRequest['status'] | 'ACCEPTED', string> =
-    {
-      PENDING: '대기중',
-      APPROVED: '승인됨',
-      REJECTED: '거절됨',
-      CANCELED: '취소됨',
-      ACCEPTED: '수락됨',
-    };
-  return statusMapping[status] || '대기중';
-};
-
-export const USER_JOIN_WAITING_STATUS_MAPPING: Record<
-  string,
-  UserJoinWaitingItem['status']
-> = {
-  대기중: 'PENDING',
-  승인됨: 'APPROVED',
-  거절됨: 'REJECTED',
-  취소됨: 'CANCELED',
+  return (
+    EXTENDED_STATUS_LABELS[status as keyof typeof EXTENDED_STATUS_LABELS] ||
+    '대기중'
+  );
 };
 
 export const getUserJoinWaitingStatusInEnglish = (
   koreanStatus: string
 ): UserJoinWaitingItem['status'] => {
-  return USER_JOIN_WAITING_STATUS_MAPPING[koreanStatus] || 'PENDING';
+  return KOREAN_TO_ENGLISH_STATUS_MAPPING[koreanStatus] || 'PENDING';
 };
 
 export const transformUserJoinWaitingItem = (
@@ -231,11 +203,5 @@ export const transformUserJoinWaitingPageResponse = (
 export const getUserJoinWaitingStatusDisplayName = (
   status: UserJoinWaitingItem['status']
 ): string => {
-  const statusMapping: Record<UserJoinWaitingItem['status'], string> = {
-    PENDING: '대기중',
-    APPROVED: '승인됨',
-    REJECTED: '거절됨',
-    CANCELED: '취소됨',
-  };
-  return statusMapping[status] || '대기중';
+  return BASIC_STATUS_LABELS[status] || '대기중';
 };

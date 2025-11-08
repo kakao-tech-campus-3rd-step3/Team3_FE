@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Alert } from 'react-native';
 
 import JoinRequestsModal from '@/src/components/team/modals/join_requests_modal';
@@ -21,7 +21,10 @@ import {
 import { styles } from '@/src/screens/team/management/team_settings_styles';
 import { colors } from '@/src/theme';
 import type { MatchRequestResponseDto } from '@/src/types/match';
-import { translateErrorMessage } from '@/src/utils/error_messages';
+import {
+  ERROR_MESSAGES,
+  translateErrorMessage,
+} from '@/src/utils/error_messages';
 
 interface TeamSettingsScreenProps {
   teamId: string | number;
@@ -56,11 +59,46 @@ export default function TeamSettingsScreen({
     refetch: refetchMembers,
   } = useTeamMembers(numericTeamId, 0, 100);
   const {
-    data: joinRequestsData,
-    isLoading,
-    error,
-    refetch,
-  } = useTeamJoinWaitingList(teamId, 'PENDING', false, 0, 10);
+    data: regularMemberRequestsData,
+    isLoading: isLoadingRegular,
+    error: errorRegular,
+    refetch: refetchRegular,
+  } = useTeamJoinWaitingList(teamId, 'PENDING', false, 0, 100);
+
+  const {
+    data: mercenaryRequestsData,
+    isLoading: isLoadingMercenary,
+    error: errorMercenary,
+    refetch: refetchMercenary,
+  } = useTeamJoinWaitingList(teamId, 'PENDING', true, 0, 100);
+
+  const isLoading = isLoadingRegular || isLoadingMercenary;
+  const error = errorRegular || errorMercenary;
+  const refetch = () => {
+    refetchRegular();
+    refetchMercenary();
+  };
+
+  const joinRequestsData = (() => {
+    if (!regularMemberRequestsData && !mercenaryRequestsData) {
+      return null;
+    }
+
+    const regularContent = regularMemberRequestsData?.content || [];
+    const mercenaryContent = mercenaryRequestsData?.content || [];
+    const mergedContent = [...regularContent, ...mercenaryContent];
+
+    const baseData = regularMemberRequestsData || mercenaryRequestsData;
+    return {
+      ...baseData,
+      content: mergedContent,
+      totalElements:
+        (regularMemberRequestsData?.totalElements || 0) +
+        (mercenaryRequestsData?.totalElements || 0),
+      numberOfElements: mergedContent.length,
+      empty: mergedContent.length === 0,
+    };
+  })();
 
   const currentUserName = userProfile?.name;
   const teamMembers = teamMembersData?.content || [];
@@ -252,7 +290,7 @@ export default function TeamSettingsScreen({
                   } else if (apiError.status === 403) {
                     errorMessage = '팀장만 팀을 삭제할 수 있습니다.';
                   } else if (apiError.status === 404) {
-                    errorMessage = '팀을 찾을 수 없습니다.';
+                    errorMessage = ERROR_MESSAGES.TEAM_NOT_FOUND;
                   } else if (apiError.status === 500) {
                     errorMessage =
                       '팀 삭제 중 서버 오류가 발생했습니다.\n\n다음 데이터들이 남아있어 팀을 삭제할 수 없습니다:\n• 팀 가입 대기 목록\n• 진행 중인 매치 요청\n• 팀 관련 업무 데이터\n\n팀에서 먼저 이러한 데이터들을 정리해주세요.';

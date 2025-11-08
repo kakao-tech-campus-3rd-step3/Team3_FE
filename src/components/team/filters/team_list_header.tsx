@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import { styles } from '@/src/components/team/filters/team_list_header_styles';

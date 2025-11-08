@@ -1,7 +1,5 @@
-import React from 'react';
-
 import MatchSetScreen from '@/src/screens/match_set';
 
-export default function MatchSetScreenRoute() {
+export default function MatchSetRoute() {
   return <MatchSetScreen />;
 }

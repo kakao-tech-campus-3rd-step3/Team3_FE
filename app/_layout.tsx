@@ -4,7 +4,7 @@ import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import ErrorBoundary from 'react-native-error-boundary';
 import 'react-native-reanimated';
@@ -21,13 +21,11 @@ function AppContent() {
   });
 
   let token: string | null = null;
-  let refreshToken: string | null = null;
   let isInitialized = false;
 
   try {
     const authData = useAuth();
     token = authData.token;
-    refreshToken = authData.refreshToken;
     isInitialized = authData.isInitialized;
 
     if (!isInitialized || !loaded) {
@@ -72,7 +70,7 @@ function AppContent() {
             />,
             <Stack.Screen key="lineup" name="match_application/lineup" />,
             <Stack.Screen
-              key="Createlineup"
+              key="create_lineup"
               name="match_application/create_lineup"
             />,
           ]

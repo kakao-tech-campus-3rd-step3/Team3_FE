@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import { type ReactNode } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -29,7 +29,7 @@ interface RequestManagementModalProps {
   emptyStateText: string;
   onClose: () => void;
   onRequestAction: (requestId: number, status: 'approved' | 'rejected') => void;
-  renderRequestDetails?: (request: RequestItem) => React.ReactNode;
+  renderRequestDetails?: (request: RequestItem) => ReactNode;
   processingRequestId?: number | null;
 }
 

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,212 @@ import {
 } from 'react-native';
 
 import { theme } from '@/src/theme';
+
+interface TabContextValue {
+  selectedIndex: number;
+  onSelect: (index: number) => void;
+  getTabStyles: () => {
+    paddingHorizontal: number;
+    paddingVertical: number;
+    fontSize: number;
+    minFontSize: number;
+  };
+}
+
+const TabContext = createContext<TabContextValue | null>(null);
+
+const useTabContext = () => {
+  const context = useContext(TabContext);
+  if (!context) {
+    throw new Error('Tab components must be used within TabGroup');
+  }
+  return context;
+};
+
+const getTabStyles = (screenWidth: number) => {
+  if (screenWidth < 360) {
+    return {
+      paddingHorizontal: theme.spacing.spacing2,
+      paddingVertical: theme.spacing.spacing2,
+      fontSize: 11,
+      minFontSize: 9,
+    };
+  } else if (screenWidth < 400) {
+    return {
+      paddingHorizontal: theme.spacing.spacing3,
+      paddingVertical: theme.spacing.spacing2,
+      fontSize: 12,
+      minFontSize: 10,
+    };
+  }
+  return {
+    paddingHorizontal: theme.spacing.spacing4,
+    paddingVertical: theme.spacing.spacing3,
+    fontSize: 14,
+    minFontSize: 12,
+  };
+};
+
+interface TabGroupProps {
+  defaultIndex?: number;
+  selectedIndex?: number;
+  onChange?: (index: number) => void;
+  children: React.ReactNode;
+}
+
+export const TabGroup: React.FC<TabGroupProps> = ({
+  defaultIndex = 0,
+  selectedIndex: controlledIndex,
+  onChange,
+  children,
+}) => {
+  const [internalIndex, setInternalIndex] = useState(defaultIndex);
+  const screenWidth = Dimensions.get('window').width;
+
+  const selectedIndex =
+    controlledIndex !== undefined ? controlledIndex : internalIndex;
+
+  const handleSelect = useCallback(
+    (index: number) => {
+      if (controlledIndex === undefined) {
+        setInternalIndex(index);
+      }
+      onChange?.(index);
+    },
+    [controlledIndex, onChange]
+  );
+
+  const contextValue: TabContextValue = {
+    selectedIndex,
+    onSelect: handleSelect,
+    getTabStyles: () => getTabStyles(screenWidth),
+  };
+
+  return (
+    <TabContext.Provider value={contextValue}>{children}</TabContext.Provider>
+  );
+};
+
+interface TabListProps {
+  children: React.ReactNode;
+  style?: any;
+}
+
+export const TabList: React.FC<TabListProps> = ({ children, style }) => {
+  return <View style={[styles.container, style]}>{children}</View>;
+};
+
+interface TabProps {
+  index: number;
+  disabled?: boolean;
+  children:
+    | React.ReactNode
+    | ((props: { selected: boolean; hover: boolean }) => React.ReactNode);
+}
+
+export const Tab: React.FC<TabProps> = ({
+  index,
+  disabled = false,
+  children,
+}) => {
+  const { selectedIndex, onSelect, getTabStyles } = useTabContext();
+  const [hover, setHover] = useState(false);
+  const selected = selectedIndex === index && !disabled;
+  const tabStyles = getTabStyles();
+
+  const handlePress = () => {
+    if (!disabled) {
+      onSelect(index);
+    }
+  };
+
+  const renderContent = () => {
+    if (typeof children === 'function') {
+      return children({ selected, hover });
+    }
+    return children;
+  };
+
+  return (
+    <TouchableOpacity
+      style={[
+        styles.tab,
+        {
+          paddingHorizontal: tabStyles.paddingHorizontal,
+          paddingVertical: tabStyles.paddingVertical,
+        },
+        selected && styles.activeTab,
+        disabled && styles.disabledTab,
+      ]}
+      onPress={handlePress}
+      disabled={disabled}
+      activeOpacity={0.7}
+      onPressIn={() => setHover(true)}
+      onPressOut={() => setHover(false)}
+    >
+      {typeof renderContent() === 'string' ? (
+        <Text
+          style={[
+            styles.tabText,
+            { fontSize: tabStyles.fontSize },
+            selected && styles.activeTabText,
+            disabled && styles.disabledTabText,
+          ]}
+          numberOfLines={1}
+          adjustsFontSizeToFit={true}
+          minimumFontScale={tabStyles.minFontSize / tabStyles.fontSize}
+        >
+          {renderContent() as string}
+        </Text>
+      ) : (
+        renderContent()
+      )}
+    </TouchableOpacity>
+  );
+};
+
+interface TabPanelsProps {
+  children: React.ReactNode;
+}
+
+export const TabPanels: React.FC<TabPanelsProps> = ({ children }) => {
+  return <View>{children}</View>;
+};
+
+interface TabPanelProps {
+  index: number;
+  children:
+    | React.ReactNode
+    | ((props: { selected: boolean }) => React.ReactNode);
+  static?: boolean;
+  unmount?: boolean;
+}
+
+export const TabPanel: React.FC<TabPanelProps> = ({
+  index,
+  children,
+  static: isStatic = false,
+  unmount = true,
+}) => {
+  const { selectedIndex } = useTabContext();
+  const selected = selectedIndex === index;
+
+  if (isStatic) {
+    return (
+      <>{typeof children === 'function' ? children({ selected }) : children}</>
+    );
+  }
+
+  if (unmount && !selected) {
+    return null;
+  }
+
+  return (
+    <View style={selected ? undefined : styles.hidden}>
+      {typeof children === 'function' ? children({ selected }) : children}
+    </View>
+  );
+};
 
 interface TabSelectorProps {
   tabs: { key: string; label: string }[];
@@ -20,62 +226,21 @@ export const TabSelector: React.FC<TabSelectorProps> = ({
   activeTab,
   onTabChange,
 }) => {
-  const screenWidth = Dimensions.get('window').width;
-
-  const tabStyles = useMemo(() => {
-    if (screenWidth < 360) {
-      return {
-        paddingHorizontal: theme.spacing.spacing2,
-        paddingVertical: theme.spacing.spacing2,
-        fontSize: 11,
-        minFontSize: 9,
-      };
-    } else if (screenWidth < 400) {
-      return {
-        paddingHorizontal: theme.spacing.spacing3,
-        paddingVertical: theme.spacing.spacing2,
-        fontSize: 12,
-        minFontSize: 10,
-      };
-    }
-    return {
-      paddingHorizontal: theme.spacing.spacing4,
-      paddingVertical: theme.spacing.spacing3,
-      fontSize: 14,
-      minFontSize: 12,
-    };
-  }, [screenWidth]);
+  const activeIndex = tabs.findIndex(tab => tab.key === activeTab);
 
   return (
-    <View style={styles.container}>
-      {tabs.map(tab => (
-        <TouchableOpacity
-          key={tab.key}
-          style={[
-            styles.tab,
-            {
-              paddingHorizontal: tabStyles.paddingHorizontal,
-              paddingVertical: tabStyles.paddingVertical,
-            },
-            activeTab === tab.key && styles.activeTab,
-          ]}
-          onPress={() => onTabChange(tab.key)}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              { fontSize: tabStyles.fontSize },
-              activeTab === tab.key && styles.activeTabText,
-            ]}
-            numberOfLines={1}
-            adjustsFontSizeToFit={true}
-            minimumFontScale={tabStyles.minFontSize / tabStyles.fontSize}
-          >
+    <TabGroup
+      selectedIndex={activeIndex >= 0 ? activeIndex : 0}
+      onChange={index => onTabChange(tabs[index].key)}
+    >
+      <TabList>
+        {tabs.map((tab, index) => (
+          <Tab key={tab.key} index={index}>
             {tab.label}
-          </Text>
-        </TouchableOpacity>
-      ))}
-    </View>
+          </Tab>
+        ))}
+      </TabList>
+    </TabGroup>
   );
 };
 
@@ -106,6 +271,9 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
+  disabledTab: {
+    opacity: 0.5,
+  },
   tabText: {
     fontSize: 14,
     fontWeight: '500',
@@ -114,5 +282,11 @@ const styles = StyleSheet.create({
   activeTabText: {
     color: theme.colors.text.main,
     fontWeight: '600',
+  },
+  disabledTabText: {
+    color: theme.colors.text.sub,
+  },
+  hidden: {
+    display: 'none',
   },
 });

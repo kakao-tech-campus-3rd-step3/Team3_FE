@@ -1,5 +1,6 @@
 import { LINEUP_API } from '@/src/constants/endpoints';
 import { apiClient } from '@/src/lib/api_client';
+import { FormatError } from '@/src/lib/errors';
 import type {
   CreateLineupRequest,
   ApiCreateLineupResponse,
@@ -10,15 +11,22 @@ import type {
 const transformCreateLineupResponse = (
   apiResponse: ApiCreateLineupResponse
 ): CreateLineupResponse => {
-  return apiResponse.map(item => ({
-    id: item.id,
-    lineupId: item.lineupId,
-    teamMemberId: item.teamMemberId,
-    position: item.position,
-    isStarter: item.isStarter,
-    createdAt: item.createdAt,
-    updatedAt: item.updatedAt,
-  }));
+  try {
+    return apiResponse.map(item => ({
+      id: item.id,
+      lineupId: item.lineupId,
+      teamMemberId: item.teamMemberId,
+      position: item.position,
+      isStarter: item.isStarter,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    }));
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new FormatError('라인업 응답 데이터 형식이 올바르지 않습니다.');
+    }
+    throw error;
+  }
 };
 
 export const lineupApi = {
@@ -33,7 +41,6 @@ export const lineupApi = {
 
       return transformCreateLineupResponse(apiResponse);
     } catch (error) {
-      console.error('[API ERROR] createLineups 실패:', error);
       throw error;
     }
   },

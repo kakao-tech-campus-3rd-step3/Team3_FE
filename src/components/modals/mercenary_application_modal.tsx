@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -250,6 +250,7 @@ const styles = StyleSheet.create({
   keyboardView: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     width: '100%',
   },
   modalContainer: {
@@ -263,6 +264,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 8,
+    alignSelf: 'center',
   },
   header: {
     flexDirection: 'row',

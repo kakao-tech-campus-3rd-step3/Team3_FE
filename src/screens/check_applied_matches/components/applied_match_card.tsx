@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import InfoRow from '@/src/components/ui/info_row';
@@ -112,23 +111,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: theme.colors.gray[900],
   },
-  statusBadge: {
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
   body: {
     marginTop: 4,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 2,
   },
   label: {
     fontSize: 13,

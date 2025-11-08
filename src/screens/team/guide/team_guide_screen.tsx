@@ -1,5 +1,4 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
 import { View, StyleSheet, useWindowDimensions } from 'react-native';
 
 import Buttons from '@/src/screens/team/guide/components/buttons';
