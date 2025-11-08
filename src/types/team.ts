@@ -286,7 +286,9 @@ export interface JoinWaitingRequest {
 
 export interface JoinWaitingResponse {
   id: number;
+  applicantName: string;
   teamId: number;
+  teamName: string;
   applicantId: number;
   status: string;
   decisionReason: string | null;

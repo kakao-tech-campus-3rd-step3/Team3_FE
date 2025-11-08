@@ -43,7 +43,8 @@ export default function MercenaryHistoryScreen() {
   const { data: joinWaitingData, isLoading } = useMyJoinWaitingList(
     currentPage,
     pageSize,
-    'audit.createdAt,desc'
+    'audit.createdAt,desc',
+    true
   );
 
   const { data: recruitmentsData, isLoading: isRecruitmentsLoading } =
@@ -57,9 +58,8 @@ export default function MercenaryHistoryScreen() {
     useState<UserJoinWaitingItem | null>(null);
   const [cancelReason, setCancelReason] = useState('');
 
-  const applicationsData = (joinWaitingData?.content || []).filter(
-    item => item.isMercenary === true
-  );
+  // API에서 isMercenary: true로 필터링되므로 클라이언트 측 필터링 불필요
+  const applicationsData = joinWaitingData?.content || [];
   const myRecruitmentsData = recruitmentsData?.content || [];
 
   const handleEdit = (recruitmentId: number) => {

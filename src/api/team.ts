@@ -326,10 +326,11 @@ export const userJoinWaitingApi = {
   getMyJoinWaitingList: async (
     page: number = 0,
     size: number = 10,
-    sort: string = 'audit.createdAt,desc'
+    sort: string = 'audit.createdAt,desc',
+    isMercenary: boolean = false
   ): Promise<UserJoinWaitingPageResponse> => {
     const apiResponse = await apiClient.get<ApiUserJoinWaitingPageResponse>(
-      USER_JOIN_WAITING_API.GET_MY_JOIN_WAITING(page, size, sort)
+      USER_JOIN_WAITING_API.GET_MY_JOIN_WAITING(page, size, sort, isMercenary)
     );
     return transformUserJoinWaitingPageResponse(apiResponse);
   },

@@ -125,11 +125,18 @@ function JoinRequestCard({
     <View style={styles.requestCard}>
       <View style={styles.requestHeader}>
         <View style={styles.applicantInfo}>
-          <Text style={styles.applicantName}>
-            {p?.name ||
-              request.applicantName ||
-              `사용자 ${request.applicantId}`}
-          </Text>
+          <View style={styles.applicantNameRow}>
+            <Text style={styles.applicantName}>
+              {p?.name ||
+                request.applicantName ||
+                `사용자 ${request.applicantId}`}
+            </Text>
+            {request.isMercenary && (
+              <View style={styles.mercenaryBadge}>
+                <Text style={styles.mercenaryBadgeText}>용병</Text>
+              </View>
+            )}
+          </View>
         </View>
         <View style={styles.requestStatus}>
           <StatusBadge status={request.status} />

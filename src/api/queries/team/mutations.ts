@@ -121,7 +121,8 @@ export function useTeamJoinWaitingList(
   status: string = 'PENDING',
   isMercenary: boolean = false,
   page: number = 0,
-  size: number = 10
+  size: number = 10,
+  sort: string = 'audit.createdAt,desc'
 ) {
   return useQuery({
     queryKey: teamQueries.teamJoinWaitingList.key(
@@ -129,7 +130,8 @@ export function useTeamJoinWaitingList(
       status,
       isMercenary,
       page,
-      size
+      size,
+      sort
     ),
     queryFn: () =>
       teamQueries.teamJoinWaitingList.fn(
@@ -137,7 +139,8 @@ export function useTeamJoinWaitingList(
         status,
         isMercenary,
         page,
-        size
+        size,
+        sort
       ),
     enabled: !!teamId,
     placeholderData: keepPreviousData,
@@ -147,11 +150,13 @@ export function useTeamJoinWaitingList(
 export function useMyJoinWaitingList(
   page: number = 0,
   size: number = 10,
-  sort: string = 'audit.createdAt,desc'
+  sort: string = 'audit.createdAt,desc',
+  isMercenary: boolean = false
 ) {
   return useQuery({
-    queryKey: teamQueries.myJoinWaitingList.key(page, size, sort),
-    queryFn: () => teamQueries.myJoinWaitingList.fn(page, size, sort),
+    queryKey: teamQueries.myJoinWaitingList.key(page, size, sort, isMercenary),
+    queryFn: () =>
+      teamQueries.myJoinWaitingList.fn(page, size, sort, isMercenary),
   });
 }
 

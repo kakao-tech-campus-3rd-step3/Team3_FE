@@ -53,22 +53,33 @@ export const teamQueries = {
       status: string = 'PENDING',
       isMercenary: boolean = false,
       page: number = 0,
-      size: number = 10
+      size: number = 10,
+      sort: string = 'audit.createdAt,desc'
     ) =>
-      ['teamJoinWaitingList', teamId, status, isMercenary, page, size] as const,
+      [
+        'teamJoinWaitingList',
+        teamId,
+        status,
+        isMercenary,
+        page,
+        size,
+        sort,
+      ] as const,
     fn: (
       teamId: string | number,
       status: string = 'PENDING',
       isMercenary: boolean = false,
       page: number = 0,
-      size: number = 10
+      size: number = 10,
+      sort: string = 'audit.createdAt,desc'
     ) =>
       api.teamJoinRequestApi.getTeamJoinWaitingList(
         teamId,
         status,
         isMercenary,
         page,
-        size
+        size,
+        sort
       ),
   },
   createTeam: {
@@ -199,12 +210,20 @@ export const teamQueries = {
     key: (
       page: number = 0,
       size: number = 10,
-      sort: string = 'audit.createdAt,desc'
-    ) => ['myJoinWaitingList', page, size, sort] as const,
+      sort: string = 'audit.createdAt,desc',
+      isMercenary: boolean = false
+    ) => ['myJoinWaitingList', page, size, sort, isMercenary] as const,
     fn: (
       page: number = 0,
       size: number = 10,
-      sort: string = 'audit.createdAt,desc'
-    ) => api.userJoinWaitingApi.getMyJoinWaitingList(page, size, sort),
+      sort: string = 'audit.createdAt,desc',
+      isMercenary: boolean = false
+    ) =>
+      api.userJoinWaitingApi.getMyJoinWaitingList(
+        page,
+        size,
+        sort,
+        isMercenary
+      ),
   },
 } as const;

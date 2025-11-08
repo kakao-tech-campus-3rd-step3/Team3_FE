@@ -56,11 +56,46 @@ export default function TeamSettingsScreen({
     refetch: refetchMembers,
   } = useTeamMembers(numericTeamId, 0, 100);
   const {
-    data: joinRequestsData,
-    isLoading,
-    error,
-    refetch,
-  } = useTeamJoinWaitingList(teamId, 'PENDING', false, 0, 10);
+    data: regularMemberRequestsData,
+    isLoading: isLoadingRegular,
+    error: errorRegular,
+    refetch: refetchRegular,
+  } = useTeamJoinWaitingList(teamId, 'PENDING', false, 0, 100);
+
+  const {
+    data: mercenaryRequestsData,
+    isLoading: isLoadingMercenary,
+    error: errorMercenary,
+    refetch: refetchMercenary,
+  } = useTeamJoinWaitingList(teamId, 'PENDING', true, 0, 100);
+
+  const isLoading = isLoadingRegular || isLoadingMercenary;
+  const error = errorRegular || errorMercenary;
+  const refetch = () => {
+    refetchRegular();
+    refetchMercenary();
+  };
+
+  const joinRequestsData = (() => {
+    if (!regularMemberRequestsData && !mercenaryRequestsData) {
+      return null;
+    }
+
+    const regularContent = regularMemberRequestsData?.content || [];
+    const mercenaryContent = mercenaryRequestsData?.content || [];
+    const mergedContent = [...regularContent, ...mercenaryContent];
+
+    const baseData = regularMemberRequestsData || mercenaryRequestsData;
+    return {
+      ...baseData,
+      content: mergedContent,
+      totalElements:
+        (regularMemberRequestsData?.totalElements || 0) +
+        (mercenaryRequestsData?.totalElements || 0),
+      numberOfElements: mergedContent.length,
+      empty: mergedContent.length === 0,
+    };
+  })();
 
   const currentUserName = userProfile?.name;
   const teamMembers = teamMembersData?.content || [];
