@@ -21,7 +21,10 @@ import {
 import { styles } from '@/src/screens/team/management/team_settings_styles';
 import { colors } from '@/src/theme';
 import type { MatchRequestResponseDto } from '@/src/types/match';
-import { translateErrorMessage } from '@/src/utils/error_messages';
+import {
+  ERROR_MESSAGES,
+  translateErrorMessage,
+} from '@/src/utils/error_messages';
 
 interface TeamSettingsScreenProps {
   teamId: string | number;
@@ -287,7 +290,7 @@ export default function TeamSettingsScreen({
                   } else if (apiError.status === 403) {
                     errorMessage = '팀장만 팀을 삭제할 수 있습니다.';
                   } else if (apiError.status === 404) {
-                    errorMessage = '팀을 찾을 수 없습니다.';
+                    errorMessage = ERROR_MESSAGES.TEAM_NOT_FOUND;
                   } else if (apiError.status === 500) {
                     errorMessage =
                       '팀 삭제 중 서버 오류가 발생했습니다.\n\n다음 데이터들이 남아있어 팀을 삭제할 수 없습니다:\n• 팀 가입 대기 목록\n• 진행 중인 매치 요청\n• 팀 관련 업무 데이터\n\n팀에서 먼저 이러한 데이터들을 정리해주세요.';

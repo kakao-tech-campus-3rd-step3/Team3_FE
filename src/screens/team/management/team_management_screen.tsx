@@ -17,6 +17,7 @@ import {
 } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/team/management/team_management_styles';
 import type { TeamMember } from '@/src/types/team';
+import { ERROR_MESSAGES } from '@/src/utils/error_messages';
 
 interface TeamManagementScreenProps {
   teamId: string | number;
@@ -151,7 +152,7 @@ export default function TeamManagementScreen({
                   if (apiError.status === 403) {
                     errorMessage = '팀장은 팀에서 나갈 수 없습니다.';
                   } else if (apiError.status === 404) {
-                    errorMessage = '팀을 찾을 수 없습니다.';
+                    errorMessage = ERROR_MESSAGES.TEAM_NOT_FOUND;
                   } else if (apiError.status === 400) {
                     errorMessage = '마지막 남은 팀원은 나갈 수 없습니다.';
                   } else if (apiError.message) {

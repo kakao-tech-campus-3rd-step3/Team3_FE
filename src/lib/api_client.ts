@@ -8,6 +8,8 @@ import axios, {
 
 import config from '@/src/config/environment';
 
+import { TeamMemberError } from './errors';
+
 function extractErrorMessage(response: unknown): string {
   const isAxiosResponse = (
     obj: unknown
@@ -166,11 +168,20 @@ class ApiClient {
           }
         }
 
-        throw new ApiError(
+        const apiError = new ApiError(
           detailedMessage || errorMessage,
           error.response.status,
           errorData
         );
+
+        if (
+          apiError.message.includes('팀') &&
+          apiError.message.includes('멤버')
+        ) {
+          throw new TeamMemberError(apiError.message);
+        }
+
+        throw apiError;
       }
       throw error;
     }

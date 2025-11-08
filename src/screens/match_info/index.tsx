@@ -16,6 +16,7 @@ import {
   useMyAppliedMatches,
   useMatchWaitingList,
 } from '@/src/hooks/queries';
+import { TeamMemberError } from '@/src/lib/errors';
 import FilterCard from '@/src/screens/match_application/components/filter_card';
 import MatchCard from '@/src/screens/match_application/components/match_card';
 import { styles } from '@/src/screens/match_application/match_application_style';
@@ -56,12 +57,7 @@ export default function MatchInfoScreen() {
     refetch: refetchData,
   } = useMatchWaitingList(params);
 
-  const isTeamMemberError =
-    error &&
-    ((error as any)?.message?.includes('팀 멤버') ||
-      (error as any)?.message?.includes('멤버를 찾을 수 없') ||
-      (error as any)?.message?.includes('해당 팀 멤버'));
-
+  const isTeamMemberError = error instanceof TeamMemberError;
   const shouldShowError = error && !isTeamMemberError;
 
   const { data: appliedMatches, refetch: refetchAppliedMatches } =
