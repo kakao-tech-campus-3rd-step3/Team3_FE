@@ -10,11 +10,7 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import {
-  useUserProfile,
-  useMatchWaitingList,
-  useMatchRequestMutation,
-} from '@/src/hooks/queries';
+import { useUserProfile, useMatchWaitingList } from '@/src/hooks/queries';
 import FilterCard from '@/src/screens/match_application/components/filter_card';
 import MatchCard from '@/src/screens/match_application/components/match_card';
 import { styles } from '@/src/screens/match_application/match_application_style';
@@ -37,7 +33,7 @@ export default function MatchApplicationScreen({
   const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [requestedIds, setRequestedIds] = useState<number[]>([]);
+  const [requestedIds] = useState<number[]>([]);
 
   const { data: userProfile, error: profileError, refetch } = useUserProfile();
 
@@ -54,7 +50,6 @@ export default function MatchApplicationScreen({
     error,
     refetch: refetchData,
   } = useMatchWaitingList(params);
-  const { mutate: requestMatch, isPending } = useMatchRequestMutation();
 
   const handleRefresh = async () => {
     setRefreshing(true);

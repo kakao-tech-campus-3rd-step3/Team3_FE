@@ -1,11 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 import { Alert, Dimensions, Text, TouchableOpacity, View } from 'react-native';
 
 import { ROUTES } from '@/src/constants/routes';
 import { useAuth } from '@/src/contexts/auth_context';
-import { styles } from '@/src/screens/team/management/team_management_styles';
+import {
+  styles,
+  getMatchManagementTitleStyle,
+} from '@/src/screens/team/management/team_management_styles';
 import { theme } from '@/src/theme';
 
 interface MatchManagementSectionProps {
@@ -42,27 +45,7 @@ export default memo(function MatchManagementSection({
   const { token } = useAuth();
   const isAuthenticated = !!token;
   const screenWidth = Dimensions.get('window').width;
-
-  const titleStyles = useMemo(() => {
-    if (screenWidth < 360) {
-      return {
-        fontSize: 11,
-        minFontSize: 9,
-        iconSize: 28,
-      };
-    } else if (screenWidth < 400) {
-      return {
-        fontSize: 12,
-        minFontSize: 10,
-        iconSize: 30,
-      };
-    }
-    return {
-      fontSize: 14,
-      minFontSize: 12,
-      iconSize: 32,
-    };
-  }, [screenWidth]);
+  const titleStyles = getMatchManagementTitleStyle(screenWidth);
 
   const checkTeamMembership = () => {
     if (!isAuthenticated) {

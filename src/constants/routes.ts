@@ -10,12 +10,12 @@ export const ROUTES = {
   PRIVACY_POLICY: '/profile/privacy-policy',
   TERMS_OF_SERVICE: '/profile/terms-of-service',
   SUPPORT: '/profile/support',
-  DATA_DELETION: '/profile/data-deletion',
+  DATA_DELETION: '/profile/data_deletion',
 
   TEAM_GUIDE: '/team/guide',
   TEAM_CREATION: '/team/creation',
-  TEAM_JOIN_UNIVERSITY: '/team/join-university',
-  TEAM_JOIN_LIST: '/team/join-list',
+  TEAM_JOIN_UNIVERSITY: '/team/join_university',
+  TEAM_JOIN_LIST: '/team/join_list',
 
   MATCH_MAKING: '/match_making/match_info',
   MEMBER_READY: '/member_ready',
@@ -38,7 +38,7 @@ export const ROUTES = {
   CREATE_LINEUP: '/match_application/create_lineup',
 
   TABS: '/(tabs)',
-  MATCH_INFO_TAB: '/(tabs)/match-info',
+  MATCH_INFO_TAB: '/(tabs)/match_info',
 } as const;
 
 export type RouteKey = keyof typeof ROUTES;
@@ -48,10 +48,10 @@ export const getTeamManagementUrl = (teamId: string | number) =>
 export const getTeamManagementSettingsUrl = (teamId: string) =>
   `/team/management/${teamId}/settings`;
 export const getTeamManagementRecentMatchesUrl = (teamId: string) =>
-  `/team/management/${teamId}/recent-matches`;
+  `/team/management/${teamId}/recent_matches`;
 export const getTeamManagementEditUrl = (teamId: string | number) =>
   `/team/management/${teamId}/edit`;
 export const getTeamManagementMembersUrl = (teamId: string | number) =>
   `/team/management/${teamId}/members`;
 export const getTeamManagementMatchRequestsUrl = (teamId: string | number) =>
-  `/team/management/${teamId}/match-requests`;
+  `/team/management/${teamId}/match_requests`;

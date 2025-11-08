@@ -124,8 +124,10 @@ export const USER_JOIN_WAITING_API = {
   GET_MY_JOIN_WAITING: (
     page: number = 0,
     size: number = 10,
-    sort: string = 'audit.createdAt,desc'
-  ) => `/api/users/me/join-waiting?page=${page}&size=${size}&sort=${sort}`,
+    sort: string = 'audit.createdAt,desc',
+    isMercenary: boolean = false
+  ) =>
+    `/api/users/me/join-waiting?page=${page}&size=${size}&sort=${sort}&isMercenary=${isMercenary}`,
 };
 
 export const MERCENARY_API = {
@@ -138,6 +140,6 @@ export const MERCENARY_API = {
 };
 
 export const LINEUP_API = {
-  CREATE: '/api/lineups', // POST 요청 (라인업 생성)
+  CREATE: '/api/lineups',
   GET_LINEUP: (lineupId: number | string) => `/api/lineups/${lineupId}`,
 };

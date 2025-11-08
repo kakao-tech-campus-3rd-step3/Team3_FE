@@ -6,8 +6,8 @@ export default function TeamLayout() {
   const screensWithoutHeader = [
     'guide',
     'creation',
-    'join-university',
-    'join-list',
+    'join_university',
+    'join_list',
     'management/[teamId]',
   ];
 

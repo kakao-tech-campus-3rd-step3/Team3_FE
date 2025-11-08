@@ -17,8 +17,6 @@ function ProfileScreen() {
   const { token, logout } = useAuth();
 
   const { data: userInfo, isLoading, error, refetch } = useUserProfile();
-
-  const displayUser = userInfo;
   const settingsItems = getDefaultSettingsItems(logout);
 
   if (!token) {
@@ -41,12 +39,8 @@ function ProfileScreen() {
     return <GlobalErrorFallback error={error} resetError={() => refetch()} />;
   }
 
-  if (!displayUser) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>사용자 정보를 불러오는 중...</Text>
-      </View>
-    );
+  if (!userInfo) {
+    return <View style={styles.loadingContainer}></View>;
   }
 
   return (
@@ -61,7 +55,7 @@ function ProfileScreen() {
         <View style={styles.container}>
           <CustomHeader title="프로필" showBackButton={false} />
           <Card style={styles.profileCard}>
-            <ProfileHeader user={displayUser} />
+            <ProfileHeader user={userInfo} />
           </Card>
 
           <SettingCard items={settingsItems} />

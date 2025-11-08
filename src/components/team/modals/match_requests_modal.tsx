@@ -6,6 +6,7 @@ import RequestManagementModal, {
   type RequestItem,
 } from '@/src/components/team/modals/request_management_modal';
 import { colors, spacing, typography } from '@/src/theme';
+import { convertUTCToKSTTime } from '@/src/utils/timezone';
 
 export interface MatchRequest {
   requestId: number;
@@ -79,9 +80,18 @@ export default function MatchRequestsModal({
     const formatTime = (timeStart?: string, timeEnd?: string) => {
       if (!timeStart || !timeEnd) return '시간 미정';
       try {
-        const start = timeStart.slice(0, 5);
-        const end = timeEnd.slice(0, 5);
-        return `${start} ~ ${end}`;
+        if (!matchRequest?.preferredDate) {
+          const start = timeStart.slice(0, 5);
+          const end = timeEnd.slice(0, 5);
+          return `${start} ~ ${end}`;
+        }
+        const kstStart = convertUTCToKSTTime(
+          `${matchRequest.preferredDate}T${timeStart}Z`
+        );
+        const kstEnd = convertUTCToKSTTime(
+          `${matchRequest.preferredDate}T${timeEnd}Z`
+        );
+        return `${kstStart} ~ ${kstEnd}`;
       } catch {
         return `${timeStart} ~ ${timeEnd}`;
       }

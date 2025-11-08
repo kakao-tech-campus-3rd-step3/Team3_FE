@@ -51,7 +51,12 @@ export default function MercenaryMainScreen() {
     pageSize,
     'matchDate,asc'
   );
-  const { data: myJoinWaitingData } = useMyJoinWaitingList(0, 1000);
+  const { data: myJoinWaitingData } = useMyJoinWaitingList(
+    0,
+    1000,
+    'audit.createdAt,desc',
+    true
+  );
 
   const {
     data: recruitmentDetail,

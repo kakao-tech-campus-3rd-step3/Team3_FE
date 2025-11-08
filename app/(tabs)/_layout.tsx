@@ -52,7 +52,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="match-info"
+        name="match_info"
         options={{
           title: '매치 정보',
           headerTitle: '매치 정보',
@@ -67,7 +67,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="mercenary-history"
+        name="mercenary_history"
         options={{
           title: '용병 기록',
           headerShown: false,

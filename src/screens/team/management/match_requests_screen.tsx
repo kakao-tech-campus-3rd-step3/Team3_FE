@@ -19,6 +19,7 @@ import {
 } from '@/src/hooks/queries';
 import { colors } from '@/src/theme';
 import type { MatchRequestResponseDto } from '@/src/types/match';
+import { convertUTCToKSTTime } from '@/src/utils/timezone';
 
 import { styles } from './match_requests_screen_styles';
 
@@ -60,7 +61,11 @@ export default function MatchRequestsScreen({
       }
       refetchMatchRequests();
     }
-  }, [acceptMatchRequestMutation.isSuccess, acceptMatchRequestMutation.data]);
+  }, [
+    acceptMatchRequestMutation.isSuccess,
+    acceptMatchRequestMutation.data,
+    refetchMatchRequests,
+  ]);
 
   const handleMatchRequest = async (
     requestId: number,
@@ -123,12 +128,21 @@ export default function MatchRequestsScreen({
     }
   };
 
-  const formatTime = (timeStart?: string, timeEnd?: string) => {
+  const formatTime = (
+    timeStart?: string,
+    timeEnd?: string,
+    preferredDate?: string
+  ) => {
     if (!timeStart || !timeEnd) return '시간 미정';
     try {
-      const start = timeStart.slice(0, 5);
-      const end = timeEnd.slice(0, 5);
-      return `${start} ~ ${end}`;
+      if (!preferredDate) {
+        const start = timeStart.slice(0, 5);
+        const end = timeEnd.slice(0, 5);
+        return `${start} ~ ${end}`;
+      }
+      const kstStart = convertUTCToKSTTime(`${preferredDate}T${timeStart}Z`);
+      const kstEnd = convertUTCToKSTTime(`${preferredDate}T${timeEnd}Z`);
+      return `${kstStart} ~ ${kstEnd}`;
     } catch {
       return `${timeStart} ~ ${timeEnd}`;
     }
@@ -210,7 +224,8 @@ export default function MatchRequestsScreen({
                     <Text style={styles.matchInfoItemValue}>
                       {formatTime(
                         request.preferredTimeStart,
-                        request.preferredTimeEnd
+                        request.preferredTimeEnd,
+                        request.preferredDate
                       )}
                     </Text>
                   </View>

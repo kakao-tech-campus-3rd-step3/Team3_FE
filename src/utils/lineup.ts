@@ -7,9 +7,9 @@ export const buildPositionMap = (
 };
 
 export const createLineupPayload = (
-  formationAssignments: Record<string, number | null>, // 슬롯ID -> teamMemberId
+  formationAssignments: Record<string, number | null>,
   benchPlayers: { id: number; preferredPosition?: AllowedPosition }[],
-  positionMap: Record<string, string> // 슬롯ID -> 서버 허용 포지션
+  positionMap: Record<string, string>
 ): CreateLineupRequest => {
   const starters = Object.entries(formationAssignments)
     .filter(([, memberId]) => memberId !== null)

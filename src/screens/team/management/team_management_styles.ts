@@ -62,3 +62,24 @@ export const styles = StyleSheet.create({
     flexShrink: 1,
   },
 });
+
+export const getMatchManagementTitleStyle = (screenWidth: number) => {
+  if (screenWidth < 360) {
+    return {
+      fontSize: 11,
+      minFontSize: 9,
+      iconSize: 28,
+    };
+  } else if (screenWidth < 400) {
+    return {
+      fontSize: 12,
+      minFontSize: 10,
+      iconSize: 30,
+    };
+  }
+  return {
+    fontSize: 14,
+    minFontSize: 12,
+    iconSize: 32,
+  };
+};

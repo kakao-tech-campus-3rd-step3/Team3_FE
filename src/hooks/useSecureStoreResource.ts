@@ -1,5 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 
+import { FormatError } from '@/src/lib/errors';
+
 interface Resource<T> {
   read(): T;
 }
@@ -68,7 +70,12 @@ function createSecureStoreResource<T>(
       if (stored !== null) {
         try {
           result = deserialize(stored);
-        } catch {
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            throw new FormatError(
+              `저장된 데이터 형식이 올바르지 않습니다: ${key}`
+            );
+          }
           console.warn(`저장된 데이터가 손상되었습니다: ${key}`);
           result = initialValue;
         }
@@ -137,6 +144,11 @@ export async function updateSecureStoreResource<T>(
   try {
     await SecureStore.setItemAsync(key, serializeFn(value));
   } catch (error) {
+    if (error instanceof TypeError) {
+      throw new FormatError(
+        `데이터 직렬화 중 형식 오류가 발생했습니다: ${key}`
+      );
+    }
     console.error(`데이터 저장 실패: ${key}:`, error);
     throw error;
   }
