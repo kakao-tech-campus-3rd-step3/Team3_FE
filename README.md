@@ -25,7 +25,7 @@
 
 ## 🎬 시연 영상
 
-<img src="@/assets/videos/shootdoori_video.mp4" alt="시연영상" width="1080"/>
+<img src="assets/videos/shootdoori_video.mp4" alt="시연영상" width="1080"/>
 
 ---
 
@@ -271,7 +271,7 @@ npx expo start
 
 ## 🧩 서비스 아키텍처
 
-<img src="@/assets/images/shootdoori_architecture.png" alt="서비스 아키텍처" width="1080"/>
+<img src="assets/images/shootdoori_architecture.png" alt="서비스 아키텍처" width="1080"/>
 
 ---
 
@@ -281,4 +281,4 @@ npx expo start
 
 👉 **[앱 다운로드하기](https://play.google.com/store/apps/details?id=com.cheogo.shootdoori&hl=ko)**
 
-<img src="@/assets/images/shootdoori_playstore.png" alt="플레이스토어 이미지" width="300"/>
+<img src="assets/images/shootdoori_playstore.png" alt="플레이스토어 이미지" width="300"/>
