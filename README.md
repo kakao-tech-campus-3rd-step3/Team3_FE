@@ -17,7 +17,7 @@
 
 ## 🎬 시연 영상
 
-<img src="assets/videos/shootdoori_video.mp4" alt="시연영상" width="1080"/>
+<video src="assets/videos/shootdoori_video.mp4" alt="시연영상" width="1080" ></video>
 
 ---
 
@@ -125,18 +125,6 @@ Team3_FE/
 │   └── utils/                  # 날짜 포맷, 포지션 변환 등 유틸 함수
 
 
-```
-
----
-
-## 🔧 실행
-
-```bash
-git clone https://github.com/kakao-tech-campus-3rd-step3/Team3_FE.git
-cd Team3_FE
-
-npm i
-npx expo start
 ```
 
 ---
