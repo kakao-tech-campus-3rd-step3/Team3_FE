@@ -143,6 +143,7 @@ Team3_FE/
 git clone https://github.com/kakao-tech-campus-3rd-step3/Team3_FE.git
 cd Team3_FE
 
+npm i
 npx expo start
 ```
 
