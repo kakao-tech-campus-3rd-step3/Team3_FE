@@ -17,7 +17,7 @@
 
 ## 🎬 시연 영상
 
-<video src="assets/videos/shootdoori_video.mp4" alt="시연영상" width="1080" ></video>
+<img src="assets\images\shootdoori_video.gif" alt="시연영상" width="1080"/>
 
 ---
 
