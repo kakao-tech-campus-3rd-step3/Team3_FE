@@ -8,7 +8,6 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  # 코드 품질 검사만 GitHub Actions에서 처리
   quality-check:
     name: 코드 품질 검사
     runs-on: ubuntu-latest
@@ -47,14 +46,13 @@ jobs:
       - name: 의존성 호환성 검사
         run: npm audit --audit-level=moderate
 
-  # 실제 빌드는 EAS Build에서 처리
   build:
     name: EAS Build 실행
     needs: quality-check
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production')) ||
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && (github.event.pull_request.base.ref == 'main' || github.event.pull_request.base.ref == 'production'))
+      (github.event_name == 'push' && github.ref == 'refs/heads/production') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'production')
 
     steps:
       - name: 코드 체크아웃
@@ -74,8 +72,8 @@ jobs:
 
       - name: EAS Build 실행
         run: |
-          if [ "${{ github.ref }}" == "refs/heads/main" ] || [ "${{ github.ref }}" == "refs/heads/production" ]; then
-            # 메인 브랜치 또는 프로덕션 브랜치: 프로덕션 빌드
+          if [ "${{ github.ref }}" == "refs/heads/production" ]; then
+            # 프로덕션 브랜치: 프로덕션 빌드
             eas build --platform android --profile production --non-interactive
             echo "🚀 프로덕션 빌드 완료 (${{ github.ref }} 브랜치)"
           else
