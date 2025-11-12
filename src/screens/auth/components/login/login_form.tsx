@@ -14,8 +14,8 @@ import {
 import { ROUTES } from '@/src/constants/routes';
 import { useLoginMutation } from '@/src/hooks/queries';
 import { useLoginForm } from '@/src/hooks/useLoginForm';
+import { ApiError } from '@/src/lib/api_client';
 import { theme } from '@/src/theme';
-import { translateErrorMessage } from '@/src/utils/error_messages';
 
 export default function LoginForm() {
   const { formData, errors, updateField, validateForm } = useLoginForm();
@@ -32,25 +32,13 @@ export default function LoginForm() {
     try {
       await loginMutation.mutateAsync(formData);
     } catch (error: unknown) {
-      const rawErrorMessage =
-        (error as Error).message || '로그인에 실패했습니다.';
-      const errorMessage = translateErrorMessage(rawErrorMessage, {
-        endpoint: '/api/auth/login',
-        method: 'POST',
-      });
-
-      if (
-        errorMessage.includes('비밀번호') ||
-        errorMessage.includes('password') ||
-        errorMessage.includes('인증') ||
-        errorMessage.includes('credentials') ||
-        errorMessage.includes('access') ||
-        rawErrorMessage.includes('FAIL_LOGIN') ||
-        rawErrorMessage.includes('로그인')
-      ) {
-        setPasswordError('이메일 또는 비밀번호가 올바르지 않습니다.');
+      if (error instanceof ApiError) {
+        const errorMessage = error.detail || error.message;
+        setPasswordError(errorMessage);
+      } else if (error instanceof Error) {
+        setPasswordError(error.message);
       } else {
-        Alert.alert('로그인 실패', errorMessage);
+        setPasswordError('로그인에 실패했습니다.');
       }
     }
   };
