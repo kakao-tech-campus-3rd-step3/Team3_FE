@@ -1,34 +1,28 @@
 import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, ActivityIndicator } from 'react-native';
 
-import {
-  useTeamRecentMatches,
-  useUserProfile,
-  useTeam,
-} from '@/src/hooks/queries';
-import { styles } from '@/src/screens/home/components/today_match_status/styles';
+import { useTeamRecentMatches } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import { RecentMatchResponse } from '@/src/types/match';
+import type { TeamDetailResponse } from '@/src/types/team';
 import { formatDateForAPI, convertUTCToKSTTime } from '@/src/utils/timezone';
+
+import { styles } from './styles';
 
 interface TodayMatchStatusProps {
   teamId: number | null;
+  team: TeamDetailResponse | null;
 }
 
 export default memo(function TodayMatchStatus({
   teamId,
+  team,
 }: TodayMatchStatusProps) {
-  const { data: userProfile } = useUserProfile();
-  const { data: team } = useTeam(userProfile?.teamId || 0);
-
-  const {
-    data: recentMatches = [],
-    isLoading,
-    error: hasError,
-  } = useTeamRecentMatches('MATCHED', {
-    enabled: !!teamId,
-  });
+  const { data: recentMatches = [], isLoading } = useTeamRecentMatches(
+    'MATCHED',
+    teamId
+  );
 
   const today = new Date();
   const todayString = formatDateForAPI(today);
@@ -62,7 +56,7 @@ export default memo(function TodayMatchStatus({
   );
 
   const getOpponentTeamName = (match: RecentMatchResponse) => {
-    if (!userProfile?.teamId || !team) return '상대팀';
+    if (!teamId || !team) return '상대팀';
 
     const currentTeamName = team.name || '';
 
@@ -97,46 +91,10 @@ export default memo(function TodayMatchStatus({
     );
   }
 
-  if (hasError) {
-    return (
-      <View style={styles.container}>
-        <View style={[styles.statusCard, styles.errorCard]}>
-          <View style={styles.statusContent}>
-            <Ionicons
-              name="warning-outline"
-              size={24}
-              color={theme.colors.orange[500]}
-            />
-            <View style={styles.statusText}>
-              <Text style={styles.statusTitle}>
-                팀 정보를 확인할 수 없습니다
-              </Text>
-              <Text style={styles.statusSubtitle}>
-                팀 멤버 정보를 다시 확인해주세요
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    );
-  }
-
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <View style={[styles.statusCard, styles.loadingCard]}>
-          <View style={styles.statusContent}>
-            <Ionicons
-              name="time-outline"
-              size={24}
-              color={theme.colors.blue[500]}
-            />
-            <View style={styles.statusText}>
-              <Text style={styles.statusTitle}>매치 정보 확인 중...</Text>
-              <Text style={styles.statusSubtitle}>잠시만 기다려주세요</Text>
-            </View>
-          </View>
-        </View>
+        <ActivityIndicator size="small" color={theme.colors.grass[500]} />
       </View>
     );
   }

@@ -5,6 +5,7 @@ import { Image, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { useAuth } from '@/src/contexts/auth_context';
 import { styles } from '@/src/screens/home/home_style';
 import { theme } from '@/src/theme';
+import { handleApiError } from '@/src/utils/handle_api_error';
 
 export default memo(function HomeHeader() {
   const { logout } = useAuth();
@@ -21,8 +22,8 @@ export default memo(function HomeHeader() {
         onPress: async () => {
           try {
             await logout();
-          } catch (error) {
-            console.error('로그아웃 중 오류 발생:', error);
+          } catch (error: unknown) {
+            handleApiError(error);
           }
         },
       },

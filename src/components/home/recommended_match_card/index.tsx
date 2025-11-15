@@ -1,19 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 
-import { useUserProfile, useRecommendedMatches } from '@/src/hooks/queries';
-import { styles } from '@/src/screens/home/components/recommended_match_card/styles';
+import { useRecommendedMatches } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import { RecommendedMatch } from '@/src/types/home';
 
+import { styles } from './styles';
+
 interface SafeMatchPreviewProps {
   onMatchPress?: (matchDate?: string) => void;
+  teamId?: number | null;
 }
 
 export default function SafeMatchPreview({
   onMatchPress,
+  teamId,
 }: SafeMatchPreviewProps) {
-  const { data: userProfile } = useUserProfile();
   const { data: matches = [], isLoading } = useRecommendedMatches();
 
   const renderPreviewCard = (match: RecommendedMatch, index: number) => (
@@ -125,7 +127,7 @@ export default function SafeMatchPreview({
         <Text style={styles.title}>금주의 추천 매치</Text>
       </View>
 
-      {!userProfile?.teamId ? (
+      {!teamId ? (
         renderNoTeamState()
       ) : isLoading ? (
         renderLoadingState()
