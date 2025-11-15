@@ -8,6 +8,7 @@ import {
 import { router } from 'expo-router';
 
 import { ROUTES } from '@/src/constants/routes';
+import { ApiError } from '@/src/lib/api_client';
 import { queryClient } from '@/src/lib/query_client';
 import type {
   TeamListPageResponse,
@@ -104,15 +105,14 @@ export function useTeamMatches(teamId: string | number) {
   });
 }
 
-export function useTeamRecentMatches(
-  status?: string,
-  options?: Partial<UseQueryOptions<unknown, Error>>
-) {
+export function useTeamRecentMatches(status?: string, teamId?: number | null) {
   return useQuery({
     queryKey: teamQueries.teamRecentMatches.key(status),
     queryFn: () => teamQueries.teamRecentMatches.fn(status),
-    enabled: true,
-    ...options,
+    enabled: !!teamId,
+    throwOnError: (error: unknown) => {
+      return error instanceof ApiError;
+    },
   });
 }
 
