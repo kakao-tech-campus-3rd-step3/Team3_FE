@@ -10,22 +10,22 @@ import {
   Text,
 } from 'react-native';
 
+import JoinConfirmationModal from '@/src/components/team/filters/join_confirmation_modal';
+import TeamCard from '@/src/components/team/filters/team_card';
+import TeamListHeader from '@/src/components/team/filters/team_list_header';
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { ROUTES } from '@/src/constants/routes';
 import {
   useTeamsByUniversityInfinite,
   useUserProfile,
-  useTeamJoinRequestMutation,
+  useJoinWaitingMutation,
 } from '@/src/hooks/queries';
-import JoinConfirmationModal from '@/src/screens/team/join/components/join_confirmation_modal';
-import TeamCard from '@/src/screens/team/join/components/team_card';
-import TeamListHeader from '@/src/screens/team/join/components/team_list_header';
-import { styles } from '@/src/screens/team/join/university_team_list_style';
+import { styles } from '@/src/screens/team/join_style';
 import { theme } from '@/src/theme';
-import type { TeamListItem } from '@/src/types';
+import type { TeamListItem, TeamListPageResponse } from '@/src/types';
+import { handleApiError } from '@/src/utils/handle_api_error';
 
-export default function UniversityTeamListScreen() {
+export default function JoinScreen() {
   const { university } = useLocalSearchParams<{ university: string }>();
   const { data: userProfile } = useUserProfile();
 
@@ -35,21 +35,16 @@ export default function UniversityTeamListScreen() {
   const [selectedTeam, setSelectedTeam] = useState<TeamListItem | null>(null);
   const joinModalAnim = useState(new Animated.Value(0))[0];
 
-  const { joinWaiting } = useTeamJoinRequestMutation();
+  const joinWaitingMutation = useJoinWaitingMutation();
 
-  const {
-    data,
-    isLoading: loading,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    refetch,
-  } = useTeamsByUniversityInfinite(userUniversity || '', 10);
+  const { data, isLoading, fetchNextPage, hasNextPage } =
+    useTeamsByUniversityInfinite(userUniversity || '', 10);
 
-  const allTeams = data?.pages.flatMap((page: any) => page.content) ?? [];
+  const allTeams =
+    data?.pages.flatMap((page: TeamListPageResponse) => page.content) ?? [];
 
   const loadMoreTeams = () => {
-    if (hasNextPage && !loading) {
+    if (hasNextPage && !isLoading) {
       fetchNextPage();
     }
   };
@@ -70,7 +65,7 @@ export default function UniversityTeamListScreen() {
   const handleConfirmJoin = async () => {
     if (selectedTeam) {
       try {
-        await joinWaiting({
+        await joinWaitingMutation.mutateAsync({
           teamId: selectedTeam.id,
           data: {},
         });
@@ -96,12 +91,8 @@ export default function UniversityTeamListScreen() {
             ]
           );
         });
-      } catch {
-        Alert.alert(
-          '신청 실패',
-          '팀 가입 신청에 실패했습니다. 다시 시도해주세요.',
-          [{ text: '확인' }]
-        );
+      } catch (error: unknown) {
+        handleApiError(error);
       }
     }
   };
@@ -121,16 +112,12 @@ export default function UniversityTeamListScreen() {
     <TeamCard team={item} onJoin={handleJoinTeam} />
   );
 
-  if (loading && !data) {
+  if (isLoading && !data) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={theme.colors.blue[500]} />
       </View>
     );
-  }
-
-  if (error) {
-    return <GlobalErrorFallback error={error as Error} resetError={refetch} />;
   }
 
   return (
@@ -158,7 +145,7 @@ export default function UniversityTeamListScreen() {
           </View>
         )}
         ListFooterComponent={
-          loading && data ? (
+          isLoading && data ? (
             <View style={{ padding: 20, alignItems: 'center' }}>
               <ActivityIndicator size="small" color={theme.colors.blue[500]} />
             </View>

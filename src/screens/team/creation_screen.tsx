@@ -9,82 +9,35 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
+import TeamBasicInfo from '@/src/components/team/steps/team_basic_info';
 import TeamDetails from '@/src/components/team/steps/team_details';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ROUTES } from '@/src/constants/routes';
 import { useCreateTeamMutation } from '@/src/hooks/queries';
-import TeamBasicInfo from '@/src/screens/team/creation/components/steps/team_basic_info';
-import { styles } from '@/src/screens/team/creation/team_creation_style';
+import { useTeamCreationForm } from '@/src/hooks/team/useTeamCreationForm';
+import { styles } from '@/src/screens/team/creation_style';
 import { theme } from '@/src/theme';
-import {
-  TeamType,
-  SkillLevel,
-  DEFAULT_TEAM_TYPE,
-  DEFAULT_SKILL_LEVEL,
-} from '@/src/types/team';
+import { SkillLevel } from '@/src/types/team';
+import { handleApiError } from '@/src/utils/handle_api_error';
 
-interface TeamFormData {
-  name: string;
-  university: string;
-  teamType: TeamType;
-  skillLevel: SkillLevel;
-  description: string;
-}
-
-interface TeamCreationScreenProps {
+interface CreationScreenProps {
   initialUniversity?: string;
 }
 
-export default function TeamCreationScreen({
+export default function CreationScreen({
   initialUniversity,
-}: TeamCreationScreenProps) {
+}: CreationScreenProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<TeamFormData>({
-    name: '',
-    university: initialUniversity || '',
-    teamType: DEFAULT_TEAM_TYPE,
-    skillLevel: DEFAULT_SKILL_LEVEL,
-    description: '',
-  });
+  const { formData, errors, updateFormData, validateForm } =
+    useTeamCreationForm(initialUniversity);
 
-  const [errors, setErrors] = useState<
-    Partial<Record<keyof TeamFormData, string>>
-  >({});
-
-  const validateForm = (): boolean => {
-    const newErrors: Partial<Record<keyof TeamFormData, string>> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = '팀 이름을 입력해주세요';
-    } else if (formData.name.length > 100) {
-      newErrors.name = '팀 이름은 100자 이하로 입력해주세요';
-    }
-
-    if (!formData.university.trim()) {
-      newErrors.university = '대학교를 입력해주세요';
-    } else if (formData.university.length > 100) {
-      newErrors.university = '대학교명은 100자 이하로 입력해주세요';
-    }
-
-    if (!formData.teamType.trim()) {
-      newErrors.teamType = '팀 유형을 선택해주세요';
-    }
-
-    if (formData.description && formData.description.length > 1000) {
-      newErrors.description = '팀 설명은 1000자 이하로 입력해주세요';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const createTeamMutation = useCreateTeamMutation();
+  const { mutateAsync: createTeam } = useCreateTeamMutation();
 
   const handleSubmit = async () => {
     if (validateForm()) {
       try {
-        const response = await createTeamMutation.mutateAsync(formData);
+        const response = await createTeam(formData);
 
         Alert.alert('팀 생성 완료', response.message, [
           {
@@ -94,20 +47,9 @@ export default function TeamCreationScreen({
             },
           },
         ]);
-      } catch (error) {
-        console.error('팀 생성 실패:', error);
-        Alert.alert('오류', '팀 생성에 실패했습니다.');
+      } catch (error: unknown) {
+        handleApiError(error);
       }
-    }
-  };
-
-  const updateFormData = <Key extends keyof TeamFormData>(
-    field: Key,
-    value: TeamFormData[Key]
-  ) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -128,7 +70,7 @@ export default function TeamCreationScreen({
             university={formData.university}
             teamType={formData.teamType}
             onTeamNameChange={name => updateFormData('name', name)}
-            onUniversityChange={() => {}} // 대학교는 수정 불가
+            onUniversityChange={() => {}}
             onTeamTypeChange={type => updateFormData('teamType', type)}
             {...stepProps}
             errors={{

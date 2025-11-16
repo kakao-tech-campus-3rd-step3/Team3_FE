@@ -10,7 +10,7 @@ import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { LoadingState } from '@/src/components/ui/loading_state';
 import { useTeamMemberManagement } from '@/src/hooks/team/useTeamMemberManagement';
 import { queryClient } from '@/src/lib/query_client';
-import { styles } from '@/src/screens/team/management/team_member_style';
+import { styles } from '@/src/screens/team/management/member_style';
 
 interface MemberManagementScreenProps {
   teamId: string | number;

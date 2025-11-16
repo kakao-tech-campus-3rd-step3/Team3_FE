@@ -9,16 +9,14 @@ import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { LoadingState } from '@/src/components/ui/loading_state';
 import { useTeamSettings } from '@/src/hooks/team/useTeamSettings';
 import { queryClient } from '@/src/lib/query_client';
-import { styles } from '@/src/screens/team/management/team_settings_styles';
+import { styles } from '@/src/screens/team/management/settings_styles';
 import { colors } from '@/src/theme';
 
-interface TeamSettingsScreenProps {
+interface SettingsScreenProps {
   teamId: string | number;
 }
 
-export default function TeamSettingsScreen({
-  teamId,
-}: TeamSettingsScreenProps) {
+export default function SettingsScreen({ teamId }: SettingsScreenProps) {
   const numericTeamId = teamId ? Number(teamId) : 0;
 
   const {

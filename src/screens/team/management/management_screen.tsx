@@ -9,15 +9,13 @@ import EmptyState from '@/src/components/team/states/empty_state';
 import LoadingState from '@/src/components/team/states/loading_state';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { useTeamManagement } from '@/src/hooks/team/useTeamManagement';
-import { styles } from '@/src/screens/team/management/team_management_styles';
+import { styles } from '@/src/screens/team/management/management_styles';
 
-interface TeamManagementScreenProps {
+interface ManagementScreenProps {
   teamId: string | number;
 }
 
-export default function TeamManagementScreen({
-  teamId,
-}: TeamManagementScreenProps) {
+export default function ManagementScreen({ teamId }: ManagementScreenProps) {
   const numericTeamId = teamId ? Number(teamId) : 0;
 
   const {
