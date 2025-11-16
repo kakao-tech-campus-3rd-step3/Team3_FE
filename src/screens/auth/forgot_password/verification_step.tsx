@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 
 import { useVerifyCodeMutation } from '@/src/hooks/queries';

@@ -1,11 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 
 import MatchRequestDetails from '@/src/components/team/sections/match_request_details';
 import { CustomHeader } from '@/src/components/ui/custom_header';

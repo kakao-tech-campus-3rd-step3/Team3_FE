@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 
 import { useSendCodeMutation } from '@/src/hooks/queries';
-import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 import {
   styles,
   getDynamicStyles,

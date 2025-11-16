@@ -3,7 +3,6 @@ import {
   useQuery,
   useInfiniteQuery,
   keepPreviousData,
-  UseQueryOptions,
 } from '@tanstack/react-query';
 import { router } from 'expo-router';
 

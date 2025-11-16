@@ -1,5 +1,4 @@
 import {
-  View,
   Text,
   TouchableOpacity,
   Keyboard,
@@ -10,9 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import DateTimeSection from '@/src/components/ui/date_time_section';
-import DropdownSection, {
-  type DropdownOption,
-} from '@/src/components/ui/dropdown_section';
+import DropdownSection from '@/src/components/ui/dropdown_section';
 import { ModalDatePicker } from '@/src/components/ui/modal_date_picker';
 import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
 import TextInputSection from '@/src/components/ui/text_input_section';

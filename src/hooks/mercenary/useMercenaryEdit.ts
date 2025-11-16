@@ -58,7 +58,7 @@ export function useMercenaryEdit(recruitmentId: number) {
         skillLevel: convertSkillLevelToKorean(recruitment.skillLevel),
       });
     }
-  }, [recruitment]);
+  }, [recruitment, setMatchDate, setMatchTime]);
 
   const handleUpdateRecruitment = () => {
     if (

@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 import { styles } from '@/src/screens/team/join_style';
 import type { TeamListItem } from '@/src/types';
-import { formatDate } from '@/src/utils/date';
 
 interface TeamCardProps {
   team: TeamListItem;

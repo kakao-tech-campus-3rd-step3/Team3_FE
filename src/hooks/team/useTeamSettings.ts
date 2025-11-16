@@ -8,7 +8,6 @@ import {
   useTeamJoinWaitingList,
   useTeamMembers,
   useDeleteTeamMutation,
-  useTeam,
   useTeamMatchRequests,
   useApproveJoinRequestMutation,
   useRejectJoinRequestMutation,

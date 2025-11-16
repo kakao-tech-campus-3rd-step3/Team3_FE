@@ -3,10 +3,6 @@ import { View, Text, TextInput, useWindowDimensions } from 'react-native';
 
 import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 import {
-  useRegisterValidation,
-  accountValidationRules,
-} from '@/src/hooks/useRegisterValidation';
-import {
   styles,
   getDynamicStyles,
 } from '@/src/screens/auth/register/account_setup_style';
