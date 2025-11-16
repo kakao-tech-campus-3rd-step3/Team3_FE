@@ -6,7 +6,7 @@ import { useAuth } from '@/src/contexts/auth_context';
 import { useDeleteProfileMutation } from '@/src/hooks/queries';
 import { handleApiError } from '@/src/utils/handle_api_error';
 
-export function useDataDeletion() {
+export function useProfileDelete() {
   const { token, logout } = useAuth();
   const deleteProfileMutation = useDeleteProfileMutation();
 
