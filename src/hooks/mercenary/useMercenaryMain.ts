@@ -9,7 +9,7 @@ import {
   useMercenaryRecruitments,
   useMercenaryRecruitment,
   useUserProfile,
-  useTeamJoinRequestMutation,
+  useJoinWaitingMutation,
   useMyJoinWaitingList,
 } from '@/src/hooks/queries';
 import { queryClient } from '@/src/lib/query_client';
@@ -31,7 +31,8 @@ export function useMercenaryMain() {
   const pageSize = 10;
 
   const { data: userProfile } = useUserProfile();
-  const { joinWaiting, isJoining } = useTeamJoinRequestMutation();
+  const { mutate: joinWaiting, isPending: isJoining } =
+    useJoinWaitingMutation();
   const { data: recruitmentsData, isLoading } = useMercenaryRecruitments(
     currentPage,
     pageSize,
