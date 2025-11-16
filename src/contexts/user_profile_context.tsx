@@ -6,6 +6,8 @@ import type { UserProfile } from '@/src/types/profile';
 interface UserProfileContextType {
   userProfile: UserProfile | undefined;
   isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<unknown>;
 }
 
 const UserProfileContext = createContext<UserProfileContextType | undefined>(
@@ -17,13 +19,15 @@ export function UserProfileProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { data: userProfile, isLoading } = useUserProfile();
+  const { data: userProfile, isLoading, error, refetch } = useUserProfile();
 
   return (
     <UserProfileContext.Provider
       value={{
         userProfile,
         isLoading,
+        error: error as Error | null,
+        refetch,
       }}
     >
       {children}
