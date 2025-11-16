@@ -9,13 +9,14 @@ import HomeHeader from '@/src/components/home/home_header';
 import RecommendedMatchCard from '@/src/components/home/recommended_match_card';
 import TodayMatchStatus from '@/src/components/home/today_match_status';
 import { ROUTES } from '@/src/constants/routes';
-import { useUserProfile, useTeam } from '@/src/hooks/queries';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
+import { useTeam } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/home/home_style';
 import { theme } from '@/src/theme';
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { data: userProfile, isLoading } = useUserProfile();
+  const { userProfile, isLoading } = useUserProfileContext();
   const { data: team } = useTeam(userProfile?.teamId || 0);
 
   const handleMatchPress = useCallback((matchDate?: string) => {

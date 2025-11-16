@@ -5,10 +5,10 @@ import { Alert } from 'react-native';
 import { mercenaryQueries } from '@/src/api/queries/mercenary/queries';
 import { teamQueries } from '@/src/api/queries/team/queries';
 import { ROUTES } from '@/src/constants/routes';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
 import {
   useMercenaryRecruitments,
   useMercenaryRecruitment,
-  useUserProfile,
   useJoinWaitingMutation,
   useMyJoinWaitingList,
 } from '@/src/hooks/queries';
@@ -30,7 +30,7 @@ export function useMercenaryMain() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const pageSize = 10;
 
-  const { data: userProfile } = useUserProfile();
+  const { userProfile } = useUserProfileContext();
   const { mutate: joinWaiting, isPending: isJoining } =
     useJoinWaitingMutation();
   const { data: recruitmentsData, isLoading } = useMercenaryRecruitments(

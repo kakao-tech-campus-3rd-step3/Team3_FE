@@ -4,7 +4,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Card from '@/src/components/card/card';
-import { useUserProfile, useUpdateProfileMutation } from '@/src/hooks/queries';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
+import { useUpdateProfileMutation } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/profile/edit/edit_profile_style';
 import ProfileForm from '@/src/screens/profile/edit/profile_form';
 import { theme } from '@/src/theme';
@@ -12,7 +13,7 @@ import { UpdateProfileRequest } from '@/src/types/profile';
 
 export default function EditProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { data: userInfo, refetch } = useUserProfile();
+  const { userProfile: userInfo, refetch } = useUserProfileContext();
   const updateProfileMutation = useUpdateProfileMutation();
 
   const handleSave = async (formData: UpdateProfileRequest) => {

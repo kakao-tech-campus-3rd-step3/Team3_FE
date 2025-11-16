@@ -5,7 +5,7 @@ import Card from '@/src/components/card/card';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { useAuth } from '@/src/contexts/auth_context';
-import { useUserProfile } from '@/src/hooks/queries';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
 import ProfileHeader from '@/src/screens/profile/components/profileHeader';
 import SettingCard from '@/src/screens/profile/components/settingTab/setting_card';
 import { getDefaultSettingsItems } from '@/src/screens/profile/components/settingTab/setting_items';
@@ -16,7 +16,12 @@ function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const { token, logout } = useAuth();
 
-  const { data: userInfo, isLoading, error, refetch } = useUserProfile();
+  const {
+    userProfile: userInfo,
+    isLoading,
+    error,
+    refetch,
+  } = useUserProfileContext();
   const settingsItems = getDefaultSettingsItems(logout);
 
   if (!token) {

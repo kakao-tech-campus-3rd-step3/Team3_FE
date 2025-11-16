@@ -11,11 +11,8 @@ import {
   RefreshControl,
 } from 'react-native';
 
-import {
-  useUserProfile,
-  useMyAppliedMatches,
-  useMatchWaitingList,
-} from '@/src/hooks/queries';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
+import { useMyAppliedMatches, useMatchWaitingList } from '@/src/hooks/queries';
 import { TeamMemberError } from '@/src/lib/errors';
 import FilterCard from '@/src/screens/match_application/components/filter_card';
 import MatchCard from '@/src/screens/match_application/components/match_card';
@@ -32,7 +29,7 @@ export default function MatchInfoScreen() {
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const { data: userProfile, error: profileError, refetch } = useUserProfile();
+  const { userProfile, error: profileError, refetch } = useUserProfileContext();
 
   useEffect(() => {
     if (date) {

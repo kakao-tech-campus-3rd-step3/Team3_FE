@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
 import {
-  useUserProfile,
   useMyAppliedMatches,
   useCancelMatchRequestMutation,
 } from '@/src/hooks/queries';
@@ -24,7 +24,7 @@ export default function CheckAppliedMatchesScreen() {
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const [selectedMatchId, setSelectedMatchId] = useState<number | null>(null);
 
-  const { refetch: refetchProfile } = useUserProfile();
+  const { refetch: refetchProfile } = useUserProfileContext();
   const {
     data: appliedMatches,
     isLoading,

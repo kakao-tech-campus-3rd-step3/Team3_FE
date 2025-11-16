@@ -13,14 +13,15 @@ import {
 
 import JoinWaitingList from '@/src/components/team/guide/join_waiting_list';
 import { ROUTES } from '@/src/constants/routes';
-import { useUserProfile, useMyJoinWaitingList } from '@/src/hooks/queries';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
+import { useMyJoinWaitingList } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/team/guide_styles';
 import { colors } from '@/src/theme';
 
 export default memo(function Buttons() {
   const router = useRouter();
   const [showJoinWaitingList, setShowJoinWaitingList] = useState(false);
-  const { data: userProfile } = useUserProfile();
+  const { userProfile } = useUserProfileContext();
   const { width } = useWindowDimensions();
 
   const {

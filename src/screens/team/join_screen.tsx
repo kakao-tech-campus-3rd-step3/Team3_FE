@@ -15,9 +15,9 @@ import TeamCard from '@/src/components/team/filters/team_card';
 import TeamListHeader from '@/src/components/team/filters/team_list_header';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ROUTES } from '@/src/constants/routes';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
 import {
   useTeamsByUniversityInfinite,
-  useUserProfile,
   useJoinWaitingMutation,
 } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/team/join_style';
@@ -27,7 +27,7 @@ import { handleApiError } from '@/src/utils/handle_api_error';
 
 export default function JoinScreen() {
   const { university } = useLocalSearchParams<{ university: string }>();
-  const { data: userProfile } = useUserProfile();
+  const { userProfile } = useUserProfileContext();
 
   const userUniversity = userProfile?.university || university;
 
