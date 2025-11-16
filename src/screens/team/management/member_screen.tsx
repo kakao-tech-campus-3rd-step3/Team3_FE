@@ -1,6 +1,5 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 
-import { teamQueries } from '@/src/api/queries/team/queries';
 import MemberInfoCard from '@/src/components/team/cards/member_info_card';
 import MemberDetailModal from '@/src/components/team/modals/member_detail_modal';
 import RoleChangeModal from '@/src/components/team/modals/role_change_modal';
