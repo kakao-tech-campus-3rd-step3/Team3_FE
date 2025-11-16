@@ -1,10 +1,10 @@
 import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
 
-import { useDataDeletion } from '@/src/hooks/useDataDeletion';
+import { useProfileDelete } from '@/src/hooks/profile';
 import { styles } from '@/src/screens/profile/data_deletion/styles';
 
 export default function DataDeletionScreen() {
-  const { handleDelete, isPending } = useDataDeletion();
+  const { handleDelete, isPending } = useProfileDelete();
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

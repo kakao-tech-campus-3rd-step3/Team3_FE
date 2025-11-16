@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Card from '@/src/components/card/card';
 import { LoadingState } from '@/src/components/ui/loading_state';
 import { useUserProfileContext } from '@/src/contexts/user_profile_context';
-import { useProfileEdit } from '@/src/hooks/useProfileEdit';
+import { useProfileEdit } from '@/src/hooks/profile';
 import ProfileForm from '@/src/screens/profile/edit/form';
 import { styles } from '@/src/screens/profile/edit/styles';
 import { theme } from '@/src/theme';
