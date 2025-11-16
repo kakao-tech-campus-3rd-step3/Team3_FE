@@ -16,11 +16,8 @@ import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ModalDatePicker } from '@/src/components/ui/modal_date_picker';
 import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
 import { ROUTES } from '@/src/constants/routes';
-import {
-  useUserProfile,
-  useVenues,
-  useCreateMatchMutation,
-} from '@/src/hooks/queries';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
+import { useVenues, useCreateMatchMutation } from '@/src/hooks/queries';
 import Message from '@/src/screens/match_making/match_info/components/message/message';
 import SkillLevelSelector from '@/src/screens/match_making/match_info/components/skill_level_selector/skill_level_selector';
 import { style } from '@/src/screens/match_making/match_info/match_info_style';
@@ -34,7 +31,7 @@ type SkillLevel = 'AMATEUR' | 'SEMI_PRO' | 'PRO';
 export default function MatchInfoScreen() {
   const router = useRouter();
   const { lineupId } = useLocalSearchParams<{ lineupId?: string }>();
-  const { data: userProfile, refetch } = useUserProfile();
+  const { userProfile, refetch } = useUserProfileContext();
   const { mutate: createMatch, isPending } = useCreateMatchMutation();
   const { data: venues, isLoading, error } = useVenues();
 

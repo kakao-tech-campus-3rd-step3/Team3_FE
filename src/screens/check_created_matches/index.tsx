@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
 import {
-  useUserProfile,
   useMyCreatedMatches,
   useCancelMatchMutation,
 } from '@/src/hooks/queries';
@@ -20,7 +20,7 @@ import { styles } from '@/src/screens/match_application/match_application_style'
 export default function CheckCreatedMatchesScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
-  const { refetch: refetchProfile } = useUserProfile();
+  const { refetch: refetchProfile } = useUserProfileContext();
   const {
     data: createdMatches,
     isLoading,

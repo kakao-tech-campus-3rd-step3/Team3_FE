@@ -11,7 +11,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import { useTeamMembersInfinite, useUserProfile } from '@/src/hooks/queries';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
+import { useTeamMembersInfinite } from '@/src/hooks/queries';
 import { theme } from '@/src/theme';
 import { TeamMember } from '@/src/types/team';
 
@@ -47,7 +48,7 @@ export const TeamMemberSelectModal = ({
   const [selected, setSelected] = useState<Record<number, boolean>>({});
   const [filter, setFilter] = useState<string>('전체');
 
-  const { data: userProfile } = useUserProfile();
+  const { userProfile } = useUserProfileContext();
   const teamId = userProfile?.teamId ?? 0;
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =

@@ -1,4 +1,5 @@
-import { View, ActivityIndicator, Text } from 'react-native';
+import { memo } from 'react';
+import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 
 import { theme } from '@/src/theme';
 
@@ -6,20 +7,22 @@ interface LoadingStateProps {
   message?: string;
 }
 
-export function LoadingState({ message = '로딩 중...' }: LoadingStateProps) {
+export const LoadingState = memo(function LoadingState({
+  message = '로딩 중...',
+}: LoadingStateProps) {
   return (
     <View style={styles.loadingContainer}>
       <ActivityIndicator size="large" color={theme.colors.grass[500]} />
       <Text style={styles.loadingText}>{message}</Text>
     </View>
   );
-}
+});
 
-const styles = {
+const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: theme.spacing.spacing10,
   },
   loadingText: {
@@ -27,4 +30,4 @@ const styles = {
     color: theme.colors.gray[500],
     marginTop: theme.spacing.spacing2,
   },
-};
+});

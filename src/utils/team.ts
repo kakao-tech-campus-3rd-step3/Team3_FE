@@ -23,6 +23,10 @@ import type {
 } from '@/src/types/team';
 
 import {
+  convertSkillLevelToKorean,
+  convertSkillLevelToEnglish,
+} from './skill_level';
+import {
   BASIC_STATUS_LABELS,
   EXTENDED_STATUS_LABELS,
   KOREAN_TO_ENGLISH_STATUS_MAPPING,
@@ -34,18 +38,12 @@ export const TEAM_TYPE_MAPPING: Record<string, TeamType> = {
   OTHER: '기타',
 };
 
-export const SKILL_LEVEL_MAPPING: Record<string, SkillLevel> = {
-  AMATEUR: '아마추어',
-  SEMI_PRO: '세미프로',
-  PRO: '프로',
-};
-
 export const getTeamTypeInKorean = (apiType: string): TeamType => {
   return TEAM_TYPE_MAPPING[apiType] || '기타';
 };
 
 export const getSkillLevelInKorean = (apiLevel: string): SkillLevel => {
-  return SKILL_LEVEL_MAPPING[apiLevel] || '아마추어';
+  return convertSkillLevelToKorean(apiLevel);
 };
 
 export const getTeamTypeInEnglish = (koreanType: TeamType): string => {
@@ -53,7 +51,7 @@ export const getTeamTypeInEnglish = (koreanType: TeamType): string => {
 };
 
 export const getSkillLevelInEnglish = (koreanLevel: SkillLevel): string => {
-  return koreanLevel;
+  return convertSkillLevelToEnglish(koreanLevel);
 };
 
 export const transformTeamListItem = (

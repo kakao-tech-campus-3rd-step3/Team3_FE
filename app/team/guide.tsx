@@ -1,5 +1,5 @@
-import TeamGuideScreen from '@/src/screens/team/guide/team_guide_screen';
+import GuideScreen from '@/src/screens/team/guide_screen';
 
 export default function TeamGuideRoute() {
-  return <TeamGuideScreen />;
+  return <GuideScreen />;
 }

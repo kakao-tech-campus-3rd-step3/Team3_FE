@@ -11,10 +11,8 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import {
-  useUserProfile,
-  useCreateTeamReviewMutation,
-} from '@/src/hooks/queries';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
+import { useCreateTeamReviewMutation } from '@/src/hooks/queries';
 import { styles } from '@/src/screens/review/team_review/styles';
 import { theme } from '@/src/theme';
 import { TeamReviewRequest } from '@/src/types';
@@ -39,7 +37,7 @@ export default function TeamReviewScreen() {
     matchId: string;
     reviewedTeamId: string;
   }>();
-  const { data: profile } = useUserProfile();
+  const { userProfile: profile } = useUserProfileContext();
   const { mutate: createReview, isPending } = useCreateTeamReviewMutation();
 
   const [rating, setRating] = useState<number>(0);

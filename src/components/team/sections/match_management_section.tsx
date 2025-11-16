@@ -8,7 +8,7 @@ import { useAuth } from '@/src/contexts/auth_context';
 import {
   styles,
   getMatchManagementTitleStyle,
-} from '@/src/screens/team/management/team_management_styles';
+} from '@/src/screens/team/management/management_styles';
 import { theme } from '@/src/theme';
 
 interface MatchManagementSectionProps {

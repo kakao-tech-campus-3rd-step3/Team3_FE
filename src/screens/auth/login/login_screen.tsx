@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import LoginForm from '@/src/screens/auth/components/login/login_form';
+import LoginForm from '@/src/components/auth/login/login_form';
 import { styles } from '@/src/screens/auth/login/login_style';
 
 interface LoginScreenProps {

@@ -196,7 +196,6 @@ export const teamEditApi = {
     data: {
       name: string;
       description: string;
-      university: string;
       skillLevel: SkillLevel;
       teamType: TeamType;
     }
@@ -204,7 +203,6 @@ export const teamEditApi = {
     const apiData = {
       name: data.name,
       description: data.description,
-      university: data.university,
       skillLevel: getSkillLevelInEnglish(data.skillLevel),
       teamType: getTeamTypeInEnglish(data.teamType),
     };

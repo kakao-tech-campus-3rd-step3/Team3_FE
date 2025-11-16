@@ -9,11 +9,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background.sub,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 
   header: {
     backgroundColor: theme.colors.background.sub,
@@ -48,10 +43,6 @@ export const styles = StyleSheet.create({
     paddingBottom: theme.spacing.spacing1,
   },
 
-  mainSection: {
-    marginHorizontal: theme.spacing.spacing4,
-    marginBottom: theme.spacing.spacing6,
-  },
   matchSection: {
     marginHorizontal: theme.spacing.spacing4,
     marginBottom: theme.spacing.spacing6,
