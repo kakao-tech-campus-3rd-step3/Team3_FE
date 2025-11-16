@@ -6,8 +6,8 @@ import MemberDetailModal from '@/src/components/team/modals/member_detail_modal'
 import MatchManagementSection from '@/src/components/team/sections/match_management_section';
 import TeamMembersSection from '@/src/components/team/sections/team_members_section';
 import TeamReviewsSection from '@/src/components/team/sections/team_reviews_section';
-import LoadingState from '@/src/components/team/states/loading_state';
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { LoadingState } from '@/src/components/ui/loading_state';
 import { useUserProfileContext } from '@/src/contexts/user_profile_context';
 import { useTeam, useTeamMembers } from '@/src/hooks/queries';
 import { useTeamManagement } from '@/src/hooks/team/useTeamManagement';
