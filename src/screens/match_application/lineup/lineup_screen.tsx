@@ -11,11 +11,8 @@ import {
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { FORMATION_POSITIONS, FormationType } from '@/src/constants/formations';
-import {
-  useLineupDetail,
-  useTeamMembers,
-  useUserProfile,
-} from '@/src/hooks/queries';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
+import { useLineupDetail, useTeamMembers } from '@/src/hooks/queries';
 import type { AllowedPosition, ApiLineupItem } from '@/src/types/lineup';
 
 import { style } from './lineup_screen_style';
@@ -25,14 +22,15 @@ export default function LineupScreen() {
     lineupId?: string;
     formation?: FormationType;
   }>();
-  const { data: userProfile } = useUserProfile();
+  const { userProfile } = useUserProfileContext();
   const teamId = userProfile?.teamId ?? 0;
 
-  const { members: teamMembers, isLoading: membersLoading } = useTeamMembers(
+  const { data: teamMembersData, isLoading: membersLoading } = useTeamMembers(
     teamId,
     0,
     100
   );
+  const teamMembers = teamMembersData?.content ?? [];
   const {
     data: lineupItems,
     isLoading: lineupLoading,

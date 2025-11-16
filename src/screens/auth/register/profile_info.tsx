@@ -1,22 +1,28 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
-  StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
   useWindowDimensions,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
+import { FormField } from '@/src/components/auth/register/form_field';
 import type { RegisterFormData } from '@/src/hooks/useRegisterForm';
 import {
   useRegisterValidation,
   profileValidationRules,
 } from '@/src/hooks/useRegisterValidation';
-import { theme } from '@/src/theme';
+import {
+  styles,
+  getDynamicStyles,
+} from '@/src/screens/auth/register/profile_info_style';
+import {
+  formatFieldValue,
+  validateProfileInfo,
+} from '@/src/screens/auth/register/profile_info_utils';
 
 interface Props {
   data: RegisterFormData;
@@ -35,75 +41,20 @@ export default function ProfileInfo({
   handleNext,
 }: Props) {
   const { width } = useWindowDimensions();
-  const [focusedField, setFocusedField] = useState<string | null>(null);
   const { errors, validateField } = useRegisterValidation(
     profileValidationRules
   );
 
-  const dynamicStyles = StyleSheet.create({
-    label: {
-      fontSize: Math.max(14, width * 0.04),
-      fontWeight: '500',
-      color: theme.colors.text.main,
-      marginBottom: Math.max(8, width * 0.02),
-    },
-    input: {
-      borderWidth: 1,
-      borderColor: theme.colors.border.input,
-      borderRadius: Math.max(8, width * 0.02),
-      paddingHorizontal: Math.max(16, width * 0.04),
-      fontSize: Math.max(14, width * 0.04),
-      color: theme.colors.text.main,
-      backgroundColor: theme.colors.background.input,
-      textAlignVertical: 'center',
-      minHeight: 50,
-    },
-    errorText: {
-      color: theme.colors.red[500],
-      fontSize: Math.max(12, width * 0.035),
-      marginTop: Math.max(8, width * 0.02),
-    },
-    prevButtonText: {
-      fontSize: Math.max(14, width * 0.04),
-      fontWeight: '500',
-      color: theme.colors.text.sub,
-    },
-    nextButtonText: {
-      fontSize: Math.max(14, width * 0.04),
-      fontWeight: '500',
-      color: theme.colors.white,
-    },
-  });
+  const dynamicStyles = getDynamicStyles(width);
 
   const handleFieldChange = (field: keyof RegisterFormData, value: string) => {
-    if (field === 'studentYear') {
-      const numericValue = value.replace(/[^0-9]/g, '').slice(0, 2);
-      onChange(field, numericValue);
-      const updatedData = { ...data, [field]: numericValue };
-      validateField(field, numericValue, updatedData);
-    } else if (field === 'kakaoTalkId') {
-      const validValue = value.replace(/[^a-zA-Z0-9._-]/g, '');
-      onChange(field, validValue);
-      const updatedData = { ...data, [field]: validValue };
-      validateField(field, validValue, updatedData);
-    } else {
-      onChange(field, value);
-      const updatedData = { ...data, [field]: value };
-      validateField(field, value, updatedData);
-    }
+    const formattedValue = formatFieldValue(field, value);
+    onChange(field, formattedValue);
+    const updatedData = { ...data, [field]: formattedValue };
+    validateField(field, formattedValue, updatedData);
   };
 
-  const isFormValid = useMemo(() => {
-    const nameValid = data.name && data.name.trim().length >= 2;
-    const kakaotalkIdValid =
-      data.kakaoTalkId && /^[a-zA-Z0-9._-]{4,20}$/.test(data.kakaoTalkId);
-    const studentYearValid =
-      data.studentYear && /^\d{2}$/.test(data.studentYear);
-    const departmentValid =
-      data.department && data.department.trim().length >= 2;
-
-    return nameValid && kakaotalkIdValid && studentYearValid && departmentValid;
-  }, [data]);
+  const isFormValid = useMemo(() => validateProfileInfo(data), [data]);
 
   return (
     <View style={styles.container}>
@@ -115,92 +66,41 @@ export default function ProfileInfo({
           keyboardShouldPersistTaps="handled"
           enableOnAndroid={true}
         >
-          <View style={styles.inputGroup}>
-            <Text style={dynamicStyles.label}>이름</Text>
-            <TextInput
-              style={[
-                dynamicStyles.input,
-                (focusedField === 'name' || data.name) && styles.inputFilled,
-                errors.name && styles.inputError,
-              ]}
-              placeholder="이름을 입력하세요"
-              value={data.name}
-              onChangeText={text => handleFieldChange('name', text)}
-              onFocus={() => setFocusedField('name')}
-              onBlur={() => setFocusedField(null)}
-              multiline={false}
-            />
-            {errors.name && (
-              <Text style={dynamicStyles.errorText}>{errors.name}</Text>
-            )}
-          </View>
+          <FormField
+            label="이름"
+            value={data.name}
+            onChangeText={text => handleFieldChange('name', text)}
+            error={errors.name}
+            placeholder="이름을 입력하세요"
+          />
 
-          <View style={styles.inputGroup}>
-            <Text style={dynamicStyles.label}>카카오 아이디</Text>
-            <TextInput
-              style={[
-                dynamicStyles.input,
-                (focusedField === 'kakaoTalkId' || data.kakaoTalkId) &&
-                  styles.inputFilled,
-                errors.kakaoTalkId && styles.inputError,
-              ]}
-              placeholder="카카오톡 아이디를 입력해주세요"
-              value={data.kakaoTalkId}
-              onChangeText={text => handleFieldChange('kakaoTalkId', text)}
-              onFocus={() => setFocusedField('kakaoTalkId')}
-              onBlur={() => setFocusedField(null)}
-              autoCapitalize="none"
-              autoCorrect={false}
-              multiline={false}
-            />
-            {errors.kakaoTalkId && (
-              <Text style={dynamicStyles.errorText}>{errors.kakaoTalkId}</Text>
-            )}
-          </View>
+          <FormField
+            label="카카오 아이디"
+            value={data.kakaoTalkId}
+            onChangeText={text => handleFieldChange('kakaoTalkId', text)}
+            error={errors.kakaoTalkId}
+            placeholder="카카오톡 아이디를 입력해주세요"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
 
-          <View style={styles.inputGroup}>
-            <Text style={dynamicStyles.label}>입학년도</Text>
-            <TextInput
-              style={[
-                dynamicStyles.input,
-                (focusedField === 'studentYear' || data.studentYear) &&
-                  styles.inputFilled,
-                errors.studentYear && styles.inputError,
-              ]}
-              placeholder="예: 25 (입학년도 2자리)"
-              value={data.studentYear}
-              onChangeText={text => handleFieldChange('studentYear', text)}
-              keyboardType="number-pad"
-              maxLength={2}
-              onFocus={() => setFocusedField('studentYear')}
-              onBlur={() => setFocusedField(null)}
-              multiline={false}
-            />
-            {errors.studentYear && (
-              <Text style={dynamicStyles.errorText}>{errors.studentYear}</Text>
-            )}
-          </View>
+          <FormField
+            label="입학년도"
+            value={data.studentYear}
+            onChangeText={text => handleFieldChange('studentYear', text)}
+            error={errors.studentYear}
+            placeholder="예: 25 (입학년도 2자리)"
+            keyboardType="number-pad"
+            maxLength={2}
+          />
 
-          <View style={styles.inputGroup}>
-            <Text style={dynamicStyles.label}>학과</Text>
-            <TextInput
-              style={[
-                dynamicStyles.input,
-                (focusedField === 'department' || data.department) &&
-                  styles.inputFilled,
-                errors.department && styles.inputError,
-              ]}
-              placeholder="학과를 입력하세요"
-              value={data.department}
-              onChangeText={text => handleFieldChange('department', text)}
-              onFocus={() => setFocusedField('department')}
-              onBlur={() => setFocusedField(null)}
-              multiline={false}
-            />
-            {errors.department && (
-              <Text style={dynamicStyles.errorText}>{errors.department}</Text>
-            )}
-          </View>
+          <FormField
+            label="학과"
+            value={data.department}
+            onChangeText={text => handleFieldChange('department', text)}
+            error={errors.department}
+            placeholder="학과를 입력하세요"
+          />
         </KeyboardAwareScrollView>
       </TouchableWithoutFeedback>
 
@@ -220,44 +120,3 @@ export default function ProfileInfo({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background.main,
-  },
-  scrollView: { flex: 1 },
-  scrollContent: {
-    paddingHorizontal: theme.spacing.spacing2,
-    paddingBottom: theme.spacing.spacing20,
-    minHeight: '100%',
-  },
-  inputGroup: { marginBottom: theme.spacing.spacing6 },
-  inputFilled: { borderColor: theme.colors.brand.main },
-  inputError: { borderColor: theme.colors.red[500] },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: theme.spacing.spacing2,
-    paddingVertical: theme.spacing.spacing4,
-    backgroundColor: theme.colors.background.main,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border.light,
-    gap: theme.spacing.spacing4,
-  },
-  prevButton: {
-    flex: 1,
-    backgroundColor: theme.colors.gray[200],
-    borderRadius: 8,
-    paddingVertical: theme.spacing.spacing4,
-    alignItems: 'center',
-  },
-  nextButton: {
-    flex: 1,
-    backgroundColor: theme.colors.brand.main,
-    borderRadius: 8,
-    paddingVertical: theme.spacing.spacing4,
-    alignItems: 'center',
-  },
-  nextButtonDisabled: { backgroundColor: theme.colors.gray[400] },
-});

@@ -3,17 +3,15 @@ import { useState } from 'react';
 import { Alert } from 'react-native';
 
 import { convertKoreanToPosition } from '@/src/constants/positions';
-import {
-  useCreateMercenaryRecruitment,
-  useUserProfile,
-} from '@/src/hooks/queries';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
+import { useCreateMercenaryRecruitment } from '@/src/hooks/queries';
 import { useDateTimePicker } from '@/src/hooks/useDateTimePicker';
 import type { RecruitmentCreateRequest } from '@/src/types';
 import { formatDateForAPI, formatTimeForAPI } from '@/src/utils/date';
 import { handleApiError } from '@/src/utils/handle_api_error';
 
 export function useMercenaryCreate() {
-  const { data: userProfile } = useUserProfile();
+  const { userProfile } = useUserProfileContext();
   const { createRecruitment, isCreating } = useCreateMercenaryRecruitment();
 
   const {

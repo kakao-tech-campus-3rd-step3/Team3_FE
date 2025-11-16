@@ -11,6 +11,8 @@ import {
 import { convertPositionToKorean } from '@/src/constants/positions';
 import { theme } from '@/src/theme';
 import { RecruitmentResponse } from '@/src/types/mercenary';
+import { formatTime } from '@/src/utils/date';
+import { getSkillLevelBadgeStyle } from '@/src/utils/skill_level';
 
 interface RecruitmentCardProps {
   recruitment: RecruitmentResponse;
@@ -60,35 +62,6 @@ export function RecruitmentCard({
       iconSize: 16,
     };
   }, [screenWidth]);
-
-  const formatTime = (time: string) => {
-    return time.slice(0, 5);
-  };
-
-  const getSkillLevelBadgeStyle = (skillLevel: string) => {
-    switch (skillLevel) {
-      case 'PRO':
-        return {
-          backgroundColor: '#F4E4BC',
-          textColor: theme.colors.text.main,
-        };
-      case 'SEMI_PRO':
-        return {
-          backgroundColor: '#E8E8E8',
-          textColor: theme.colors.text.main,
-        };
-      case 'AMATEUR':
-        return {
-          backgroundColor: '#E6D2B8',
-          textColor: theme.colors.text.main,
-        };
-      default:
-        return {
-          backgroundColor: '#E6D2B8',
-          textColor: theme.colors.text.main,
-        };
-    }
-  };
 
   const skillLevelStyle = getSkillLevelBadgeStyle(recruitment.skillLevel);
 

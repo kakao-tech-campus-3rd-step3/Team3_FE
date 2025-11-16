@@ -18,11 +18,11 @@ import { CustomHeader } from '@/src/components/ui/custom_header';
 import { TeamMemberSelectModal } from '@/src/components/ui/team_member_select_modal';
 import { FORMATION_POSITIONS, FormationType } from '@/src/constants/formations';
 import { ROUTES } from '@/src/constants/routes';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
 import {
   useCreateLineupsMutation,
   useMatchRequestMutation,
   useTeamMembersInfinite,
-  useUserProfile,
 } from '@/src/hooks/queries';
 import { style } from '@/src/screens/match_application/create_lineup/create_lineup_style';
 import { MatchRequestRequestDto } from '@/src/types';
@@ -37,7 +37,7 @@ export default function CreateLineupScreen() {
   }>();
   const { mutate: requestMatch, isPending: isRequestMatchPending } =
     useMatchRequestMutation();
-  const { data: userProfile } = useUserProfile();
+  const { userProfile } = useUserProfileContext();
   const teamId = userProfile?.teamId ?? 0;
 
   const { data, isLoading } = useTeamMembersInfinite(teamId, 50);

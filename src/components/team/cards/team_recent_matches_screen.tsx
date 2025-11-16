@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 
 import { CustomHeader } from '@/src/components/ui/custom_header';
-import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { ROUTES } from '@/src/constants/routes';
 import { useTeamRecentMatches, useTeam } from '@/src/hooks/queries';
 import { colors, spacing, typography, theme } from '@/src/theme';
@@ -25,26 +24,11 @@ interface TeamRecentMatchesScreenProps {
 export default memo(function TeamRecentMatchesScreen({
   teamId,
 }: TeamRecentMatchesScreenProps) {
-  const {
-    data: matches,
-    isLoading,
-    error,
-    refetch,
-  } = useTeamRecentMatches('FINISHED');
+  const { data: matches, isLoading } = useTeamRecentMatches(
+    'FINISHED',
+    teamId ? Number(teamId) : null
+  );
   const { data: team } = useTeam(teamId);
-
-  if (!teamId || teamId === null || teamId === undefined) {
-    return (
-      <View style={styles.container}>
-        <CustomHeader title="최근 경기" />
-        <View style={styles.loadingContainer}>
-          <Text style={{ textAlign: 'center', color: colors.red[500] }}>
-            유효하지 않은 팀 ID입니다.
-          </Text>
-        </View>
-      </View>
-    );
-  }
 
   const numericTeamId = Number(teamId);
 
@@ -112,10 +96,6 @@ export default memo(function TeamRecentMatchesScreen({
         <ActivityIndicator size="large" color={theme.colors.grass[500]} />
       </View>
     );
-  }
-
-  if (error) {
-    return <GlobalErrorFallback error={error} resetError={() => refetch()} />;
   }
 
   const currentTeamMatches = (matches || []) as RecentMatchResponse[];

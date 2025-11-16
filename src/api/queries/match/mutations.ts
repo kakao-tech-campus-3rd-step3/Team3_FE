@@ -1,6 +1,8 @@
 import { useMutation, useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { useAuth } from '@/src/contexts/auth_context';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
+import { ApiError } from '@/src/lib/api_client';
 import { queryClient } from '@/src/lib/query_client';
 import type {
   MatchWaitingHistoryResponseDto,
@@ -11,7 +13,6 @@ import type {
 } from '@/src/types';
 import { addDaysToDate, formatDateForAPI } from '@/src/utils/date';
 
-import { useUserProfile } from '../profile/mutations';
 import { profileQueries } from '../profile/queries';
 
 import { matchQueries } from './queries';
@@ -23,6 +24,9 @@ export function useTeamMatchRequests() {
     queryKey: matchQueries.teamMatchRequests.key,
     queryFn: matchQueries.teamMatchRequests.fn,
     enabled: !!token && isInitialized,
+    throwOnError: (error: unknown) => {
+      return error instanceof ApiError;
+    },
   });
 }
 
@@ -36,7 +40,7 @@ export function useRecommendedMatch() {
 export function useMyAppliedMatches(
   options?: Partial<UseQueryOptions<MatchWaitingHistoryResponseDto[], Error>>
 ) {
-  const { data: userProfile } = useUserProfile();
+  const { userProfile } = useUserProfileContext();
 
   return useQuery<MatchWaitingHistoryResponseDto[], Error>({
     queryKey: matchQueries.myAppliedMatches.key,
@@ -167,7 +171,7 @@ const getRecommendedMatches = (
 };
 
 export function useRecommendedMatches() {
-  const { data: userProfile } = useUserProfile();
+  const { userProfile } = useUserProfileContext();
 
   return useQuery({
     queryKey: ['recommendedMatches'],

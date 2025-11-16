@@ -24,7 +24,7 @@ interface JoinRequestsModalProps {
   joinRequests: TeamJoinRequest[];
   onClose: () => void;
   onJoinRequest: (requestId: number, status: 'approved' | 'rejected') => void;
-  processingRequestId?: number | null;
+  isProcessing?: boolean;
 }
 
 export default function JoinRequestsModal({
@@ -32,7 +32,7 @@ export default function JoinRequestsModal({
   joinRequests,
   onClose,
   onJoinRequest,
-  processingRequestId = null,
+  isProcessing = false,
 }: JoinRequestsModalProps) {
   useEffect(() => {
     const backAction = () => {
@@ -86,7 +86,7 @@ export default function JoinRequestsModal({
                   key={request.id}
                   request={request}
                   onJoinRequest={onJoinRequest}
-                  isProcessing={processingRequestId === request.id}
+                  isProcessing={isProcessing}
                 />
               ))}
             </View>

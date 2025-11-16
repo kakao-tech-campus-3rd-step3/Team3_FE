@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { useAuth } from '@/src/contexts/auth_context';
+import { ApiError } from '@/src/lib/api_client';
 import { queryClient } from '@/src/lib/query_client';
 
 import { profileQueries } from './queries';
@@ -12,6 +13,9 @@ export function useUserProfile() {
     queryKey: profileQueries.userProfile.key,
     queryFn: profileQueries.userProfile.fn,
     enabled: !!token && isInitialized,
+    throwOnError: (error: unknown) => {
+      return error instanceof ApiError;
+    },
   });
 }
 

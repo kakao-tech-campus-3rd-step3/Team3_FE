@@ -12,6 +12,7 @@ import 'react-native-reanimated';
 import GlobalErrorFallback from '@/src/components/ui/global_error_fallback';
 import { ROUTES } from '@/src/constants/routes';
 import { AuthProvider, useAuth } from '@/src/contexts/auth_context';
+import { UserProfileProvider } from '@/src/contexts/user_profile_context';
 import { queryClient } from '@/src/lib/query_client';
 SplashScreen.preventAutoHideAsync();
 
@@ -88,22 +89,24 @@ export default function RootLayout() {
     <ErrorBoundary FallbackComponent={GlobalErrorFallback}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <Suspense
-            fallback={
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: '#2D5016',
-                }}
-              >
-                <ActivityIndicator size="large" color="white" />
-              </View>
-            }
-          >
-            <AppContent />
-          </Suspense>
+          <UserProfileProvider>
+            <Suspense
+              fallback={
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#2D5016',
+                  }}
+                >
+                  <ActivityIndicator size="large" color="white" />
+                </View>
+              }
+            >
+              <AppContent />
+            </Suspense>
+          </UserProfileProvider>
         </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>

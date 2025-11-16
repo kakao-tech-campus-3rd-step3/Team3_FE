@@ -5,16 +5,17 @@ import { Alert } from 'react-native';
 import { mercenaryQueries } from '@/src/api/queries/mercenary/queries';
 import { teamQueries } from '@/src/api/queries/team/queries';
 import { ROUTES } from '@/src/constants/routes';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
 import {
   useMercenaryRecruitments,
   useMercenaryRecruitment,
-  useUserProfile,
-  useTeamJoinRequestMutation,
+  useJoinWaitingMutation,
   useMyJoinWaitingList,
 } from '@/src/hooks/queries';
 import { queryClient } from '@/src/lib/query_client';
 import type { RecruitmentResponse } from '@/src/types';
 import type { JoinWaitingRequest } from '@/src/types/team';
+import { formatTime } from '@/src/utils/date';
 import { handleApiError } from '@/src/utils/handle_api_error';
 
 export function useMercenaryMain() {
@@ -30,8 +31,9 @@ export function useMercenaryMain() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const pageSize = 10;
 
-  const { data: userProfile } = useUserProfile();
-  const { joinWaiting, isJoining } = useTeamJoinRequestMutation();
+  const { userProfile } = useUserProfileContext();
+  const { mutate: joinWaiting, isPending: isJoining } =
+    useJoinWaitingMutation();
   const { data: recruitmentsData, isLoading } = useMercenaryRecruitments(
     currentPage,
     pageSize,
@@ -55,10 +57,6 @@ export function useMercenaryMain() {
     if (!selectedUniversity || selectedUniversity === '전체') return list;
     return list.filter(r => r.universityName === selectedUniversity);
   }, [recruitmentsData?.content, selectedUniversity]);
-
-  const formatTime = (time: string) => {
-    return time.slice(0, 5);
-  };
 
   const handleApplication = (recruitmentId: number, message: string) => {
     const selectedRecruitment = recruitmentsData?.content.find(

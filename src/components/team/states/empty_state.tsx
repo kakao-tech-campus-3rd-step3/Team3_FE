@@ -6,7 +6,6 @@ import { styles } from '@/src/components/team/states/empty_state_styles';
 import { colors } from '@/src/theme';
 
 interface EmptyStateProps {
-  icon: string;
   title: string;
   subtitle: string;
   description: string;
@@ -15,7 +14,6 @@ interface EmptyStateProps {
 }
 
 export default memo(function EmptyState({
-  icon,
   title,
   subtitle,
   description,
@@ -24,7 +22,6 @@ export default memo(function EmptyState({
 }: EmptyStateProps) {
   return (
     <View style={styles.stateContainer}>
-      <Text style={styles.stateIcon}>{icon}</Text>
       <Text style={styles.stateTitle}>{title}</Text>
       <Text style={styles.stateSubtitle}>{subtitle}</Text>
       <Text style={styles.stateDescription}>{description}</Text>

@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, Alert } from 'react-native';
 
 import { ROUTES } from '@/src/constants/routes';
 import { useAuth } from '@/src/contexts/auth_context';
-import { useUserProfile } from '@/src/hooks/queries';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
 
 interface TeamGuardProps {
   children: React.ReactNode;
@@ -18,7 +18,7 @@ export default function TeamGuard({
   const router = useRouter();
   const { token } = useAuth();
   const isAuthenticated = !!token;
-  const { data: userProfile, isLoading } = useUserProfile();
+  const { userProfile, isLoading } = useUserProfileContext();
 
   useEffect(() => {
     if (!isAuthenticated) {

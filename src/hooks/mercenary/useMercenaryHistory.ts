@@ -9,7 +9,7 @@ import {
   useMyJoinWaitingList,
   useMyMercenaryRecruitments,
   useDeleteMercenaryRecruitment,
-  useTeamJoinRequestMutation,
+  useCancelJoinRequestMutation,
 } from '@/src/hooks/queries';
 import { queryClient } from '@/src/lib/query_client';
 import type {
@@ -42,7 +42,8 @@ export function useMercenaryHistory() {
     useMyMercenaryRecruitments(recruitmentsPage, pageSize, 'matchDate,asc');
 
   const { deleteRecruitment } = useDeleteMercenaryRecruitment();
-  const { cancelJoinRequest, isCanceling } = useTeamJoinRequestMutation();
+  const { mutate: cancelJoinRequest, isPending: isCanceling } =
+    useCancelJoinRequestMutation();
 
   const applicationsData = joinWaitingData?.content || [];
   const myRecruitmentsData = recruitmentsData?.content || [];

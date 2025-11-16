@@ -17,10 +17,10 @@ import Dropdown from '@/src/components/dropdown';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { TeamMemberSelectModal } from '@/src/components/ui/team_member_select_modal';
 import { FORMATION_POSITIONS, FormationType } from '@/src/constants/formations';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
 import {
   useCreateLineupsMutation,
   useTeamMembersInfinite,
-  useUserProfile,
 } from '@/src/hooks/queries';
 import { AllowedPosition } from '@/src/types/lineup';
 import { buildPositionMap, createLineupPayload } from '@/src/utils/lineup';
@@ -29,7 +29,7 @@ import { style } from './team_formation_style';
 
 export default function TeamFormationScreen() {
   const router = useRouter();
-  const { data: userProfile } = useUserProfile();
+  const { userProfile } = useUserProfileContext();
   const teamId = userProfile?.teamId ?? 0;
 
   const { data, isLoading } = useTeamMembersInfinite(teamId, 50);

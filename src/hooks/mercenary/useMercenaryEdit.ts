@@ -19,12 +19,7 @@ import {
   parseTimeFromAPI,
 } from '@/src/utils/date';
 import { handleApiError } from '@/src/utils/handle_api_error';
-
-const SKILL_LEVEL_MAP: { [key: string]: string } = {
-  PRO: '프로',
-  SEMI_PRO: '세미프로',
-  AMATEUR: '아마추어',
-};
+import { convertSkillLevelToKorean } from '@/src/utils/skill_level';
 
 export function useMercenaryEdit(recruitmentId: number) {
   const { data: recruitment, isLoading } =
@@ -60,11 +55,10 @@ export function useMercenaryEdit(recruitmentId: number) {
         matchTime: recruitment.matchTime,
         message: recruitment.message,
         position: convertPositionToKorean(recruitment.position),
-        skillLevel:
-          SKILL_LEVEL_MAP[recruitment.skillLevel] || recruitment.skillLevel,
+        skillLevel: convertSkillLevelToKorean(recruitment.skillLevel),
       });
     }
-  }, [recruitment]);
+  }, [recruitment, setMatchDate, setMatchTime]);
 
   const handleUpdateRecruitment = () => {
     if (

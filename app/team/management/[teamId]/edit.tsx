@@ -1,6 +1,6 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 
-import TeamEditScreen from '@/src/screens/team/management/team_edit_screen';
+import EditScreen from '@/src/screens/team/management/edit_screen';
 
 export default function TeamEditRoute() {
   const { teamId } = useLocalSearchParams<{ teamId: string }>();
@@ -8,7 +8,7 @@ export default function TeamEditRoute() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <TeamEditScreen teamId={teamId} />
+      <EditScreen teamId={teamId} />
     </>
   );
 }

@@ -2,21 +2,18 @@ import { router } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 
-import { teamQueries } from '@/src/api/queries/team/queries';
 import { ROUTES, getTeamManagementUrl } from '@/src/constants/routes';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
 import {
   useTeamJoinWaitingList,
   useTeamMembers,
-  useUserProfile,
   useDeleteTeamMutation,
-  useTeam,
   useTeamMatchRequests,
   useApproveJoinRequestMutation,
   useRejectJoinRequestMutation,
 } from '@/src/hooks/queries';
-import { ApiError } from '@/src/lib/api_client';
-import { queryClient } from '@/src/lib/query_client';
 import type { MatchRequestResponseDto } from '@/src/types/match';
+import { handleApiError } from '@/src/utils/handle_api_error';
 
 interface UseTeamSettingsProps {
   teamId: string | number;
@@ -24,73 +21,30 @@ interface UseTeamSettingsProps {
 
 export function useTeamSettings({ teamId }: UseTeamSettingsProps) {
   const [showJoinRequestsModal, setShowJoinRequestsModal] = useState(false);
-  const [processingRequestId, setProcessingRequestId] = useState<number | null>(
-    null
-  );
 
-  const { data: userProfile } = useUserProfile();
+  const { userProfile } = useUserProfileContext();
   const numericTeamId = teamId ? Number(teamId) : 0;
 
-  const {
-    data: matchRequestsData,
-    isLoading: matchRequestsLoading,
-    error: matchRequestsError,
-  } = useTeamMatchRequests();
+  const { data: matchRequestsData, isLoading: matchRequestsLoading } =
+    useTeamMatchRequests();
 
-  const {
-    data: teamMembersData,
-    isLoading: membersLoading,
-    error: membersError,
-  } = useTeamMembers(numericTeamId, 0, 100);
+  const { data: teamMembersData, isLoading: membersLoading } = useTeamMembers(
+    numericTeamId,
+    0,
+    100
+  );
 
-  const {
-    data: regularMemberRequestsData,
-    isLoading: isLoadingRegular,
-    error: errorRegular,
-  } = useTeamJoinWaitingList(teamId, 'PENDING', false, 0, 100);
+  const { data: regularMemberRequestsData, isLoading: isLoadingRegular } =
+    useTeamJoinWaitingList(teamId, 'PENDING', false, 0, 100);
 
-  const {
-    data: mercenaryRequestsData,
-    isLoading: isLoadingMercenary,
-    error: errorMercenary,
-  } = useTeamJoinWaitingList(teamId, 'PENDING', true, 0, 100);
+  const { data: mercenaryRequestsData, isLoading: isLoadingMercenary } =
+    useTeamJoinWaitingList(teamId, 'PENDING', true, 0, 100);
 
   const deleteTeamMutation = useDeleteTeamMutation();
   const approveJoinRequestMutation = useApproveJoinRequestMutation();
   const rejectJoinRequestMutation = useRejectJoinRequestMutation();
 
   const isLoading = isLoadingRegular || isLoadingMercenary;
-  const error = errorRegular || errorMercenary;
-
-  const handleApiError = (error: unknown) => {
-    if (error instanceof ApiError) {
-      const errorMessage = error.message || error.detail;
-      Alert.alert('오류', errorMessage);
-    } else if (error instanceof Error) {
-      Alert.alert('오류', error.message);
-    }
-  };
-
-  const handleRefetch = () => {
-    queryClient.invalidateQueries({
-      queryKey: teamQueries.teamJoinWaitingList.key(
-        teamId,
-        'PENDING',
-        false,
-        0,
-        100
-      ),
-    });
-    queryClient.invalidateQueries({
-      queryKey: teamQueries.teamJoinWaitingList.key(
-        teamId,
-        'PENDING',
-        true,
-        0,
-        100
-      ),
-    });
-  };
 
   const joinRequestsData = (() => {
     if (!regularMemberRequestsData && !mercenaryRequestsData) {
@@ -152,7 +106,6 @@ export function useTeamSettings({ teamId }: UseTeamSettingsProps) {
         text: action,
         style: status === 'rejected' ? 'destructive' : 'default',
         onPress: () => {
-          setProcessingRequestId(requestId);
           if (status === 'approved') {
             const role: '회장' | '부회장' | '일반멤버' = '일반멤버';
             approveJoinRequestMutation.mutate(
@@ -163,39 +116,9 @@ export function useTeamSettings({ teamId }: UseTeamSettingsProps) {
               },
               {
                 onSuccess: () => {
-                  setProcessingRequestId(null);
                   Alert.alert('성공', `가입을 ${action}했습니다.`);
-                  queryClient.invalidateQueries({
-                    queryKey: teamQueries.teamJoinWaitingList.key(
-                      teamId,
-                      'PENDING',
-                      false,
-                      0,
-                      100
-                    ),
-                  });
-                  queryClient.invalidateQueries({
-                    queryKey: teamQueries.teamJoinWaitingList.key(
-                      teamId,
-                      'PENDING',
-                      true,
-                      0,
-                      100
-                    ),
-                  });
-                  queryClient.invalidateQueries({
-                    queryKey: teamQueries.teamMembers.key(
-                      numericTeamId,
-                      0,
-                      100
-                    ),
-                  });
-                  queryClient.invalidateQueries({
-                    queryKey: teamQueries.team.key(numericTeamId),
-                  });
                 },
                 onError: (error: unknown) => {
-                  setProcessingRequestId(null);
                   handleApiError(error);
                 },
               }
@@ -209,29 +132,9 @@ export function useTeamSettings({ teamId }: UseTeamSettingsProps) {
               },
               {
                 onSuccess: () => {
-                  setProcessingRequestId(null);
                   Alert.alert('성공', `가입을 ${action}했습니다.`);
-                  queryClient.invalidateQueries({
-                    queryKey: teamQueries.teamJoinWaitingList.key(
-                      teamId,
-                      'PENDING',
-                      false,
-                      0,
-                      100
-                    ),
-                  });
-                  queryClient.invalidateQueries({
-                    queryKey: teamQueries.teamJoinWaitingList.key(
-                      teamId,
-                      'PENDING',
-                      true,
-                      0,
-                      100
-                    ),
-                  });
                 },
                 onError: (error: unknown) => {
-                  setProcessingRequestId(null);
                   handleApiError(error);
                 },
               }
@@ -284,20 +187,19 @@ export function useTeamSettings({ teamId }: UseTeamSettingsProps) {
   const matchRequests: MatchRequestResponseDto[] = matchRequestsData || [];
   const joinRequests = joinRequestsData?.content || [];
 
+  const isProcessing =
+    approveJoinRequestMutation.isPending || rejectJoinRequestMutation.isPending;
+
   return {
     joinRequests,
     matchRequests,
     isLoading,
     membersLoading,
     matchRequestsLoading,
-    error,
-    membersError,
-    matchRequestsError,
     showJoinRequestsModal,
-    processingRequestId,
     canManageTeam,
     joinRequestsData,
-    handleRefetch,
+    isProcessing,
     handleJoinRequest,
     handleDeleteTeam,
     openJoinRequestsModal,

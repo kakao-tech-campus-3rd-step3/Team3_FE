@@ -1,4 +1,4 @@
-import SupportScreen from '@/src/screens/profile/support/support_screen';
+import SupportScreen from '@/src/screens/profile/support';
 
 export default function SupportRoute() {
   return <SupportScreen />;

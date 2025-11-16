@@ -15,7 +15,7 @@ import SelectionModal from '@/src/components/ui/selection_modal';
 import SkillLevelBadge from '@/src/components/ui/skill_level_badge';
 import { convertPositionToKorean } from '@/src/constants/positions';
 import { UNIVERSITIES } from '@/src/constants/universities';
-import { useMercenaryMain } from '@/src/hooks/mercenary/useMercenaryMain';
+import { useMercenaryMain } from '@/src/hooks/mercenary';
 import { theme } from '@/src/theme';
 import type { RecruitmentResponse } from '@/src/types';
 

@@ -16,7 +16,7 @@ import { ModalDatePicker } from '@/src/components/ui/modal_date_picker';
 import { ModalTimePicker } from '@/src/components/ui/modal_time_picker';
 import TextInputSection from '@/src/components/ui/text_input_section';
 import { POSITION_OPTIONS } from '@/src/constants/positions';
-import { useMercenaryEdit } from '@/src/hooks/mercenary/useMercenaryEdit';
+import { useMercenaryEdit } from '@/src/hooks/mercenary';
 
 import { styles } from './edit_styles';
 

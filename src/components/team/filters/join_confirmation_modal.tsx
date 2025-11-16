@@ -15,6 +15,7 @@ interface JoinConfirmationModalProps {
   visible: boolean;
   teamName: string;
   teamType: string;
+  teamId: number;
   onConfirm: () => void;
   onCancel: () => void;
   slideAnim: Animated.Value;
@@ -26,6 +27,7 @@ export default function JoinConfirmationModal({
   visible,
   teamName,
   teamType,
+  teamId,
   onConfirm,
   onCancel,
   slideAnim,
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingBottom: 40,
+    paddingBottom: 60,
     shadowColor: colors.black,
     shadowOffset: {
       width: 0,

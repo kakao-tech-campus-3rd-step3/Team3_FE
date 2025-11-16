@@ -7,7 +7,7 @@ import CancelApplicationModal from '@/src/components/mercenary/cancel_applicatio
 import { RecruitmentCard } from '@/src/components/mercenary/recruitment_card';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { TabGroup, TabList, Tab } from '@/src/components/ui/tab_selector';
-import { useMercenaryHistory } from '@/src/hooks/mercenary/useMercenaryHistory';
+import { useMercenaryHistory } from '@/src/hooks/mercenary';
 import { theme } from '@/src/theme';
 import type { RecruitmentResponse } from '@/src/types/mercenary';
 import type { UserJoinWaitingItem } from '@/src/types/team';

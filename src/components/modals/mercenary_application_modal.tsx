@@ -18,6 +18,11 @@ import {
 import { convertPositionToKorean } from '@/src/constants/positions';
 import { theme } from '@/src/theme';
 import { RecruitmentResponse } from '@/src/types/mercenary';
+import { formatTime } from '@/src/utils/date';
+import {
+  getSkillLevelBadgeStyle,
+  convertSkillLevelToKorean,
+} from '@/src/utils/skill_level';
 
 interface MercenaryApplicationModalProps {
   visible: boolean;
@@ -51,37 +56,8 @@ export default function MercenaryApplicationModal({
     ]);
   };
 
-  const getSkillLevelBadgeStyle = (skillLevel: string) => {
-    switch (skillLevel) {
-      case 'PRO':
-        return {
-          backgroundColor: '#F4E4BC',
-          color: theme.colors.text.main,
-          text: '프로',
-        };
-      case 'SEMI_PRO':
-        return {
-          backgroundColor: '#E8E8E8',
-          color: theme.colors.text.main,
-          text: '세미프로',
-        };
-      case 'AMATEUR':
-        return {
-          backgroundColor: '#E6D2B8',
-          color: theme.colors.text.main,
-          text: '아마추어',
-        };
-      default:
-        return {
-          backgroundColor: '#E6D2B8',
-          color: theme.colors.text.main,
-          text: skillLevel,
-        };
-    }
-  };
-
-  const formatTime = (time: string) => time.substring(0, 5);
-  const skillLevelStyle = getSkillLevelBadgeStyle(recruitment.skillLevel);
+  const skillLevelBadgeStyle = getSkillLevelBadgeStyle(recruitment.skillLevel);
+  const skillLevelKorean = convertSkillLevelToKorean(recruitment.skillLevel);
 
   return (
     <Modal
@@ -124,17 +100,18 @@ export default function MercenaryApplicationModal({
                           style={[
                             styles.skillBadge,
                             {
-                              backgroundColor: skillLevelStyle.backgroundColor,
+                              backgroundColor:
+                                skillLevelBadgeStyle.backgroundColor,
                             },
                           ]}
                         >
                           <Text
                             style={[
                               styles.skillBadgeText,
-                              { color: skillLevelStyle.color },
+                              { color: skillLevelBadgeStyle.textColor },
                             ]}
                           >
-                            {skillLevelStyle.text}
+                            {skillLevelKorean}
                           </Text>
                         </View>
                         <View style={styles.statusBadge}>

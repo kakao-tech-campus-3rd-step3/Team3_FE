@@ -122,7 +122,6 @@ export const teamQueries = {
       data: {
         name: string;
         description: string;
-        university: string;
         skillLevel: SkillLevel;
         teamType: TeamType;
       };

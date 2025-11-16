@@ -1,6 +1,6 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 
-import TeamSettingsScreen from '@/src/screens/team/management/team_settings_screen';
+import SettingsScreen from '@/src/screens/team/management/settings_screen';
 
 export default function TeamSettingsRoute() {
   const { teamId } = useLocalSearchParams<{ teamId: string }>();
@@ -8,7 +8,7 @@ export default function TeamSettingsRoute() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <TeamSettingsScreen teamId={teamId} />
+      <SettingsScreen teamId={teamId} />
     </>
   );
 }
