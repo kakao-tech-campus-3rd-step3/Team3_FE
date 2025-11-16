@@ -6,7 +6,7 @@ import RoleChangeModal from '@/src/components/team/modals/role_change_modal';
 import MemberListSection from '@/src/components/team/sections/member_list_section';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { LoadingState } from '@/src/components/ui/loading_state';
-import { useTeamMemberManagement } from '@/src/hooks/team/useTeamMemberManagement';
+import { useTeamMemberManagement } from '@/src/hooks/team';
 import { styles } from '@/src/screens/team/management/member_style';
 
 interface MemberManagementScreenProps {

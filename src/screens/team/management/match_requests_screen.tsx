@@ -11,7 +11,7 @@ import MatchRequestDetails from '@/src/components/team/sections/match_request_de
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { LoadingState } from '@/src/components/ui/loading_state';
 import StatusBadge from '@/src/components/ui/status_badge';
-import { useMatchRequests } from '@/src/hooks/team/useMatchRequests';
+import { useMatchRequests } from '@/src/hooks/team';
 import { colors } from '@/src/theme';
 
 import { styles } from './match_requests_screen_styles';

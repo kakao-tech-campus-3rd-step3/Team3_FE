@@ -4,7 +4,7 @@ import JoinRequestsModal from '@/src/components/team/modals/join_requests_modal'
 import ManageSection from '@/src/components/team/sections/manage_section';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { LoadingState } from '@/src/components/ui/loading_state';
-import { useTeamSettings } from '@/src/hooks/team/useTeamSettings';
+import { useTeamSettings } from '@/src/hooks/team';
 import { styles } from '@/src/screens/team/management/settings_styles';
 
 interface SettingsScreenProps {
