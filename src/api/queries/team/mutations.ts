@@ -64,6 +64,9 @@ export function useTeam(teamId: string | number) {
     queryKey: teamQueries.team.key(teamId),
     queryFn: () => teamQueries.team.fn(teamId),
     enabled: !!teamId,
+    throwOnError: (error: unknown) => {
+      return error instanceof ApiError;
+    },
   });
 }
 
@@ -72,13 +75,14 @@ export function useTeamMembers(
   page: number = 0,
   size: number = 10
 ) {
-  const query = useQuery({
+  return useQuery({
     queryKey: teamQueries.teamMembers.key(teamId, page, size),
     queryFn: () => teamQueries.teamMembers.fn(teamId, page, size),
     enabled: !!teamId,
+    throwOnError: (error: unknown) => {
+      return error instanceof ApiError;
+    },
   });
-  const members = query.data?.content ?? [];
-  return { ...query, members };
 }
 
 export function useTeamMember(
@@ -264,9 +268,6 @@ export function useUpdateTeamMutation() {
         queryKey: profileQueries.userProfile.key,
       });
     },
-    onError: (error: unknown) => {
-      console.error('팀 정보 수정 실패:', error);
-    },
   });
 }
 
@@ -278,9 +279,6 @@ export function useDeleteTeamMutation() {
       queryClient.invalidateQueries({
         queryKey: teamQueries.teamMembers.key(teamId, 0, 10),
       });
-    },
-    onError: (error: unknown) => {
-      console.error('[팀 삭제 Mutation] API 실패:', error);
     },
   });
 }
@@ -298,9 +296,6 @@ export function useTeamExitMutation() {
       });
       router.replace(ROUTES.TEAM_GUIDE);
     },
-    onError: (error: unknown) => {
-      console.error('팀 나가기 실패:', error);
-    },
   });
 }
 
@@ -309,14 +304,11 @@ export function useDelegateLeadershipMutation() {
     mutationFn: teamQueries.delegateLeadership.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['teamMembers', variables.teamId],
+        queryKey: teamQueries.teamMembers.key(variables.teamId, 0, 10),
       });
       queryClient.invalidateQueries({
         queryKey: teamQueries.team.key(variables.teamId),
       });
-    },
-    onError: (error: unknown) => {
-      console.error('리더십 위임 실패:', error);
     },
   });
 }
@@ -325,18 +317,31 @@ export function useApproveJoinRequestMutation() {
   return useMutation({
     mutationFn: teamQueries.approveJoinRequest.fn,
     onSuccess: (response, variables) => {
+      const numericTeamId = Number(variables.teamId);
       queryClient.invalidateQueries({
-        queryKey: ['teamJoinWaitingList', variables.teamId],
+        queryKey: teamQueries.teamJoinWaitingList.key(
+          variables.teamId,
+          'PENDING',
+          false,
+          0,
+          100
+        ),
       });
       queryClient.invalidateQueries({
-        queryKey: teamQueries.teamMembers.key(variables.teamId),
+        queryKey: teamQueries.teamJoinWaitingList.key(
+          variables.teamId,
+          'PENDING',
+          true,
+          0,
+          100
+        ),
       });
       queryClient.invalidateQueries({
-        queryKey: teamQueries.team.key(variables.teamId),
+        queryKey: teamQueries.teamMembers.key(numericTeamId, 0, 100),
       });
-    },
-    onError: (error: unknown) => {
-      console.error('가입 요청 승인 실패:', error);
+      queryClient.invalidateQueries({
+        queryKey: teamQueries.team.key(numericTeamId),
+      });
     },
   });
 }
@@ -346,11 +351,23 @@ export function useRejectJoinRequestMutation() {
     mutationFn: teamQueries.rejectJoinRequest.fn,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['teamJoinWaitingList', variables.teamId],
+        queryKey: teamQueries.teamJoinWaitingList.key(
+          variables.teamId,
+          'PENDING',
+          false,
+          0,
+          100
+        ),
       });
-    },
-    onError: (error: unknown) => {
-      console.error('가입 요청 거절 실패:', error);
+      queryClient.invalidateQueries({
+        queryKey: teamQueries.teamJoinWaitingList.key(
+          variables.teamId,
+          'PENDING',
+          true,
+          0,
+          100
+        ),
+      });
     },
   });
 }
@@ -382,9 +399,6 @@ export function useCancelJoinRequestMutation() {
       queryClient.invalidateQueries({
         queryKey: ['teamJoinWaitingList', variables.teamId],
       });
-    },
-    onError: (error: unknown) => {
-      console.error('팀 가입 요청 취소 실패:', error);
     },
   });
 }
