@@ -53,6 +53,9 @@ export function useTeamsByUniversityInfinite(
     },
     initialPageParam: 0,
     enabled: !!university,
+    throwOnError: (error: unknown) => {
+      return error instanceof ApiError;
+    },
   });
 }
 
@@ -352,10 +355,10 @@ export function useRejectJoinRequestMutation() {
   });
 }
 
-export function useTeamJoinRequestMutation() {
-  const joinWaitingMutation = useMutation({
+export function useJoinWaitingMutation() {
+  return useMutation({
     mutationFn: teamQueries.joinWaiting.fn,
-    onSuccess: (data, variables) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['myJoinWaitingList'],
       });
@@ -366,12 +369,11 @@ export function useTeamJoinRequestMutation() {
         queryKey: teamQueries.team.key(variables.teamId),
       });
     },
-    onError: (error: unknown) => {
-      console.error('팀 가입 요청 실패:', error);
-    },
   });
+}
 
-  const cancelJoinRequestMutation = useMutation({
+export function useCancelJoinRequestMutation() {
+  return useMutation({
     mutationFn: teamQueries.cancelJoinRequest.fn,
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
@@ -385,17 +387,4 @@ export function useTeamJoinRequestMutation() {
       console.error('팀 가입 요청 취소 실패:', error);
     },
   });
-
-  return {
-    joinWaiting: joinWaitingMutation.mutate,
-    isJoining: joinWaitingMutation.isPending,
-    joinError: joinWaitingMutation.error,
-    joinSuccess: joinWaitingMutation.isSuccess,
-    resetJoinState: joinWaitingMutation.reset,
-    cancelJoinRequest: cancelJoinRequestMutation.mutate,
-    isCanceling: cancelJoinRequestMutation.isPending,
-    cancelError: cancelJoinRequestMutation.error,
-    cancelSuccess: cancelJoinRequestMutation.isSuccess,
-    resetCancelState: cancelJoinRequestMutation.reset,
-  };
 }
