@@ -9,51 +9,21 @@ import {
 
 import MatchRequestDetails from '@/src/components/team/sections/match_request_details';
 import { CustomHeader } from '@/src/components/ui/custom_header';
+import { LoadingState } from '@/src/components/ui/loading_state';
 import StatusBadge from '@/src/components/ui/status_badge';
 import { useMatchRequests } from '@/src/hooks/team/useMatchRequests';
 import { colors } from '@/src/theme';
 
 import { styles } from './match_requests_screen_styles';
 
-interface MatchRequestsScreenProps {
-  teamId?: string | string[];
-}
-
-export default function MatchRequestsScreen({
-  teamId,
-}: MatchRequestsScreenProps) {
-  const {
-    matchRequests,
-    isLoading,
-    error,
-    processingRequestId,
-    handleMatchRequest,
-  } = useMatchRequests();
+export default function MatchRequestsScreen() {
+  const { matchRequests, isLoading, handleMatchRequest } = useMatchRequests();
 
   if (isLoading) {
     return (
       <View style={styles.container}>
         <CustomHeader title="매치 요청 관리" />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.blue[600]} />
-          <Text style={styles.loadingText}>매치 요청을 불러오는 중...</Text>
-        </View>
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <CustomHeader title="매치 요청 관리" />
-        <View style={styles.errorContainer}>
-          <Ionicons
-            name="alert-circle-outline"
-            size={48}
-            color={colors.red[500]}
-          />
-          <Text style={styles.errorText}>매치 요청을 불러올 수 없습니다.</Text>
-        </View>
+        <LoadingState message="매치 요청을 불러오는 중..." />
       </View>
     );
   }
@@ -100,15 +70,10 @@ export default function MatchRequestsScreen({
                 {request.status === 'PENDING' && (
                   <View style={styles.requestActions}>
                     <TouchableOpacity
-                      style={[
-                        styles.approveButton,
-                        processingRequestId === request.requestId &&
-                          styles.buttonDisabled,
-                      ]}
+                      style={styles.approveButton}
                       onPress={() =>
                         handleMatchRequest(request.requestId, 'approved')
                       }
-                      disabled={processingRequestId === request.requestId}
                     >
                       <Ionicons
                         name="checkmark"
@@ -118,15 +83,10 @@ export default function MatchRequestsScreen({
                       <Text style={styles.approveButtonText}>승인</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={[
-                        styles.rejectButton,
-                        processingRequestId === request.requestId &&
-                          styles.buttonDisabled,
-                      ]}
+                      style={styles.rejectButton}
                       onPress={() =>
                         handleMatchRequest(request.requestId, 'rejected')
                       }
-                      disabled={processingRequestId === request.requestId}
                     >
                       <Ionicons
                         name="close"

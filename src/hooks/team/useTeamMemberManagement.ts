@@ -1,17 +1,15 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
 
-import { teamQueries } from '@/src/api/queries/team/queries';
+import { useUserProfileContext } from '@/src/contexts/user_profile_context';
 import {
   useTeamMembers,
   useRemoveMemberMutation,
   useUpdateMemberRoleMutation,
   useDelegateLeadershipMutation,
-  useUserProfile,
 } from '@/src/hooks/queries';
-import { ApiError } from '@/src/lib/api_client';
-import { queryClient } from '@/src/lib/query_client';
 import type { TeamMember, TeamMemberRole } from '@/src/types/team';
+import { handleApiError } from '@/src/utils/handle_api_error';
 import { getRoleDisplayName } from '@/src/utils/team';
 
 interface UseTeamMemberManagementProps {
@@ -25,25 +23,12 @@ export function useTeamMemberManagement({
   const [showMemberDetailModal, setShowMemberDetailModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
-  const { data: userProfile } = useUserProfile();
-  const {
-    data: teamMembers,
-    isLoading,
-    error,
-  } = useTeamMembers(teamId, 0, 100);
+  const { userProfile } = useUserProfileContext();
+  const { data: teamMembers, isLoading } = useTeamMembers(teamId, 0, 100);
 
   const removeMemberMutation = useRemoveMemberMutation();
   const updateMemberRoleMutation = useUpdateMemberRoleMutation();
   const delegateLeadershipMutation = useDelegateLeadershipMutation();
-
-  const handleApiError = (error: unknown) => {
-    if (error instanceof ApiError) {
-      const errorMessage = error.message || error.detail;
-      Alert.alert('오류', errorMessage);
-    } else if (error instanceof Error) {
-      Alert.alert('오류', error.message);
-    }
-  };
 
   const handleMemberPress = (member: TeamMember) => {
     setSelectedMember(member);
@@ -77,11 +62,10 @@ export function useTeamMemberManagement({
                   Alert.alert('성공', '역할이 성공적으로 변경되었습니다.');
                   setShowRoleModal(false);
                   setSelectedMember(null);
-                  queryClient.invalidateQueries({
-                    queryKey: teamQueries.teamMembers.key(teamId),
-                  });
                 },
-                onError: handleApiError,
+                onError: (error: unknown) => {
+                  handleApiError(error);
+                },
               }
             );
           },
@@ -100,7 +84,7 @@ export function useTeamMemberManagement({
           text: '강퇴',
           style: 'destructive',
           onPress: () => {
-            removeMemberMutation.mutate(
+            removeMemberMutation.mutateAsync(
               {
                 teamId,
                 userId: member.userId,
@@ -108,11 +92,10 @@ export function useTeamMemberManagement({
               {
                 onSuccess: () => {
                   Alert.alert('성공', '팀원이 성공적으로 강퇴되었습니다.');
-                  queryClient.invalidateQueries({
-                    queryKey: teamQueries.teamMembers.key(teamId),
-                  });
                 },
-                onError: handleApiError,
+                onError: (error: unknown) => {
+                  handleApiError(error);
+                },
               }
             );
           },
@@ -131,7 +114,7 @@ export function useTeamMemberManagement({
           text: '위임',
           style: 'destructive',
           onPress: () => {
-            delegateLeadershipMutation.mutate(
+            delegateLeadershipMutation.mutateAsync(
               {
                 teamId,
                 memberId: member.id,
@@ -139,14 +122,10 @@ export function useTeamMemberManagement({
               {
                 onSuccess: () => {
                   Alert.alert('성공', '리더십이 성공적으로 위임되었습니다.');
-                  queryClient.invalidateQueries({
-                    queryKey: teamQueries.teamMembers.key(teamId),
-                  });
-                  queryClient.invalidateQueries({
-                    queryKey: teamQueries.team.key(teamId),
-                  });
                 },
-                onError: handleApiError,
+                onError: (error: unknown) => {
+                  handleApiError(error);
+                },
               }
             );
           },
@@ -182,7 +161,7 @@ export function useTeamMemberManagement({
   });
 
   const currentUserMember = teamMembers?.content.find(
-    m => m.name === userProfile?.name
+    m => m.email === userProfile?.email
   );
 
   return {
@@ -191,7 +170,6 @@ export function useTeamMemberManagement({
     currentUserMember,
     userProfile,
     isLoading,
-    error,
     showRoleModal,
     showMemberDetailModal,
     selectedMember,
