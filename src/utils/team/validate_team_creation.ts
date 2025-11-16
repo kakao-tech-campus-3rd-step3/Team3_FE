@@ -1,4 +1,4 @@
-import type { TeamFormData } from '@/src/hooks/team/useTeamCreationForm';
+import type { TeamFormData } from '@/src/hooks/team';
 
 export interface TeamFormErrors {
   name?: string;

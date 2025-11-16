@@ -14,7 +14,7 @@ import TeamDetails from '@/src/components/team/steps/team_details';
 import { CustomHeader } from '@/src/components/ui/custom_header';
 import { ROUTES } from '@/src/constants/routes';
 import { useCreateTeamMutation } from '@/src/hooks/queries';
-import { useTeamCreationForm } from '@/src/hooks/team/useTeamCreationForm';
+import { useTeamCreationForm } from '@/src/hooks/team';
 import { styles } from '@/src/screens/team/creation_style';
 import { theme } from '@/src/theme';
 import { SkillLevel } from '@/src/types/team';
