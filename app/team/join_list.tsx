@@ -1,5 +1,5 @@
-import UniversityTeamListScreen from '@/src/screens/team/join/university_team_list_screen';
+import JoinScreen from '@/src/screens/team/join_screen';
 
 export default function TeamJoinListRoute() {
-  return <UniversityTeamListScreen />;
+  return <JoinScreen />;
 }
