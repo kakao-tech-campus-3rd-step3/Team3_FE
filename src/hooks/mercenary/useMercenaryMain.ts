@@ -15,6 +15,7 @@ import {
 import { queryClient } from '@/src/lib/query_client';
 import type { RecruitmentResponse } from '@/src/types';
 import type { JoinWaitingRequest } from '@/src/types/team';
+import { formatTime } from '@/src/utils/date';
 import { handleApiError } from '@/src/utils/handle_api_error';
 
 export function useMercenaryMain() {
@@ -56,10 +57,6 @@ export function useMercenaryMain() {
     if (!selectedUniversity || selectedUniversity === '전체') return list;
     return list.filter(r => r.universityName === selectedUniversity);
   }, [recruitmentsData?.content, selectedUniversity]);
-
-  const formatTime = (time: string) => {
-    return time.slice(0, 5);
-  };
 
   const handleApplication = (recruitmentId: number, message: string) => {
     const selectedRecruitment = recruitmentsData?.content.find(

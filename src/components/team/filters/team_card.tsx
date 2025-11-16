@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 
 import { styles } from '@/src/screens/team/join_style';
 import type { TeamListItem } from '@/src/types';
+import { formatDate } from '@/src/utils/date';
 
 interface TeamCardProps {
   team: TeamListItem;
@@ -15,7 +16,7 @@ interface TeamInfoItem {
 }
 
 export default function TeamCard({ team, onJoin }: TeamCardProps) {
-  const formatDate = (dateString: string) => {
+  const formatTeamDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('ko-KR', {
       year: 'numeric',
@@ -27,7 +28,7 @@ export default function TeamCard({ team, onJoin }: TeamCardProps) {
     () => [
       { label: '실력', value: team.skillLevel },
       { label: '멤버', value: `${team.memberCount}명` },
-      { label: '생성일', value: formatDate(team.createdAt) },
+      { label: '생성일', value: formatTeamDate(team.createdAt) },
     ],
     [team.skillLevel, team.memberCount, team.createdAt]
   );
